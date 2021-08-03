@@ -1,0 +1,52 @@
+body {
+    background-color:grey;
+    text-align: center;
+}
+
+header {
+    text-align: center;
+    display: block;
+}
+
+canvas{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 30px;
+    margin: 0 auto;
+    outline: 10px;
+    outline-color: white;
+}
+
+h1 {
+    color: blue;
+}
+
+h2 {
+    color: white;
+}
+
+h3 {
+    color: brown;
+}
+
+#high-scores {
+    text-align: center;
+}
+
+#nav-message{
+    color: orange;
+}
+
+footer {
+    color: purple;
+    text-align: center;
+    padding: 10px
+}
+
+.stats {
+    text-align: center;
+    color: purple;
+    font-weight: bold;
+    /* font-size: large; */
+}
