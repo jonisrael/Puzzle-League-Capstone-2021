@@ -898,7 +898,7 @@ function doPanic(board) {
       }
     } else {
       for (let r = 0; r < ROWS; r++) {
-        if (board[c][r].typef == PANICKING) {
+        if (board[c][r].type == PANICKING) {
           board[c][r].type = NORMAL;
         }
       }
@@ -1281,6 +1281,7 @@ function CONTROL(event) {
       running = false;
       cvs = null;
       ctx = null;
+      music.pause();
     }
   } else {
     if (event.keyCode == 13 && dateTimeAPI.length != 0) {
@@ -1500,7 +1501,7 @@ function gameLoop(timestamp) {
   checkMatch(board);
   updateGrid(board);
   isChainActive(board);
-  if (frames % 15 == 0) {
+  if (frames % 12 == 0) {
     doPanic(board);
   }
 
