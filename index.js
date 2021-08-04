@@ -52,9 +52,9 @@ const DEBUGB = "PuzzleLeagueFiles/Extras/DebugSprites/debugB.png";
 const AUDIO = "PuzzleLeagueFiles/Audio/";
 
 const MUSIC = ["popcorn.mp3"];
-let music = (mySound = new Audio(
+let music = new Audio(
   `PuzzleLeagueFiles/Audio/Music/${MUSIC[randInt(MUSIC.length)]}`
-));
+);
 
 const ANNOUNCER_COMBO_ARRAY = [
   "what a rush.wav",
@@ -562,7 +562,7 @@ function updateGrid(board, debugFrameAdvance = false) {
 
 function swapProperties(FirstBlock, SecondBlock) {
   // Transfer everything except x and y coordinates
-  tempProperties = [
+  let tempProperties = [
     FirstBlock.color,
     FirstBlock.type,
     FirstBlock.delay,
@@ -657,7 +657,6 @@ function trySwappingBlocks(board) {
   }
 
   let swap = true;
-  let swapLocations = `[${x}, ${y}], [${x + 1}, ${y}]`;
 
   // Make sure both blocks aren't vacant
   if (board[x][y].color == VACANT && board[x + 1][y].color == VACANT) {
@@ -1281,6 +1280,8 @@ function CONTROL(event) {
       running = false;
       cvs = null;
       ctx = null;
+      music.pause();
+      music.currentTime = 0;
     }
   } else {
     if (event.keyCode == 13 && dateTimeAPI.length != 0) {
@@ -1500,7 +1501,7 @@ function gameLoop(timestamp) {
   checkMatch(board);
   updateGrid(board);
   isChainActive(board);
-  if (frames % 15 == 0) {
+  if (frames % 12 == 0) {
     doPanic(board);
   }
 
