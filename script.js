@@ -17,7 +17,7 @@ fetch("PuzzleLeagueFiles/database.json")
   // "using" the formatted response in our script
   .then(json => data.push(json));
 
-fetch("http://worldtimeapi.org/api/ip")
+fetch("https://worldtimeapi.org/api/ip")
   // parsing our response into JSON format
   .then(response => response.json())
   // "using" the formatted response in our script
