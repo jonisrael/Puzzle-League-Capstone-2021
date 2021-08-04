@@ -10,7 +10,7 @@
   },
   "editor.fontFamily": "'Inconsolata', Menlo, Monaco, 'Courier New', monospace",
   "editor.fontLigatures": true,
-  "editor.minimap.enabled": false,
+  "editor.minimap.enabled": true,
   "editor.scrollBeyondLastColumn": 2,
   "editor.smoothScrolling": true,
   "editor.tabSize": 2,

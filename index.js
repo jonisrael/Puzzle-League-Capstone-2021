@@ -125,16 +125,10 @@ let rise = 0; // Value between 0 and 15
 // let Announcer = new Audio("")
 // let SFX = new Audio("")
 
-class Position {
+class Cursor {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-  }
-}
-
-class Cursor extends Position {
-  constructor(x, y) {
-    super(x, y);
   }
   draw(ctx) {
     let pixelX = this.x * SQ;
@@ -148,7 +142,7 @@ class Cursor extends Position {
   }
 }
 
-class Block extends Position {
+class Block {
   constructor(
     x,
     y,
@@ -159,7 +153,8 @@ class Block extends Position {
     availableForPrimaryChain = false,
     availableForSecondaryChain = false
   ) {
-    super(x, y);
+    this.x = x;
+    this.y = y;
     this.color = color;
     this.type = type;
     this.delay = delay;
