@@ -5,10 +5,13 @@
     game released in Japan in 1995.  There is another clone globally released in 1995 called Tetris
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
+
+import image from "./PuzzleLeagueFiles/Sprites/cursor.png"
+
 let database = [];
 let data = [];
 let dateTimeAPI = [];
-let successfulFetch = true;
+let board = [];
 // fetching our data from an API
 
 fetch("PuzzleLeagueFiles/database.json")
@@ -120,10 +123,6 @@ let highScores = [1500, 1000, 800, 500, 300];
 // const fs = require("fs")
 
 let rise = 0; // Value between 0 and 15
-
-// let Music = new Audio("")
-// let Announcer = new Audio("")
-// let SFX = new Audio("")
 
 class Cursor {
   constructor(x, y) {
@@ -254,6 +253,7 @@ function randInt(max) {
 }
 
 function playChainSFX(currentChain) {
+  return;
   if (currentChain == 1) {
     return;
   }
@@ -298,12 +298,14 @@ function extractTimeToIndex(dateTimeAPI) {
 }
 
 function playSFX(file, volume = 0.1) {
+  return;
   mySound = new Audio(`PuzzleLeagueFiles/Audio/${file}`);
   mySound.volume = volume;
   mySound.play();
 }
 
 function playMusic(file, volume = 0.2, mute = 0) {
+  return;
   music.play();
   music.loop = true;
   music.playbackRate = 1.0;
@@ -368,7 +370,7 @@ function makeOpeningBoard(index) {
   score = 0;
   pause = 0;
   gameOver = false;
-  let board = [];
+  // let board = [];
   for (let c = 0; c < COLS; c++) {
     board.push([]);
     for (let r = 0; r < ROWS + 2; r++) {
@@ -389,7 +391,9 @@ function generateOpeningBoard() {
   cursor.x = 2;
   cursor.y = 6;
 
-  let board = [];
+  mute = 0;
+  playMusic(mute);
+  // let board = [];
   disableRaise = false;
   level = 1;
   speedGameSetting = speedValues[level];
@@ -1295,9 +1299,12 @@ function CONTROL(event) {
       cvs = document.getElementById("canvas");
       ctx = cvs.getContext("2d");
       running = true;
-      if (successfulFetch) {
-        board = makeOpeningBoard(extractTimeToIndex(dateTimeAPI));
-      } else {
+      try {
+        board = makeOpeningBoard(extractTimeToIndex);
+      } catch (error) {
+        console.log(
+          `fetching database.json failed. Will randomly generate board instead`
+        );
         board = generateOpeningBoard();
       }
       setTimeout(gameLoop(), 1000 / 60);
@@ -1621,23 +1628,23 @@ function gameLoop(timestamp) {
   } else {
     multiplierString = `${scoreMultiplier}x`;
   }
-  if (debugModeEnabled) {
-    statDisplay.innerHTML = `FPS: ${fps} | Level: ${level} | Time: ${timeString} |
-        Speed/Clear/Stall ${speedGameSetting}/${clearGameSetting}/${stallGameSetting}`;
-  } else {
-    statDisplay.innerHTML = `Level: ${level} | Time ${timeString}`;
-    scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
-  }
+  // if (debugModeEnabled) {
+  //   statDisplay.innerHTML = `FPS: ${fps} | Level: ${level} | Time: ${timeString} |
+  //       Speed/Clear/Stall ${speedGameSetting}/${clearGameSetting}/${stallGameSetting}`;
+  // } else {
+  //   statDisplay.innerHTML = `Level: ${level} | Time ${timeString}`;
+  //   scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
+  // }
 
-  if (chain > 0) {
-    chainDisplay.innerHTML = `${chain}x chain!`;
-    chainDisplay.style.color = "red";
-  } else {
-    chainDisplay.innerHTML = `Highest Chain: ${highestChain}`;
-    chainDisplay.style.color = "blue";
-  }
+  // if (chain > 0) {
+  //   chainDisplay.innerHTML = `${chain}x chain!`;
+  //   chainDisplay.style.color = "red";
+  // } else {
+  //   chainDisplay.innerHTML = `Highest Chain: ${highestChain}`;
+  //   chainDisplay.style.color = "blue";
+  // }
 
-  highScoreDisplay.innerHTML = `High Score: ${highScore}`;
+  // highScoreDisplay.innerHTML = `High Score: ${highScore}`;
   requestAnimationFrame(gameLoop);
 }
 
