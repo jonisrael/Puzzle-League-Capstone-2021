@@ -50,3 +50,7 @@ footer {
     font-weight: bold;
     /* font-size: large; */
 }
+
+canvas {
+    outline: red solid 2px;
+}

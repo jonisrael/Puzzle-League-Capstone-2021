@@ -32,3 +32,5 @@ export default st => html`
     <div id="debug"></div>
   </body>
 `;
+
+let CURSOR = new Image();

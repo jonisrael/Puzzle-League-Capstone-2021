@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-// import image from "./PuzzleLeagueFiles/Sprites/cursor.png";
+import image from "./assets/Sprites/cursor.png";
 
 let database = [];
 let data = [];
@@ -14,7 +14,7 @@ let dateTimeAPI = [];
 let board = [];
 // fetching our data from an API
 
-fetch("PuzzleLeagueFiles/database.json")
+fetch("assets/database.json")
   // parsing our response into JSON format
   .then(response => response.json())
   // "using" the formatted response in our script
@@ -27,13 +27,13 @@ fetch("https://worldtimeapi.org/api/ip")
   .then(json => dateTimeAPI.push(json));
 
 // File locations to access folders
-const CYAN = "PuzzleLeagueFiles/Sprites/cyanStar/";
-const GREEN = "PuzzleLeagueFiles/Sprites/greenCircle/";
-const PURPLE = "PuzzleLeagueFiles/Sprites/purpleDiamond/";
-const RED = "PuzzleLeagueFiles/Sprites/redHeart/";
-const YELLOW = "PuzzleLeagueFiles/Sprites/yellowLightning/";
-const BLUE = "PuzzleLeagueFiles/Sprites/blueTriangle/";
-const VACANT = "PuzzleLeagueFiles/Sprites/vacantSquare/";
+const CYAN = "assets/Sprites/cyanStar/";
+const GREEN = "assets/Sprites/greenCircle/";
+const PURPLE = "assets/Sprites/purpleDiamond/";
+const RED = "assets/Sprites/redHeart/";
+const YELLOW = "assets/Sprites/yellowLightning/";
+const BLUE = "assets/Sprites/blueTriangle/";
+const VACANT = "assets/Sprites/vacantSquare/";
 
 const NORMAL = "normal.png";
 const FACE = "face.png";
@@ -47,17 +47,15 @@ const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
 const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEATH];
 const SWAPPABLES = [NORMAL, LANDING, PANICKING];
 
-const DEBUGW = "PuzzleLeagueFiles/Extras/DebugSprites/debugW.png";
-const DEBUGP = "PuzzleLeagueFiles/Extras/DebugSprites/debugP.png";
-const DEBUGO = "PuzzleLeagueFiles/Extras/DebugSprites/debugO.png";
-const DEBUGB = "PuzzleLeagueFiles/Extras/DebugSprites/debugB.png";
+const DEBUGW = "assets/Extras/DebugSprites/debugW.png";
+const DEBUGP = "assets/Extras/DebugSprites/debugP.png";
+const DEBUGO = "assets/Extras/DebugSprites/debugO.png";
+const DEBUGB = "assets/Extras/DebugSprites/debugB.png";
 
-const AUDIO = "PuzzleLeagueFiles/Audio/";
+const AUDIO = "assets/Audio/";
 
 const MUSIC = ["popcorn.mp3"];
-let music = new Audio(
-  `PuzzleLeagueFiles/Audio/Music/${MUSIC[randInt(MUSIC.length)]}`
-);
+let music = new Audio(`assets/Audio/Music/${MUSIC[randInt(MUSIC.length)]}`);
 
 const ANNOUNCER_COMBO_ARRAY = [
   "what a rush.wav",
@@ -134,7 +132,7 @@ class Cursor {
     let pixelY = this.y * SQ - rise;
     // ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY)
     const CURSOR_IMAGE = new Image();
-    CURSOR_IMAGE.src = "PuzzleLeagueFiles/Sprites/cursor.png";
+    CURSOR_IMAGE.src = "assets/Sprites/cursor.png";
     CURSOR_IMAGE.onload = () => {
       ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY);
     };
@@ -259,12 +257,10 @@ function playChainSFX(currentChain) {
   }
   if (currentChain < 9) {
     mySound = new Audio(
-      `PuzzleLeagueFiles/audio/Super Mario 64 Red Coin ${currentChain - 1}.wav`
+      `assets/audio/Super Mario 64 Red Coin ${currentChain - 1}.wav`
     );
   } else {
-    mySound = new Audio(
-      `PuzzleLeagueFiles/audio/Super Mario 64 Red Coin 8.wav`
-    );
+    mySound = new Audio(`assets/audio/Super Mario 64 Red Coin 8.wav`);
   }
   mySound.volume = 0.1;
   mySound.play();
@@ -299,7 +295,7 @@ function extractTimeToIndex(dateTimeAPI) {
 
 function playSFX(file, volume = 0.1) {
   return;
-  mySound = new Audio(`PuzzleLeagueFiles/Audio/${file}`);
+  mySound = new Audio(`assets/Audio/${file}`);
   mySound.volume = volume;
   mySound.play();
 }
@@ -801,6 +797,8 @@ function trySwappingBlocks(board) {
 function doGravity(board) {
   let falling = false;
   let possibleLandedLocations = [];
+  let c;
+  let r;
 
   for (let c = 0; c < COLS; c++) {
     if (board[c][11].type == LANDING && board[c][11].delay == 0) {
@@ -867,7 +865,8 @@ function doGravity(board) {
   }
 
   if (!falling) {
-    c = r = 0;
+    c = 0;
+    r = 0;
     for (let c = 0; c < COLS; c++) {
       for (let r = 0; r < ROWS; r++) {
         board[c][r].touched = false;
@@ -1418,10 +1417,11 @@ let lastTime = 0;
 let frames = 0;
 let fps = 0;
 let prev = 0;
-let prevFrame = frames - 1;
+let secondsPerLoop;
 let seconds = 0;
 let minutes = 0;
-let gameOver = (clearing = false);
+let gameOver = false;
+let clearing = false;
 let grounded = true;
 let score = 0;
 let scoreMultiplier = 1;
