@@ -4,7 +4,6 @@ import Navigo from "navigo";
 import { capitalize } from "lodash";
 
 
-// import file from "PuzzleLeagueFiles/database.json"
 
 const router = new Navigo(window.location.origin);
 
