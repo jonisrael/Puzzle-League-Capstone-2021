@@ -6,8 +6,6 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import image from "./assets/Sprites/cursor.png";
-
 let database = [];
 let data = [];
 let dateTimeAPI = [];
@@ -38,13 +36,13 @@ const VACANT = "assets/Sprites/vacantSquare/";
 const NORMAL = "normal.png";
 const FACE = "face.png";
 const DARK = "dark.png";
-const DEATH = "death.png";
+const DEAD = "death.png";
 const CLEARING = "clearing/";
 const PANICKING = "panicking/";
 const LANDING = "landing/";
 
 const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
-const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEATH];
+const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEAD];
 const SWAPPABLES = [NORMAL, LANDING, PANICKING];
 
 const DEBUGW = "assets/Extras/DebugSprites/debugW.png";
@@ -122,6 +120,7 @@ let highScores = [1500, 1000, 800, 500, 300];
 
 let rise = 0; // Value between 0 and 15
 
+import c_IMAGE from "./assets/Sprites/cursor.png";
 class Cursor {
   constructor(x, y) {
     this.x = x;
@@ -132,7 +131,7 @@ class Cursor {
     let pixelY = this.y * SQ - rise;
     // ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY)
     const CURSOR_IMAGE = new Image();
-    CURSOR_IMAGE.src = "assets/Sprites/cursor.png";
+    CURSOR_IMAGE.src = c_IMAGE;
     CURSOR_IMAGE.onload = () => {
       ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY);
     };
@@ -1183,8 +1182,8 @@ function raiseStack(board) {
 }
 
 function gameOverBoard(board) {
-  // don't continue function if all pieces are already switched to DEATH type
-  if (board[5][11].type == DEATH) {
+  // don't continue function if all pieces are already switched to DEAD type
+  if (board[5][11].type == DEAD) {
     return;
   }
   if (frames == 1) {
@@ -1196,7 +1195,7 @@ function gameOverBoard(board) {
   let deathRow = Math.floor(frames / 2);
   for (let i = 0; i < COLS; i++) {
     if (board[i][deathRow].color != VACANT) {
-      board[i][deathRow].type = DEATH;
+      board[i][deathRow].type = DEAD;
     }
   }
 }

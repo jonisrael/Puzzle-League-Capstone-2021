@@ -3,8 +3,6 @@ import * as state from "/store";
 import Navigo from "navigo";
 import { capitalize } from "lodash";
 
-
-
 const router = new Navigo(window.location.origin);
 
 router.on({
@@ -24,3 +22,13 @@ function render(st) {
 }
 
 render(state.Home);
+
+// Image Sprites
+
+// function blockURL(color, type, animationIndex = -1) {
+//     if (animationIndex === -1) {
+//       return `${color}_${type}`
+//     } else {
+//       return `${color}_${type}_${animationIndex}`
+//     }
+// }
