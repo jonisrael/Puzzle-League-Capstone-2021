@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import image from "./PuzzleLeagueFiles/Sprites/cursor.png";
+// import image from "./PuzzleLeagueFiles/Sprites/cursor.png";
 
 let database = [];
 let data = [];
@@ -449,7 +449,10 @@ function generateOpeningBoard() {
     // Correct Duplicates so blocks of same color cannot be adjacent
     for (let y = 0; y < ROWS; y++) {
       if (board[x][y].color != VACANT) {
-        let topBlock = (rightBlock = bottomBlock = leftBlock = VACANT);
+        let topBlock = VACANT;
+        let rightBlock = VACANT;
+        let bottomBlock = VACANT;
+        let leftBlock = VACANT;
         if (y != 0) {
           topBlock = board[x][y - 1].color;
         }
@@ -1412,7 +1415,9 @@ function CONTROL(event) {
 
 let commentary = ``;
 let lastTime = 0;
-let frames = (fps = prev = 0);
+let frames = 0;
+let fps = 0;
+let prev = 0;
 let prevFrame = frames - 1;
 let seconds = 0;
 let minutes = 0;
