@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import image from "./PuzzleLeagueFiles/Sprites/cursor.png"
+import image from "./PuzzleLeagueFiles/Sprites/cursor.png";
 
 let database = [];
 let data = [];
