@@ -30,6 +30,7 @@ export default st => html`
     <!-- <canvas id ="canvas" width="192" height="448", background-color></canvas>  -->
     <h2 id="high-score"></h2>
     <div id="debug"></div>
+
   </body>
 `;
 

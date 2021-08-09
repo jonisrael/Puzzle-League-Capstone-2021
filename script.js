@@ -1553,6 +1553,7 @@ function CONTROL(event) {
   } else {
     if (event.keyCode == 13 && dateTimeAPI.length != 0) {
       // enter
+      console.log(dateTimeAPI);
       database = data[0];
       newCanvas = document.createElement(`canvas`);
       newCanvas.setAttribute("id", "canvas");

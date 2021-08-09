@@ -2,24 +2,16 @@ import html from "html-literal";
 
 export default st => html`
   <section id="home-page">
-    <h2>Vivamus ac justo eu nisi</h2>
+    <h2>Puzzle League Clone</h2>
     <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eu sagittis
-      nulla. Etiam semper mauris a quam tempus, non feugiat massa posuere. Morbi
-      vitae nisi aliquam, semper diam id, molestie leo. In hac habitasse platea
-      dictumst. Nulla et enim vel elit dictum viverra. Nunc pharetra lacinia
-      arcu sit amet dignissim. Pellentesque ut mi nulla.
-    </p>
-    <p>
-      Etiam egestas consectetur gravida. Nulla mollis suscipit sapien sed
-      fermentum. Integer vitae eros a magna vulputate aliquam. Suspendisse sed
-      pulvinar augue, auctor mollis lectus. Class aptent taciti sociosqu ad
-      litora torquent per conubia nostra, per inceptos himenaeos. Duis eleifend
-      diam quis libero sollicitudin efficitur. Nullam sapien eros, tempor eget
-      vulputate ut, interdum vel orci. Donec sit amet tempor mi. Nam feugiat
-      cursus egestas. Suspendisse eget orci et ex mattis ornare tempor non
-      tellus. Suspendisse gravida neque in urna congue bibendum. Duis dui odio,
-      pharetra nec odio ac, ornare vulputate nibh.
+      /* Puzzle League/Tetris Attack Clone by Jonathan Israel! For more
+      information on the game, check out
+      https://tetris.fandom.com/wiki/Tetris_Attack. The game is most known as
+      Pokemon Puzzle League, which was released 2000 on Nintendo 64), but it is
+      actually a clone of Panel De Pon, a Super Nintendo Entertainment system
+      game released in Japan in 1995. There is another clone globally released
+      in 1995 called Tetris Attack (It featured Yoshi!), but the game is really
+      nothing like Tetris other than a grid. */
     </p>
   </section>
 `;
