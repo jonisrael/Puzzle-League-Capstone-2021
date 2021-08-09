@@ -289,6 +289,8 @@ import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
+// import image from "./PuzzleLeagueFiles/Sprites/cursor.png";
+
 let database = [];
 let data = [];
 let dateTimeAPI = [];
@@ -1680,6 +1682,7 @@ let frames = 0;
 let fps = 0;
 let prev = 0;
 let secondsPerLoop;
+let prevFrame = frames - 1;
 let seconds = 0;
 let minutes = 0;
 let gameOver = false;
