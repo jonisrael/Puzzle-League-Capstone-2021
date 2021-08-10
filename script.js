@@ -1123,6 +1123,8 @@ function checkMatch(board) {
 function isGameOver(board, scoreOfThisGame) {
   for (let c = 0; c < COLS; c++) {
     if (board[c][0].color != VACANT) {
+      console.log(`Score: ${score}`);
+      console.log(`High Score: ${highScore}`);
       // enter new high scores
       let pastHighScore = localStorage.getItem("highScore");
       if (scoreOfThisGame > parseInt(pastHighScore)) {
@@ -1317,7 +1319,7 @@ function CONTROL(event) {
       music.currentTime = 0;
     }
   } else {
-    if (event.keyCode == 13 && dateTimeAPI.length != 0) {
+    if (event.keyCode == 13) {
       // enter
       console.log(dateTimeAPI);
       database = data[0];
@@ -1437,7 +1439,14 @@ function CONTROL(event) {
     if (event.keyCode >= 0 && frames >= 200) {
       //any key
       gameOver = false;
-      board = makeOpeningBoard(randInt(1440));
+      try {
+        board = makeOpeningBoard(extractTimeToIndex);
+      } catch (error) {
+        console.log(
+          `fetching database.json failed. Will randomly generate board instead`
+        );
+        board = generateOpeningBoard();
+      }
     }
   }
 }
@@ -1514,6 +1523,7 @@ function gameLoop(timestamp) {
   ) {
     // Speed the stack up every 30 seconds
     if (frames == 3600) {
+      console.log(`Current Score: ${score}`);
       playSFX(`Announcer/time marches on.wav`);
     } else if (frames >= 7200) {
       playSFX(
