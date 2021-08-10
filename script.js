@@ -1778,9 +1778,8 @@ function gameLoop(timestamp) {
     }
   }
   grounded = doGravity(board);
-
-  checkMatch(board);
   updateGrid(board);
+  checkMatch(board);
   isChainActive(board);
   if (frames % 12 == 0) {
     doPanic(board);
