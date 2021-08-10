@@ -364,6 +364,8 @@ const stallValues = [24, 12, 11, 10, 9, 8, 7, 6, 6, 6, 6];
 const startingHangTime = 12; // Changeable
 let called = false;
 let level = 1;
+let xSwap = 2;
+let ySwap = 6;
 let speedGameSetting = speedValues[level];
 let clearGameSetting = clearValues[level];
 let stallGameSetting = stallValues[level]; // Changeable
@@ -916,9 +918,9 @@ function isChainActive(board) {
   return false;
 }
 
-function trySwappingBlocks(board) {
-  let x = cursor.x;
-  let y = cursor.y;
+function trySwappingBlocks(board, xSwap, ySwap) {
+  let x = xSwap;
+  let y = ySwap;
   if (disableSwap) {
     return;
   }
@@ -1602,7 +1604,9 @@ function CONTROL(event) {
       }
     } else if (event.keyCode == 88 || event.keyCode == 83) {
       // x, s
-      trySwappingBlocks(board);
+      xSwap = cursor.x;
+      ySwap = cursor.y;
+      swapPressed = true;
     } else if (event.keyCode == 32 || event.keyCode == 90) {
       // space, z
       raisePressed = true; // run raise function on next frame
@@ -1780,6 +1784,11 @@ function gameLoop(timestamp) {
   isChainActive(board);
   if (frames % 12 == 0) {
     doPanic(board);
+  }
+
+  if (swapPressed) {
+    trySwappingBlocks(board, xSwap, ySwap);
+    swapPressed = false;
   }
 
   if (raisePressed) {
