@@ -50,12 +50,6 @@
 // import FANFARE4 from "./assets/Audio/fanfare4.wav";
 // import TOPOUT from "./assets/Audio/topout.wav";
 
-// Debug Sprites
-import DEBUGW from "./assets/Extras/DebugSprites/debugW.png";
-import DEBUGP from "./assets/Extras/DebugSprites/debugP.png";
-import DEBUGO from "./assets/Extras/DebugSprites/debugO.png";
-import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
-
 // Image Sprites
 import CURSOR from "./assets/Sprites/cursor.png";
 
@@ -160,7 +154,7 @@ import PANICKING_1_V from "./assets/Sprites/vacantSquare/panicking/1.png";
 import PANICKING_2_V from "./assets/Sprites/vacantSquare/panicking/2.png";
 import PANICKING_3_V from "./assets/Sprites/vacantSquare/panicking/3.png";
 
-const blockURL = {
+const blockURLs = {
   blue_normal: NORMAL_B,
   blue_face: FACE_B,
   blue_dark: DARK_B,
@@ -260,31 +254,7 @@ const blockURL = {
   vacant_panicking_3: PANICKING_3_V
 };
 
-const blueTriangle = "blueTriangle";
-const cyanStar = "cyanStar";
-const greenCircle = "greenCircle";
-const purpleDiamond = "purpleDiamond";
-const redHeart = "redHeart";
-const yellowLightning = "yellowLightning";
-const vacantSquare = "vacantSquare";
+const imageKeys = Object.keys(blockURLs);
+const imageList = Object.values(blockURLs);
 
-const NORMAL = "normal";
-const FACE = "face";
-const DARK = "dark";
-const DEAD = "dead";
-const CLEARING = "clearing";
-const LANDING = "landing";
-const PANICKING = "panicking";
-
-const img0 = "img0";
-const img1 = "img1";
-const img2 = "img2";
-const img3 = "img3";
-
-// function blockURL(color, type, animationIndex = -1) {
-//     if (animationIndex === -1) {
-//       return `${color}_${type}`
-//     } else {
-//       return `${color}_${type}_${animationIndex}`
-//     }
-// }
+export { blockURLs, CURSOR, imageKeys, imageList };

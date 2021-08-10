@@ -19,6 +19,7 @@ export default st => html`
       "overtime" begins, and the stack rise speed will be extremely fast.
       However, all point scores will be doubled at 2.0x. Have fun!
     </h3>
+    <button id="click-to-play">Click to Play</button>
     <div id="canvas-container">
       <h3 class="stats" id="all-stats"></h3>
       <h3 class="stats" id="time"></h3>
@@ -30,8 +31,5 @@ export default st => html`
     <!-- <canvas id ="canvas" width="192" height="448", background-color></canvas>  -->
     <h2 id="high-score"></h2>
     <div id="debug"></div>
-
   </body>
 `;
-
-let CURSOR = new Image();
