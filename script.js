@@ -104,7 +104,7 @@ const MICRO_SQ = SQ / 16;
 let clearDelaySetting = 60;
 const speedValues = [60, 20, 15, 12, 10, 6, 4, 2, 2, 2, 1];
 const clearValues = [60, 50, 45, 40, 35, 30, 25, 20, 20, 20, 15]; // iterate twice
-const stallValues = [24, 12, 11, 10, 9, 8, 7, 6, 6, 6, 6];
+const stallValues = [24, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6];
 const startingHangTime = 12; // Changeable
 let called = false;
 let level = 1;
@@ -1379,6 +1379,8 @@ function CONTROL(event) {
       debugModeEnabled = (debugModeEnabled + 1) % 2;
       if (debugModeEnabled == 1) {
         console.log("debug ON");
+        console.log(`FPS: ${fps}`);
+        console.log(`Draw Divisor: ${drawDivisor}`);
       } else {
         console.log("debug OFF");
       }
@@ -1472,6 +1474,7 @@ let lastChain = 0;
 let highestChain = 0;
 let computerPerformanceTracker = 0;
 let drawsPerSecond = 60;
+let drawDivisor = 1;
 let performanceConstant = 1;
 let statDisplay = document.querySelector("#all-stats");
 let scoreDisplay = document.querySelector("#score");
@@ -1587,16 +1590,14 @@ function gameLoop(timestamp) {
     drawGrid(board);
   }
 
-  // Try and control a frame rate that is too fast
+  // Try and control a frame rate based
+  // on computer performance by decreasing or increasing
+  // the amount of times the board is drawn per second
   if (!gameOver) {
-    if (fps <= 50) {
-      if (frames % 2 == 0) {
-        drawGrid(board);
-      }
-    } else if (fps <= 90) {
+    if (frames % drawDivisor == 0) {
       drawGrid(board);
-    } else {
-      drawGrid(board);
+    }
+    if (fps >= 80) {
       drawGrid(board);
     }
   }
@@ -1628,12 +1629,18 @@ function gameLoop(timestamp) {
   if (computerPerformanceTracker > 10) {
     // If fps is below 50fps for 2 seconds in the next 10, lower settings
     computerPerformanceTracker = 0;
-    console.log("computer running slow");
-    if (drawsPerSecond == 30) {
-      gameSpeed = 1; // Game is running very slow, double the speed of everything!
-      console.log("Game speed has changed");
+    console.log(`computer running slow, FPS ${fps}`);
+    if (fps <= 50) {
+      drawDivisor += 1;
     }
-    drawsPerSecond = 30;
+    if (fps > 80) drawGrid(board);
+    if (fps > 120) {
+      console.log(`computer running fast, FPS ${fps}`);
+
+      drawGrid(board);
+      if (drawDivisor > 1) drawDivisor -= 1;
+    }
+    if (fps > 150) drawGrid(board);
     // } else if (drawsPerSecond == 30) {
     //     drawsPerSecond = 20
     // } else if (drawsPerSecond == 20) {

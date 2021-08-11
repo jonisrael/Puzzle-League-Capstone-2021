@@ -2,32 +2,77 @@ import html from "html-literal";
 
 export default st => html`
   <section id="home-page">
-    <h2>Vivamus ac justo eu nisi</h2>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eu sagittis
-      nulla. Etiam semper mauris a quam tempus, non feugiat massa posuere. Morbi
-      vitae nisi aliquam, semper diam id, molestie leo. In hac habitasse platea
-      dictumst. Nulla et enim vel elit dictum viverra. Nunc pharetra lacinia
-      arcu sit amet dignissim. Pellentesque ut mi nulla.
-    </p>
-    <p>
-      Quisque at hendrerit libero, eget interdum lectus. Etiam facilisis leo
-      nulla, sit amet imperdiet nunc molestie vel. Orci varius natoque penatibus
-      et magnis dis parturient montes, nascetur ridiculus mus. Curabitur
-      consectetur felis a purus volutpat, sed finibus magna iaculis.
-      Pellentesque tristique tristique turpis nec vehicula. Maecenas varius quis
-      tellus id mollis. Vivamus ut ultrices ligula.
-    </p>
-    <p>
-      Etiam egestas consectetur gravida. Nulla mollis suscipit sapien sed
-      fermentum. Integer vitae eros a magna vulputate aliquam. Suspendisse sed
-      pulvinar augue, auctor mollis lectus. Class aptent taciti sociosqu ad
-      litora torquent per conubia nostra, per inceptos himenaeos. Duis eleifend
-      diam quis libero sollicitudin efficitur. Nullam sapien eros, tempor eget
-      vulputate ut, interdum vel orci. Donec sit amet tempor mi. Nam feugiat
-      cursus egestas. Suspendisse eget orci et ex mattis ornare tempor non
-      tellus. Suspendisse gravida neque in urna congue bibendum. Duis dui odio,
-      pharetra nec odio ac, ornare vulputate nibh.
-    </p>
+    <body>
+      <main>
+        <img src="../assets/Images/Tetris_Attack_box_art.png" id="box-art" />
+        <h1 id="more-info" class="headers"></h1>
+        <h1 id="more-info" class="headers"></h1>
+        Puzzle League is a tetris-like game where the player arranges 3 or more
+        adjacent blocks with the same color to create a combo and clear them
+        from the board. You can also do more advanced techniques such as chains
+        to gain more points. Usually the main game is multiplayer, where upon
+        creating combos and chains, it will send garbage blocks to your opponent
+        in attempt to top them out. There are other game modes such as a puzzle
+        mode or a line clear mode, but with the limited time I have, I chose to
+        focus on the single-player game modes involving scores.<br /><br />
+        The main two modes that involve score are the two-minute time-trial and
+        endless mode. In endless mode, the speed the stack rises gets faster and
+        faster, but theoretically you can play it forever. In time trial, the
+        speed is the same but you have a two minute time-limit to get the
+        highest score possible.<br /><br />Outside of a couple animations, I did
+        my best to replicate the game mechanics of the original game. If you
+        would like to learn more information about how I programmed the game,
+        some improvements I will implement later,
+        <strong>as well as a list of bugs (Should I keep this?)</strong>, you
+        can check out my <a href="#About">About</a> page.<br /><br />
+        To make my clone a little more interesting, I created my own game mode
+        called "Puzzle League Blitz". My idea was to combine the endless and
+        time-trial mode into an arcade style 2-3 minute round. The stack rise
+        speed as well as match clear speed will rapidly increase every twenty
+        seconds, along with a score multiplier. At two minutes, it becomes
+        nearly unplayably fast, but the player is rewarded for survival time. At
+        three minutes, it is basically unplayable.<br /><br /><strong
+          >NOT FINISHED YET</strong
+        >Since 1995, there have been a couple of Puzzle League games released.
+        It also had an interesting history on what regions of the world various
+        games were released in. This is the main list of games that created new
+        content:
+        <ul id="list-of-games" class="lists">
+          <li>
+            <a href="https://panepon.fandom.com/wiki/Panel_De_Pon_Wiki"
+              >Panel De Pon</a
+            >
+            (1995 Super Nintendo, Japan Only)
+          </li>
+          <li>
+            <a href="https://en.wikipedia.org/wiki/Tetris_Attack"
+              >Tetris Attack</a
+            >
+            (1996 Super Nintendo, Worldwide)
+          </li>
+          <li>
+            <a href="https://en.wikipedia.org/wiki/Pok%C3%A9mon_Puzzle_League"
+              >Pokemon Puzzle League</a
+            >
+            (2000 Nintendo 64, NA and Europe)
+          </li>
+          <li>
+            <a href="https://en.wikipedia.org/wiki/Pokemon_Puzzle_Challenge"
+              >Pokemon Puzzle Challenge</a
+            >
+            (2000 Game Boy Color, Worldwide)
+          </li>
+          <li>
+            <a href="https://en.wikipedia.org/wiki/Planet_Puzzle_League"
+              >Planet Puzzle League</a
+            >
+            (2007 Nintendo DS, Worldwide)
+          </li>
+        </ul>
+        <br /><br />
+        <h2>Tutorial</h2>
+      </main>
+      <script src="index.js"></script>
+    </body>
   </section>
 `;

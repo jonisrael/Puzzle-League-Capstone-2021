@@ -54,3 +54,39 @@ footer {
 canvas {
     outline: red solid 2px;
 }
+
+#nav-bar {
+    display: flex;
+    list-style-type: none;
+    flex-direction: column;
+    justify-content: ;
+    align-items: center;
+    outline: red solid 2px;
+}
+
+#nav-bar ul {
+    font-size: x-large;
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 5px;
+    overflow: hidden;
+    background-color: #333;
+    outline: red solid 2px;
+  }
+
+  #nav-bar li {
+    float: left;
+  }
+
+  #nav-bar li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  /* Change the link color to #111 (black) on hover */
+  #nav-bar li a:hover {
+    background-color: #111;
+  }
