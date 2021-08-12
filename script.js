@@ -1594,10 +1594,12 @@ function gameLoop(timestamp) {
     // fps counter
     secondsPerLoop = Math.floor(100 * (timestamp / 1000 - prev)) / 100;
     fps = Math.floor(10 * 5 * (1 / secondsPerLoop)) / 10;
-    if (fps < 40) {
+    if (fps < 40 && gameSpeed == 1) {
       // If the game is running at below 0.9x speed, there's a problem.
       computerSlowdownTracker += 1; // for each frame, if there is low frame rate 2
-      console.log(computerSlowdownTracker);
+      console.log(
+        `${computerSlowdownTracker} times under 40f ps every 2 seconds (3 needed)`
+      );
     }
     prev = timestamp / 1000;
   }
