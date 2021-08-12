@@ -280,6 +280,13 @@ const soundEffectURLs = {
   fanfare4: FANFARE4
 };
 
+let SilentSoundLoader = new Audio();
+SilentSoundLoader.mute = true;
+Object.keys(soundEffectURLs).forEach(key => {
+  SilentSoundLoader.src = soundEffectURLs[key];
+  SilentSoundLoader.play();
+});
+
 let Music = new Audio();
 let CursorMoveSFX = new Audio(soundEffectURLs.moveCursor);
 let CursorSwapSFX = new Audio(soundEffectURLs.swapSuccess);
