@@ -1,55 +1,3 @@
-// import ANN_TRAINING from "./assets/Audio/Announcer/all the training and practice led up to this very moment.wav";
-// import ANN_PAYOFF from "./assets/Audio/Announcer/and there's the payoff.wav";
-// import ANN_BEAUTIFUL from "./assets/Audio/Announcer/beautiful.wav";
-// import ANN_BRING_US_HOME from "./assets/Audio/Announcer/bring us home.wav";
-// import ANN_FANTASTIC_COMBO from "./assets/Audio/Announcer/fantastic combo.wav";
-// import ANN_HOW_MUCH_LONGER from "./assets/Audio/Announcer/how much longer can this go on.wav";
-// import ANN_I_HOPE_READY from "./assets/Audio/Announcer/i hope you're ready.wav";
-// import ANN_SOMETHING_BIG from "./assets/Audio/Announcer/i think we're about to see something big.wav";
-// import ANN_CALL_THIS_ONE from "./assets/Audio/Announcer/i'm almost ready to call this one.wav";
-// import ANN_COMBO_INTENSE from "./assets/Audio/Announcer/i've never seen a combo that intense.wav";
-// import ANN_ANYTHING_LIKE from "./assets/Audio/Announcer/i've never seen anything like this.wav";
-// import ANN_INCRED_BELIEVE from "./assets/Audio/Announcer/incredible I can't believe it.wav";
-// import ANN_INCRED_TECHNIQUE from "./assets/Audio/Announcer/incredible technique.wav";
-// import ANN_IS_THE_END from "./assets/Audio/Announcer/is this it, is this the end.wav";
-// import ANN_ALL_BOILS from "./assets/Audio/Announcer/it all boils down to these last moments.wav";
-// import ANN_ANY_MORE_INTENSE from "./assets/Audio/Announcer/it doesn't get any more intense than this.wav";
-// import ANN_WONT_BE_LONG from "./assets/Audio/Announcer/it won't be long now.wav";
-// import ANN_FIREWORKS from "./assets/Audio/Announcer/looks like we can expect fireworks.wav";
-// import ANN_NO_ONE_SEE from "./assets/Audio/Announcer/no one could have seen that coming.wav";
-// import ANN_TEN_SECONDS from "./assets/Audio/Announcer/ten seconds to destiny.wav";
-// import ANN_WORLD_ANTICIPATION from "./assets/Audio/Announcer/the world is holding its breath in anticipation.wav";
-// import ANN_THERE_IT_IS from "./assets/Audio/Announcer/there it is.wav";
-// import ANN_COULD_BE_END from "./assets/Audio/Announcer/this could be the end.wav";
-// import ANN_TURN_ALL_AROUND from "./assets/Audio/Announcer/this could turn it all around.wav";
-// import ANN_TIME_MARCHES_ON from "./assets/Audio/Announcer/time marches on.wav";
-// import ANN_UNBELIEVABLE from "./assets/Audio/Announcer/unbelievable.wav";
-// import ANN_NOW_OR_NEVER from "./assets/Audio/Announcer/watch closely, it's now or never.wav";
-// import ANN_NEVER_FORGET_EVENT from "./assets/Audio/Announcer/we are never going to forget this event.wav";
-// import ANN_WHAT_RUSH from "./assets/Audio/Announcer/what a rush.wav";
-// import ANN_WHERE_COME_FROM from "./assets/Audio/Announcer/where did that come from.wav";
-// import ANN_DESERVE_PRAISE from "./assets/Audio/Announcer/you deserve praise my friend.wav";
-// import ANN_YOU_DONT_SEE_MOVES from "./assets/Audio/Announcer/you don't see moves like that everyday folks.wav";
-// import DING from "./assets/Audio/Ding.wav";
-// import MOVE_CURSOR from "./assets/Audio/MoveCursor.wav";
-// import OVERTIME_SONG from "./assets/Audio/Music/overtime.mp3";
-// import POPCORN_SONG from "./assets/Audio/Music/popcorn.mp3";
-// import CHAIN2 from "./assets/Audio/Super Mario 64 Red Coin 1.wav";
-// import CHAIN3 from "./assets/Audio/Super Mario 64 Red Coin 2.wav";
-// import CHAIN4 from "./assets/Audio/Super Mario 64 Red Coin 3.wav";
-// import CHAIN5 from "./assets/Audio/Super Mario 64 Red Coin 4.wav";
-// import CHAIN6 from "./assets/Audio/Super Mario 64 Red Coin 5.wav";
-// import CHAIN7 from "./assets/Audio/Super Mario 64 Red Coin 6.wav";
-// import CHAIN8 from "./assets/Audio/Super Mario 64 Red Coin 7.wav";
-// import CHAIN9 from "./assets/Audio/Super Mario 64 Red Coin 8.wav";
-// import SWAP_SFX_FAILED from "./assets/Audio/Swap Failed.wav";
-// import SWAP_SFX_SUCCESS from "./assets/Audio/SwapBlocks.wav";
-// import FANFARE1 from "./assets/Audio/fanfare1.wav";
-// import FANFARE2 from "./assets/Audio/fanfare2.wav";
-// import FANFARE3 from "./assets/Audio/fanfare3.wav";
-// import FANFARE4 from "./assets/Audio/fanfare4.wav";
-// import TOPOUT from "./assets/Audio/topout.wav";
-
 // Image Sprites
 import CURSOR from "./assets/Sprites/cursor.png";
 
@@ -257,4 +205,107 @@ const blockURLs = {
 const imageKeys = Object.keys(blockURLs);
 const imageList = Object.values(blockURLs);
 
-export { blockURLs, CURSOR, imageKeys, imageList };
+// import ANN_TRAINING from "./assets/Audio/Announcer/all the training and practice led up to this very moment.wav";
+// import ANN_PAYOFF from "./assets/Audio/Announcer/and there's the payoff.wav";
+// import ANN_BEAUTIFUL from "./assets/Audio/Announcer/beautiful.wav";
+// import ANN_BRING_US_HOME from "./assets/Audio/Announcer/bring us home.wav";
+// import ANN_FANTASTIC_COMBO from "./assets/Audio/Announcer/fantastic combo.wav";
+// import ANN_HOW_MUCH_LONGER from "./assets/Audio/Announcer/how much longer can this go on.wav";
+// import ANN_I_HOPE_READY from "./assets/Audio/Announcer/i hope you're ready.wav";
+// import ANN_SOMETHING_BIG from "./assets/Audio/Announcer/i think we're about to see something big.wav";
+// import ANN_CALL_THIS_ONE from "./assets/Audio/Announcer/i'm almost ready to call this one.wav";
+// import ANN_COMBO_INTENSE from "./assets/Audio/Announcer/i've never seen a combo that intense.wav";
+// import ANN_ANYTHING_LIKE from "./assets/Audio/Announcer/i've never seen anything like this.wav";
+// import ANN_INCRED_BELIEVE from "./assets/Audio/Announcer/incredible I can't believe it.wav";
+// import ANN_INCRED_TECHNIQUE from "./assets/Audio/Announcer/incredible technique.wav";
+// import ANN_IS_THE_END from "./assets/Audio/Announcer/is this it, is this the end.wav";
+// import ANN_ALL_BOILS from "./assets/Audio/Announcer/it all boils down to these last moments.wav";
+// import ANN_ANY_MORE_INTENSE from "./assets/Audio/Announcer/it doesn't get any more intense than this.wav";
+// import ANN_WONT_BE_LONG from "./assets/Audio/Announcer/it won't be long now.wav";
+// import ANN_FIREWORKS from "./assets/Audio/Announcer/looks like we can expect fireworks.wav";
+// import ANN_NO_ONE_SEE from "./assets/Audio/Announcer/no one could have seen that coming.wav";
+// import ANN_TEN_SECONDS from "./assets/Audio/Announcer/ten seconds to destiny.wav";
+// import ANN_WORLD_ANTICIPATION from "./assets/Audio/Announcer/the world is holding its breath in anticipation.wav";
+// import ANN_THERE_IT_IS from "./assets/Audio/Announcer/there it is.wav";
+// import ANN_COULD_BE_END from "./assets/Audio/Announcer/this could be the end.wav";
+// import ANN_TURN_ALL_AROUND from "./assets/Audio/Announcer/this could turn it all around.wav";
+// import ANN_TIME_MARCHES_ON from "./assets/Audio/Announcer/time marches on.wav";
+// import ANN_UNBELIEVABLE from "./assets/Audio/Announcer/unbelievable.wav";
+// import ANN_NOW_OR_NEVER from "./assets/Audio/Announcer/watch closely, it's now or never.wav";
+// import ANN_NEVER_FORGET_EVENT from "./assets/Audio/Announcer/we are never going to forget this event.wav";
+// import ANN_WHAT_RUSH from "./assets/Audio/Announcer/what a rush.wav";
+// import ANN_WHERE_COME_FROM from "./assets/Audio/Announcer/where did that come from.wav";
+// import ANN_DESERVE_PRAISE from "./assets/Audio/Announcer/you deserve praise my friend.wav";
+// import ANN_YOU_DONT_SEE_MOVES from "./assets/Audio/Announcer/you don't see moves like that everyday folks.wav";
+import MOVE_CURSOR from "./assets/Audio/MoveCursor.wav";
+import OVERTIME_SONG from "./assets/Audio/Music/overtime.mp3";
+import POPCORN_SONG from "./assets/Audio/Music/popcorn.mp3";
+import CHAIN2 from "./assets/Audio/Super Mario 64 Red Coin 1.wav";
+import CHAIN3 from "./assets/Audio/Super Mario 64 Red Coin 2.wav";
+import CHAIN4 from "./assets/Audio/Super Mario 64 Red Coin 3.wav";
+import CHAIN5 from "./assets/Audio/Super Mario 64 Red Coin 4.wav";
+import CHAIN6 from "./assets/Audio/Super Mario 64 Red Coin 5.wav";
+import CHAIN7 from "./assets/Audio/Super Mario 64 Red Coin 6.wav";
+import CHAIN8 from "./assets/Audio/Super Mario 64 Red Coin 7.wav";
+import CHAIN9 from "./assets/Audio/Super Mario 64 Red Coin 8.wav";
+import SWAP_SUCCESS from "./assets/Audio/SwapSuccess.wav";
+import SWAP_FAILED from "./assets/Audio/SwapFailed.wav";
+import FANFARE1 from "./assets/Audio/fanfare1.wav";
+import FANFARE2 from "./assets/Audio/fanfare2.wav";
+import FANFARE3 from "./assets/Audio/fanfare3.wav";
+import FANFARE4 from "./assets/Audio/fanfare4.wav";
+import TOPOUT from "./assets/Audio/topout.wav";
+
+const musicURLs = {
+  popcornMusic: POPCORN_SONG,
+  overtimeMusic: OVERTIME_SONG
+};
+
+const soundEffectURLs = {
+  moveCursor: MOVE_CURSOR,
+  swapSuccess: SWAP_SUCCESS,
+  swapFailed: SWAP_FAILED,
+  topout: TOPOUT,
+  chain2: CHAIN2,
+  chain3: CHAIN3,
+  chain4: CHAIN4,
+  chain5: CHAIN5,
+  chain6: CHAIN6,
+  chain7: CHAIN7,
+  chain8: CHAIN8,
+  chain9: CHAIN9,
+  fanfare1: FANFARE1,
+  fanfare2: FANFARE2,
+  fanfare3: FANFARE3,
+  fanfare4: FANFARE4
+};
+
+let Music = new Audio();
+let CursorMoveSFX = new Audio(soundEffectURLs.moveCursor);
+let CursorSwapSFX = new Audio(soundEffectURLs.swapSuccess);
+let ChainSFX = new Audio();
+let FanfareSFX = new Audio();
+let AnnouncerVoice = new Audio();
+const audioElements = {
+  Music: Music,
+  CursorMoveSFX: CursorMoveSFX,
+  CursorSwapSFX: CursorSwapSFX,
+  ChainSFX: ChainSFX,
+  FanfareSFX: FanfareSFX,
+  AnnouncerVoice: AnnouncerVoice
+};
+Object.keys(audioElements).forEach(key => {
+  audioElements[key].volume = 0.1;
+});
+audioElements.Music.volume = 0.2;
+audioElements.AnnouncerVoice.volume = 0.2;
+
+export {
+  blockURLs,
+  musicURLs,
+  soundEffectURLs,
+  audioElements,
+  CURSOR,
+  imageKeys,
+  imageList
+};

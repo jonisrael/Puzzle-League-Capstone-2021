@@ -33,7 +33,15 @@ import DEBUGP from "./assets/Extras/DebugSprites/debugP.png";
 import DEBUGO from "./assets/Extras/DebugSprites/debugO.png";
 import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
 
-import { blockURLs, CURSOR, imageKeys, imageList } from "./fileImports.js";
+import {
+  blockURLs,
+  musicURLs,
+  soundEffectURLs,
+  audioElements,
+  CURSOR,
+  imageKeys,
+  imageList
+} from "./fileImports.js";
 
 let database = [];
 let data = [];
@@ -58,10 +66,7 @@ const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
 const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEAD];
 const SWAPPABLES = [NORMAL, LANDING, PANICKING];
 
-const AUDIO = "assets/Audio/";
-
-const MUSIC = ["popcorn.mp3"];
-let music = new Audio(`assets/Audio/Music/${MUSIC[randInt(MUSIC.length)]}`);
+audioElements.Music.src = musicURLs.popcornMusic;
 
 const ANNOUNCER_COMBO_ARRAY = [
   "what a rush.wav",
@@ -172,8 +177,7 @@ class Block {
     delay = 0,
     touched = false,
     availableForPrimaryChain = false,
-    availableForSecondaryChain = false,
-    imageName = "vacant_normal"
+    availableForSecondaryChain = false
   ) {
     this.x = x;
     this.y = y;
@@ -183,12 +187,10 @@ class Block {
     this.touched = touched;
     this.availableForPrimaryChain = availableForPrimaryChain; // When disappear, chain ends
     this.availableForSecondaryChain = availableForSecondaryChain;
-    this.imageName = imageName;
   }
 
   draw(ctx) {
     let animationIndex = -1;
-    let BLOCK_KEY = this.imageName;
     const DEBUGW_IMAGE = new Image();
     const DEBUGP_IMAGE = new Image();
     const DEBUGO_IMAGE = new Image();
@@ -263,19 +265,16 @@ function randInt(max) {
 }
 
 function playChainSFX(currentChain) {
-  return;
   if (currentChain == 1) {
     return;
   }
   if (currentChain < 9) {
-    mySound = new Audio(
-      `assets/audio/Super Mario 64 Red Coin ${currentChain - 1}.wav`
-    );
+    audioElements.ChainSFX.src = soundEffectURLs[`chain${chain}`];
   } else {
-    mySound = new Audio(`assets/audio/Super Mario 64 Red Coin 8.wav`);
+    audioElements.ChainSFX.src = soundEffectURLs.chain9;
   }
-  mySound.volume = 0.1;
-  mySound.play();
+  audioElements.ChainSFX.volume = 0.05;
+  audioElements.ChainSFX.play();
 }
 
 function extractTimeToIndex(dateTimeAPI) {
@@ -305,24 +304,31 @@ function extractTimeToIndex(dateTimeAPI) {
   return index;
 }
 
-function playSFX(file, volume = 0.1) {
-  return;
-  mySound = new Audio(`assets/Audio/${file}`);
-  mySound.volume = volume;
-  mySound.play();
+function playAudio(audioElement, file, volume = 0.1) {
+  try {
+    audioElement.volume = volume;
+    audioElement.pause;
+    audioElement.currentTime = 0;
+    audioElement.src = file;
+    audioElement.play();
+  } catch (error) {
+    console.log(`Audio play failed.`);
+  }
 }
 
-function playMusic(file, volume = 0.2, mute = 0) {
-  return;
-  music.play();
-  music.loop = true;
-  music.playbackRate = 1.0;
-  music.currentTime = 0;
-  music.volume = volume;
+function playMusic(Music, file, volume = 0.2, mute = 0) {
+  Music.pause;
+  Music.currentTime = 0;
+  Music.src = file;
+  console.log(Music.src);
+  Music.play();
+  Music.loop = true;
+  Music.playbackRate = 1.0;
+  Music.volume = volume;
   if (mute == 1) {
-    music.volume = 0;
+    Music.volume = 0;
   } else {
-    music.volume = 0.2;
+    Music.volume = 0.2;
   }
   mute = (mute + 1) % 2;
 }
@@ -366,7 +372,7 @@ function fixNextDarkStack(board) {
 function makeOpeningBoard(index) {
   console.log(`Board Index Selected: ${index}`);
   mute = 0;
-  playMusic(mute);
+  playMusic(audioElements.Music, musicURLs.popcornMusic);
   cursor.x = 2;
   cursor.y = 6;
   disableRaise = false;
@@ -400,7 +406,7 @@ function generateOpeningBoard() {
   cursor.y = 6;
 
   mute = 0;
-  playMusic(mute);
+  playMusic(audioElements.Music, musicURLs.popcornMusic);
   board = [];
   disableRaise = false;
   level = 1;
@@ -633,18 +639,18 @@ function isChainActive(board) {
   // Test failed, so ending chain.
   lastChain = chain;
   if (chain >= 8) {
-    playSFX("fanfare4.wav");
+    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare4);
   } else if (chain >= 6) {
-    playSFX("fanfare3.wav");
+    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare3);
   } else if (chain >= 4) {
-    playSFX("fanfare2.wav");
+    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare2);
   } else if (chain >= 2) {
-    playSFX("fanfare1.wav");
+    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare1);
   }
   if (chain > 7) {
-    playSFX(`Announcer/${ANNOUNCER_CHAIN_ARRAY[7]}`), (volume = 0.3);
+    // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[7]}`), (volume = 0.3);
   } else if (chain > 1) {
-    playSFX(`Announcer/${ANNOUNCER_CHAIN_ARRAY[chain - 2]}`), (volume = 0.3);
+    // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[chain - 2]}`), (volume = 0.3);
   }
   if (chain > 1) console.log(`${chain} chain!`);
   if (chain > highestChain) highestChain = chain;
@@ -737,7 +743,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
   // }
 
   if (swap) {
-    playSFX("SwapBlocks.wav");
+    playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapSuccess);
     swapProperties(board[x][y], board[x + 1][y]);
     board[x][y].delay = 0;
     board[x + 1][y].delay = 0;
@@ -801,7 +807,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
       }
     }
   } else {
-    playSFX("Swap Failed.wav");
+    playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapFailed);
   }
 }
 
@@ -1052,14 +1058,14 @@ function checkMatch(board) {
         addToPrimaryChain = true;
         chain++;
         if (clearLocationsLength > 3) {
-          playSFX(
-            `Announcer/${
-              ANNOUNCER_COMBO_ARRAY[randInt(ANNOUNCER_COMBO_ARRAY.length)]
-            }`
-          );
+          // playAudio(
+          //   `Announcer/${
+          //     ANNOUNCER_COMBO_ARRAY[randInt(ANNOUNCER_COMBO_ARRAY.length)]
+          //   }`
+          // );
         } else {
-          // playChainSFX(chain)
-          // playSFX((`Announcer/${ANNOUNCER_CHAIN_ARRAY[Math.floor(Math.random() * ANNOUNCER_CHAIN_ARRAY.length)]}`))
+          playChainSFX(chain);
+          // playAudio((`Announcer/${ANNOUNCER_CHAIN_ARRAY[Math.floor(Math.random() * ANNOUNCER_CHAIN_ARRAY.length)]}`))
         }
       } else {
         add1ToChain = false;
@@ -1078,7 +1084,7 @@ function checkMatch(board) {
         addToPrimaryChain = true;
         chain++;
         playChainSFX(chain);
-        // playSFX(`Announcer/${ANNOUNCER_CHAIN_ARRAY[Math.floor(Math.random() * ANNOUNCER_CHAIN_ARRAY.length)]}`)
+        // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[Math.floor(Math.random() * ANNOUNCER_CHAIN_ARRAY.length)]}`)
       }
 
       for (let i = 0; i < clearLocationsLength; i++) {
@@ -1182,9 +1188,9 @@ function raiseStack(board) {
         }
       } else {
         if (board[c][2].color != VACANT) {
-          playSFX(
-            `Announcer/${ANNOUNCER_PANIC[randInt(ANNOUNCER_PANIC.length)]}`
-          );
+          // playAudio(
+          //   `Announcer/${ANNOUNCER_PANIC[randInt(ANNOUNCER_PANIC.length)]}`
+          // );
           break;
         }
       }
@@ -1200,9 +1206,9 @@ function gameOverBoard(board) {
     return;
   }
   if (frames == 1) {
-    music.pause();
-    music.currentTime = 0;
-    playSFX("topout.wav");
+    audioElements.Music.pause();
+    audioElements.Music.currentTime = 0;
+    playAudio("topout.wav");
   }
   disableRaise = true;
   let deathRow = Math.floor(frames / 2);
@@ -1307,8 +1313,8 @@ function CONTROL(event) {
       running = false;
       cvs = null;
       ctx = null;
-      music.pause();
-      music.currentTime = 0;
+      audioElements.Music.pause();
+      audioElements.Music.currentTime = 0;
     }
   } else {
     if (event.keyCode == 13) {
@@ -1341,22 +1347,22 @@ function CONTROL(event) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
         cursor.x -= 1;
-        playSFX("MoveCursor.wav", (volume = 0.1));
+        playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
       }
     } else if (event.keyCode == 38) {
       if (cursor.y - 1 >= 1) {
         cursor.y -= 1;
-        playSFX("MoveCursor.wav", (volume = 0.1));
+        playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
       }
     } else if (event.keyCode == 39) {
       if (cursor.x + 1 <= 4) {
         cursor.x += 1;
-        playSFX("MoveCursor.wav", (volume = 0.1));
+        playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
       }
     } else if (event.keyCode == 40) {
       if (cursor.y + 1 <= 11) {
         cursor.y += 1;
-        playSFX("MoveCursor.wav", (volume = 0.1));
+        playAudio(audioElements.CursorMoveSFX, soundEffectURLs["moveCursor"]);
       }
     } else if (event.keyCode == 88 || event.keyCode == 83) {
       // x, s
@@ -1508,7 +1514,7 @@ function gameLoop(timestamp) {
   }
 
   if (frames == 6600 && !gameOver) {
-    playSFX(`Announcer/ten seconds to destiny.wav`);
+    // playAudio(`Announcer/ten seconds to destiny.wav`);
   }
   if (
     frames % 1200 == 0 &&
@@ -1520,15 +1526,16 @@ function gameLoop(timestamp) {
     // Speed the stack up every 30 seconds
     if (frames == 3600) {
       console.log(`Current Score: ${score}`);
-      playSFX(`Announcer/time marches on.wav`);
+      // playAudio(`Announcer/time marches on.wav`);
     } else if (frames >= 7200) {
-      playSFX(
-        `Announcer/${ANNOUNCER_OVERTIME[randInt(ANNOUNCER_OVERTIME.length)]}`
-      );
+      // playAudio(
+      // `Announcer/${ANNOUNCER_OVERTIME[randInt(ANNOUNCER_OVERTIME.length)]}`
+      // );
+      // playMusic(audioElements.Music, musicURLs.overtimeMusic);
     }
 
     level += 1;
-    music.playbackRate += 0.05;
+    // playMusic(audioElements.Music, musicURLs.overtimeMusic);
     speedGameSetting = speedValues[level];
     clearGameSetting = clearValues[level];
     stallGameSetting = stallValues[level];
