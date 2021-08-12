@@ -1254,9 +1254,8 @@ function updateScore(clearLocationsLength, currentChain) {
     scoreMultiplier = 2 + (level - 7) / 5;
   }
   score += scoreMultiplier * addToScore;
-  console.log(`+${scoreMultiplier * addToScore}`);
-  console.log(`Score: ${score}`);
-  console.log(`Current FPS: ${fps}`);
+  console.log(`+${scoreMultiplier * addToScore} | Score: ${score}`);
+  console.log(`Current Time: ${minutes}:${seconds} | Current FPS: ${fps}`);
   totalAddToScore += scoreMultiplier;
   if (score > highScore) {
     highScore = score;
