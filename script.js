@@ -194,18 +194,10 @@ class Block {
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
     if (this.type == CLEARING) {
-      if (gameSpeed == 1) {
-        if ((frames % 4 >= 0 && frames % 4 < 2) || pause == 1) {
-          animationIndex = 0;
-        } else {
-          animationIndex = 1;
-        }
+      if ((frames % 4 >= 0 && frames % 4 < 2) || pause == 1) {
+        animationIndex = 0;
       } else {
-        if (frames % 4 >= 0 && frames % 4 < 2) {
-          animationIndex = 0;
-        } else {
-          animationIndex = 1;
-        }
+        animationIndex = 1;
       }
     } else if (this.type == PANICKING) {
       if (frames % 18 >= 0 && frames % 18 < 3) {
@@ -1263,6 +1255,8 @@ function updateScore(clearLocationsLength, currentChain) {
     scoreMultiplier = 2 + (level - 7) / 5;
   }
   score += scoreMultiplier * addToScore;
+  console.log(`+${scoreMultiplier * addToScore}`);
+  console.log(`Score: ${score}`);
   totalAddToScore += scoreMultiplier;
   if (score > highScore) {
     highScore = score;
@@ -1274,7 +1268,6 @@ let cursor = new Cursor(2, 6);
 let disableRaise = false;
 let disableSwap = false;
 let quickRaise = false;
-let swapPressed = false;
 let raisePressed = false;
 
 // Prevent browser scroll from arrow keys
@@ -1370,7 +1363,7 @@ function CONTROL(event) {
       // x, s
       xSwap = cursor.x;
       ySwap = cursor.y;
-      swapPressed = true;
+      trySwappingBlocks(board, xSwap, ySwap);
     } else if (event.keyCode == 32 || event.keyCode == 90) {
       // space, z
       raisePressed = true; // run raise function on next frame
@@ -1381,6 +1374,7 @@ function CONTROL(event) {
         console.log("debug ON");
         console.log(`FPS: ${fps}`);
         console.log(`Draw Divisor: ${drawDivisor}`);
+        console.log(`Time: ${minutes}, ${seconds}`);
       } else {
         console.log("debug OFF");
       }
@@ -1472,7 +1466,7 @@ let combo = 0;
 let gameSpeed = 1;
 let lastChain = 0;
 let highestChain = 0;
-let computerPerformanceTracker = 0;
+let computerSlowdownTracker = 0;
 let drawsPerSecond = 60;
 let drawDivisor = 1;
 let performanceConstant = 1;
@@ -1534,7 +1528,7 @@ function gameLoop(timestamp) {
       );
     }
 
-    level += 1 * gameSpeed;
+    level += 1;
     music.playbackRate += 0.05;
     speedGameSetting = speedValues[level];
     clearGameSetting = clearValues[level];
@@ -1558,11 +1552,6 @@ function gameLoop(timestamp) {
   isChainActive(board);
   if (frames % 12 == 0) {
     doPanic(board);
-  }
-
-  if (swapPressed) {
-    trySwappingBlocks(board, xSwap, ySwap);
-    swapPressed = false;
   }
 
   if (raisePressed) {
@@ -1608,30 +1597,28 @@ function gameLoop(timestamp) {
     fps = Math.floor(10 * 5 * (1 / secondsPerLoop)) / 10;
     if (fps < 40) {
       // If the game is running at below 0.9x speed, there's a problem.
-      computerPerformanceTracker += 1; // for each frame, if there is low frame rate 2
-      // console.log("Number of slow frames counted every quarter second:",computerPerformanceTracker)
-      // console.log(computerPerformanceTracker)
-    } else if (fps > 90) {
-      // If the game is running too fast
-      gameSpeed = 1;
-    } else if (fps > 70) {
-      gameSpeed = 1;
-    } else {
-      gameSpeed = 1;
-      // console.log("high frame rate,", fps, "|","seconds", seconds)
+      computerSlowdownTracker += 1; // for each frame, if there is low frame rate 2
+      console.log(computerSlowdownTracker);
     }
     prev = timestamp / 1000;
   }
 
-  if (seconds % 5 == 0) {
-    computerPerformanceTracker = 0;
+  if (seconds % 2 == 0) {
+    computerSlowdownTracker -= 1;
+    if (computerSlowdownTracker < 0) computerSlowdownTracker = 0;
   } // Check # of frame rate drops every 600 frames
-  if (computerPerformanceTracker > 10) {
+  if (computerSlowdownTracker > 2) {
     // If fps is below 50fps for 2 seconds in the next 10, lower settings
-    computerPerformanceTracker = 0;
-    console.log(`computer running slow, FPS ${fps}`);
-    if (fps <= 50) {
+    computerSlowdownTracker = 0;
+    if (fps <= 40 && drawDivisor >= 2 && gameSpeed < 2) {
+      gameSpeed = 2;
+      console.log("game speed has now doubled");
+    }
+    if (fps <= 55 && drawDivisor < 2) {
       drawDivisor += 1;
+      console.log(
+        `computer running slow, FPS ${fps}, draw divisor=${drawDivisor}`
+      );
     }
     if (fps > 80) drawGrid(board);
     if (fps > 120) {
