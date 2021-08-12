@@ -646,9 +646,8 @@ function isChainActive(board) {
   } else if (chain > 1) {
     playSFX(`Announcer/${ANNOUNCER_CHAIN_ARRAY[chain - 2]}`), (volume = 0.3);
   }
-  if (chain > highestChain) {
-    highestChain = chain;
-  }
+  if (chain > 1) console.log(`${chain} chain!`);
+  if (chain > highestChain) highestChain = chain;
   chain = 0;
   combo = 0;
   if (potentialSecondarySuccessor) {
@@ -1250,13 +1249,14 @@ function updateScore(clearLocationsLength, currentChain) {
 
   let addToScore = blockBonus + comboBonus + chainBonus;
   if (level < 7) {
-    scoreMultiplier = 1 + level / 10;
+    scoreMultiplier = 1 + (level - 1) / 10;
   } else {
     scoreMultiplier = 2 + (level - 7) / 5;
   }
   score += scoreMultiplier * addToScore;
   console.log(`+${scoreMultiplier * addToScore}`);
   console.log(`Score: ${score}`);
+  console.log(`Current FPS: ${fps}`);
   totalAddToScore += scoreMultiplier;
   if (score > highScore) {
     highScore = score;
