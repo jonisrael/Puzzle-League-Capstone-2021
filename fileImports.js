@@ -237,86 +237,87 @@ const imageList = Object.values(blockURLs);
 // import ANN_WHERE_COME_FROM from "./assets/Audio/Announcer/where did that come from.wav";
 // import ANN_DESERVE_PRAISE from "./assets/Audio/Announcer/you deserve praise my friend.wav";
 // import ANN_YOU_DONT_SEE_MOVES from "./assets/Audio/Announcer/you don't see moves like that everyday folks.wav";
-import MOVE_CURSOR from "./assets/Audio/MoveCursor.wav";
-import OVERTIME_SONG from "./assets/Audio/Music/overtime.mp3";
-import POPCORN_SONG from "./assets/Audio/Music/popcorn.mp3";
-import CHAIN2 from "./assets/Audio/Super Mario 64 Red Coin 1.wav";
-import CHAIN3 from "./assets/Audio/Super Mario 64 Red Coin 2.wav";
-import CHAIN4 from "./assets/Audio/Super Mario 64 Red Coin 3.wav";
-import CHAIN5 from "./assets/Audio/Super Mario 64 Red Coin 4.wav";
-import CHAIN6 from "./assets/Audio/Super Mario 64 Red Coin 5.wav";
-import CHAIN7 from "./assets/Audio/Super Mario 64 Red Coin 6.wav";
-import CHAIN8 from "./assets/Audio/Super Mario 64 Red Coin 7.wav";
-import CHAIN9 from "./assets/Audio/Super Mario 64 Red Coin 8.wav";
-import SWAP_SUCCESS from "./assets/Audio/SwapSuccess.wav";
-import SWAP_FAILED from "./assets/Audio/SwapFailed.wav";
-import FANFARE1 from "./assets/Audio/fanfare1.wav";
-import FANFARE2 from "./assets/Audio/fanfare2.wav";
-import FANFARE3 from "./assets/Audio/fanfare3.wav";
-import FANFARE4 from "./assets/Audio/fanfare4.wav";
-import TOPOUT from "./assets/Audio/topout.wav";
+// import MOVE_CURSOR from "./assets/Audio/MoveCursor.wav";
+// import OVERTIME_SONG from "./assets/Audio/Music/overtime.mp3";
+// import POPCORN_SONG from "./assets/Audio/Music/popcorn.mp3";
+// import CHAIN2 from "./assets/Audio/Super Mario 64 Red Coin 1.wav";
+// import CHAIN3 from "./assets/Audio/Super Mario 64 Red Coin 2.wav";
+// import CHAIN4 from "./assets/Audio/Super Mario 64 Red Coin 3.wav";
+// import CHAIN5 from "./assets/Audio/Super Mario 64 Red Coin 4.wav";
+// import CHAIN6 from "./assets/Audio/Super Mario 64 Red Coin 5.wav";
+// import CHAIN7 from "./assets/Audio/Super Mario 64 Red Coin 6.wav";
+// import CHAIN8 from "./assets/Audio/Super Mario 64 Red Coin 7.wav";
+// import CHAIN9 from "./assets/Audio/Super Mario 64 Red Coin 8.wav";
+// import SWAP_SUCCESS from "./assets/Audio/SwapSuccess.wav";
+// import SWAP_FAILED from "./assets/Audio/SwapFailed.wav";
+// import FANFARE1 from "./assets/Audio/fanfare1.wav";
+// import FANFARE2 from "./assets/Audio/fanfare2.wav";
+// import FANFARE3 from "./assets/Audio/fanfare3.wav";
+// import FANFARE4 from "./assets/Audio/fanfare4.wav";
+// import TOPOUT from "./assets/Audio/topout.wav";
 
-import DATABASE from "./database.json";
+// import DATABASE from "./database.json";
 
-const musicURLs = {
-  popcornMusic: POPCORN_SONG,
-  overtimeMusic: OVERTIME_SONG
-};
+// const musicURLs = {
+//   popcornMusic: POPCORN_SONG,
+//   overtimeMusic: OVERTIME_SONG
+// };
 
-const soundEffectURLs = {
-  moveCursor: MOVE_CURSOR,
-  swapSuccess: SWAP_SUCCESS,
-  swapFailed: SWAP_FAILED,
-  topout: TOPOUT,
-  chain2: CHAIN2,
-  chain3: CHAIN3,
-  chain4: CHAIN4,
-  chain5: CHAIN5,
-  chain6: CHAIN6,
-  chain7: CHAIN7,
-  chain8: CHAIN8,
-  chain9: CHAIN9,
-  fanfare1: FANFARE1,
-  fanfare2: FANFARE2,
-  fanfare3: FANFARE3,
-  fanfare4: FANFARE4
-};
+// const soundEffectURLs = {
+//   moveCursor: MOVE_CURSOR,
+//   swapSuccess: SWAP_SUCCESS,
+//   swapFailed: SWAP_FAILED,
+//   topout: TOPOUT,
+//   chain2: CHAIN2,
+//   chain3: CHAIN3,
+//   chain4: CHAIN4,
+//   chain5: CHAIN5,
+//   chain6: CHAIN6,
+//   chain7: CHAIN7,
+//   chain8: CHAIN8,
+//   chain9: CHAIN9,
+//   fanfare1: FANFARE1,
+//   fanfare2: FANFARE2,
+//   fanfare3: FANFARE3,
+//   fanfare4: FANFARE4
+// };
 
-let SilentSoundLoader;
-Object.keys(soundEffectURLs).forEach(key => {
-  SilentSoundLoader = new Audio(soundEffectURLs[key]);
-  SilentSoundLoader.mute = true;
-  SilentSoundLoader.play();
-  SilentSoundLoader.pause();
-});
+// let SilentSoundLoader;
+// Object.keys(soundEffectURLs).forEach(key => {
+//   SilentSoundLoader = new Audio(soundEffectURLs[key]);
+//   SilentSoundLoader.mute = true;
+//   SilentSoundLoader.play();
+//   SilentSoundLoader.pause();
+// });
 
-let Music = new Audio();
-let CursorMoveSFX = new Audio(soundEffectURLs.moveCursor);
-let CursorSwapSFX = new Audio(soundEffectURLs.swapSuccess);
-let ChainSFX = new Audio();
-let FanfareSFX = new Audio();
-let AnnouncerVoice = new Audio();
-const audioElements = {
-  Music: Music,
-  CursorMoveSFX: CursorMoveSFX,
-  CursorSwapSFX: CursorSwapSFX,
-  ChainSFX: ChainSFX,
-  FanfareSFX: FanfareSFX,
-  AnnouncerVoice: AnnouncerVoice
-};
-Object.keys(audioElements).forEach(key => {
-  audioElements[key].volume = 0.1;
-});
-audioElements.Music.volume = 0.2;
-audioElements.AnnouncerVoice.volume = 0.2;
+// let Music = new Audio();
+// let CursorMoveSFX = new Audio(soundEffectURLs.moveCursor);
+// let CursorSwapSFX = new Audio(soundEffectURLs.swapSuccess);
+// let ChainSFX = new Audio();
+// let FanfareSFX = new Audio();
+// let AnnouncerVoice = new Audio();
+// const audioElements = {
+//   Music: Music,
+//   CursorMoveSFX: CursorMoveSFX,
+//   CursorSwapSFX: CursorSwapSFX,
+//   ChainSFX: ChainSFX,
+//   FanfareSFX: FanfareSFX,
+//   AnnouncerVoice: AnnouncerVoice
+// };
+// Object.keys(audioElements).forEach(key => {
+//   audioElements[key].volume = 0.1;
+// });
+// audioElements.Music.volume = 0.2;
+// audioElements.AnnouncerVoice.volume = 0.2;
 
 export {
-  DATABASE,
+  // DATABASE,
   blockURLs,
-  musicURLs,
-  soundEffectURLs,
-  audioElements,
   CURSOR,
   imageKeys,
   imageList
+  // DATABASE,
+  // musicURLs,
+  // soundEffectURLs,
+  // audioElements,
 };

@@ -35,12 +35,13 @@ import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
 
 import {
   blockURLs,
-  musicURLs,
-  soundEffectURLs,
-  audioElements,
   CURSOR,
   imageKeys,
   imageList
+  // musicURLs,
+  // soundEffectURLs,
+  // audioElements
+  // DATABASE
 } from "./fileImports.js";
 
 let database = [];
@@ -49,12 +50,6 @@ let dateTimeAPI = [];
 let board = [];
 let volume = 1; // YOU CAN REMOVE
 // fetching our data from an API
-
-fetch("assets/database.json")
-  // parsing our response into JSON format
-  .then(response => response.json())
-  // "using" the formatted response in our script
-  .then(json => data.push(json));
 
 fetch("https://worldtimeapi.org/api/ip")
   // parsing our response into JSON format
@@ -66,39 +61,39 @@ const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
 const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEAD];
 const SWAPPABLES = [NORMAL, LANDING, PANICKING];
 
-audioElements.Music.src = musicURLs.popcornMusic;
+// audioElements.Music.src = musicURLs.popcornMusic;
 
-const ANNOUNCER_COMBO_ARRAY = [
-  "what a rush.wav",
-  "fantastic combo.wav",
-  "there it is.wav",
-  "and there's the payoff.wav"
-];
-const ANNOUNCER_CHAIN_ARRAY = [
-  "beautiful.wav",
-  "incredible I can't believe it.wav",
-  "you don't see moves like that everyday folks.wav",
-  "where did that come from.wav",
-  "i've never seen anything like this.wav",
-  "i've never seen a combo that intense.wav",
-  "we are never going to forget this event.wav",
-  "unbelievable.wav"
-];
-const ANNOUNCER_TIME_TRANSITION = ["time marches on.wav"];
-const ANNOUNCER_HURRY_UP = [
-  "ten seconds to destiny.wav",
-  "it all boils down to these last moments.wav"
-];
-const ANNOUNCER_PANIC = [
-  "how much longer can this go on.wav",
-  "i'm almost ready to call this one.wav",
-  "this could be the end.wav"
-];
-const ANNOUNCER_OVERTIME = [
-  "i hope you're ready.wav",
-  "bring us home.wav",
-  "looks like we can expect fireworks.wav"
-];
+// const ANNOUNCER_COMBO_ARRAY = [
+//   "what a rush.wav",
+//   "fantastic combo.wav",
+//   "there it is.wav",
+//   "and there's the payoff.wav"
+// ];
+// const ANNOUNCER_CHAIN_ARRAY = [
+//   "beautiful.wav",
+//   "incredible I can't believe it.wav",
+//   "you don't see moves like that everyday folks.wav",
+//   "where did that come from.wav",
+//   "i've never seen anything like this.wav",
+//   "i've never seen a combo that intense.wav",
+//   "we are never going to forget this event.wav",
+//   "unbelievable.wav"
+// ];
+// const ANNOUNCER_TIME_TRANSITION = ["time marches on.wav"];
+// const ANNOUNCER_HURRY_UP = [
+//   "ten seconds to destiny.wav",
+//   "it all boils down to these last moments.wav"
+// ];
+// const ANNOUNCER_PANIC = [
+//   "how much longer can this go on.wav",
+//   "i'm almost ready to call this one.wav",
+//   "this could be the end.wav"
+// ];
+// const ANNOUNCER_OVERTIME = [
+//   "i hope you're ready.wav",
+//   "bring us home.wav",
+//   "looks like we can expect fireworks.wav"
+// ];
 
 const COLS = 6;
 const ROWS = 12;
@@ -136,14 +131,13 @@ let highScores = [1500, 1000, 800, 500, 300];
 let rise = 0; // Value between 0 and 15
 
 // Load all images
-let loadedImageEntries = {};
+let loadedImageEntries = [];
 for (let i = 0; i < imageList.length; i++) {
   let img = new Image();
   img.src = imageList[i];
-  loadedImageEntries[imageKeys[i]] = img;
+  loadedImageEntries[i] = img;
 }
-console.log(loadedImageEntries);
-
+console.log(loadedImageEntries.length);
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
     return `${color}_${type}`;
@@ -305,7 +299,7 @@ function extractTimeToIndex(dateTimeAPI) {
   return index;
 }
 
-function playAudio(audioElement, file, volume = 0.1) {
+function playAudio(audioElement = null, file, volume = 0.1) {
   return;
   try {
     audioElement.volume = volume;
@@ -318,7 +312,7 @@ function playAudio(audioElement, file, volume = 0.1) {
   }
 }
 
-function playMusic(Music, file, volume = 0.2, mute = 0) {
+function playMusic(Music = null, file, volume = 0.2, mute = 0) {
   return;
   Music.pause;
   Music.currentTime = 0;
@@ -375,7 +369,7 @@ function fixNextDarkStack(board) {
 function makeOpeningBoard(index) {
   console.log(`Board Index Selected: ${index}`);
   mute = 0;
-  playMusic(audioElements.Music, musicURLs.popcornMusic);
+  // playMusic(audioElements.Music, musicURLs.popcornMusic);
   cursor.x = 2;
   cursor.y = 6;
   disableRaise = false;
@@ -394,13 +388,15 @@ function makeOpeningBoard(index) {
       let block = new Block(
         c,
         r,
-        database[index][c][r].color,
-        database[index][c][r].type
+        DATABASE[index][c][r].color,
+        DATABASE[index][c][r].type
       );
       board[c].push(block);
       block.draw(ctx);
     }
   }
+  console.log(DATABASE[index]);
+  console.log(board);
   return board;
 }
 
@@ -409,7 +405,7 @@ function generateOpeningBoard() {
   cursor.y = 6;
 
   mute = 0;
-  playMusic(audioElements.Music, musicURLs.popcornMusic);
+  // playMusic(audioElements.Music, musicURLs.popcornMusic);
   board = [];
   disableRaise = false;
   level = 1;
@@ -641,15 +637,15 @@ function isChainActive(board) {
   }
   // Test failed, so ending chain.
   lastChain = chain;
-  if (chain >= 8) {
-    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare4);
-  } else if (chain >= 6) {
-    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare3);
-  } else if (chain >= 4) {
-    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare2);
-  } else if (chain >= 2) {
-    playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare1);
-  }
+  // if (chain >= 8) {
+  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare4);
+  // } else if (chain >= 6) {
+  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare3);
+  // } else if (chain >= 4) {
+  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare2);
+  // } else if (chain >= 2) {
+  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare1);
+  // }
   if (chain > 7) {
     // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[7]}`), (volume = 0.3);
   } else if (chain > 1) {
@@ -673,6 +669,7 @@ function isChainActive(board) {
 }
 
 function trySwappingBlocks(board, xSwap, ySwap) {
+  console.log(loadedImageEntries.length);
   let x = xSwap;
   let y = ySwap;
   if (disableSwap) {
@@ -746,7 +743,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
   // }
 
   if (swap) {
-    playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapSuccess);
+    // playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapSuccess);
     swapProperties(board[x][y], board[x + 1][y]);
     board[x][y].delay = 0;
     board[x + 1][y].delay = 0;
@@ -810,7 +807,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
       }
     }
   } else {
-    playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapFailed);
+    // playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapFailed);
   }
 }
 
@@ -1123,6 +1120,9 @@ function checkMatch(board) {
 function isGameOver(board, scoreOfThisGame) {
   for (let c = 0; c < COLS; c++) {
     if (board[c][0].color != VACANT) {
+      console.log(board[c][0].color);
+      console.log(VACANT);
+      console.log("Game over!");
       console.log(`Score: ${score}`);
       console.log(`High Score: ${highScore}`);
       // enter new high scores
@@ -1209,8 +1209,8 @@ function gameOverBoard(board) {
     return;
   }
   if (frames == 1) {
-    audioElements.Music.pause();
-    audioElements.Music.currentTime = 0;
+    // audioElements.Music.pause();
+    // audioElements.Music.currentTime = 0;
     playAudio("topout.wav");
   }
   disableRaise = true;
@@ -1316,8 +1316,8 @@ function CONTROL(event) {
       running = false;
       cvs = null;
       ctx = null;
-      audioElements.Music.pause();
-      audioElements.Music.currentTime = 0;
+      // audioElements.Music.pause();
+      // audioElements.Music.currentTime = 0;
     }
   } else {
     if (event.keyCode == 13) {
@@ -1333,7 +1333,7 @@ function CONTROL(event) {
       ctx = cvs.getContext("2d");
       running = true;
       try {
-        board = makeOpeningBoard(extractTimeToIndex);
+        board = makeOpeningBoard(extractTimeToIndex(dateTimeAPI));
       } catch (error) {
         console.log(
           `fetching database.json failed. Will randomly generate board instead`
@@ -1350,22 +1350,22 @@ function CONTROL(event) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
         cursor.x -= 1;
-        playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
+        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
       }
     } else if (event.keyCode == 38) {
       if (cursor.y - 1 >= 1) {
         cursor.y -= 1;
-        playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
+        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
       }
     } else if (event.keyCode == 39) {
       if (cursor.x + 1 <= 4) {
         cursor.x += 1;
-        playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
+        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
       }
     } else if (event.keyCode == 40) {
       if (cursor.y + 1 <= 11) {
         cursor.y += 1;
-        playAudio(audioElements.CursorMoveSFX, soundEffectURLs["moveCursor"]);
+        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs["moveCursor"]);
       }
     } else if (event.keyCode == 88 || event.keyCode == 83) {
       // x, s
@@ -1444,7 +1444,7 @@ function CONTROL(event) {
       //any key
       gameOver = false;
       try {
-        board = makeOpeningBoard(extractTimeToIndex);
+        board = makeOpeningBoard(extractTimeToIndex(dateTimeAPI));
       } catch (error) {
         console.log(
           `fetching database.json failed. Will randomly generate board instead`
