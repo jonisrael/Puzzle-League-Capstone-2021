@@ -314,7 +314,6 @@ function playAudio(file, volume = 0.1) {
     Sound.pause = true;
     Sound.currentTime = 0;
     Sound.src = file;
-    console.log(Sound.duration.toString());
     Sound.play();
   } catch (error) {
     console.log(`Audio play failed.`);
@@ -404,8 +403,6 @@ function makeOpeningBoard(index) {
       block.draw(ctx);
     }
   }
-  console.log(DATABASE[index]);
-  console.log(board);
   return board;
 }
 
@@ -751,8 +748,6 @@ function trySwappingBlocks(board, xSwap, ySwap) {
   // }
 
   if (swap) {
-    console.log(loadedImages.length);
-    console.log(loadedAudios.length);
     playAudio(audioURLs.swapSuccess);
     swapProperties(board[x][y], board[x + 1][y]);
     board[x][y].delay = 0;
@@ -1130,8 +1125,6 @@ function checkMatch(board) {
 function isGameOver(board, scoreOfThisGame) {
   for (let c = 0; c < COLS; c++) {
     if (board[c][0].color != VACANT) {
-      console.log(board[c][0].color);
-      console.log(VACANT);
       console.log("Game over!");
       console.log(`Score: ${score}`);
       console.log(`High Score: ${highScore}`);
@@ -1344,6 +1337,7 @@ function CONTROL(event) {
       running = true;
       try {
         board = makeOpeningBoard(extractTimeToIndex(dateTimeAPI));
+        console.log("Fetch successful!");
       } catch (error) {
         console.log(
           `fetching database.json failed. Will randomly generate board instead`
@@ -1618,7 +1612,7 @@ function gameLoop(timestamp) {
       // If the game is running at below 0.9x speed, there's a problem.
       computerSlowdownTracker += 1; // for each frame, if there is low frame rate 2
       console.log(
-        `${computerSlowdownTracker} times under 40f ps every 2 seconds (3 needed)`
+        `${computerSlowdownTracker} times under 40fps every 2 seconds (3 needed)`
       );
     }
     prev = timestamp / 1000;
