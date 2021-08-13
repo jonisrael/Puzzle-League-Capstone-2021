@@ -256,6 +256,8 @@ import FANFARE3 from "./assets/Audio/fanfare3.wav";
 import FANFARE4 from "./assets/Audio/fanfare4.wav";
 import TOPOUT from "./assets/Audio/topout.wav";
 
+import DATABASE from "./database.json";
+
 const musicURLs = {
   popcornMusic: POPCORN_SONG,
   overtimeMusic: OVERTIME_SONG
@@ -280,11 +282,12 @@ const soundEffectURLs = {
   fanfare4: FANFARE4
 };
 
-let SilentSoundLoader = new Audio();
-SilentSoundLoader.mute = true;
+let SilentSoundLoader;
 Object.keys(soundEffectURLs).forEach(key => {
-  SilentSoundLoader.src = soundEffectURLs[key];
+  SilentSoundLoader = new Audio(soundEffectURLs[key]);
+  SilentSoundLoader.mute = true;
   SilentSoundLoader.play();
+  SilentSoundLoader.pause();
 });
 
 let Music = new Audio();
@@ -308,6 +311,7 @@ audioElements.Music.volume = 0.2;
 audioElements.AnnouncerVoice.volume = 0.2;
 
 export {
+  DATABASE,
   blockURLs,
   musicURLs,
   soundEffectURLs,
