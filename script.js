@@ -36,8 +36,9 @@ import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
 import {
   blockURLs,
   CURSOR,
-  imageKeys,
-  imageList
+  imageList,
+  audioURLs,
+  audioList
   // musicURLs,
   // soundEffectURLs,
   // audioElements
@@ -131,13 +132,20 @@ let highScores = [1500, 1000, 800, 500, 300];
 let rise = 0; // Value between 0 and 15
 
 // Load all images
-let loadedImageEntries = [];
+let loadedImages = [];
 for (let i = 0; i < imageList.length; i++) {
   let img = new Image();
   img.src = imageList[i];
-  loadedImageEntries[i] = img;
+  loadedImages[i] = img;
 }
-console.log(loadedImageEntries.length);
+// Load all audios
+let loadedAudios = [];
+for (let i = 0; i < audioList.length; i++) {
+  let audio = new Audio();
+  audio.src = audioList[i];
+  loadedAudios[i] = audio;
+}
+
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
     return `${color}_${type}`;
@@ -299,14 +307,15 @@ function extractTimeToIndex(dateTimeAPI) {
   return index;
 }
 
-function playAudio(audioElement = null, file, volume = 0.1) {
-  return;
+function playAudio(file, volume = 0.1) {
+  let Sound = new Audio();
   try {
-    audioElement.volume = volume;
-    audioElement.pause;
-    audioElement.currentTime = 0;
-    audioElement.src = file;
-    audioElement.play();
+    Sound.volume = volume;
+    Sound.pause = true;
+    Sound.currentTime = 0;
+    Sound.src = file;
+    console.log(Sound.duration.toString());
+    Sound.play();
   } catch (error) {
     console.log(`Audio play failed.`);
   }
@@ -669,7 +678,6 @@ function isChainActive(board) {
 }
 
 function trySwappingBlocks(board, xSwap, ySwap) {
-  console.log(loadedImageEntries.length);
   let x = xSwap;
   let y = ySwap;
   if (disableSwap) {
@@ -743,7 +751,9 @@ function trySwappingBlocks(board, xSwap, ySwap) {
   // }
 
   if (swap) {
-    // playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapSuccess);
+    console.log(loadedImages.length);
+    console.log(loadedAudios.length);
+    playAudio(audioURLs.swapSuccess);
     swapProperties(board[x][y], board[x + 1][y]);
     board[x][y].delay = 0;
     board[x + 1][y].delay = 0;
@@ -807,7 +817,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
       }
     }
   } else {
-    // playAudio(audioElements.CursorSwapSFX, soundEffectURLs.swapFailed);
+    playAudio(audioURLs.swapFailed);
   }
 }
 
@@ -1211,7 +1221,7 @@ function gameOverBoard(board) {
   if (frames == 1) {
     // audioElements.Music.pause();
     // audioElements.Music.currentTime = 0;
-    playAudio("topout.wav");
+    // playAudio("topout.wav");
   }
   disableRaise = true;
   let deathRow = Math.floor(frames / 2);
