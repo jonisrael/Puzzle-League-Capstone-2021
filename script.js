@@ -265,6 +265,7 @@ function randInt(max) {
 }
 
 function playChainSFX(currentChain) {
+  return;
   if (currentChain == 1) {
     return;
   }
@@ -305,6 +306,7 @@ function extractTimeToIndex(dateTimeAPI) {
 }
 
 function playAudio(audioElement, file, volume = 0.1) {
+  return;
   try {
     audioElement.volume = volume;
     audioElement.pause;
@@ -317,6 +319,7 @@ function playAudio(audioElement, file, volume = 0.1) {
 }
 
 function playMusic(Music, file, volume = 0.2, mute = 0) {
+  return;
   Music.pause;
   Music.currentTime = 0;
   Music.src = file;
