@@ -267,17 +267,17 @@ function randInt(max) {
 }
 
 function playChainSFX(currentChain) {
-  return;
+  let Sound = new Audio();
   if (currentChain == 1) {
     return;
   }
   if (currentChain < 9) {
-    audioElements.ChainSFX.src = soundEffectURLs[`chain${chain}`];
+    Sound.src = audioURLs[`chain${currentChain}`];
   } else {
-    audioElements.ChainSFX.src = soundEffectURLs.chain9;
+    Sound.src = audioURLs.chain9;
   }
-  audioElements.ChainSFX.volume = 0.05;
-  audioElements.ChainSFX.play();
+  Sound.volume = 0.05;
+  Sound.play();
 }
 
 function extractTimeToIndex(dateTimeAPI) {
@@ -646,15 +646,15 @@ function isChainActive(board) {
   }
   // Test failed, so ending chain.
   lastChain = chain;
-  // if (chain >= 8) {
-  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare4);
-  // } else if (chain >= 6) {
-  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare3);
-  // } else if (chain >= 4) {
-  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare2);
-  // } else if (chain >= 2) {
-  //   playAudio(audioElements.FanfareSFX, soundEffectURLs.fanfare1);
-  // }
+  if (chain >= 8) {
+    playAudio(audioURLs.fanfare4);
+  } else if (chain >= 6) {
+    playAudio(audioURLs.fanfare3);
+  } else if (chain >= 4) {
+    playAudio(audioURLs.fanfare2);
+  } else if (chain >= 2) {
+    playAudio(audioURLs.fanfare1);
+  }
   if (chain > 7) {
     // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[7]}`), (volume = 0.3);
   } else if (chain > 1) {
@@ -1221,7 +1221,7 @@ function gameOverBoard(board) {
   if (frames == 1) {
     // audioElements.Music.pause();
     // audioElements.Music.currentTime = 0;
-    // playAudio("topout.wav");
+    playAudio(audioURLs.topout);
   }
   disableRaise = true;
   let deathRow = Math.floor(frames / 2);
@@ -1360,22 +1360,22 @@ function CONTROL(event) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
         cursor.x -= 1;
-        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
+        playAudio(audioURLs.moveCursor);
       }
     } else if (event.keyCode == 38) {
       if (cursor.y - 1 >= 1) {
         cursor.y -= 1;
-        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
+        playAudio(audioURLs.moveCursor);
       }
     } else if (event.keyCode == 39) {
       if (cursor.x + 1 <= 4) {
         cursor.x += 1;
-        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs.moveCursor);
+        playAudio(audioURLs.moveCursor);
       }
     } else if (event.keyCode == 40) {
       if (cursor.y + 1 <= 11) {
         cursor.y += 1;
-        // playAudio(audioElements.CursorMoveSFX, soundEffectURLs["moveCursor"]);
+        playAudio(audioURLs.moveCursor);
       }
     } else if (event.keyCode == 88 || event.keyCode == 83) {
       // x, s
