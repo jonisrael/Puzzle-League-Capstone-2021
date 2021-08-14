@@ -6,6 +6,55 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
+// Debug Sprites
+import DEBUGW from "./assets/Extras/DebugSprites/debugW.png";
+import DEBUGP from "./assets/Extras/DebugSprites/debugP.png";
+import DEBUGO from "./assets/Extras/DebugSprites/debugO.png";
+import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
+
+import {
+  blockURLs,
+  CURSOR,
+  imageList,
+  audioURLs,
+  audioList
+} from "./fileImports.js";
+
+const announcer = {
+  comboDialogue: [
+    audioURLs.announcerWhatARush,
+    audioURLs.announcerFantasticCombo,
+    audioURLs.announcerThereItIs,
+    audioURLs.announcerPayoff,
+    audioURLs.announcerFireworks
+  ],
+  chainDialogue: [
+    audioURLs.announcerBeautiful,
+    audioURLs.announcerIncredibleCantBelieve,
+    audioURLs.announcerMovesLikeThat,
+    audioURLs.announcerWhereComeFrom,
+    audioURLs.announcerAnythingLike,
+    audioURLs.announcerComboIntense,
+    audioURLs.announcerNeverForgetEvent,
+    audioURLs.announcerUnbelievable
+  ],
+  timeTransitionDialogue: [audioURLs.announcerTimeMarchesOn],
+  hurryUpDialogue: [
+    audioURLs.announcerTenSeconds,
+    audioURLs.announcerAllBoilsDown
+  ],
+  panicDialogue: [
+    audioURLs.announcerHowMuchLonger,
+    audioURLs.announcerIsItTheEnd,
+    audioURLs.announcerCallThisOne
+  ],
+  overtimeDialogue: [
+    audioURLs.announcerBringUsHome,
+    audioURLs.announcerIHopeReady
+  ],
+  newHighScore: [audioURLs.announcerDeservePraise, audioURLs.announcerTraining]
+};
+
 const BLUE = "blue";
 const CYAN = "cyan";
 const GREEN = "green";
@@ -27,24 +76,6 @@ const img1 = "img1";
 const img2 = "img2";
 const img3 = "img3";
 
-// Debug Sprites
-import DEBUGW from "./assets/Extras/DebugSprites/debugW.png";
-import DEBUGP from "./assets/Extras/DebugSprites/debugP.png";
-import DEBUGO from "./assets/Extras/DebugSprites/debugO.png";
-import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
-
-import {
-  blockURLs,
-  CURSOR,
-  imageList,
-  audioURLs,
-  audioList
-  // musicURLs,
-  // soundEffectURLs,
-  // audioElements
-  // DATABASE
-} from "./fileImports.js";
-
 let database = [];
 let data = [];
 let dateTimeAPI = [];
@@ -61,40 +92,6 @@ fetch("https://worldtimeapi.org/api/ip")
 const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
 const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEAD];
 const SWAPPABLES = [NORMAL, LANDING, PANICKING];
-
-// audioElements.Music.src = musicURLs.popcornMusic;
-
-// const ANNOUNCER_COMBO_ARRAY = [
-//   "what a rush.wav",
-//   "fantastic combo.wav",
-//   "there it is.wav",
-//   "and there's the payoff.wav"
-// ];
-// const ANNOUNCER_CHAIN_ARRAY = [
-//   "beautiful.wav",
-//   "incredible I can't believe it.wav",
-//   "you don't see moves like that everyday folks.wav",
-//   "where did that come from.wav",
-//   "i've never seen anything like this.wav",
-//   "i've never seen a combo that intense.wav",
-//   "we are never going to forget this event.wav",
-//   "unbelievable.wav"
-// ];
-// const ANNOUNCER_TIME_TRANSITION = ["time marches on.wav"];
-// const ANNOUNCER_HURRY_UP = [
-//   "ten seconds to destiny.wav",
-//   "it all boils down to these last moments.wav"
-// ];
-// const ANNOUNCER_PANIC = [
-//   "how much longer can this go on.wav",
-//   "i'm almost ready to call this one.wav",
-//   "this could be the end.wav"
-// ];
-// const ANNOUNCER_OVERTIME = [
-//   "i hope you're ready.wav",
-//   "bring us home.wav",
-//   "looks like we can expect fireworks.wav"
-// ];
 
 const COLS = 6;
 const ROWS = 12;
@@ -145,6 +142,10 @@ for (let i = 0; i < audioList.length; i++) {
   audio.src = audioList[i];
   loadedAudios[i] = audio;
 }
+
+let gameMusic = new Audio(audioURLs.popcornMusic);
+gameMusic.volume = 0.2;
+gameMusic.loop = true;
 
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
@@ -320,13 +321,11 @@ function playAudio(file, volume = 0.1) {
   }
 }
 
-function playMusic(Music = null, file, volume = 0.2, mute = 0) {
+function playMusic(volume = 0.2, mute = 0) {
   return;
-  Music.pause;
-  Music.currentTime = 0;
-  Music.src = file;
+  gameMusic.src = file;
   console.log(Music.src);
-  Music.play();
+  gameMusic.play();
   Music.loop = true;
   Music.playbackRate = 1.0;
   Music.volume = volume;
@@ -377,7 +376,9 @@ function fixNextDarkStack(board) {
 function makeOpeningBoard(index) {
   console.log(`Board Index Selected: ${index}`);
   mute = 0;
-  // playMusic(audioElements.Music, musicURLs.popcornMusic);
+  gameMusic.currentTime = 0;
+  gameMusic.volume = 0.2;
+  gameMusic.play();
   cursor.x = 2;
   cursor.y = 6;
   disableRaise = false;
@@ -411,7 +412,9 @@ function generateOpeningBoard() {
   cursor.y = 6;
 
   mute = 0;
-  // playMusic(audioElements.Music, musicURLs.popcornMusic);
+  gameMusic.currentTime = 0;
+  gameMusic.volume = 0.2;
+  gameMusic.play();
   board = [];
   disableRaise = false;
   level = 1;
@@ -653,9 +656,9 @@ function isChainActive(board) {
     playAudio(audioURLs.fanfare1);
   }
   if (chain > 7) {
-    // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[7]}`), (volume = 0.3);
+    playAudio(announcer.chainDialogue[7]);
   } else if (chain > 1) {
-    // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[chain - 2]}`), (volume = 0.3);
+    playAudio(announcer.chainDialogue[chain - 2]);
   }
   if (chain > 1) console.log(`${chain} chain!`);
   if (chain > highestChain) highestChain = chain;
@@ -696,7 +699,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
     swap = false;
   }
 
-  // Do not swap if ANY block below is falling                                                                                                                                                                  `alling
+  // Do not swap if ANY block below is falling
   if (y < 11) {
     if (SWAPPABLES.includes(board[x][y].type) && board[x][y].color != VACANT) {
       for (let j = y; j < ROWS; j++) {
@@ -951,6 +954,8 @@ function legalMatch(board, clearLocations) {
     }
   }
   grounded = false;
+  console.log(loadedImages.length);
+  console.log(loadedAudios.length);
   return true;
 }
 
@@ -1063,14 +1068,11 @@ function checkMatch(board) {
         addToPrimaryChain = true;
         chain++;
         if (clearLocationsLength > 3) {
-          // playAudio(
-          //   `Announcer/${
-          //     ANNOUNCER_COMBO_ARRAY[randInt(ANNOUNCER_COMBO_ARRAY.length)]
-          //   }`
-          // );
+          playAudio(
+            announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
+          );
         } else {
           playChainSFX(chain);
-          // playAudio((`Announcer/${ANNOUNCER_CHAIN_ARRAY[Math.floor(Math.random() * ANNOUNCER_CHAIN_ARRAY.length)]}`))
         }
       } else {
         add1ToChain = false;
@@ -1089,7 +1091,6 @@ function checkMatch(board) {
         addToPrimaryChain = true;
         chain++;
         playChainSFX(chain);
-        // playAudio(`Announcer/${ANNOUNCER_CHAIN_ARRAY[Math.floor(Math.random() * ANNOUNCER_CHAIN_ARRAY.length)]}`)
       }
 
       for (let i = 0; i < clearLocationsLength; i++) {
@@ -1125,6 +1126,7 @@ function checkMatch(board) {
 function isGameOver(board, scoreOfThisGame) {
   for (let c = 0; c < COLS; c++) {
     if (board[c][0].color != VACANT) {
+      gameMusic.volume = 0;
       console.log("Game over!");
       console.log(`Score: ${score}`);
       console.log(`High Score: ${highScore}`);
@@ -1194,9 +1196,9 @@ function raiseStack(board) {
         }
       } else {
         if (board[c][2].color != VACANT) {
-          // playAudio(
-          //   `Announcer/${ANNOUNCER_PANIC[randInt(ANNOUNCER_PANIC.length)]}`
-          // );
+          playAudio(
+            announcer.panicDialogue[randInt(announcer.panicDialogue.length)]
+          );
           break;
         }
       }
@@ -1212,8 +1214,6 @@ function gameOverBoard(board) {
     return;
   }
   if (frames == 1) {
-    // audioElements.Music.pause();
-    // audioElements.Music.currentTime = 0;
     playAudio(audioURLs.topout);
   }
   disableRaise = true;
@@ -1521,7 +1521,9 @@ function gameLoop(timestamp) {
   }
 
   if (frames == 6600 && !gameOver) {
-    // playAudio(`Announcer/ten seconds to destiny.wav`);
+    playAudio(
+      announcer.hurryUpDialogue[randInt(announcer.hurryUpDialogue.length)]
+    );
   }
   if (
     frames % 1200 == 0 &&
@@ -1533,16 +1535,21 @@ function gameLoop(timestamp) {
     // Speed the stack up every 30 seconds
     if (frames == 3600) {
       console.log(`Current Score: ${score}`);
-      // playAudio(`Announcer/time marches on.wav`);
+      playAudio(
+        announcer.timeTransitionDialogue[
+          randInt(announcer.timeTransitionDialogue.length)
+        ]
+      );
     } else if (frames >= 7200) {
-      // playAudio(
-      // `Announcer/${ANNOUNCER_OVERTIME[randInt(ANNOUNCER_OVERTIME.length)]}`
-      // );
-      // playMusic(audioElements.Music, musicURLs.overtimeMusic);
+      playAudio(
+        announcer.overtimeDialogue[randInt(announcer.overtimeDialogue.length)]
+      );
+      gameMusic.pause;
+      gameMusic.src = audioURLs.overtimeMusic;
+      playMusic(gameMusic);
     }
 
     level += 1;
-    // playMusic(audioElements.Music, musicURLs.overtimeMusic);
     speedGameSetting = speedValues[level];
     clearGameSetting = clearValues[level];
     stallGameSetting = stallValues[level];
