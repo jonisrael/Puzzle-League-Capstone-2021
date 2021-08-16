@@ -109,6 +109,7 @@ import ANN_TRAINING from "./assets/Audio/Announcer/all the training and practice
 import ANN_PAYOFF from "./assets/Audio/Announcer/and there's the payoff.wav";
 import ANN_BEAUTIFUL from "./assets/Audio/Announcer/beautiful.wav";
 import ANN_BRING_US_HOME from "./assets/Audio/Announcer/bring us home.wav";
+import ANN_CLEAR from "./assets/Audio/Announcer/clear.wav";
 import ANN_FANTASTIC_COMBO from "./assets/Audio/Announcer/fantastic combo.wav";
 import ANN_HOW_MUCH_LONGER from "./assets/Audio/Announcer/how much longer can this go on.wav";
 import ANN_I_HOPE_READY from "./assets/Audio/Announcer/i hope you're ready.wav";
@@ -119,6 +120,7 @@ import ANN_ANYTHING_LIKE from "./assets/Audio/Announcer/i've never seen anything
 import ANN_INCRED_BELIEVE from "./assets/Audio/Announcer/incredible I can't believe it.wav";
 import ANN_INCRED_TECHNIQUE from "./assets/Audio/Announcer/incredible technique.wav";
 import ANN_IS_THE_END from "./assets/Audio/Announcer/is this it, is this the end.wav";
+import ANN_KO from "./assets/Audio/Announcer/KO.wav";
 import ANN_ALL_BOILS from "./assets/Audio/Announcer/it all boils down to these last moments.wav";
 import ANN_ANY_MORE_INTENSE from "./assets/Audio/Announcer/it doesn't get any more intense than this.wav";
 import ANN_WONT_BE_LONG from "./assets/Audio/Announcer/it won't be long now.wav";
@@ -282,6 +284,7 @@ const audioURLs = {
   announcerPayoff: ANN_PAYOFF,
   announcerBeautiful: ANN_BEAUTIFUL,
   announcerBringUsHome: ANN_BRING_US_HOME,
+  announcerClear: ANN_CLEAR,
   announcerFantasticCombo: ANN_FANTASTIC_COMBO,
   announcerHowMuchLonger: ANN_HOW_MUCH_LONGER,
   announcerIHopeReady: ANN_I_HOPE_READY,
@@ -292,6 +295,7 @@ const audioURLs = {
   announcerIncredibleCantBelieve: ANN_INCRED_BELIEVE,
   announcerIncredibleTechnique: ANN_INCRED_TECHNIQUE,
   announcerIsItTheEnd: ANN_IS_THE_END,
+  announcerKO: ANN_KO,
   announcerAllBoilsDown: ANN_ALL_BOILS,
   announcerAnymoreIntenseThanThis: ANN_ANY_MORE_INTENSE,
   announcerWontBeLong: ANN_WONT_BE_LONG,
@@ -312,8 +316,6 @@ const audioURLs = {
   announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES
 };
 const audioList = Object.values(audioURLs);
-
-
 
 export {
   // DATABASE,

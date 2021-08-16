@@ -22,21 +22,25 @@ import {
 
 const announcer = {
   comboDialogue: [
-    audioURLs.announcerWhatARush,
+    audioURLs.announcerBeautiful,
     audioURLs.announcerFantasticCombo,
     audioURLs.announcerThereItIs,
     audioURLs.announcerPayoff,
-    audioURLs.announcerFireworks
+    audioURLs.announcerClear
   ],
-  chainDialogue: [
+  smallChainDialogue: [
     audioURLs.announcerBeautiful,
-    audioURLs.announcerIncredibleCantBelieve,
+    audioURLs.announcerWhatARush,
+    audioURLs.announcerIncredibleCantBelieve
+  ],
+  mediumChainDialogue: [
     audioURLs.announcerMovesLikeThat,
-    audioURLs.announcerWhereComeFrom,
+    audioURLs.announcerWhereComeFrom
+  ],
+  highChainDialogue: [
     audioURLs.announcerAnythingLike,
     audioURLs.announcerComboIntense,
-    audioURLs.announcerNeverForgetEvent,
-    audioURLs.announcerUnbelievable
+    audioURLs.announcerNeverForgetEvent
   ],
   timeTransitionDialogue: [audioURLs.announcerTimeMarchesOn],
   hurryUpDialogue: [
@@ -144,8 +148,6 @@ for (let i = 0; i < audioList.length; i++) {
 }
 
 let gameMusic = new Audio(audioURLs.popcornMusic);
-gameMusic.volume = 0.2;
-gameMusic.loop = true;
 
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
@@ -317,22 +319,21 @@ function playAudio(file, volume = 0.1) {
     Sound.src = file;
     Sound.play();
   } catch (error) {
-    console.log(`Audio play failed.`);
+    console.log(`Audio play failed. File: ${file}`);
   }
 }
 
-function playMusic(volume = 0.2, mute = 0) {
-  return;
+function playMusic(file, volume = 0.1, mute = 0) {
+  gameMusic.pause = true;
   gameMusic.src = file;
-  console.log(Music.src);
   gameMusic.play();
-  Music.loop = true;
-  Music.playbackRate = 1.0;
-  Music.volume = volume;
+  gameMusic.loop = true;
+  gameMusic.playbackRate = 1.0;
+  gameMusic.volume = volume;
   if (mute == 1) {
-    Music.volume = 0;
+    gameMusic.volume = 0;
   } else {
-    Music.volume = 0.2;
+    gameMusic.volume = 0.1;
   }
   mute = (mute + 1) % 2;
 }
@@ -646,19 +647,26 @@ function isChainActive(board) {
   }
   // Test failed, so ending chain.
   lastChain = chain;
-  if (chain >= 8) {
+  if (chain > 8) {
     playAudio(audioURLs.fanfare4);
+    playAudio(audioURLs.announcerUnbelievable);
   } else if (chain >= 6) {
     playAudio(audioURLs.fanfare3);
+    playAudio(
+      announcer.highChainDialogue[frames % announcer.highChainDialogue.length]
+    );
   } else if (chain >= 4) {
     playAudio(audioURLs.fanfare2);
+    playAudio(
+      announcer.mediumChainDialogue[
+        frames % announcer.mediumChainDialogue.length
+      ]
+    );
   } else if (chain >= 2) {
     playAudio(audioURLs.fanfare1);
-  }
-  if (chain > 7) {
-    playAudio(announcer.chainDialogue[7]);
-  } else if (chain > 1) {
-    playAudio(announcer.chainDialogue[chain - 2]);
+    playAudio(
+      announcer.smallChainDialogue[frames % announcer.smallChainDialogue.length]
+    );
   }
   if (chain > 1) console.log(`${chain} chain!`);
   if (chain > highestChain) highestChain = chain;
@@ -1215,6 +1223,8 @@ function gameOverBoard(board) {
   }
   if (frames == 1) {
     playAudio(audioURLs.topout);
+    playAudio(audioURLs.announcerKO);
+    gameMusic.src = audioURLs.popcornMusic;
   }
   disableRaise = true;
   let deathRow = Math.floor(frames / 2);
@@ -1324,7 +1334,7 @@ function CONTROL(event) {
     }
   } else {
     if (event.keyCode == 13) {
-      // enter
+      // enter key
       console.log(dateTimeAPI);
       database = data[0];
       newCanvas = document.createElement(`canvas`);
@@ -1344,6 +1354,7 @@ function CONTROL(event) {
         );
         board = generateOpeningBoard();
       }
+      playMusic(audioURLs.popcornMusic);
       setTimeout(gameLoop(), 1000 / 60);
     } else if (event.keyCode == 191) {
       extractTimeToIndex(dateTimeAPI);
@@ -1540,13 +1551,11 @@ function gameLoop(timestamp) {
           randInt(announcer.timeTransitionDialogue.length)
         ]
       );
-    } else if (frames >= 7200) {
+    } else if (frames == 7200) {
       playAudio(
         announcer.overtimeDialogue[randInt(announcer.overtimeDialogue.length)]
       );
-      gameMusic.pause;
-      gameMusic.src = audioURLs.overtimeMusic;
-      playMusic(gameMusic);
+      playMusic(audioURLs.overtimeMusic);
     }
 
     level += 1;
