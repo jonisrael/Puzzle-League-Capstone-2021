@@ -1,7 +1,12 @@
 import { Header, Nav, Main, Footer } from "./components";
-import * as state from "/store";
+import * as state from "./store";
+
 import Navigo from "navigo";
 import { capitalize } from "lodash";
+import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = new Navigo(window.location.origin);
 
@@ -24,5 +29,3 @@ function render(st) {
 
   // addEventListeners(st);
 }
-
-render(state.Home);

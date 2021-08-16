@@ -13,82 +13,16 @@ import DEBUGO from "./assets/Extras/DebugSprites/debugO.png";
 import DEBUGB from "./assets/Extras/DebugSprites/debugB.png";
 
 import {
-  blockURLs,
+  sprite,
   CURSOR,
   imageList,
-  audioURLs,
-  audioList
-} from "./fileImports.js";
-
-const announcer = {
-  comboDialogue: [
-    audioURLs.announcerBeautiful,
-    audioURLs.announcerFantasticCombo,
-    audioURLs.announcerThereItIs,
-    audioURLs.announcerPayoff,
-    audioURLs.announcerClear
-  ],
-  smallChainDialogue: [
-    audioURLs.announcerBeautiful,
-    audioURLs.announcerWhatARush,
-    audioURLs.announcerIncredibleCantBelieve
-  ],
-  mediumChainDialogue: [
-    audioURLs.announcerMovesLikeThat,
-    audioURLs.announcerWhereComeFrom
-  ],
-  highChainDialogue: [
-    audioURLs.announcerAnythingLike,
-    audioURLs.announcerComboIntense,
-    audioURLs.announcerNeverForgetEvent
-  ],
-  timeTransitionDialogue: [
-    audioURLs.announcerTimeMarchesOn
-    // audioURLs.announcerAllBetsOff
-  ],
-  hurryUpDialogue: [
-    audioURLs.announcerTenSeconds,
-    audioURLs.announcerAllBoilsDown
-  ],
-  panicDialogue: [
-    audioURLs.announcerHowMuchLonger,
-    audioURLs.announcerIsItTheEnd,
-    audioURLs.announcerCallThisOne,
-    //audioURLs.announcerFatLady
-    audioURLs.announcerItAintOver
-  ],
-  overtimeDialogue: [
-    audioURLs.announcerBringUsHome,
-    audioURLs.announcerIHopeReady
-    // audioURLs.announcerWorldHoldingBreath,
-  ],
-  newHighScore: [
-    audioURLs.announcerDeservePraise,
-    audioURLs.announcerTraining
-    // audioURLs.announcerOnlyWordWorthy
-  ]
-};
-
-const BLUE = "blue";
-const CYAN = "cyan";
-const GREEN = "green";
-const PURPLE = "purple";
-const RED = "red";
-const YELLOW = "yellow";
-const VACANT = "vacant";
-
-const NORMAL = "normal";
-const FACE = "face";
-const DARK = "dark";
-const DEAD = "dead";
-const CLEARING = "clearing";
-const LANDING = "landing";
-const PANICKING = "panicking";
-
-const img0 = "img0";
-const img1 = "img1";
-const img2 = "img2";
-const img3 = "img3";
+  audio,
+  audioList,
+  announcer,
+  blockColor,
+  blockType,
+  PIECES
+} from "./scripts/global.js";
 
 let database = [];
 let data = [];
@@ -103,9 +37,16 @@ fetch("https://worldtimeapi.org/api/ip")
   // "using" the formatted response in our script
   .then(json => dateTimeAPI.push(json));
 
-const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
-const TYPES = [NORMAL, CLEARING, FACE, LANDING, PANICKING, DARK, DEAD];
-const SWAPPABLES = [NORMAL, LANDING, PANICKING];
+const TYPES = [
+  blockType.NORMAL,
+  blockType.CLEARING,
+  blockType.FACE,
+  blockType.LANDING,
+  blockType.PANICKING,
+  blockType.DARK,
+  blockType.DEAD
+];
+const SWAPPABLES = [blockType.NORMAL, blockType.LANDING, blockType.PANICKING];
 
 const COLS = 6;
 const ROWS = 12;
@@ -157,7 +98,7 @@ for (let i = 0; i < audioList.length; i++) {
   loadedAudios[i] = audio;
 }
 
-let gameMusic = new Audio(audioURLs.popcornMusic);
+let gameMusic = new Audio(audio.popcornMusic);
 
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
@@ -210,13 +151,13 @@ class Block {
     const DEBUGP_IMAGE = new Image();
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
-    if (this.type == CLEARING) {
+    if (this.type == blockType.CLEARING) {
       if ((frames % 4 >= 0 && frames % 4 < 2) || pause == 1) {
         animationIndex = 0;
       } else {
         animationIndex = 1;
       }
-    } else if (this.type == PANICKING) {
+    } else if (this.type == blockType.PANICKING) {
       if (frames % 18 >= 0 && frames % 18 < 3) {
         animationIndex = 0;
       } else if (
@@ -232,7 +173,7 @@ class Block {
       } else {
         animationIndex = 3;
       }
-    } else if (this.type == LANDING) {
+    } else if (this.type == blockType.LANDING) {
       if (this.delay > 5 || this.delay < 0) {
         animationIndex = 0;
       } else if (this.delay > 2) {
@@ -243,7 +184,7 @@ class Block {
     }
     let BLOCK_IMAGE = new Image();
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
-    BLOCK_IMAGE.src = blockURLs[urlKey];
+    BLOCK_IMAGE.src = sprite[urlKey];
     BLOCK_IMAGE.onload = () => {
       ctx.drawImage(BLOCK_IMAGE, SQ * this.x, SQ * this.y - rise);
     };
@@ -265,7 +206,7 @@ class Block {
         DEBUGP_IMAGE.onload = () => {
           ctx.drawImage(DEBUGP_IMAGE, SQ * this.x, SQ * this.y - rise);
         };
-      } else if (this.delay > 0 && this.type == NORMAL) {
+      } else if (this.delay > 0 && this.type == blockType.NORMAL) {
         DEBUGW_IMAGE.src = DEBUGW;
         DEBUGW_IMAGE.onload = () => {
           ctx.drawImage(DEBUGW_IMAGE, SQ * this.x, SQ * this.y - rise);
@@ -285,9 +226,9 @@ function playChainSFX(currentChain) {
     return;
   }
   if (currentChain < 9) {
-    Sound.src = audioURLs[`chain${currentChain}`];
+    Sound.src = audio[`chain${currentChain}`];
   } else {
-    Sound.src = audioURLs.chain9;
+    Sound.src = audio.chain9;
   }
   Sound.volume = 0.05;
   Sound.play();
@@ -439,11 +380,11 @@ function generateOpeningBoard() {
   for (let c = 0; c < COLS; c++) {
     board.push([]);
     for (let r = 0; r < ROWS + 2; r++) {
-      let block = new Block(c, r, VACANT, NORMAL, 0);
+      let block = new Block(c, r, blockColor.VACANT, blockType.NORMAL, 0);
       board[c].push(block);
       if (r > 11) {
         board[c][r].color = PIECES[randInt(PIECES.length)];
-        board[c][r].type = DARK;
+        board[c][r].type = blockType.DARK;
       }
       block.draw(ctx);
     }
@@ -454,7 +395,7 @@ function generateOpeningBoard() {
     while (true) {
       let x = randInt(COLS);
       let y = randInt(ROWS / 2) + 6;
-      if (board[x][y].color == VACANT) {
+      if (board[x][y].color == blockColor.VACANT) {
         board[x][y].color = PIECES[randInt(PIECES.length)];
         break;
       }
@@ -465,12 +406,12 @@ function generateOpeningBoard() {
     // Drop all blocks to bottom
     let currentBlocks = []; // Temporary
     for (let r = ROWS - 1; r >= 0; r--) {
-      if (board[c][r].color != VACANT) {
+      if (board[c][r].color != blockColor.VACANT) {
         currentBlocks.unshift(board[c][r].color);
       }
     }
     while (currentBlocks.length < 12) {
-      currentBlocks.unshift(VACANT);
+      currentBlocks.unshift(blockColor.VACANT);
     }
 
     for (let r = 0; r < currentBlocks.length; r++) {
@@ -481,11 +422,11 @@ function generateOpeningBoard() {
   for (let x = 0; x < COLS; x++) {
     // Correct Duplicates so blocks of same color cannot be adjacent
     for (let y = 0; y < ROWS; y++) {
-      if (board[x][y].color != VACANT) {
-        let topBlock = VACANT;
-        let rightBlock = VACANT;
-        let bottomBlock = VACANT;
-        let leftBlock = VACANT;
+      if (board[x][y].color != blockColor.VACANT) {
+        let topBlock = blockColor.VACANT;
+        let rightBlock = blockColor.VACANT;
+        let bottomBlock = blockColor.VACANT;
+        let leftBlock = blockColor.VACANT;
         if (y != 0) {
           topBlock = board[x][y - 1].color;
         }
@@ -536,13 +477,13 @@ function updateGrid(board, debugFrameAdvance = false) {
   for (let x = 0; x < COLS; x++) {
     for (let y = 0; y < ROWS + 2; y++) {
       // Check to see if a block is still legally in a landing animation
-      if (board[x][y].type == LANDING) {
+      if (board[x][y].type == blockType.LANDING) {
         for (let i = ROWS - 1; i > y; i--) {
-          if (board[x][i].color == VACANT) {
-            board[x][y].type = NORMAL;
+          if (board[x][i].color == blockColor.VACANT) {
+            board[x][y].type = blockType.NORMAL;
             board[x][y].delay = 0;
             break;
-            /* A vacant block below a "landed" block was detected,
+            /* A blockColor.VACANT block below a "landed" block was detected,
                            so the animation will be cancelled. */
           }
         }
@@ -553,8 +494,8 @@ function updateGrid(board, debugFrameAdvance = false) {
         board[x][y].availableForSecondaryChain
       ) {
         if (
-          board[x][y].color == VACANT ||
-          (board[x][y].type == LANDING &&
+          board[x][y].color == blockColor.VACANT ||
+          (board[x][y].type == blockType.LANDING &&
             board[x][y].delay > 8 &&
             board[x][y].delay < 11)
         ) {
@@ -568,13 +509,13 @@ function updateGrid(board, debugFrameAdvance = false) {
           board[x][y].delay -= 1 * gameSpeed;
           disableRaise = true;
         } else if (board[x][y].delay == 0) {
-          if (board[x][y].type == CLEARING) {
-            board[x][y].type = FACE;
+          if (board[x][y].type == blockType.CLEARING) {
+            board[x][y].type = blockType.FACE;
             board[x][y].delay = clearValues[level];
-          } else if (board[x][y].type == FACE) {
-            board[x][y].color = VACANT;
-            board[x][y].type = NORMAL;
-            if (y > 0 && board[x][y - 1].color != VACANT) {
+          } else if (board[x][y].type == blockType.FACE) {
+            board[x][y].color = blockColor.VACANT;
+            board[x][y].type = blockType.NORMAL;
+            if (y > 0 && board[x][y - 1].color != blockColor.VACANT) {
               board[x][y - 1].delay = stallGameSetting;
             }
             disableRaise = false;
@@ -658,22 +599,22 @@ function isChainActive(board) {
   // Test failed, so ending chain.
   lastChain = chain;
   if (chain > 8) {
-    playAudio(audioURLs.fanfare4);
-    playAudio(audioURLs.announcerUnbelievable);
+    playAudio(audio.fanfare4);
+    playAudio(audio.announcerUnbelievable);
   } else if (chain >= 6) {
-    playAudio(audioURLs.fanfare3);
+    playAudio(audio.fanfare3);
     playAudio(
       announcer.highChainDialogue[frames % announcer.highChainDialogue.length]
     );
   } else if (chain >= 4) {
-    playAudio(audioURLs.fanfare2);
+    playAudio(audio.fanfare2);
     playAudio(
       announcer.mediumChainDialogue[
         frames % announcer.mediumChainDialogue.length
       ]
     );
   } else if (chain >= 2) {
-    playAudio(audioURLs.fanfare1);
+    playAudio(audio.fanfare1);
     playAudio(
       announcer.smallChainDialogue[frames % announcer.smallChainDialogue.length]
     );
@@ -704,8 +645,11 @@ function trySwappingBlocks(board, xSwap, ySwap) {
 
   let swap = true;
 
-  // Make sure both blocks aren't vacant
-  if (board[x][y].color == VACANT && board[x + 1][y].color == VACANT) {
+  // Make sure both blocks aren't blockColor.VACANT
+  if (
+    board[x][y].color == blockColor.VACANT &&
+    board[x + 1][y].color == blockColor.VACANT
+  ) {
     swap = false;
   }
 
@@ -719,9 +663,12 @@ function trySwappingBlocks(board, xSwap, ySwap) {
 
   // Do not swap if ANY block below is falling
   if (y < 11) {
-    if (SWAPPABLES.includes(board[x][y].type) && board[x][y].color != VACANT) {
+    if (
+      SWAPPABLES.includes(board[x][y].type) &&
+      board[x][y].color != blockColor.VACANT
+    ) {
       for (let j = y; j < ROWS; j++) {
-        if (board[x][j].color == VACANT) {
+        if (board[x][j].color == blockColor.VACANT) {
           swap = false;
           break;
         }
@@ -729,10 +676,10 @@ function trySwappingBlocks(board, xSwap, ySwap) {
     }
     if (
       SWAPPABLES.includes(board[x + 1][y].type) &&
-      board[x + 1][y].color != VACANT
+      board[x + 1][y].color != blockColor.VACANT
     ) {
       for (let j = y; j < ROWS; j++) {
-        if (board[x + 1][j].color == VACANT) {
+        if (board[x + 1][j].color == blockColor.VACANT) {
           swap = false;
           break;
         }
@@ -743,14 +690,14 @@ function trySwappingBlocks(board, xSwap, ySwap) {
   if (y > 0) {
     if (
       SWAPPABLES.includes(board[x][y - 1].type) &&
-      board[x][y - 1].color != VACANT &&
-      board[x][y].color == VACANT
+      board[x][y - 1].color != blockColor.VACANT &&
+      board[x][y].color == blockColor.VACANT
     ) {
       swap = false;
     } else if (
       SWAPPABLES.includes(board[x + 1][y - 1].type) &&
-      board[x + 1][y - 1].color != VACANT &&
-      board[x + 1][y].color == VACANT
+      board[x + 1][y - 1].color != blockColor.VACANT &&
+      board[x + 1][y].color == blockColor.VACANT
     ) {
       swap = false;
     }
@@ -759,22 +706,22 @@ function trySwappingBlocks(board, xSwap, ySwap) {
   // Do not swap if a falling block is less than two units BELOW the cursor (rare)
   // if (y > 0) {
   //     if (SWAPPABLES.includes(board[x][y].type) &&
-  //         board[x+1][y].color == VACANT &&
-  //         board[x+1][y+1].color != VACANT &&
+  //         board[x+1][y].color == blockColor.VACANT &&
+  //         board[x+1][y+1].color != blockColor.VACANT &&
   //         board[x+1][y+1].delay>0) {swap = false; console.log("right here!") }
   //     else if (SWAPPABLES.includes(board[x+1][y].type) &&
-  //         board[x][y].color == VACANT &&
-  //         board[x][y+1].color != VACANT &&
+  //         board[x][y].color == blockColor.VACANT &&
+  //         board[x][y+1].color != blockColor.VACANT &&
   //         board[x][y+1].delay>0) {swap = false; console.log("right here!") }
   // }
 
   if (swap) {
-    playAudio(audioURLs.swapSuccess);
+    playAudio(audio.swapSuccess);
     swapProperties(board[x][y], board[x + 1][y]);
     board[x][y].delay = 0;
     board[x + 1][y].delay = 0;
-    board[x][y].type = NORMAL;
-    board[x + 1][y].type = NORMAL;
+    board[x][y].type = blockType.NORMAL;
+    board[x + 1][y].type = blockType.NORMAL;
     board[x][y].availableForPrimaryChain = false;
     board[x][y].availableForPrimaryChain = false;
     board[x + 1][y].availableForSecondaryChain = false;
@@ -783,7 +730,10 @@ function trySwappingBlocks(board, xSwap, ySwap) {
     if (y < 11) {
       //Check to see if block is about to fall
       // Check left block after swap
-      if (board[x][y].color != VACANT && board[x][y + 1].color == VACANT) {
+      if (
+        board[x][y].color != blockColor.VACANT &&
+        board[x][y + 1].color == blockColor.VACANT
+      ) {
         board[x][y].delay = stallGameSetting; // Default 12 frames
         board[x][y].touched = true; // used for properly counting chains
         board[x][y].availableForSecondaryChain = false; // Don't allow the block to be used for chains
@@ -791,8 +741,8 @@ function trySwappingBlocks(board, xSwap, ySwap) {
       }
       // Check right block after swap
       if (
-        board[x + 1][y].color != VACANT &&
-        board[x + 1][y + 1].color == VACANT
+        board[x + 1][y].color != blockColor.VACANT &&
+        board[x + 1][y + 1].color == blockColor.VACANT
       ) {
         board[x + 1][y].delay = stallGameSetting; // Default 12 frames
         board[x + 1][y].touched = true; // used for properly counting chains
@@ -802,14 +752,14 @@ function trySwappingBlocks(board, xSwap, ySwap) {
     }
 
     if (y > 0) {
-      // Check to see if there are blocks above a vacant block
+      // Check to see if there are blocks above a blockColor.VACANT block
       // Check left column
       if (
-        board[x][y].color == VACANT &&
-        board[x][y - 1].color != VACANT &&
+        board[x][y].color == blockColor.VACANT &&
+        board[x][y - 1].color != blockColor.VACANT &&
         SWAPPABLES.includes(board[x][y - 1].type)
       ) {
-        board[x][y - 1].type = NORMAL;
+        board[x][y - 1].type = blockType.NORMAL;
         board[x][y - 1].delay = stallGameSetting;
         for (let i = y - 1; i >= 0; i--) {
           board[x][i].touched = true;
@@ -819,11 +769,11 @@ function trySwappingBlocks(board, xSwap, ySwap) {
       }
       // Check right column
       if (
-        board[x + 1][y].color == VACANT &&
-        board[x + 1][y - 1].color != VACANT &&
+        board[x + 1][y].color == blockColor.VACANT &&
+        board[x + 1][y - 1].color != blockColor.VACANT &&
         SWAPPABLES.includes(board[x + 1][y - 1].type)
       ) {
-        board[x + 1][y - 1].type = NORMAL;
+        board[x + 1][y - 1].type = blockType.NORMAL;
         board[x + 1][y - 1].delay = stallGameSetting; // Default 12 frames
         for (let i = y - 1; i >= 0; i--) {
           board[x + 1][i].touched = true;
@@ -833,7 +783,7 @@ function trySwappingBlocks(board, xSwap, ySwap) {
       }
     }
   } else {
-    playAudio(audioURLs.swapFailed);
+    playAudio(audio.swapFailed);
   }
 }
 
@@ -844,26 +794,29 @@ function doGravity(board) {
   let r;
 
   for (let c = 0; c < COLS; c++) {
-    if (board[c][11].type == LANDING && board[c][11].delay == 0) {
-      board[c][11].type = NORMAL;
+    if (board[c][11].type == blockType.LANDING && board[c][11].delay == 0) {
+      board[c][11].type = blockType.NORMAL;
       disableRaise = false;
     }
 
     for (let r = ROWS - 1; r >= 0; r--) {
-      if (board[c][r].type == LANDING && board[c][r + 1].color == VACANT) {
-        board[c][r].type = NORMAL;
+      if (
+        board[c][r].type == blockType.LANDING &&
+        board[c][r + 1].color == blockColor.VACANT
+      ) {
+        board[c][r].type = blockType.NORMAL;
         board[c][r].delay = 0;
       }
 
-      if (board[c][r].type == LANDING && board[c][r].delay == 0) {
-        board[c][r].type = NORMAL;
+      if (board[c][r].type == blockType.LANDING && board[c][r].delay == 0) {
+        board[c][r].type = blockType.NORMAL;
         board[c][r].touched = false;
         disableRaise = false;
       }
 
       if (
-        board[c][r].color != VACANT &&
-        board[c][r + 1].color == VACANT &&
+        board[c][r].color != blockColor.VACANT &&
+        board[c][r + 1].color == blockColor.VACANT &&
         SWAPPABLES.includes(board[c][r].type)
       ) {
         // fall one unit
@@ -878,7 +831,7 @@ function doGravity(board) {
             board[c][r].availableForSecondaryChain;
           board[c][r + 1].availableForPrimaryChain =
             board[c][r].availableForPrimaryChain;
-          board[c][r].color = VACANT;
+          board[c][r].color = blockColor.VACANT;
           board[c][r].touched = false;
           possibleLandedLocations.push([c, r + 1]);
 
@@ -896,8 +849,11 @@ function doGravity(board) {
     for (let i = 0; i < possibleLandedLocations.length; i++) {
       let x = possibleLandedLocations[i][0];
       let y = possibleLandedLocations[i][1];
-      if (board[x][y].color != VACANT && board[x][y + 1].color != VACANT) {
-        board[x][y].type = LANDING;
+      if (
+        board[x][y].color != blockColor.VACANT &&
+        board[x][y + 1].color != blockColor.VACANT
+      ) {
+        board[x][y].type = blockType.LANDING;
         board[x][y].delay = 10;
         //DEBUG
         if (developerEnabled == 1) {
@@ -937,17 +893,17 @@ function checkClearing(board) {
 function doPanic(board) {
   let panic = false;
   for (let c = 0; c < COLS; c++) {
-    if (board[c][1].color != VACANT) {
+    if (board[c][1].color != blockColor.VACANT) {
       for (let r = 0; r < ROWS; r++) {
-        if (board[c][r].type == NORMAL) {
-          board[c][r].type = PANICKING;
+        if (board[c][r].type == blockType.NORMAL) {
+          board[c][r].type = blockType.PANICKING;
           panic = true;
         }
       }
     } else {
       for (let r = 0; r < ROWS; r++) {
-        if (board[c][r].type == PANICKING) {
-          board[c][r].type = NORMAL;
+        if (board[c][r].type == blockType.PANICKING) {
+          board[c][r].type = blockType.NORMAL;
         }
       }
     }
@@ -966,7 +922,7 @@ function legalMatch(board, clearLocations) {
     let c = clearLocations[i][0];
     let r = clearLocations[i][1];
     for (let j = 11; j > r; j--) {
-      if (board[c][j].color == VACANT) {
+      if (board[c][j].color == blockColor.VACANT) {
         return false; // If the block is falling, no match occurs.
       }
     }
@@ -991,7 +947,7 @@ function checkMatch(board) {
       // Check Vertical and afterwards, horizontal
       for (let r = 1; r < ROWS - 1; r++) {
         if (
-          board[c][r].color != VACANT &&
+          board[c][r].color != blockColor.VACANT &&
           board[c][r].color == board[c][r - 1].color &&
           board[c][r].color == board[c][r + 1].color &&
           SWAPPABLES.includes(board[c][r].type) &&
@@ -1033,7 +989,7 @@ function checkMatch(board) {
       // Check Horizontal
       for (let r = 0; r < ROWS; r++) {
         if (
-          board[c][r].color != VACANT &&
+          board[c][r].color != blockColor.VACANT &&
           board[c][r].color == board[c - 1][r].color &&
           board[c][r].color == board[c + 1][r].color &&
           SWAPPABLES.includes(board[c][r].type) &&
@@ -1097,7 +1053,7 @@ function checkMatch(board) {
         for (let i = 0; i < clearLocationsLength; i++) {
           let x = clearLocations[i][0];
           let y = clearLocations[i][1];
-          if (board[x][y].type == LANDING && !board[x][y].touched) {
+          if (board[x][y].type == blockType.LANDING && !board[x][y].touched) {
             // need to add .touched?
             add1ToChain = true;
           }
@@ -1114,7 +1070,7 @@ function checkMatch(board) {
       for (let i = 0; i < clearLocationsLength; i++) {
         let c = clearLocations[i][0];
         let r = clearLocations[i][1];
-        board[c][r].type = CLEARING;
+        board[c][r].type = blockType.CLEARING;
         board[c][r].delay = clearValues[level];
         if (addToPrimaryChain) {
           board[c][r].availableForPrimaryChain = true;
@@ -1143,7 +1099,7 @@ function checkMatch(board) {
 
 function isGameOver(board, scoreOfThisGame) {
   for (let c = 0; c < COLS; c++) {
-    if (board[c][0].color != VACANT) {
+    if (board[c][0].color != blockColor.VACANT) {
       gameMusic.volume = 0;
       console.log("Game over!");
       console.log(`Score: ${score}`);
@@ -1194,7 +1150,7 @@ function raiseStack(board) {
     for (let r = 1; r < ROWS; r++) {
       // Raise all rows, then delete bottom rows.
       board[c][r - 1].color = board[c][r].color;
-      board[c][r].color = VACANT;
+      board[c][r].color = blockColor.VACANT;
     }
   }
 
@@ -1208,12 +1164,15 @@ function raiseStack(board) {
   for (let i = 0; i < 2; i++) {
     for (let c = 0; c < COLS; c++) {
       if (i == 0) {
-        if (board[c][0].color != VACANT || board[c][1].color != VACANT) {
+        if (
+          board[c][0].color != blockColor.VACANT ||
+          board[c][1].color != blockColor.VACANT
+        ) {
           i = 1;
           break;
         }
       } else {
-        if (board[c][2].color != VACANT) {
+        if (board[c][2].color != blockColor.VACANT) {
           playAudio(
             announcer.panicDialogue[randInt(announcer.panicDialogue.length)]
           );
@@ -1227,22 +1186,22 @@ function raiseStack(board) {
 }
 
 function gameOverBoard(board) {
-  // don't continue function if all pieces are already switched to DEAD type
-  if (board[5][11].type == DEAD) {
+  // don't continue function if all pieces are already switched to blockType.DEAD type
+  if (board[5][11].type == blockType.DEAD) {
     return;
   }
   if (frames == 1) {
-    playAudio(audioURLs.announcerKO, (volume = 0.2));
-    gameMusic.src = audioURLs.popcornMusic;
+    playAudio(audio.announcerKO, (volume = 0.2));
+    gameMusic.src = audio.popcornMusic;
   }
   if (frames == 4) {
-    playAudio(audioURLs.topout, (volume = 0.05));
+    playAudio(audio.topout, (volume = 0.05));
   }
   disableRaise = true;
   let deathRow = Math.floor(frames / 2);
   for (let i = 0; i < COLS; i++) {
-    if (board[i][deathRow].color != VACANT) {
-      board[i][deathRow].type = DEAD;
+    if (board[i][deathRow].color != blockColor.VACANT) {
+      board[i][deathRow].type = blockType.DEAD;
     }
   }
 }
@@ -1304,7 +1263,7 @@ let quickRaise = false;
 let raisePressed = false;
 
 // Prevent browser scroll from arrow keys
-document.addEventListener(
+window.addEventListener(
   "keydown",
   function(e) {
     if (
@@ -1366,7 +1325,7 @@ function CONTROL(event) {
         );
         board = generateOpeningBoard();
       }
-      playMusic(audioURLs.popcornMusic);
+      playMusic(audio.popcornMusic);
       setTimeout(gameLoop(), 1000 / 60);
     } else if (event.keyCode == 191) {
       extractTimeToIndex(dateTimeAPI);
@@ -1377,22 +1336,22 @@ function CONTROL(event) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
         cursor.x -= 1;
-        playAudio(audioURLs.moveCursor);
+        playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 38) {
       if (cursor.y - 1 >= 1) {
         cursor.y -= 1;
-        playAudio(audioURLs.moveCursor);
+        playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 39) {
       if (cursor.x + 1 <= 4) {
         cursor.x += 1;
-        playAudio(audioURLs.moveCursor);
+        playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 40) {
       if (cursor.y + 1 <= 11) {
         cursor.y += 1;
-        playAudio(audioURLs.moveCursor);
+        playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 88 || event.keyCode == 83) {
       // x, s
@@ -1460,8 +1419,8 @@ function CONTROL(event) {
         // LShift to empty board
         for (let i = 0; i < COLS; i++) {
           for (let j = 0; j < ROWS; j++) {
-            board[i][j].color = VACANT;
-            board[i][j].type = NORMAL;
+            board[i][j].color = blockColor.VACANT;
+            board[i][j].type = blockType.NORMAL;
           }
         }
       }
@@ -1568,7 +1527,7 @@ function gameLoop(timestamp) {
       playAudio(
         announcer.overtimeDialogue[randInt(announcer.overtimeDialogue.length)]
       );
-      playMusic(audioURLs.overtimeMusic);
+      playMusic(audio.overtimeMusic);
     }
 
     level += 1;
@@ -1609,7 +1568,7 @@ function gameLoop(timestamp) {
     gameOver = true;
     for (let c = 0; c < COLS; c++) {
       for (let r = 0; r < ROWS; r++) {
-        board[c][r].type = LANDING;
+        board[c][r].type = blockType.LANDING;
         board[c][r].delay = -2;
       }
     }
