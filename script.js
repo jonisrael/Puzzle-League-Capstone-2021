@@ -1222,9 +1222,11 @@ function gameOverBoard(board) {
     return;
   }
   if (frames == 1) {
-    playAudio(audioURLs.topout);
-    playAudio(audioURLs.announcerKO);
+    playAudio(audioURLs.announcerKO, (volume = 0.2));
     gameMusic.src = audioURLs.popcornMusic;
+  }
+  if (frames == 4) {
+    playAudio(audioURLs.topout, (volume = 0.05));
   }
   disableRaise = true;
   let deathRow = Math.floor(frames / 2);
