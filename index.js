@@ -5,10 +5,12 @@ import { capitalize } from "lodash";
 
 const router = new Navigo(window.location.origin);
 
-router.on({
-  ":page": params => render(state[capitalize(params.page)]),
-  "/": () => render(state.Home)
-});
+router
+  .on({
+    "/": () => render(state.Home),
+    ":page": params => render(state[capitalize(params.page)])
+  })
+  .resolve();
 
 function render(st) {
   document.querySelector("#root").innerHTML = `
@@ -19,16 +21,8 @@ function render(st) {
   `;
 
   router.updatePageLinks();
+
+  // addEventListeners(st);
 }
 
 render(state.Home);
-
-// Image Sprites
-
-// function blockURL(color, type, animationIndex = -1) {
-//     if (animationIndex === -1) {
-//       return `${color}_${type}`
-//     } else {
-//       return `${color}_${type}_${animationIndex}`
-//     }
-// }

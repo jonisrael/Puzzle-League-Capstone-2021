@@ -42,7 +42,10 @@ const announcer = {
     audioURLs.announcerComboIntense,
     audioURLs.announcerNeverForgetEvent
   ],
-  timeTransitionDialogue: [audioURLs.announcerTimeMarchesOn],
+  timeTransitionDialogue: [
+    audioURLs.announcerTimeMarchesOn
+    // audioURLs.announcerAllBetsOff
+  ],
   hurryUpDialogue: [
     audioURLs.announcerTenSeconds,
     audioURLs.announcerAllBoilsDown
@@ -50,13 +53,20 @@ const announcer = {
   panicDialogue: [
     audioURLs.announcerHowMuchLonger,
     audioURLs.announcerIsItTheEnd,
-    audioURLs.announcerCallThisOne
+    audioURLs.announcerCallThisOne,
+    //audioURLs.announcerFatLady
+    audioURLs.announcerItAintOver
   ],
   overtimeDialogue: [
     audioURLs.announcerBringUsHome,
     audioURLs.announcerIHopeReady
+    // audioURLs.announcerWorldHoldingBreath,
   ],
-  newHighScore: [audioURLs.announcerDeservePraise, audioURLs.announcerTraining]
+  newHighScore: [
+    audioURLs.announcerDeservePraise,
+    audioURLs.announcerTraining
+    // audioURLs.announcerOnlyWordWorthy
+  ]
 };
 
 const BLUE = "blue";
@@ -105,7 +115,7 @@ const MICRO_SQ = SQ / 16;
 
 let clearDelaySetting = 60;
 const speedValues = [60, 20, 15, 12, 10, 6, 4, 2, 2, 2, 1];
-const clearValues = [60, 50, 45, 40, 35, 30, 25, 20, 20, 20, 15]; // iterate twice
+const clearValues = [60, 50, 45, 40, 35, 30, 25, 20, 16, 12, 8]; // iterate twice
 const stallValues = [24, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6];
 const startingHangTime = 12; // Changeable
 let called = false;
@@ -1294,7 +1304,7 @@ let quickRaise = false;
 let raisePressed = false;
 
 // Prevent browser scroll from arrow keys
-window.addEventListener(
+document.addEventListener(
   "keydown",
   function(e) {
     if (
@@ -1495,12 +1505,13 @@ let computerSlowdownTracker = 0;
 let drawsPerSecond = 60;
 let drawDivisor = 1;
 let performanceConstant = 1;
-let statDisplay = document.querySelector("#all-stats");
+let statDisplay = document.getElementById("all-stats");
 let scoreDisplay = document.querySelector("#score");
 let chainDisplay = document.querySelector("#chain");
 let timeDisplay = document.querySelector("#time");
 let levelDisplay = document.querySelector("#level");
-let highScoreDisplay = document.querySelector("#high-score");
+// let highScoreDisplay = document.querySelector("#high-score");
+// console.log(highScoreDisplay);
 function gameLoop(timestamp) {
   frames++;
   if (!running) {
