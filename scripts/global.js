@@ -81,6 +81,13 @@ const INTERACTIVE_PIECES = [
   blockType.PANICKING
 ];
 
+const app = {
+  running: false,
+  makeCanvas: null,
+  cvs: null,
+  ctx: null
+};
+
 const grid = {
   COLS: 6,
   ROWS: 12,
@@ -93,6 +100,11 @@ const preset = {
   stallValues: [24, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6]
 };
 
+if (localStorage.getItem("highScore") === null) {
+  localStorage.setItem("highScore", "1000");
+}
+let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
+
 const game = {
   rise: 0,
   board: [],
@@ -104,7 +116,12 @@ const game = {
   blockStallTime: preset.stallValues,
   pause: 0,
   raiseDelay: 0,
-  addToPrimaryChain: false // used to start/continue a chain
+  addToPrimaryChain: false, // used to start/continue a chain
+  highScore: HIGH_SCORE,
+  disableRaise: false,
+  disableSwap: false,
+  quickRaise: false,
+  raisePressed: false
 };
 
 const api = {
@@ -135,6 +152,7 @@ export {
   blockType,
   PIECES,
   INTERACTIVE_PIECES,
+  app,
   grid,
   game,
   preset,
