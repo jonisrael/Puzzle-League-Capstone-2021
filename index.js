@@ -17,6 +17,8 @@ router
   })
   .resolve();
 
+// render(state.Home);
+
 function render(st) {
   document.querySelector("#root").innerHTML = `
   ${Header(st)}
@@ -24,7 +26,6 @@ function render(st) {
   ${Main(st)}
   ${Footer()}
   `;
-
   router.updatePageLinks();
 
   // addEventListeners(st);

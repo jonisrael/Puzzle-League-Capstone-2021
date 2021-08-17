@@ -18,8 +18,8 @@ export default st => html`
         The stack rise speed will get faster every 20 seconds, which also
         increases the multiplier of combos/chains by 0.1x. At two minutes,
         "overtime" begins, and the stack rise speed will be extremely fast.
-        However, all point scores will be doubled at 2.0x. Press Enter to play.
-        Have fun!
+        However, all point scores will be doubled. Press Enter to play (button
+        to work soon). Have fun!
       </h3>
       <button id="click-to-play">Click to Play</button>
       <div id="stats-display"></div>
