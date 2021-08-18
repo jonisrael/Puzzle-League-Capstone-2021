@@ -3,71 +3,39 @@ import html from "html-literal";
 export default st => html`
   <section id="home-page">
     <body>
-      <img src="../assets/Images/Tetris_Attack_box_art.png" id="box-art" />
-      <h1 id="more-info" class="headers">More Info</h1>
-      Puzzle League is a tetris-like game where the player arranges 3 or more
-      adjacent blocks with the same color to create a combo and clear them from
-      the board. You can also do more advanced techniques such as chains to gain
-      more points. Usually the main game is multiplayer, where upon creating
-      combos and chains, it will send garbage blocks to your opponent in attempt
-      to top them out. There are other game modes such as a puzzle mode or a
-      line clear mode, but with the limited time I have, I chose to focus on the
-      single-player game modes involving scores.<br /><br />
-      The main two modes that involve score are the two-minute time-trial and
-      endless mode. In endless mode, the speed the stack rises gets faster and
-      faster, but theoretically you can play it forever. In time trial, the
-      speed is the same but you have a two minute time-limit to get the highest
-      score possible.<br /><br />Outside of a couple animations, I did my best
-      to replicate the game mechanics of the original game. If you would like to
-      learn more information about how I programmed the game, some improvements
-      I will implement later,
-      <strong>as well as a list of bugs (Should I keep this?)</strong>, you can
-      check out my <a href="/About">About</a> page.<br /><br />
-      To make my clone a little more interesting, I created my own game mode
-      called "Puzzle League Blitz". My idea was to combine the endless and
-      time-trial mode into an arcade style 2-3 minute round. The stack rise
-      speed as well as match clear speed will rapidly increase every twenty
-      seconds, along with a score multiplier. At two minutes, it becomes nearly
-      unplayably fast, but the player is rewarded for survival time. At three
-      minutes, it is basically unplayable.<br /><br /><strong
-        >NOT FINISHED YET</strong
-      >Since 1995, there have been a couple of Puzzle League games released. It
-      also had an interesting history on what regions of the world various games
-      were released in. This is the main list of games that created new content:
-      <ul id="list-of-games" class="lists">
-        <li>
-          <a href="https://panepon.fandom.com/wiki/Panel_De_Pon_Wiki"
-            >Panel De Pon</a
-          >
-          (1995 Super Nintendo, Japan Only)
-        </li>
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Tetris_Attack"
-            >Tetris Attack</a
-          >
-          (1996 Super Nintendo, Worldwide)
-        </li>
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Pok%C3%A9mon_Puzzle_League"
-            >Pokemon Puzzle League</a
-          >
-          (2000 Nintendo 64, NA and Europe)
-        </li>
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Pokemon_Puzzle_Challenge"
-            >Pokemon Puzzle Challenge</a
-          >
-          (2000 Game Boy Color, Worldwide)
-        </li>
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Planet_Puzzle_League"
-            >Planet Puzzle League</a
-          >
-          (2007 Nintendo DS, Worldwide)
-        </li>
-      </ul>
-      <br /><br />
-      <h2>Tutorial</h2>
+      <h1>Welcome to Jonathan Israel's Puzzle League Score Rush!</h1>
+      <h2>
+        Use the arrow keys to move, x to swap blocks, and z to raise the stack
+        when legal.<br />
+      </h2>
+      <h3>
+        Clear blocks by matching 3 adjacent blocks. If you match 4 or more you
+        will get more points. Create chains by matching a second combo on top of
+        a recently cleared combo before the blocks fall. Chains will get you the
+        most points. You lose when the stack reaches the top.
+      </h3>
+      <h3>
+        The stack rise speed will get faster every 20 seconds, which also
+        increases the multiplier of combos/chains by 0.1x. At two minutes,
+        "overtime" begins, and the stack rise speed will be extremely fast.
+        However, all point scores will be doubled. Press Enter to play (button
+        to work soon). Have fun!
+      </h3>
+      <button id="click-to-play">Click to Play</button>
+      <div id="stats-display"></div>
+      <div id="canvas-container">
+        <h3 class="stats" id="all-stats"></h3>
+        <h3 class="stats" id="time"></h3>
+        <h3 class="stats" id="score"></h3>
+        <h3 class="stats" id="chain"></h3>
+        <h3 class="stats" id="level"></h3>
+      </div>
+
+      <h2 id="high-score"></h2>
+      <div id="debug"></div>
     </body>
   </section>
 `;
+
+//<!-- <canvas id ="canvas" width="192" height="384", background-color></canvas>  -->
+//<!-- <canvas id ="canvas" width="192" height="448", background-color></canvas>  -->

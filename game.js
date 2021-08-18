@@ -1201,7 +1201,7 @@ function updateScore(clearLocationsLength, currentChain) {
   console.log(`Current Time: ${minutes}:${seconds} | Current FPS: ${fps}`);
   if (score > game.highScore) {
     game.highScore = score;
-    // highScoreDisplay.style.color = "gold";
+    highScoreDisplay.style.color = "gold";
   }
 }
 
@@ -1220,8 +1220,43 @@ window.addEventListener(
   false
 );
 
-document.addEventListener("keydown", CONTROL);
-function CONTROL(event) {
+function createCanvas() {
+  app.makeCanvas = document.createElement(`canvas`);
+  app.makeCanvas.setAttribute("id", "canvas");
+  app.makeCanvas.setAttribute("width", "192");
+  app.makeCanvas.setAttribute("height", "384");
+  document.body.appendChild(app.makeCanvas);
+  app.cvs = document.getElementById("canvas");
+  app.ctx = app.cvs.getContext("2d");
+  app.running = true;
+  try {
+    game.board = makeOpeningBoard(extractTimeToIndex());
+    console.log("Fetch successful!");
+  } catch (error) {
+    console.log(
+      `fetching api.database.json failed. Will randomly generate game.board instead`
+    );
+    game.board = generateOpeningBoard();
+  }
+  playMusic(audio.popcornMusic);
+}
+let count = 0;
+
+let startButton = document.getElementById("click-to-play");
+startButton.onclick = function() {
+  if (!app.running) {
+    startButton.remove();
+    createCanvas();
+    setTimeout(gameLoop(), 1000 / 60);
+  }
+};
+// // document.addEventListener("mouseup", MOUSE_CONTROL);
+// // function(MOUSE_CONTROL(event)) {
+// //   if (!app.running)
+// // }
+
+document.addEventListener("keydown", KEYBOARD_CONTROL);
+function KEYBOARD_CONTROL(event) {
   if (app.running) {
     if (event.keyCode == 27) {
       // escape
@@ -1237,26 +1272,7 @@ function CONTROL(event) {
     if (event.keyCode == 13) {
       // enter key
       console.log(api.dateTimeAPI);
-      api.database = api.data[0];
-      app.makeCanvas = document.createElement(`canvas`);
-      app.makeCanvas.setAttribute("id", "canvas");
-      app.makeCanvas.setAttribute("width", "192");
-      app.makeCanvas.setAttribute("height", "384");
-      document.body.appendChild(app.makeCanvas);
-      app.cvs = document.getElementById("canvas");
-      app.ctx = app.cvs.getContext("2d");
-      app.running = true;
-      try {
-        game.board = makeOpeningBoard(extractTimeToIndex());
-        console.log("Fetch successful!");
-      } catch (error) {
-        console.log(
-          `fetching api.database.json failed. Will randomly generate game.board instead`
-        );
-        game.board = generateOpeningBoard();
-      }
-      playMusic(audio.popcornMusic);
-      setTimeout(gameLoop(), 1000 / 60);
+      // createCanvas();
     } else if (event.keyCode == 191) {
       extractTimeToIndex();
     }
@@ -1393,7 +1409,7 @@ let scoreDisplay = document.querySelector("#score");
 let chainDisplay = document.querySelector("#chain");
 let timeDisplay = document.querySelector("#time");
 let levelDisplay = document.querySelector("#game.level");
-// let highScoreDisplay = document.querySelector("#high-score");
+let highScoreDisplay = document.querySelector("#high-score");
 // console.log(highScoreDisplay);
 function gameLoop(timestamp) {
   frames++;
@@ -1601,23 +1617,23 @@ function gameLoop(timestamp) {
   } else {
     multiplierString = `${scoreMultiplier}x`;
   }
-  // if (debug.enabled) {
-  //   statDisplay.innerHTML = `FPS: ${fps} | Level: ${game.level} | Time: ${timeString} |
-  //       Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
-  // } else {
-  //   statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
-  //   scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
-  // }
+  if (debug.enabled) {
+    statDisplay.innerHTML = `FPS: ${fps} | Level: ${game.level} | Time: ${timeString} |
+        Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+  } else {
+    statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
+    scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
+  }
 
-  // if (chain > 0) {
-  //   chainDisplay.innerHTML = `${chain}x chain!`;
-  //   chainDisplay.style.color = "red";
-  // } else {
-  //   chainDisplay.innerHTML = `Highest Chain: ${highestChain}`;
-  //   chainDisplay.style.color = "blue";
-  // }
+  if (chain > 0) {
+    chainDisplay.innerHTML = `${chain}x chain!`;
+    chainDisplay.style.color = "red";
+  } else {
+    chainDisplay.innerHTML = `Highest Chain: ${highestChain}`;
+    chainDisplay.style.color = "blue";
+  }
 
-  // highScoreDisplay.innerHTML = `High Score: ${game.highScore}`;
+  highScoreDisplay.innerHTML = `High Score: ${game.highScore}`;
   requestAnimationFrame(gameLoop);
 }
 
