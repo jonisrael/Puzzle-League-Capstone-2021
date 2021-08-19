@@ -23,7 +23,13 @@ import {
   debug
 } from "./scripts/global.js";
 
-let gameMusic = new Audio(audio.popcornMusic);
+let statDisplay = document.getElementById("all-stats");
+let scoreDisplay = document.querySelector("#score");
+let chainDisplay = document.querySelector("#chain");
+let timeDisplay = document.querySelector("#time");
+let levelDisplay = document.querySelector("#game.level");
+let highScoreDisplay = document.querySelector("#high-score");
+// console.log(highScoreDisplay);
 
 // fetching our api.data from an API
 
@@ -92,22 +98,22 @@ class Block {
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
     if (this.type == blockType.CLEARING) {
-      if ((frames % 4 >= 0 && frames % 4 < 2) || game.pause == 1) {
+      if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || game.pause == 1) {
         animationIndex = 0;
       } else {
         animationIndex = 1;
       }
     } else if (this.type == blockType.PANICKING) {
-      if (frames % 18 >= 0 && frames % 18 < 3) {
+      if (game.frames % 18 >= 0 && game.frames % 18 < 3) {
         animationIndex = 0;
       } else if (
-        (frames % 18 >= 3 && frames % 18 < 6) ||
-        (frames % 18 >= 15 && frames % 18 < 18)
+        (game.frames % 18 >= 3 && game.frames % 18 < 6) ||
+        (game.frames % 18 >= 15 && game.frames % 18 < 18)
       ) {
         animationIndex = 1;
       } else if (
-        (frames % 18 >= 6 && frames % 18 < 9) ||
-        (frames % 18 >= 12 && frames % 18 < 15)
+        (game.frames % 18 >= 6 && game.frames % 18 < 9) ||
+        (game.frames % 18 >= 12 && game.frames % 18 < 15)
       ) {
         animationIndex = 2;
       } else {
@@ -136,7 +142,7 @@ class Block {
     //Debug Visuals
     if (debug.enabled == 1) {
       if (this.availableForPrimaryChain && this.availableForSecondaryChain) {
-        DEBUGB_IMAGE.src = DEBUGB;
+        DEBUGB_IMAGE.src = sprite.debugBrown;
         DEBUGB_IMAGE.onload = () => {
           app.ctx.drawImage(
             DEBUGB_IMAGE,
@@ -145,7 +151,7 @@ class Block {
           );
         };
       } else if (this.availableForPrimaryChain) {
-        DEBUGO_IMAGE.src = DEBUGO;
+        DEBUGO_IMAGE.src = sprite.debugOrange;
         DEBUGO_IMAGE.onload = () => {
           app.ctx.drawImage(
             DEBUGO_IMAGE,
@@ -154,7 +160,7 @@ class Block {
           );
         };
       } else if (this.availableForSecondaryChain) {
-        DEBUGP_IMAGE.src = DEBUGP;
+        DEBUGP_IMAGE.src = sprite.debugPink;
         DEBUGP_IMAGE.onload = () => {
           app.ctx.drawImage(
             DEBUGP_IMAGE,
@@ -163,7 +169,7 @@ class Block {
           );
         };
       } else if (this.timer > 0 && this.type == blockType.NORMAL) {
-        DEBUGW_IMAGE.src = DEBUGW;
+        DEBUGW_IMAGE.src = sprite.debugWhite;
         DEBUGW_IMAGE.onload = () => {
           app.ctx.drawImage(
             DEBUGW_IMAGE,
@@ -192,6 +198,10 @@ function playChainSFX(currentChain) {
   }
   Sound.volume = 0.05;
   Sound.play();
+}
+
+function timeSinceGameStarted(gameStart) {
+  return Math.floor((Date.now() - gameStart) / 1000);
 }
 
 function extractTimeToIndex() {
@@ -235,16 +245,16 @@ function playAudio(file, volume = 0.1) {
 }
 
 function playMusic(file, volume = 0.1, mute = 0) {
-  gameMusic.pause = true;
-  gameMusic.src = file;
-  gameMusic.play();
-  gameMusic.loop = true;
-  gameMusic.playbackRate = 1.0;
-  gameMusic.volume = volume;
+  game.Music.pause = true;
+  game.Music.src = file;
+  game.Music.play();
+  game.Music.loop = true;
+  game.Music.playbackRate = 1.0;
+  game.Music.volume = volume;
   if (mute == 1) {
-    gameMusic.volume = 0;
+    game.Music.volume = 0;
   } else {
-    gameMusic.volume = 0.1;
+    game.Music.volume = 0.1;
   }
   mute = (mute + 1) % 2;
 }
@@ -288,9 +298,9 @@ function fixNextDarkStack() {
 function makeOpeningBoard(index) {
   console.log(`Board Index Selected: ${index}`);
   game.mute = 0;
-  gameMusic.currentTime = 0;
-  gameMusic.volume = 0.2;
-  gameMusic.play();
+  game.Music.currentTime = 0;
+  game.Music.volume = 0.2;
+  game.Music.play();
   cursor.x = 2;
   cursor.y = 6;
   game.disableRaise = false;
@@ -298,10 +308,10 @@ function makeOpeningBoard(index) {
   game.boardRiseSpeed = preset.speedValues[game.level];
   game.blockClearTime = preset.clearValues[game.level];
   game.blockStallTime = preset.stallValues[game.level];
-  frames = minutes = seconds = 0;
-  score = 0;
+  game.frames = game.minutes = game.seconds = 0;
+  game.score = 0;
   game.pause = 0;
-  gameOver = false;
+  game.over = false;
   game.board = [];
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
@@ -324,16 +334,16 @@ function generateOpeningBoard() {
   cursor.y = 6;
 
   game.mute = 0;
-  gameMusic.currentTime = 0;
-  gameMusic.volume = 0.2;
-  gameMusic.play();
+  game.Music.currentTime = 0;
+  game.Music.volume = 0.2;
+  game.Music.play();
   game.board = [];
   game.disableRaise = false;
   game.level = 1;
-  frames = minutes = seconds = 0;
-  score = 0;
+  game.frames = game.minutes = game.seconds = 0;
+  game.score = 0;
   game.pause = 0;
-  gameOver = false;
+  game.over = false;
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
@@ -463,7 +473,7 @@ function updateGrid(debugFrameAdvance = false) {
 
       if (!debugFrameAdvance) {
         if (game.board[x][y].timer > 0 && game.pause == 0) {
-          game.board[x][y].timer -= 1 * gameSpeed;
+          game.board[x][y].timer -= 1 * performance.gameSpeed;
           game.disableRaise = true;
         } else if (game.board[x][y].timer == 0) {
           if (game.board[x][y].type == blockType.CLEARING) {
@@ -529,13 +539,13 @@ function drawGrid() {
       game.board[x][y].draw();
     }
   }
-  if (!gameOver) {
+  if (!game.over) {
     cursor.draw();
   }
 }
 
 function isChainActive() {
-  // if (grounded) { // failsafe to end chain
+  // if (game.grounded) { // failsafe to end chain
   //     for (let c=0; c<grid.COLS; c++) {
   //         for (let r=0; r<grid.ROWS; r++) {
   //             game.board[c][r].availableForPrimaryChain = false
@@ -554,32 +564,37 @@ function isChainActive() {
     }
   }
   // Test failed, so ending chain.
-  lastChain = chain;
-  if (chain > 8) {
+  game.lastChain = game.currentChain;
+  if (game.currentChain > 8) {
     playAudio(audio.fanfare4);
     playAudio(audio.announcerUnbelievable);
-  } else if (chain >= 6) {
+  } else if (game.currentChain >= 6) {
     playAudio(audio.fanfare3);
     playAudio(
-      announcer.highChainDialogue[frames % announcer.highChainDialogue.length]
+      announcer.highChainDialogue[
+        game.frames % announcer.highChainDialogue.length
+      ]
     );
-  } else if (chain >= 4) {
+  } else if (game.currentChain >= 4) {
     playAudio(audio.fanfare2);
     playAudio(
       announcer.mediumChainDialogue[
-        frames % announcer.mediumChainDialogue.length
+        game.frames % announcer.mediumChainDialogue.length
       ]
     );
-  } else if (chain >= 2) {
+  } else if (game.currentChain >= 2) {
     playAudio(audio.fanfare1);
     playAudio(
-      announcer.smallChainDialogue[frames % announcer.smallChainDialogue.length]
+      announcer.smallChainDialogue[
+        game.frames % announcer.smallChainDialogue.length
+      ]
     );
   }
-  if (chain > 1) console.log(`${chain} chain!`);
-  if (chain > highestChain) highestChain = chain;
-  chain = 0;
-  combo = 0;
+  if (game.currentChain > 1) console.log(`${game.currentChain} chain!`);
+  if (game.currentChain > game.highestChain)
+    game.highestChain = game.currentChain;
+  game.currentChain = 0;
+  game.combo = 0;
   if (potentialSecondarySuccessor) {
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
@@ -891,7 +906,7 @@ function legalMatch(clearLocations) {
       }
     }
   }
-  grounded = false;
+  game.grounded = false;
   return true;
 }
 
@@ -1000,15 +1015,15 @@ function checkMatch() {
         clearLocationsString += `[${clearLocations[i]}], `;
       }
       clearLocationsString += `[${clearLocations[clearLocationsLength - 1]}].`;
-      if (chain == 0) {
+      if (game.currentChain == 0) {
         chainLogic.addToPrimaryChain = true;
-        chain++;
+        game.currentChain++;
         if (clearLocationsLength > 3) {
           playAudio(
             announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
           );
         } else {
-          playChainSFX(chain);
+          playChainSFX(game.currentChain);
         }
       } else {
         add1ToChain = false;
@@ -1025,11 +1040,11 @@ function checkMatch() {
         }
       }
 
-      updateScore(clearLocationsLength, chain);
+      updateScore(clearLocationsLength, game.currentChain);
       if (add1ToChain) {
         chainLogic.addToPrimaryChain = true;
-        chain++;
-        playChainSFX(chain);
+        game.currentChain++;
+        playChainSFX(game.currentChain);
       }
 
       for (let i = 0; i < clearLocationsLength; i++) {
@@ -1048,8 +1063,8 @@ function checkMatch() {
       }
 
       if (clearLocationsLength != 0) {
-        combo = clearLocationsLength;
-        if (combo > 3 || chain > 1) {
+        game.combo = clearLocationsLength;
+        if (game.combo > 3 || game.currentChain > 1) {
           game.raiseDelay = 6 * game.boardRiseSpeed;
           if (game.rise == 0) {
             game.rise = 2; // Failsafe to prevent extra raise
@@ -1065,9 +1080,9 @@ function checkMatch() {
 function isGameOver(scoreOfThisGame) {
   for (let c = 0; c < grid.COLS; c++) {
     if (game.board[c][0].color != blockColor.VACANT) {
-      gameMusic.volume = 0;
+      game.Music.volume = 0;
       console.log("Game over!");
-      console.log(`Score: ${score}`);
+      console.log(`Score: ${game.score}`);
       console.log(`High Score: ${game.highScore}`);
       // enter new high scores
       let pastHighScore = localStorage.getItem("highScore");
@@ -1086,7 +1101,7 @@ function raiseStack() {
   if (game.disableRaise || game.pause == 1) {
     return false;
   } else if (game.raiseDelay > 0) {
-    game.raiseDelay -= 1 * gameSpeed;
+    game.raiseDelay -= 1 * performance.gameSpeed;
     if (game.raiseDelay < 0) {
       game.raiseDelay = 0;
     }
@@ -1141,15 +1156,15 @@ function gameOverBoard() {
   if (game.board[5][11].type == blockType.DEAD) {
     return;
   }
-  if (frames == 1) {
+  if (game.frames == 1) {
     playAudio(audio.announcerKO, 0.2);
-    gameMusic.src = audio.popcornMusic;
+    game.Music.src = audio.popcornMusic;
   }
-  if (frames == 4) {
+  if (game.frames == 4) {
     playAudio(audio.topout);
   }
   game.disableRaise = true;
-  let deathRow = Math.floor(frames / 2);
+  let deathRow = Math.floor(game.frames / 2);
   for (let i = 0; i < grid.COLS; i++) {
     if (game.board[i][deathRow].color != blockColor.VACANT) {
       game.board[i][deathRow].type = blockType.DEAD;
@@ -1192,20 +1207,22 @@ function updateScore(clearLocationsLength, currentChain) {
 
   let addToScore = blockBonus + comboBonus + chainBonus;
   if (game.level < 7) {
-    scoreMultiplier = 1 + (game.level - 1) / 10;
+    game.scoreMultiplier = 1 + (game.level - 1) / 10;
   } else {
-    scoreMultiplier = 2 + (game.level - 7) / 5;
+    game.scoreMultiplier = 2 + (game.level - 7) / 5;
   }
-  score += scoreMultiplier * addToScore;
-  console.log(`+${scoreMultiplier * addToScore} | Score: ${score}`);
-  console.log(`Current Time: ${minutes}:${seconds} | Current FPS: ${fps}`);
-  if (score > game.highScore) {
-    game.highScore = score;
+  game.score += game.scoreMultiplier * addToScore;
+  console.log(`+${game.scoreMultiplier * addToScore} | Score: ${game.score}`);
+  console.log(
+    `Current Time: ${game.minutes}:${game.seconds} | Current fps: ${performance.fps}`
+  );
+  if (game.score > game.highScore) {
+    game.highScore = game.score;
     highScoreDisplay.style.color = "gold";
   }
 }
 
-// Prevent browser scroll from arrow keys
+// prevent browser scroll from arrow keys
 window.addEventListener(
   "keydown",
   function(e) {
@@ -1278,7 +1295,7 @@ function KEYBOARD_CONTROL(event) {
     }
   }
 
-  if (app.running & !gameOver) {
+  if (app.running & !game.over) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
         cursor.x -= 1;
@@ -1310,9 +1327,9 @@ function KEYBOARD_CONTROL(event) {
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
         console.log("debug ON");
-        console.log(`FPS: ${fps}`);
-        console.log(`Draw Divisor: ${drawDivisor}`);
-        console.log(`Time: ${minutes}, ${seconds}`);
+        console.log(`fps: ${performance.fps}`);
+        console.log(`Draw Divisor: ${performance.drawDivisor}`);
+        console.log(`Time: ${game.minutes}, ${game.seconds}`);
       } else {
         console.log("debug OFF");
       }
@@ -1328,13 +1345,13 @@ function KEYBOARD_CONTROL(event) {
         game.pause = (game.pause + 1) % 2;
       } else if (event.keyCode == 77 && game.level < 10) {
         //+
-        game.level += 1 * gameSpeed;
+        game.level += 1 * performance.gameSpeed;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
       } else if (event.keyCode == 78 && game.level > 0) {
         //-
-        game.level -= 1 * gameSpeed;
+        game.level -= 1 * performance.gameSpeed;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
@@ -1369,10 +1386,10 @@ function KEYBOARD_CONTROL(event) {
         }
       }
     }
-  } else if (app.running && gameOver) {
-    if (event.keyCode >= 0 && frames >= 200) {
+  } else if (app.running && game.over) {
+    if (event.keyCode >= 0 && game.frames >= 200) {
       //any key
-      gameOver = false;
+      game.over = false;
       try {
         game.board = makeOpeningBoard();
       } catch (error) {
@@ -1385,85 +1402,59 @@ function KEYBOARD_CONTROL(event) {
   }
 }
 
-let frames = 0;
-let fps = 0;
-let prev = 0;
-let secondsPerLoop;
-let seconds = 0;
-let minutes = 0;
-let gameOver = false;
-let grounded = true;
-let score = 0;
-let scoreMultiplier = 1;
-let chain = 0;
-let combo = 0;
-let gameSpeed = 1;
-let lastChain = 0;
-let highestChain = 0;
-let computerSlowdownTracker = 0;
-let drawsPerSecond = 60;
-let drawDivisor = 1;
-let performanceConstant = 1;
-let statDisplay = document.getElementById("all-stats");
-let scoreDisplay = document.querySelector("#score");
-let chainDisplay = document.querySelector("#chain");
-let timeDisplay = document.querySelector("#time");
-let levelDisplay = document.querySelector("#game.level");
-let highScoreDisplay = document.querySelector("#high-score");
-// console.log(highScoreDisplay);
 function gameLoop(timestamp) {
-  frames++;
+  game.frames++;
   if (!app.running) {
     return;
   }
-  if (frames == 2) {
+  if (game.frames == 2) {
     window.scrollTo(0, document.body.scrollHeight);
   }
 
-  if (frames % 60 == 0 && !gameOver) {
-    seconds++;
+  if (game.frames % 60 == 0 && !game.over) {
+    game.seconds++;
   }
-  if (seconds % 60 == 0 && seconds != 0) {
-    minutes++;
-    seconds = 0;
+  if (game.seconds % 60 == 0 && game.seconds != 0) {
+    game.minutes++;
+    game.seconds = 0;
   }
 
-  if (frames % game.boardRiseSpeed == 0) {
-    if (!game.disableRaise && grounded && game.pause == 0) {
+  if (game.frames % game.boardRiseSpeed == 0) {
+    if (!game.disableRaise && game.grounded && game.pause == 0) {
       if (game.raiseDelay > 0) {
         if (!checkClearing().includes(true)) {
-          game.raiseDelay -= game.boardRiseSpeed * gameSpeed;
+          game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
         }
       } else {
         game.rise = (game.rise + 2) % 32;
       }
     }
-    if (game.rise == 0 && !gameOver) {
+    if (game.rise == 0 && !game.over) {
       raiseStack();
     }
   }
 
-  if (frames == 6600 && !gameOver) {
+  if (game.frames == 6600 && !game.over) {
     playAudio(
       announcer.hurryUpDialogue[randInt(announcer.hurryUpDialogue.length)]
     );
   }
   if (
-    frames % 1200 == 0 &&
+    game.frames % 1200 == 0 &&
     game.level < 10 &&
     game.level > 0 &&
     debug.enabled == 0 &&
-    !gameOver
+    !game.over
   ) {
     // Speed the stack up every 30 seconds
-    if (frames == 3600) {
-      console.log(`Current Score: ${score}`);
+    if (game.frames == 3600) {
+      console.log(`Current Score: ${game.score}`);
       playAudio(
         announcer.timeTransitionDialogue[
           randInt(announcer.timeTransitionDialogue.length)
         ]
       );
-    } else if (frames == 7200) {
+    } else if (game.frames == 7200) {
       playAudio(
         announcer.overtimeDialogue[randInt(announcer.overtimeDialogue.length)]
       );
@@ -1483,17 +1474,17 @@ function gameLoop(timestamp) {
       game.quickRaise = false;
       game.raiseDelay = 0;
       game.boardRiseSpeed = Math.floor(
-        preset.speedValues[game.level] / gameSpeed
+        preset.speedValues[game.level] / performance.gameSpeed
       );
     } else {
       game.boardRiseSpeed = 1;
     }
   }
-  grounded = doGravity();
+  game.grounded = doGravity();
   updateGrid();
   checkMatch();
   isChainActive();
-  if (frames % 12 == 0) {
+  if (game.frames % 12 == 0) {
     doPanic();
   }
 
@@ -1505,9 +1496,9 @@ function gameLoop(timestamp) {
     }
   }
 
-  if (!gameOver && isGameOver(score)) {
-    frames = 0;
-    gameOver = true;
+  if (!game.over && isGameOver(game.score)) {
+    game.frames = 0;
+    game.over = true;
     for (let c = 0; c < grid.COLS; c++) {
       for (let r = 0; r < grid.ROWS; r++) {
         game.board[c][r].type = blockType.LANDING;
@@ -1517,7 +1508,7 @@ function gameLoop(timestamp) {
     gameOverBoard();
     drawGrid();
   }
-  if (gameOver && frames < 25) {
+  if (game.over && game.frames < 25) {
     gameOverBoard();
     drawGrid();
   }
@@ -1525,58 +1516,64 @@ function gameLoop(timestamp) {
   // Try and control a frame rate based
   // on computer performance by decreasing or increasing
   // the amount of times the game.board is drawn per second
-  if (!gameOver) {
-    if (frames % drawDivisor == 0) {
+  if (!game.over) {
+    if (game.frames % performance.drawDivisor == 0) {
       drawGrid();
     }
-    if (fps >= 80) {
+    if (performance.fps >= 80) {
       drawGrid();
     }
   }
 
-  if (frames % 5 == 0) {
+  if (game.frames % 5 == 0) {
     // fps counter
-    secondsPerLoop = Math.floor(100 * (timestamp / 1000 - prev)) / 100;
-    fps = Math.floor(10 * 5 * (1 / secondsPerLoop)) / 10;
-    if (fps < 40 && gameSpeed == 1) {
+    performance.secondsPerLoop =
+      Math.floor(100 * (timestamp / 1000 - performance.prev)) / 100;
+    performance.fps =
+      Math.floor(10 * 5 * (1 / performance.secondsPerLoop)) / 10;
+    if (performance.fps < 40 && performance.gameSpeed == 1) {
       // If the game is running at below 0.9x speed, there's a problem.
-      computerSlowdownTracker += 1; // for each frame, if there is low frame rate 2
+      performance.slowdownTracker += 1; // for each frame, if there is low frame rate 2
       console.log(
-        `${computerSlowdownTracker} times under 40fps every 2 seconds (3 needed)`
+        `${performance.slowdownTracker} times under 40 fps every 2 seconds (3 needed)`
       );
     }
-    prev = timestamp / 1000;
+    performance.prev = timestamp / 1000;
   }
 
-  if (seconds % 2 == 0) {
-    computerSlowdownTracker -= 1;
-    if (computerSlowdownTracker < 0) computerSlowdownTracker = 0;
+  if (game.seconds % 2 == 0) {
+    performance.slowdownTracker -= 1;
+    if (performance.slowdownTracker < 0) performance.slowdownTracker = 0;
   } // Check # of frame rate drops every 600 frames
-  if (computerSlowdownTracker > 2) {
-    // If fps is below 50fps for 2 seconds in the next 10, lower settings
-    computerSlowdownTracker = 0;
-    if (fps <= 40 && drawDivisor >= 2 && gameSpeed < 2) {
-      gameSpeed = 2;
+  if (performance.slowdownTracker > 2) {
+    // If fps is below 50 fps for 2 seconds in the next 10, lower settings
+    performance.slowdownTracker = 0;
+    if (
+      performance.fps <= 40 &&
+      performance.drawDivisor >= 2 &&
+      performance.gameSpeed < 2
+    ) {
+      performance.gameSpeed = 2;
       console.log("game speed has now doubled");
     }
-    if (fps <= 55 && drawDivisor < 2) {
-      drawDivisor += 1;
+    if (performance.fps <= 55 && performance.drawDivisor < 2) {
+      performance.drawDivisor += 1;
       console.log(
-        `computer running slow, FPS ${fps}, draw divisor=${drawDivisor}`
+        `computer running slow, fps ${performance.fps}, draw divisor=${performance.drawDivisor}`
       );
     }
-    if (fps > 80) drawGrid();
-    if (fps > 120) {
-      console.log(`computer running fast, FPS ${fps}`);
+    if (performance.fps > 80) drawGrid();
+    if (performance.fps > 120) {
+      console.log(`computer running fast, fps ${performance.fps}`);
 
       drawGrid();
-      if (drawDivisor > 1) drawDivisor -= 1;
+      if (performance.drawDivisor > 1) performance.drawDivisor -= 1;
     }
-    if (fps > 150) drawGrid();
-    // } else if (drawsPerSecond == 30) {
-    //     drawsPerSecond = 20
-    // } else if (drawsPerSecond == 20) {
-    //     drawsPerSecond = -1
+    if (performance.fps > 150) drawGrid();
+    // } else if (performance.drawsPerSecond == 30) {
+    //     performance.drawsPerSecond = 20
+    // } else if (performance.drawsPerSecond == 20) {
+    //     performance.drawsPerSecond = -1
     //     console.log("Performance of device is too low for accurate play.")
     // }
   }
@@ -1584,52 +1581,52 @@ function gameLoop(timestamp) {
   let secondsString = "";
   let scoreString = "";
   let multiplierString = "";
-  if (minutes < 10) {
-    minutesString = `0${minutes}`;
+  if (game.minutes < 10) {
+    minutesString = `0${game.minutes}`;
   } else {
-    minutesString = `${minutes}`;
+    minutesString = `${game.minutes}`;
   }
-  if (seconds < 10) {
-    secondsString = `0${seconds}`;
+  if (game.seconds < 10) {
+    secondsString = `0${game.seconds}`;
   } else {
-    secondsString = `${seconds}`;
+    secondsString = `${game.seconds}`;
   }
   let timeString = `${minutesString}:${secondsString}`;
 
-  if (score < 10) {
-    scoreString = `00000${score}`;
-  } else if (score < 100) {
-    scoreString = `0000${score}`;
-  } else if (score < 1000) {
-    scoreString = `000${score}`;
-  } else if (score < 10000) {
-    scoreString = `00${score}`;
-  } else if (score < 100000) {
-    scoreString = `0${score}`;
+  if (game.score < 10) {
+    scoreString = `00000${game.score}`;
+  } else if (game.score < 100) {
+    scoreString = `0000${game.score}`;
+  } else if (game.score < 1000) {
+    scoreString = `000${game.score}`;
+  } else if (game.score < 10000) {
+    scoreString = `00${game.score}`;
+  } else if (game.score < 100000) {
+    scoreString = `0${game.score}`;
   } else {
-    scoreString = `${score}`;
+    scoreString = `${game.score}`;
   }
 
-  if (scoreMultiplier == 1) {
+  if (game.scoreMultiplier == 1) {
     multiplierString = "1.0x";
-  } else if (scoreMultiplier == 2) {
+  } else if (game.scoreMultiplier == 2) {
     multiplierString = "2.0x";
   } else {
-    multiplierString = `${scoreMultiplier}x`;
+    multiplierString = `${game.scoreMultiplier}x`;
   }
   if (debug.enabled) {
-    statDisplay.innerHTML = `FPS: ${fps} | Level: ${game.level} | Time: ${timeString} |
+    statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
   } else {
     statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
     scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
   }
 
-  if (chain > 0) {
-    chainDisplay.innerHTML = `${chain}x chain!`;
+  if (game.currentChain > 0) {
+    chainDisplay.innerHTML = `${game.currentChain}x chain!`;
     chainDisplay.style.color = "red";
   } else {
-    chainDisplay.innerHTML = `Highest Chain: ${highestChain}`;
+    chainDisplay.innerHTML = `Highest Chain: ${game.highestChain}`;
     chainDisplay.style.color = "blue";
   }
 

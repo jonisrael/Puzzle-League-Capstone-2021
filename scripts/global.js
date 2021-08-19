@@ -104,6 +104,7 @@ if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
 }
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
+let gameMusic = new Audio();
 
 const game = {
   rise: 0,
@@ -116,12 +117,24 @@ const game = {
   blockStallTime: preset.stallValues,
   pause: 0,
   raiseDelay: 0,
+  frames: 0,
+  seconds: 0,
+  minutes: 0,
+  score: 0,
+  scoreMultiplier: 1,
+  chain: 0,
+  combo: 0,
+  lastChain: 0,
+  highestChain: 0,
+  over: false, //gameOver
+  grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain
   highScore: HIGH_SCORE,
   disableRaise: false,
   disableSwap: false,
   quickRaise: false,
-  raisePressed: false
+  raisePressed: false,
+  Music: gameMusic
 };
 
 const api = {
@@ -135,7 +148,14 @@ const chainLogic = {
 };
 
 const performance = {
-  gameSpeedDoubled: false
+  gameSpeedDoubled: false,
+  gameSpeed: 1,
+  fps: 0,
+  prev: 0,
+  secondsPerLoop: 1,
+  slowdownTracker: 0,
+  drawsPerSecond: 60, // not used yet
+  drawDivisor: 1
 };
 
 const debug = {

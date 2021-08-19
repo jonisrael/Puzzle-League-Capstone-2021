@@ -1,44 +1,44 @@
 const { Router } = require("express");
-const block = require("../models/pizza");
+const game = require("../models/game");
 
 const router = Router();
 
 // Create record in MongoDB
-router.post("/pizzas", (request, response) => {
-  const newPizza = new pizza.model(request.body);
-  newPizza.save((err, pizza) => {
-    return err ? response.sendStatus(500).json(err) : response.json(pizza);
+router.post("/games", (request, response) => {
+  const newPizza = new game.model(request.body);
+  newPizza.save((err, game) => {
+    return err ? response.sendStatus(500).json(err) : response.json(game);
   });
 });
 
-// Get all pizza records
-router.get("/pizzas", (request, response) => {
-  pizza.model.find({}, (error, data) => {
+// Get all game records
+router.get("/games", (request, response) => {
+  game.model.find({}, (error, data) => {
     if (error) return res.sendStatus(500).json(error);
     return response.json(data);
   });
 });
 
-// Get a pizza by ID
-router.get("/pizzas/:id", (request, response) => {
-  pizza.model.findById(request.params.id, (error, data) => {
+// Get a game by ID
+router.get("/games/:id", (request, response) => {
+  game.model.findById(request.params.id, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
   });
 });
 
-// Delete a pizza by ID
-router.delete("/pizzas/:id", (request, response) => {
-  pizza.model.findByIdAndRemove(request.params.id, {}, (error, data) => {
+// Delete a game by ID
+router.delete("/games/:id", (request, response) => {
+  game.model.findByIdAndRemove(request.params.id, {}, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
   });
 });
 
-// Update a pizza by ID
-router.put("/pizzas/:id", (request, response) => {
+// Update a game by ID
+router.put("/games/:id", (request, response) => {
   const body = request.body;
-  pizza.model.findByIdAndUpdate(
+  game.model.findByIdAndUpdate(
     request.params.id,
     {
       $set: {

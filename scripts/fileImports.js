@@ -102,6 +102,10 @@ import PANICKING_0_V from ".././assets/Sprites/vacantSquare/panicking/0.png";
 import PANICKING_1_V from ".././assets/Sprites/vacantSquare/panicking/1.png";
 import PANICKING_2_V from ".././assets/Sprites/vacantSquare/panicking/2.png";
 import PANICKING_3_V from ".././assets/Sprites/vacantSquare/panicking/3.png";
+import DEBUGW from ".././assets/Extras/DebugSprites/debugW.png";
+import DEBUGP from ".././assets/Extras/DebugSprites/debugP.png";
+import DEBUGO from ".././assets/Extras/DebugSprites/debugO.png";
+import DEBUGB from ".././assets/Extras/DebugSprites/debugB.png";
 
 // Audio
 import ANN_TRAINING from ".././assets/Audio/Announcer/all the training and practice led up to this very moment.wav";
@@ -256,7 +260,13 @@ const sprite = {
   vacant_panicking_0: PANICKING_0_V,
   vacant_panicking_1: PANICKING_1_V,
   vacant_panicking_2: PANICKING_2_V,
-  vacant_panicking_3: PANICKING_3_V
+  vacant_panicking_3: PANICKING_3_V,
+
+  // debug items
+  debugWhite: DEBUGW,
+  debugOrange: DEBUGO,
+  debugBrown: DEBUGB,
+  debugPink: DEBUGP
 };
 
 const audio = {
