@@ -5,7 +5,18 @@
     game released in Japan in 1995.  There is another clone globally released in 1995 called Tetris
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
+
 import { sprite, audio } from "./scripts/fileImports";
+import { legalMatch, checkMatch } from "./scripts/functions/matchFunctions";
+import {
+  playAudio,
+  playChainSFX,
+  playMusicS
+} from "./scripts/functions/audioFunctions.js";
+import {
+  isGameOver,
+  gameOverBoard
+} from "./scripts/functions/gameOverFunctions";
 
 import {
   announcer,
@@ -13,14 +24,15 @@ import {
   blockType,
   PIECES,
   INTERACTIVE_PIECES,
-  app,
+  win,
   grid,
   game,
   preset,
   api,
   chainLogic,
   performance,
-  debug
+  debug,
+  randInt
 } from "./scripts/global.js";
 
 let statDisplay = document.getElementById("all-stats");
@@ -64,7 +76,7 @@ class Cursor {
     const CURSOR_IMAGE = new Image();
     CURSOR_IMAGE.src = sprite.cursor;
     CURSOR_IMAGE.onload = () => {
-      app.ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY);
+      win.ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY);
     };
   }
 }
@@ -132,7 +144,7 @@ class Block {
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
     BLOCK_IMAGE.src = sprite[urlKey];
     BLOCK_IMAGE.onload = () => {
-      app.ctx.drawImage(
+      win.ctx.drawImage(
         BLOCK_IMAGE,
         grid.SQ * this.x,
         grid.SQ * this.y - game.rise
@@ -144,7 +156,7 @@ class Block {
       if (this.availableForPrimaryChain && this.availableForSecondaryChain) {
         DEBUGB_IMAGE.src = sprite.debugBrown;
         DEBUGB_IMAGE.onload = () => {
-          app.ctx.drawImage(
+          win.ctx.drawImage(
             DEBUGB_IMAGE,
             grid.SQ * this.x,
             grid.SQ * this.y - game.rise
@@ -153,7 +165,7 @@ class Block {
       } else if (this.availableForPrimaryChain) {
         DEBUGO_IMAGE.src = sprite.debugOrange;
         DEBUGO_IMAGE.onload = () => {
-          app.ctx.drawImage(
+          win.ctx.drawImage(
             DEBUGO_IMAGE,
             grid.SQ * this.x,
             grid.SQ * this.y - game.rise
@@ -162,7 +174,7 @@ class Block {
       } else if (this.availableForSecondaryChain) {
         DEBUGP_IMAGE.src = sprite.debugPink;
         DEBUGP_IMAGE.onload = () => {
-          app.ctx.drawImage(
+          win.ctx.drawImage(
             DEBUGP_IMAGE,
             grid.SQ * this.x,
             grid.SQ * this.y - game.rise
@@ -171,7 +183,7 @@ class Block {
       } else if (this.timer > 0 && this.type == blockType.NORMAL) {
         DEBUGW_IMAGE.src = sprite.debugWhite;
         DEBUGW_IMAGE.onload = () => {
-          app.ctx.drawImage(
+          win.ctx.drawImage(
             DEBUGW_IMAGE,
             grid.SQ * this.x,
             grid.SQ * this.y - game.rise
@@ -180,24 +192,6 @@ class Block {
       }
     }
   }
-}
-
-function randInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-function playChainSFX(currentChain) {
-  let Sound = new Audio();
-  if (currentChain == 1) {
-    return;
-  }
-  if (currentChain < 9) {
-    Sound.src = audio[`chain${currentChain}`];
-  } else {
-    Sound.src = audio.chain9;
-  }
-  Sound.volume = 0.05;
-  Sound.play();
 }
 
 function timeSinceGameStarted(gameStart) {
@@ -229,34 +223,6 @@ function extractTimeToIndex() {
   index = hour * 60 + minute;
   console.log(hour, minute, index);
   return index;
-}
-
-function playAudio(file, volume = 0.1) {
-  let Sound = new Audio();
-  try {
-    Sound.volume = volume;
-    Sound.pause = true;
-    Sound.currentTime = 0;
-    Sound.src = file;
-    Sound.play();
-  } catch (error) {
-    console.log(`Audio play failed. File: ${file}`);
-  }
-}
-
-function playMusic(file, volume = 0.1, mute = 0) {
-  game.Music.pause = true;
-  game.Music.src = file;
-  game.Music.play();
-  game.Music.loop = true;
-  game.Music.playbackRate = 1.0;
-  game.Music.volume = volume;
-  if (mute == 1) {
-    game.Music.volume = 0;
-  } else {
-    game.Music.volume = 0.1;
-  }
-  mute = (mute + 1) % 2;
 }
 
 function fixNextDarkStack() {
@@ -890,213 +856,6 @@ function doPanic() {
   return panic;
 }
 
-function legalMatch(clearLocations) {
-  if (clearLocations.length == 0) {
-    return false;
-  }
-
-  let clearLocationsLength = clearLocations.length;
-
-  for (let i = 0; i < clearLocationsLength; i++) {
-    let c = clearLocations[i][0];
-    let r = clearLocations[i][1];
-    for (let j = 11; j > r; j--) {
-      if (game.board[c][j].color == blockColor.VACANT) {
-        return false; // If the block is falling, no match occurs.
-      }
-    }
-  }
-  game.grounded = false;
-  return true;
-}
-
-function checkMatch() {
-  // Vertical Case, starting from top block
-  let done = false;
-  let checkAgain = false;
-  let clearLocations = [];
-  let clearLocationsString = "";
-  let add1ToChain = false;
-  while (!done && !checkAgain) {
-    done = true;
-    checkAgain = false;
-    for (let c = 0; c < grid.COLS; c++) {
-      // Check Vertical and afterwards, horizontal
-      for (let r = 1; r < grid.ROWS - 1; r++) {
-        if (
-          game.board[c][r].color != blockColor.VACANT &&
-          game.board[c][r].color == game.board[c][r - 1].color &&
-          game.board[c][r].color == game.board[c][r + 1].color &&
-          INTERACTIVE_PIECES.includes(game.board[c][r].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c][r - 1].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c][r + 1].type)
-        ) {
-          checkAgain = true;
-          clearLocations.push([c, r - 1]);
-          clearLocations.push([c, r]);
-          clearLocations.push([c, r + 1]);
-          // Check for four, five, and six clear
-          if (
-            r < 10 &&
-            game.board[c][r].color == game.board[c][r + 2].color &&
-            INTERACTIVE_PIECES.includes(game.board[c][r + 2].type)
-          ) {
-            clearLocations.push([c, r + 2]);
-            if (
-              r < 9 &&
-              game.board[c][r].color == game.board[c][r + 3].color &&
-              INTERACTIVE_PIECES.includes(game.board[c][r + 3].type)
-            ) {
-              clearLocations.push([c, r + 3]);
-              if (
-                r < 8 &&
-                game.board[c][r].color == game.board[c][r + 4].color &&
-                INTERACTIVE_PIECES.includes(game.board[c][r + 4].type)
-              ) {
-                clearLocations.push([c, r + 4]);
-              }
-            }
-          }
-          done = false;
-        }
-      }
-    }
-
-    for (let c = 1; c < grid.COLS - 1; c++) {
-      // Check Horizontal
-      for (let r = 0; r < grid.ROWS; r++) {
-        if (
-          game.board[c][r].color != blockColor.VACANT &&
-          game.board[c][r].color == game.board[c - 1][r].color &&
-          game.board[c][r].color == game.board[c + 1][r].color &&
-          INTERACTIVE_PIECES.includes(game.board[c][r].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c - 1][r].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c + 1][r].type)
-        ) {
-          checkAgain = true;
-          clearLocations.push([c - 1, r]);
-          clearLocations.push([c, r]);
-          clearLocations.push([c + 1, r]);
-          if (
-            c < 4 &&
-            game.board[c][r].color == game.board[c + 2][r].color &&
-            INTERACTIVE_PIECES.includes(game.board[c + 2][r].type)
-          ) {
-            clearLocations.push([c + 2, r]);
-            if (
-              c < 3 &&
-              game.board[c][r].color == game.board[c + 3][r].color &&
-              INTERACTIVE_PIECES.includes(game.board[c + 3][r].type)
-            ) {
-              clearLocations.push([c + 3, r]);
-              if (
-                c < 2 &&
-                game.board[c][r].color == game.board[c + 4][r].color &&
-                INTERACTIVE_PIECES.includes(game.board[c + 4][r].type)
-              ) {
-                clearLocations.push([c + 4, r]);
-              }
-            }
-          }
-          done = false;
-        }
-      }
-    }
-
-    //Remove Duplicates:
-    clearLocations = Array.from(
-      new Set(clearLocations.map(JSON.stringify)),
-      JSON.parse
-    );
-    let clearLocationsLength = clearLocations.length;
-    if (legalMatch(clearLocations)) {
-      chainLogic.addToPrimaryChain = false;
-      for (let i = 0; i < clearLocationsLength - 1; i++) {
-        clearLocationsString += `[${clearLocations[i]}], `;
-      }
-      clearLocationsString += `[${clearLocations[clearLocationsLength - 1]}].`;
-      if (game.currentChain == 0) {
-        chainLogic.addToPrimaryChain = true;
-        game.currentChain++;
-        if (clearLocationsLength > 3) {
-          playAudio(
-            announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
-          );
-        } else {
-          playChainSFX(game.currentChain);
-        }
-      } else {
-        add1ToChain = false;
-        for (let i = 0; i < clearLocationsLength; i++) {
-          let x = clearLocations[i][0];
-          let y = clearLocations[i][1];
-          if (
-            game.board[x][y].type == blockType.LANDING &&
-            !game.board[x][y].touched
-          ) {
-            // need to add .touched?
-            add1ToChain = true;
-          }
-        }
-      }
-
-      updateScore(clearLocationsLength, game.currentChain);
-      if (add1ToChain) {
-        chainLogic.addToPrimaryChain = true;
-        game.currentChain++;
-        playChainSFX(game.currentChain);
-      }
-
-      for (let i = 0; i < clearLocationsLength; i++) {
-        let c = clearLocations[i][0];
-        let r = clearLocations[i][1];
-        game.board[c][r].type = blockType.CLEARING;
-        game.board[c][r].timer = preset.clearValues[game.level];
-        if (chainLogic.addToPrimaryChain) {
-          game.board[c][r].availableForPrimaryChain = true;
-          game.board[c][r].availableForSecondaryChain = false;
-        } else {
-          game.board[c][r].availableForSecondaryChain = true;
-          game.board[c][r].availableForPrimaryChain = false;
-        }
-        // else (game.board[c][r].availableForSecondaryChain = true) // if new chain doesn't start
-      }
-
-      if (clearLocationsLength != 0) {
-        game.combo = clearLocationsLength;
-        if (game.combo > 3 || game.currentChain > 1) {
-          game.raiseDelay = 6 * game.boardRiseSpeed;
-          if (game.rise == 0) {
-            game.rise = 2; // Failsafe to prevent extra raise
-          }
-        }
-      }
-    } else {
-      done = true; // Needs to end if confirm clear fails
-    }
-  }
-}
-
-function isGameOver(scoreOfThisGame) {
-  for (let c = 0; c < grid.COLS; c++) {
-    if (game.board[c][0].color != blockColor.VACANT) {
-      game.Music.volume = 0;
-      console.log("Game over!");
-      console.log(`Score: ${game.score}`);
-      console.log(`High Score: ${game.highScore}`);
-      // enter new high scores
-      let pastHighScore = localStorage.getItem("highScore");
-      if (scoreOfThisGame > parseInt(pastHighScore)) {
-        console.log("new high score!");
-        localStorage.setItem("highScore", `${scoreOfThisGame}`);
-      }
-      game.highScore = parseInt(localStorage.getItem("highScore"));
-      return true;
-    }
-  }
-  return false;
-}
-
 function raiseStack() {
   if (game.disableRaise || game.pause == 1) {
     return false;
@@ -1151,77 +910,6 @@ function raiseStack() {
   return true;
 }
 
-function gameOverBoard() {
-  // don't continue function if all pieces are already switched to blockType.DEAD type
-  if (game.board[5][11].type == blockType.DEAD) {
-    return;
-  }
-  if (game.frames == 1) {
-    playAudio(audio.announcerKO, 0.2);
-    game.Music.src = audio.popcornMusic;
-  }
-  if (game.frames == 4) {
-    playAudio(audio.topout);
-  }
-  game.disableRaise = true;
-  let deathRow = Math.floor(game.frames / 2);
-  for (let i = 0; i < grid.COLS; i++) {
-    if (game.board[i][deathRow].color != blockColor.VACANT) {
-      game.board[i][deathRow].type = blockType.DEAD;
-    }
-  }
-}
-
-function updateScore(clearLocationsLength, currentChain) {
-  let blockBonus = clearLocationsLength * 10;
-  let comboBonus = 0;
-  let chainBonus = 0;
-
-  if (clearLocationsLength == 3) {
-    comboBonus = 0;
-  } else if (clearLocationsLength < 6) {
-    comboBonus = blockBonus - 20;
-  } else if (clearLocationsLength < 10) {
-    comboBonus = blockBonus - 10;
-  } else if (clearLocationsLength == 10) {
-    comboBonus = blockBonus;
-  } else {
-    comboBonus = 200 + 5 * (blockBonus - 100);
-  }
-
-  if (currentChain == 1) {
-    chainBonus = 0;
-  } else if (currentChain == 2) {
-    chainBonus = 50;
-  } else if (currentChain == 3) {
-    chainBonus = 80;
-  } else if (currentChain == 4) {
-    chainBonus = 150;
-  } else if (currentChain <= 6) {
-    chainBonus = 300 + 100 * (currentChain - 5);
-  } else if (currentChain <= 11) {
-    chainBonus = 500 + 200 * (currentChain - 7);
-  } else {
-    chainBonus = 1500 + 300 * (currentChain - 12);
-  }
-
-  let addToScore = blockBonus + comboBonus + chainBonus;
-  if (game.level < 7) {
-    game.scoreMultiplier = 1 + (game.level - 1) / 10;
-  } else {
-    game.scoreMultiplier = 2 + (game.level - 7) / 5;
-  }
-  game.score += game.scoreMultiplier * addToScore;
-  console.log(`+${game.scoreMultiplier * addToScore} | Score: ${game.score}`);
-  console.log(
-    `Current Time: ${game.minutes}:${game.seconds} | Current fps: ${performance.fps}`
-  );
-  if (game.score > game.highScore) {
-    game.highScore = game.score;
-    highScoreDisplay.style.color = "gold";
-  }
-}
-
 // prevent browser scroll from arrow keys
 window.addEventListener(
   "keydown",
@@ -1238,14 +926,14 @@ window.addEventListener(
 );
 
 function createCanvas() {
-  app.makeCanvas = document.createElement(`canvas`);
-  app.makeCanvas.setAttribute("id", "canvas");
-  app.makeCanvas.setAttribute("width", "192");
-  app.makeCanvas.setAttribute("height", "384");
-  document.body.appendChild(app.makeCanvas);
-  app.cvs = document.getElementById("canvas");
-  app.ctx = app.cvs.getContext("2d");
-  app.running = true;
+  win.makeCanvas = document.createElement(`canvas`);
+  win.makeCanvas.setAttribute("id", "canvas");
+  win.makeCanvas.setAttribute("width", "192");
+  win.makeCanvas.setAttribute("height", "384");
+  document.body.appendChild(win.makeCanvas);
+  win.cvs = document.getElementById("canvas");
+  win.ctx = win.cvs.getContext("2d");
+  win.running = true;
   try {
     game.board = makeOpeningBoard(extractTimeToIndex());
     console.log("Fetch successful!");
@@ -1261,7 +949,7 @@ let count = 0;
 
 let startButton = document.getElementById("click-to-play");
 startButton.onclick = function() {
-  if (!app.running) {
+  if (!win.running) {
     startButton.remove();
     createCanvas();
     setTimeout(gameLoop(), 1000 / 60);
@@ -1269,19 +957,19 @@ startButton.onclick = function() {
 };
 // // document.addEventListener("mouseup", MOUSE_CONTROL);
 // // function(MOUSE_CONTROL(event)) {
-// //   if (!app.running)
+// //   if (!win.running)
 // // }
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
-  if (app.running) {
+  if (win.running) {
     if (event.keyCode == 27) {
       // escape
-      app.makeCanvas = document.getElementById("canvas").remove();
+      win.makeCanvas = document.getElementById("canvas").remove();
       // document.getElementById("canvas-container").remove()
-      app.running = false;
-      app.cvs = null;
-      app.ctx = null;
+      win.running = false;
+      win.cvs = null;
+      win.ctx = null;
       // audioElements.Music.pause();
       // audioElements.Music.currentTime = 0;
     }
@@ -1295,7 +983,7 @@ function KEYBOARD_CONTROL(event) {
     }
   }
 
-  if (app.running & !game.over) {
+  if (win.running & !game.over) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
         cursor.x -= 1;
@@ -1386,7 +1074,7 @@ function KEYBOARD_CONTROL(event) {
         }
       }
     }
-  } else if (app.running && game.over) {
+  } else if (win.running && game.over) {
     if (event.keyCode >= 0 && game.frames >= 200) {
       //any key
       game.over = false;
@@ -1404,7 +1092,7 @@ function KEYBOARD_CONTROL(event) {
 
 function gameLoop(timestamp) {
   game.frames++;
-  if (!app.running) {
+  if (!win.running) {
     return;
   }
   if (game.frames == 2) {

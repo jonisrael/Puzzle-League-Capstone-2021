@@ -81,7 +81,7 @@ const INTERACTIVE_PIECES = [
   blockType.PANICKING
 ];
 
-const app = {
+const win = {
   running: false,
   makeCanvas: null,
   cvs: null,
@@ -122,7 +122,7 @@ const game = {
   minutes: 0,
   score: 0,
   scoreMultiplier: 1,
-  chain: 0,
+  currentChain: 0,
   combo: 0,
   lastChain: 0,
   highestChain: 0,
@@ -162,6 +162,10 @@ const debug = {
   enabled: 0
 };
 
+function randInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 // a
 // a
 // a
@@ -172,12 +176,13 @@ export {
   blockType,
   PIECES,
   INTERACTIVE_PIECES,
-  app,
+  win,
   grid,
   game,
   preset,
   api,
   chainLogic,
   performance,
+  randInt,
   debug
 };
