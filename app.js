@@ -11,7 +11,7 @@ import { legalMatch, checkMatch } from "./scripts/functions/matchFunctions";
 import {
   playAudio,
   playChainSFX,
-  playMusicS
+  playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
   isGameOver,

@@ -46,7 +46,7 @@ export function checkMatch() {
   let clearLocations = [];
   let clearLocationsString = "";
   let add1ToChain = false;
-  while (!done && !checkAgain) {S
+  while (!done && !checkAgain) {
     done = true;
     checkAgain = false;
     for (let c = 0; c < grid.COLS; c++) {
