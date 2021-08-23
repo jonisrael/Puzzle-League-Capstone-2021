@@ -107,6 +107,10 @@ import DEBUGP from ".././assets/Extras/DebugSprites/debugP.png";
 import DEBUGO from ".././assets/Extras/DebugSprites/debugO.png";
 import DEBUGB from ".././assets/Extras/DebugSprites/debugB.png";
 
+// Music
+import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
+import POPCORN_SONG from ".././assets/Audio/Music/popcorn.mp3";
+import RESULTS_SONG from ".././assets/Audio/Music/results.wav";
 // Audio
 import ANN_TRAINING from ".././assets/Audio/Announcer/all the training and practice led up to this very moment.wav";
 import ANN_PAYOFF from ".././assets/Audio/Announcer/and there's the payoff.wav";
@@ -143,8 +147,6 @@ import ANN_WHERE_COME_FROM from ".././assets/Audio/Announcer/where did that come
 import ANN_DESERVE_PRAISE from ".././assets/Audio/Announcer/you deserve praise my friend.wav";
 import ANN_YOU_DONT_SEE_MOVES from ".././assets/Audio/Announcer/you don't see moves like that everyday folks.wav";
 import MOVE_CURSOR from ".././assets/Audio/MoveCursor.wav";
-import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
-import POPCORN_SONG from ".././assets/Audio/Music/popcorn.mp3";
 import CHAIN2 from ".././assets/Audio/Super Mario 64 Red Coin 1.wav";
 import CHAIN3 from ".././assets/Audio/Super Mario 64 Red Coin 2.wav";
 import CHAIN4 from ".././assets/Audio/Super Mario 64 Red Coin 3.wav";
@@ -272,6 +274,7 @@ const sprite = {
 const audio = {
   popcornMusic: POPCORN_SONG,
   overtimeMusic: OVERTIME_SONG,
+  resultsMusic: RESULTS_SONG,
   moveCursor: MOVE_CURSOR,
   swapSuccess: SWAP_SUCCESS,
   swapFailed: SWAP_FAILED,

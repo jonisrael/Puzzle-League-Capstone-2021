@@ -35,12 +35,12 @@ import {
   randInt
 } from "./scripts/global.js";
 
-let statDisplay = document.getElementById("all-stats");
-let scoreDisplay = document.querySelector("#score");
-let chainDisplay = document.querySelector("#chain");
-let timeDisplay = document.querySelector("#time");
-let levelDisplay = document.querySelector("#game.level");
-let highScoreDisplay = document.querySelector("#high-score");
+win.statDisplay = document.getElementById("all-stats");
+win.scoreDisplay = document.querySelector("#score");
+win.chainDisplay = document.querySelector("#chain");
+win.timeDisplay = document.querySelector("#time");
+win.levelDisplay = document.querySelector("#game.level");
+win.highScoreDisplay = document.querySelector("#high-score");
 // console.log(highScoreDisplay);
 
 // fetching our api.data from an API
@@ -406,7 +406,7 @@ function generateOpeningBoard() {
   return game.board;
 }
 
-function updateGrid(debugFrameAdvance = false) {
+function updateGrid(frameAdvance = false) {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       // Check to see if a block is still legally in a landing animation
@@ -437,7 +437,7 @@ function updateGrid(debugFrameAdvance = false) {
         }
       }
 
-      if (!debugFrameAdvance) {
+      if (!frameAdvance) {
         if (game.board[x][y].timer > 0 && game.pause == 0) {
           game.board[x][y].timer -= 1 * performance.gameSpeed;
           game.disableRaise = true;
@@ -537,8 +537,8 @@ function isChainActive() {
   } else if (game.currentChain >= 6) {
     playAudio(audio.fanfare3);
     playAudio(
-      announcer.highChainDialogue[
-        game.frames % announcer.highChainDialogue.length
+      announcer.largeChainDialogue[
+        game.frames % announcer.largeChainDialogue.length
       ]
     );
   } else if (game.currentChain >= 4) {
@@ -945,7 +945,8 @@ function createCanvas() {
   }
   playMusic(audio.popcornMusic);
 }
-let count = 0;
+
+function destroyCanvas() {}
 
 let startButton = document.getElementById("click-to-play");
 startButton.onclick = function() {
@@ -965,24 +966,13 @@ function KEYBOARD_CONTROL(event) {
   if (win.running) {
     if (event.keyCode == 27) {
       // escape
+
       win.makeCanvas = document.getElementById("canvas").remove();
-      // document.getElementById("canvas-container").remove()
       win.running = false;
       win.cvs = null;
       win.ctx = null;
-      // audioElements.Music.pause();
-      // audioElements.Music.currentTime = 0;
-    }
-  } else {
-    if (event.keyCode == 13) {
-      // enter key
-      console.log(api.dateTimeAPI);
-      // createCanvas();
-    } else if (event.keyCode == 191) {
-      extractTimeToIndex();
     }
   }
-
   if (win.running & !game.over) {
     if (event.keyCode == 37) {
       if (cursor.x - 1 >= 0) {
@@ -1048,7 +1038,7 @@ function KEYBOARD_CONTROL(event) {
       } else if (event.keyCode == 70) {
         // f
         if (game.pause == 1) {
-          updateGrid((debugFrameAdvance = true));
+          updateGrid((debug.frameAdvance = true));
         }
       } else if (event.keyCode == 84) {
         // t
@@ -1077,15 +1067,14 @@ function KEYBOARD_CONTROL(event) {
   } else if (win.running && game.over) {
     if (event.keyCode >= 0 && game.frames >= 200) {
       //any key
-      game.over = false;
-      try {
-        game.board = makeOpeningBoard();
-      } catch (error) {
-        console.log(
-          `fetching api.database.json failed. Will randomly generate game.board instead`
-        );
-        game.board = generateOpeningBoard();
-      }
+      playAudio(announcer.endgame[randInt(announcer.endgame.length)]);
+      playMusic(audio.resultsMusic, 0.2);
+      game.Music.loop = false;
+      win.makeCanvas = document.getElementById("canvas").remove();
+      win.running = false;
+      win.cvs = null;
+      win.ctx = null;
+      document.body.appendChild();
     }
   }
 }
@@ -1303,22 +1292,22 @@ function gameLoop(timestamp) {
     multiplierString = `${game.scoreMultiplier}x`;
   }
   if (debug.enabled) {
-    statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
+    win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
   } else {
-    statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
-    scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
+    win.statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
+    win.scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
   }
 
   if (game.currentChain > 0) {
-    chainDisplay.innerHTML = `${game.currentChain}x chain!`;
-    chainDisplay.style.color = "red";
+    win.chainDisplay.innerHTML = `${game.currentChain}x chain!`;
+    win.chainDisplay.style.color = "red";
   } else {
-    chainDisplay.innerHTML = `Highest Chain: ${game.highestChain}`;
-    chainDisplay.style.color = "blue";
+    win.chainDisplay.innerHTML = `Highest Chain: ${game.highestChain}`;
+    win.chainDisplay.style.color = "blue";
   }
 
-  highScoreDisplay.innerHTML = `High Score: ${game.highScore}`;
+  win.highScoreDisplay.innerHTML = `High Score: ${game.highScore}`;
   requestAnimationFrame(gameLoop);
 }
 

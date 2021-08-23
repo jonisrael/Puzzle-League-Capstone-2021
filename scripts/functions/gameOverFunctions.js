@@ -45,7 +45,7 @@ export function gameOverBoard() {
   }
   if (game.frames == 1) {
     playAudio(audio.announcerKO, 0.2);
-    game.Music.src = audio.popcornMusic;
+    game.Music.src = audio.resultsMusic;
   }
   if (game.frames == 4) {
     playAudio(audio.topout);
