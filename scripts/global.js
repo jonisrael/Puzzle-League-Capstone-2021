@@ -1,19 +1,18 @@
 import { audio } from "./fileImports";
 
 const announcer = {
-  opening: [
-    // audio.announcerAreYouReady,
-    // audio.announcerLetsGetStarted,
-    // audio.announcerReady
+  openingDialogue: [
+    audio.announcerAreYouReady,
+    audio.announcerLetsGetStarted,
+    audio.announcerReady
   ],
   comboDialogue: [
     audio.announcerBeautiful,
     audio.announcerFantasticCombo,
     audio.announcerThereItIs,
     audio.announcerPayoff,
-    audio.announcerClear
-    // audio.announcerPerfect,
-    // audio.announcerNowsYourChance
+    audio.announcerClear,
+    audio.announcerNowsYourChance
   ],
   smallChainDialogue: [
     audio.announcerBeautiful,
@@ -27,39 +26,39 @@ const announcer = {
   largeChainDialogue: [
     audio.announcerAnythingLike,
     audio.announcerComboIntense,
-    audio.announcerNeverForgetEvent
+    audio.announcerPerfect
   ],
   timeTransitionDialogue: [
-    audio.announcerTimeMarchesOn
-    // audio.announcerLetsKeepItUp,
-    // audio.announcerPickUpPace,
-    // audio.announcerAllBetsOff
-    //
+    audio.announcerTimeMarchesOn,
+    audio.announcerLetsKeepItUp,
+    audio.announcerPickUpPace,
+    audio.announcerBattleContinues
   ],
   hurryUpDialogue: [
     audio.announcerTenSeconds,
-    audio.announcerAllBoilsDown
-    // audio.announcerNotMuchTimeLeft
+    audio.announcerAllBoilsDown,
+    audio.announcerBattleOfEndurance,
+    audio.announcerNotMuchTimeLeft
   ],
   panicDialogue: [
     audio.announcerHowMuchLonger,
     audio.announcerIsItTheEnd,
     audio.announcerCallThisOne,
-    //audio.announcerFatLady
+    audio.announcerFatLadySing,
     audio.announcerItAintOver
   ],
   overtimeDialogue: [
     audio.announcerBringUsHome,
-    audio.announcerIHopeReady
-    // audio.announcerBattleOfEndurance,
-    // audio.announcerWorldHoldingBreath,
+    audio.announcerIHopeReady,
+    audio.announcerWorldAnticipation
   ],
-  endgame: [
+  endgameDialogue: [
     audio.announcerDeservePraise,
-    audio.announcerTraining
-    // audio.announcerAllTheGlory,
-    // audio.announcerOnlyWordWorthy,
-    // audio.announcerWatchChampBask
+    audio.announcerTraining,
+    audio.announcerNeverForgetEvent,
+    audio.announcerAllTheGlory,
+    audio.announcerOnlyWordWorthy,
+    audio.announcerWatchChampBask
   ],
   openingIndexLastPicked: -1, // These are used to minimize repeat dialogues
   smallChainIndexLastPicked: -1,
@@ -155,7 +154,38 @@ const game = {
   blockStallTime: preset.stallValues,
   pause: 0,
   raiseDelay: 0,
-  frames: 0,
+  frames: -180,
+  seconds: 0,
+  minutes: 0,
+  score: 0,
+  scoreMultiplier: 1,
+  currentChain: 0,
+  combo: 0,
+  lastChain: 0,
+  highestChain: 0,
+  over: false, //gameOver
+  grounded: true,
+  addToPrimaryChain: false, // used to start/continue a chain
+  highScore: HIGH_SCORE,
+  disableRaise: false,
+  disableSwap: false,
+  quickRaise: false,
+  raisePressed: false,
+  Music: gameMusic
+};
+
+const resetGameVar = {
+  rise: 0,
+  board: [],
+  mute: 0,
+  volume: 1,
+  level: 1,
+  boardRiseSpeed: preset.speedValues,
+  blockClearTime: preset.clearValues,
+  blockStallTime: preset.stallValues,
+  pause: 0,
+  raiseDelay: 0,
+  frames: -180,
   seconds: 0,
   minutes: 0,
   score: 0,
@@ -218,6 +248,7 @@ export {
   win,
   grid,
   game,
+  resetGameVar,
   preset,
   api,
   chainLogic,

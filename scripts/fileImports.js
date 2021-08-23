@@ -111,7 +111,31 @@ import DEBUGB from ".././assets/Extras/DebugSprites/debugB.png";
 import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
 import POPCORN_SONG from ".././assets/Audio/Music/popcorn.mp3";
 import RESULTS_SONG from ".././assets/Audio/Music/results.wav";
+
 // Audio
+import ANN_5 from ".././assets/Audio/Announcer/5.wav";
+import ANN_4 from ".././assets/Audio/Announcer/4.wav";
+import ANN_3 from ".././assets/Audio/Announcer/3.wav";
+import ANN_2 from ".././assets/Audio/Announcer/2.wav";
+import ANN_1 from ".././assets/Audio/Announcer/1.wav";
+import ANN_GO from ".././assets/Audio/Announcer/go.wav";
+
+import ANN_PICK_UP_PACE from ".././assets/Audio/Announcer/pick up the pace.wav";
+import ANN_ARE_YOU_READY from ".././assets/Audio/Announcer/are you ready.wav";
+import ANN_WATCH_CHAMP_BASK from ".././assets/Audio/Announcer/watch the champ bask in glory.wav";
+import ANN_ONLY_WORD_WORTHY from ".././assets/Audio/Announcer/beautiful thats the only word worthy of such strength.wav";
+
+import ANN_ALL_THE_GLORY from ".././assets/Audio/Announcer/all the glory goes to the winner.wav";
+import ANN_FAT_LADY_SING from ".././assets/Audio/Announcer/the fat lady is about to sing.wav";
+import ANN_NOT_MUCH_TIME from ".././assets/Audio/Announcer/not much time left.wav";
+
+import ANN_LETS_KEEP_IT_UP from ".././assets/Audio/Announcer/lets keep it up.wav";
+import ANN_BATTLE_CONTINUES from ".././assets/Audio/Announcer/and the battle continues.wav";
+import ANN_AINT_OVER from ".././assets/Audio/Announcer/it aint over till its over.wav";
+import ANN_PERFECT from ".././assets/Audio/Announcer/perfect.wav";
+import ANN_LETS_GET_STARTED from ".././assets/Audio/Announcer/lets get started.wav";
+import ANN_READY from ".././assets/Audio/Announcer/ready.wav";
+import ANN_NOWS_YOUR_CHANCE from ".././assets/Audio/Announcer/nows your chance.wav";
 import ANN_TRAINING from ".././assets/Audio/Announcer/all the training and practice led up to this very moment.wav";
 import ANN_PAYOFF from ".././assets/Audio/Announcer/and there's the payoff.wav";
 import ANN_BEAUTIFUL from ".././assets/Audio/Announcer/beautiful.wav";
@@ -291,6 +315,26 @@ const audio = {
   fanfare2: FANFARE2,
   fanfare3: FANFARE3,
   fanfare4: FANFARE4,
+  announcer5: ANN_5,
+  announcer4: ANN_4,
+  announcer3: ANN_3,
+  announcer2: ANN_2,
+  announcer1: ANN_1,
+  announcerGo: ANN_GO,
+  announcerWatchChampBask: ANN_WATCH_CHAMP_BASK,
+  announcerOnlyWordWorthy: ANN_ONLY_WORD_WORTHY,
+  announcerAllTheGlory: ANN_ALL_THE_GLORY,
+  announcerFatLadySing: ANN_FAT_LADY_SING,
+  announcerNotMuchTime: ANN_NOT_MUCH_TIME,
+  announcerLetsKeepItUp: ANN_LETS_KEEP_IT_UP,
+  announcerBattleContinues: ANN_BATTLE_CONTINUES,
+  announcerAintOver: ANN_AINT_OVER,
+  announcerPerfect: ANN_PERFECT,
+  announcerNowsYourChance: ANN_NOWS_YOUR_CHANCE,
+  announcerPickUpPace: ANN_PICK_UP_PACE,
+  announcerAreYouReady: ANN_ARE_YOU_READY,
+  announcerReady: ANN_READY,
+  announcerLetsGetStarted: ANN_LETS_GET_STARTED,
   announcerTraining: ANN_TRAINING,
   announcerPayoff: ANN_PAYOFF,
   announcerBeautiful: ANN_BEAUTIFUL,

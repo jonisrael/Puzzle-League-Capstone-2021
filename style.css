@@ -61,7 +61,6 @@ canvas {
     flex-direction: column;
     justify-content: ;
     align-items: center;
-    outline: red solid 2px;
 }
 
 #nav-bar ul {
@@ -71,7 +70,6 @@ canvas {
     padding: 5px;
     overflow: hidden;
     background-color: #333;
-    outline: red solid 2px;
   }
 
   #nav-bar li {

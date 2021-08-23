@@ -1,6 +1,48 @@
 import { audio } from "../fileImports";
+import { game, announcer, randInt } from "../global";
 
-import { game } from "../global";
+export function playAnnouncer(arr, lastPicked, arrType, mute = 0) {
+  let selection = randInt(arr.length);
+  console.log("selection", selection, "lastPicked", lastPicked);
+  while (selection == lastPicked) {
+    console.log("need to reselect");
+    selection = randInt(arr.length);
+  }
+  console.log(arr.length);
+  console.log(selection, lastPicked);
+  playAudio(arr[selection]);
+  switch (arrType) {
+    case "opening":
+      announcer.openingIndexLastPicked = selection;
+      break;
+    case "smallChain":
+      announcer.smallChainIndexLastPicked = selection;
+      break;
+    case "mediumChain":
+      announcer.mediumChainIndexLastPicked = selection;
+      break;
+    case "largeChain":
+      announcer.largeChainIndexLastPicked = selection;
+      break;
+    case "timeTransition":
+      announcer.timeTransitionIndexLastPicked = selection;
+      break;
+    case "hurryUp":
+      announcer.hurryUpIndexLastPicked = selection;
+      break;
+    case "panic":
+      announcer.panicIndexLastPicked = selection;
+      break;
+    case "overtime":
+      announcer.overtimeIndexLastPicked = selection;
+      break;
+    case "endgame":
+      announcer.endgameIndexLastPicked = selection;
+      break;
+    default:
+      console.log("Announcer Playback failed");
+  }
+}
 
 export function playAudio(file, volume = 0.1) {
   let Sound = new Audio();

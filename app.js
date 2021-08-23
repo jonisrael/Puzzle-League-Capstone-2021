@@ -9,6 +9,7 @@
 import { sprite, audio } from "./scripts/fileImports";
 import { legalMatch, checkMatch } from "./scripts/functions/matchFunctions";
 import {
+  playAnnouncer,
   playAudio,
   playChainSFX,
   playMusic
@@ -27,6 +28,7 @@ import {
   win,
   grid,
   game,
+  resetGameVar,
   preset,
   api,
   chainLogic,
@@ -263,22 +265,22 @@ function fixNextDarkStack() {
 
 function makeOpeningBoard(index) {
   console.log(`Board Index Selected: ${index}`);
-  game.mute = 0;
-  game.Music.currentTime = 0;
-  game.Music.volume = 0.2;
-  game.Music.play();
-  cursor.x = 2;
-  cursor.y = 6;
-  game.disableRaise = false;
-  game.level = 1;
-  game.boardRiseSpeed = preset.speedValues[game.level];
-  game.blockClearTime = preset.clearValues[game.level];
-  game.blockStallTime = preset.stallValues[game.level];
-  game.frames = game.minutes = game.seconds = 0;
-  game.score = 0;
-  game.pause = 0;
-  game.over = false;
-  game.board = [];
+  // game.mute = 0;
+  // game.Music.currentTime = 0;
+  // game.Music.volume = 0.2;
+  // game.Music.play();
+  // cursor.x = 2;
+  // cursor.y = 6;
+  // game.disableRaise = false;
+  // game.level = 1;
+  // game.boardRiseSpeed = preset.speedValues[game.level];
+  // game.blockClearTime = preset.clearValues[game.level];
+  // game.blockStallTime = preset.stallValues[game.level];
+  // game.frames = game.minutes = game.seconds = 0;
+  // game.score = 0;
+  // game.pause = 0;
+  // game.over = false;
+  // game.board = [];
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
@@ -299,17 +301,18 @@ function generateOpeningBoard() {
   cursor.x = 2;
   cursor.y = 6;
 
-  game.mute = 0;
-  game.Music.currentTime = 0;
-  game.Music.volume = 0.2;
-  game.Music.play();
-  game.board = [];
-  game.disableRaise = false;
-  game.level = 1;
-  game.frames = game.minutes = game.seconds = 0;
-  game.score = 0;
-  game.pause = 0;
-  game.over = false;
+  // game.mute = 0;
+  // game.Music.currentTime = 0;
+  // game.Music.volume = 0.2;
+  // game.Music.play();
+  // game.board = [];
+  // game.disableRaise = false;
+  // game.level = 1;
+  // game.frames = -180;
+  // game.minutes = game.seconds = 0;
+  // game.score = 0;
+  // game.pause = 0;
+  // game.over = false;
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
@@ -536,24 +539,24 @@ function isChainActive() {
     playAudio(audio.announcerUnbelievable);
   } else if (game.currentChain >= 6) {
     playAudio(audio.fanfare3);
-    playAudio(
-      announcer.largeChainDialogue[
-        game.frames % announcer.largeChainDialogue.length
-      ]
+    playAnnouncer(
+      announcer.largeChainDialogue,
+      announcer.largeChainIndexLastPicked,
+      "largeChain"
     );
   } else if (game.currentChain >= 4) {
     playAudio(audio.fanfare2);
-    playAudio(
-      announcer.mediumChainDialogue[
-        game.frames % announcer.mediumChainDialogue.length
-      ]
+    playAnnouncer(
+      announcer.mediumChainDialogue,
+      announcer.mediumChainIndexLastPicked,
+      "mediumChain"
     );
   } else if (game.currentChain >= 2) {
     playAudio(audio.fanfare1);
-    playAudio(
-      announcer.smallChainDialogue[
-        game.frames % announcer.smallChainDialogue.length
-      ]
+    playAnnouncer(
+      announcer.smallChainDialogue,
+      announcer.smallChainIndexLastPicked,
+      "smallChain"
     );
   }
   if (game.currentChain > 1) console.log(`${game.currentChain} chain!`);
@@ -898,8 +901,10 @@ function raiseStack() {
         }
       } else {
         if (game.board[c][2].color != blockColor.VACANT) {
-          playAudio(
-            announcer.panicDialogue[randInt(announcer.panicDialogue.length)]
+          playAnnouncer(
+            announcer.panicDialogue,
+            announcer.panicIndexLastPicked,
+            "panic"
           );
           break;
         }
@@ -925,7 +930,12 @@ window.addEventListener(
   false
 );
 
-function createCanvas() {
+function startGame() {
+  win.running = true;
+  let keys = Object.keys(game);
+  console.log(keys);
+  console.log(Object.keys(resetGameVar));
+  for (let key in keys) game[key] = resetGameVar[key];
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
   win.makeCanvas.setAttribute("width", "192");
@@ -933,7 +943,6 @@ function createCanvas() {
   document.body.appendChild(win.makeCanvas);
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
-  win.running = true;
   try {
     game.board = makeOpeningBoard(extractTimeToIndex());
     console.log("Fetch successful!");
@@ -952,7 +961,7 @@ let startButton = document.getElementById("click-to-play");
 startButton.onclick = function() {
   if (!win.running) {
     startButton.remove();
-    createCanvas();
+    startGame();
     setTimeout(gameLoop(), 1000 / 60);
   }
 };
@@ -996,7 +1005,9 @@ function KEYBOARD_CONTROL(event) {
       }
     } else if (event.keyCode == 88 || event.keyCode == 83) {
       // x, s
-      trySwappingBlocks(cursor.x, cursor.y);
+      if (game.frames > 0) {
+        trySwappingBlocks(cursor.x, cursor.y);
+      }
     } else if (event.keyCode == 32 || event.keyCode == 90) {
       // space, z
       game.raisePressed = true; // run raise function on next frame
@@ -1067,7 +1078,11 @@ function KEYBOARD_CONTROL(event) {
   } else if (win.running && game.over) {
     if (event.keyCode >= 0 && game.frames >= 200) {
       //any key
-      playAudio(announcer.endgame[randInt(announcer.endgame.length)]);
+      playAnnouncer(
+        announcer.endgameDialogue,
+        announcer.endgameIndexLastPicked,
+        "endgame"
+      );
       playMusic(audio.resultsMusic, 0.2);
       game.Music.loop = false;
       win.makeCanvas = document.getElementById("canvas").remove();
@@ -1079,16 +1094,52 @@ function KEYBOARD_CONTROL(event) {
   }
 }
 
+function checkTime() {
+  switch (game.frames) {
+    case -178:
+      window.scrollTo(0, document.body.scrollHeight);
+      playAnnouncer(
+        announcer.openingDialogue,
+        announcer.openingIndexLastPicked,
+        "opening"
+      );
+      break;
+    case 0:
+      playAudio(audio.announcerGo);
+      break;
+    case 6600:
+      playAnnouncer(
+        announcer.hurryUpDialogue,
+        announcer.hurryUpIndexLastPicked,
+        "hurryUp"
+      );
+      break;
+    case 6900:
+      playAudio(audio.announcer5, (game.volume = 0.3));
+      break;
+    case 6960:
+      playAudio(audio.announcer4, (game.volume = 0.3));
+      break;
+    case 7020:
+      playAudio(audio.announcer3, (game.volume = 0.3));
+      break;
+    case 7080:
+      playAudio(audio.announcer2, (game.volume = 0.3));
+      break;
+    case 7140:
+      playAudio(audio.announcer1, (game.volume = 0.3));
+      break;
+  }
+}
+
 function gameLoop(timestamp) {
   game.frames++;
   if (!win.running) {
     return;
   }
-  if (game.frames == 2) {
-    window.scrollTo(0, document.body.scrollHeight);
-  }
+  checkTime();
 
-  if (game.frames % 60 == 0 && !game.over) {
+  if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
     game.seconds++;
   }
   if (game.seconds % 60 == 0 && game.seconds != 0) {
@@ -1102,20 +1153,13 @@ function gameLoop(timestamp) {
         if (!checkClearing().includes(true)) {
           game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
         }
-      } else {
-        game.rise = (game.rise + 2) % 32;
-      }
+      } else if (game.frames > 0) game.rise = (game.rise + 2) % 32;
     }
-    if (game.rise == 0 && !game.over) {
+    if (game.rise == 0 && !game.over && game.frames > 0) {
       raiseStack();
     }
   }
 
-  if (game.frames == 6600 && !game.over) {
-    playAudio(
-      announcer.hurryUpDialogue[randInt(announcer.hurryUpDialogue.length)]
-    );
-  }
   if (
     game.frames % 1200 == 0 &&
     game.level < 10 &&
@@ -1123,22 +1167,25 @@ function gameLoop(timestamp) {
     debug.enabled == 0 &&
     !game.over
   ) {
-    // Speed the stack up every 30 seconds
-    if (game.frames == 3600) {
-      console.log(`Current Score: ${game.score}`);
-      playAudio(
-        announcer.timeTransitionDialogue[
-          randInt(announcer.timeTransitionDialogue.length)
-        ]
-      );
-    } else if (game.frames == 7200) {
-      playAudio(
-        announcer.overtimeDialogue[randInt(announcer.overtimeDialogue.length)]
+    // Speed the stack up every 20 seconds
+
+    if (game.frames == 7200) {
+      playAnnouncer(
+        announcer.overtimeDialogue,
+        announcer.overtimeIndexLastPicked,
+        "overtime"
       );
       playMusic(audio.overtimeMusic, 0.2);
+    } else if (game.frames >= 1200) {
+      console.log(`Current Score: ${game.score}`);
+      playAnnouncer(
+        announcer.timeTransitionDialogue,
+        announcer.timeTransitionIndexLastPicked,
+        "timeTransition"
+      );
     }
 
-    game.level += 1;
+    if (game.frames > 0) game.level++;
     game.boardRiseSpeed = preset.speedValues[game.level];
     game.blockClearTime = preset.clearValues[game.level];
     game.blockStallTime = preset.stallValues[game.level];

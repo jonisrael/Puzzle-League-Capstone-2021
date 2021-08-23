@@ -195,10 +195,8 @@ export function checkMatch() {
         game.combo = clearLocationsLength;
         if (game.combo > 3 || game.currentChain > 1) {
           game.raiseDelay = 6 * game.boardRiseSpeed;
-          if (game.rise == 0) {
-            game.rise = 2; // Failsafe to prevent extra raise
-          }
         }
+        if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
       }
     } else {
       done = true; // Needs to end if confirm clear fails
