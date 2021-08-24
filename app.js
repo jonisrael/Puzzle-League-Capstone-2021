@@ -1156,7 +1156,6 @@ function gameLoop(timestamp) {
 
   if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
     game.seconds++;
-    console.log(game.seconds);
   }
   if (game.seconds % 60 == 0 && game.seconds != 0) {
     game.minutes++;
