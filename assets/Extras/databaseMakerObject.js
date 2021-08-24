@@ -46,7 +46,7 @@ class Block {
 
 let data = [];
 let databaseString = ``;
-for (let index = 0; index < 2; index++) {
+for (let index = 0; index < 1440; index++) {
   let board = [];
   let boardInformation = [];
   let boardString = `[`;

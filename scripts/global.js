@@ -116,7 +116,8 @@ const win = {
   chainDisplay: null,
   timeDisplay: null,
   levelDisplay: null,
-  highScoreDisplay: null
+  highScoreDisplay: null,
+  gameOverMessage: null
 };
 
 const grid = {

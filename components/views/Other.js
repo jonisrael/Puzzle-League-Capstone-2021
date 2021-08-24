@@ -3,7 +3,7 @@ import html from "html-literal";
 export default st => html`
   <section id="other-page">
     <body>
-      <img src="../assets/Images/Tetris_Attack_box_art.png" id="box-art" />
+      <!-- <img src="../assets/Images/Tetris_Attack_box_art.png" id="box-art" />d -->
       <h1 id="more-info" class="headers">More Info</h1>
       Puzzle League is a tetris-like game where the player arranges 3 or more
       adjacent blocks with the same color to create a combo and clear them from

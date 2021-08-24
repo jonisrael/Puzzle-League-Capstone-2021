@@ -44,7 +44,7 @@ class Block {
   }
 }
 
-let data = [];
+let data = {};
 let databaseString = ``;
 for (let index = 0; index < 2; index++) {
   let board = [];
@@ -173,24 +173,24 @@ for (let index = 0; index < 2; index++) {
     }
   }
 
-  let boardEntry = [];
+  // write data
+  data[`board${index}`] = {};
   for (let c = 0; c < COLS; c++) {
-    boardEntry.push([]);
+    data[`board${index}`][`x${c}`] = {};
     for (let r = 0; r < ROWS + 2; r++) {
-      boardEntry[c].push({
+      data[`board${index}`][`x${c}`][`y${r}`] = {
         x: c,
         y: r,
         color: board[c][r].color,
         type: board[c][r].type
-      });
+      };
     }
   }
-  data.push(boardEntry);
 }
 console.log(data);
 
 // console.log(fs)
-fsLibrary.writeFile("database.json", JSON.stringify(data), error => {
+fsLibrary.writeFile("databaseTest.json", JSON.stringify(data), error => {
   // In case of a error throw err exception.
   if (error) throw err;
 });

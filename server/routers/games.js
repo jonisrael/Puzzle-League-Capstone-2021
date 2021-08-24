@@ -42,10 +42,9 @@ router.put("/games/:id", (request, response) => {
     request.params.id,
     {
       $set: {
-        crust: body.crust,
-        cheese: body.cheese,
-        sauce: body.sauce,
-        toppings: body.toppings
+        name: body.name,
+        score: body.score,
+        duration: body.duration
       }
     },
     (error, data) => {

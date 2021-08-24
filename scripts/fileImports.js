@@ -1,4 +1,4 @@
-// import DATABASE from ".././database.json";
+import DATABASE from ".././database2.json";
 
 // Image Sprites
 import CURSOR from ".././assets/Sprites/cursor.png";

@@ -37,12 +37,15 @@ import {
   randInt
 } from "./scripts/global.js";
 
+import { currentView } from "./index.js";
+
 win.statDisplay = document.getElementById("all-stats");
 win.scoreDisplay = document.querySelector("#score");
 win.chainDisplay = document.querySelector("#chain");
 win.timeDisplay = document.querySelector("#time");
 win.levelDisplay = document.querySelector("#game.level");
 win.highScoreDisplay = document.querySelector("#high-score");
+win.gameOverMessage = document.querySelector("#high-score");
 // console.log(highScoreDisplay);
 
 // fetching our api.data from an API
@@ -287,8 +290,8 @@ function makeOpeningBoard(index) {
       let block = new Block(
         c,
         r,
-        DATABASE[index][c][r].color,
-        DATABASE[index][c][r].type
+        DATABASE[`board${index}`][`x${c}`][`y${r}`].color,
+        DATABASE[`board${index}`][`x${c}`][`y${r}`].type
       );
       game.board[c].push(block);
       block.draw();
@@ -944,7 +947,7 @@ function startGame() {
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
   try {
-    game.board = makeOpeningBoard(extractTimeToIndex());
+    game.board = makeOpeningBoard(randInt(2));
     console.log("Fetch successful!");
   } catch (error) {
     console.log(
@@ -955,7 +958,22 @@ function startGame() {
   playMusic(audio.popcornMusic);
 }
 
-function destroyCanvas() {}
+function closeGame(view) {
+  let el;
+  if (view == "Home") {
+    playMusic(audio.resultsMusic, 0.2);
+    game.Music.loop = false;
+    el = document.createElement("p");
+    el.innerHTML = "This is a test";
+    document.body.append(el);
+  } else {
+    game.Music.volume = 0;
+  }
+  win.cvs = null;
+  win.ctx = null;
+  win.running = false;
+  win.makeCanvas = document.getElementById("canvas").remove();
+}
 
 let startButton = document.getElementById("click-to-play");
 startButton.onclick = function() {
@@ -1027,7 +1045,7 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode == 48) {
         // 0 (number)
         game.rise = 0;
-        game.board = makeOpeningBoard(randInt(1440));
+        game.board = makeOpeningBoard(randInt(2));
         game.disableRaise = false;
       } else if (event.keyCode == 80 || event.keyCode == 81) {
         // p, q
@@ -1083,13 +1101,7 @@ function KEYBOARD_CONTROL(event) {
         announcer.endgameIndexLastPicked,
         "endgame"
       );
-      playMusic(audio.resultsMusic, 0.2);
-      game.Music.loop = false;
-      win.makeCanvas = document.getElementById("canvas").remove();
-      win.running = false;
-      win.cvs = null;
-      win.ctx = null;
-      document.body.appendChild();
+      closeGame(currentView); // Since game is over, we are on home page
     }
   }
 }
@@ -1134,13 +1146,17 @@ function checkTime() {
 
 function gameLoop(timestamp) {
   game.frames++;
-  if (!win.running) {
+  if (!win.running || currentView != "Home") {
+    console.log("closing game", currentView);
+    closeGame(currentView);
+    win.running = false;
     return;
   }
   checkTime();
 
   if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
     game.seconds++;
+    console.log(game.seconds);
   }
   if (game.seconds % 60 == 0 && game.seconds != 0) {
     game.minutes++;
