@@ -22,16 +22,7 @@ export function isGameOver(scoreOfThisGame) {
   for (let c = 0; c < grid.COLS; c++) {
     if (game.board[c][0].color != blockColor.VACANT) {
       game.Music.volume = 0;
-      console.log("Game over!");
-      console.log(`Score: ${game.score}`);
-      console.log(`High Score: ${game.highScore}`);
-      // enter new high scores
-      let pastHighScore = localStorage.getItem("highScore");
-      if (scoreOfThisGame > parseInt(pastHighScore)) {
-        console.log("new high score!");
-        localStorage.setItem("highScore", `${scoreOfThisGame}`);
-      }
-      game.highScore = parseInt(localStorage.getItem("highScore"));
+      endGame();
       return true;
     }
   }
@@ -57,4 +48,31 @@ export function gameOverBoard() {
       game.board[i][deathRow].type = blockType.DEAD;
     }
   }
+}
+
+function endGame() {
+  console.log("Game over!");
+  console.log(`Score: ${game.score}`);
+  console.log(`High Score: ${game.highScore}`);
+  // enter new high scores
+  let pastHighScore = localStorage.getItem("highScore");
+  if (game.score > parseInt(pastHighScore)) {
+    console.log("new high score!");
+    localStorage.setItem("highScore", `${game.score}`);
+  }
+  game.highScore = parseInt(localStorage.getItem("highScore"));
+  sendData("Anon", game.score, game.minutes, game.seconds);
+}
+
+function sendData(name = "Anon", score, minutes, seconds) {
+  if (seconds < 10) seconds = `0${seconds}`;
+  else seconds = `${seconds}`;
+  let duration = `${minutes}:${seconds}`;
+  let data = {
+    name: name,
+    score: score,
+    duration: duration
+  };
+  console.log(data);
+  return data;
 }

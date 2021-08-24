@@ -9,14 +9,15 @@ import {
   app,
   grid,
   game,
+  win,
   preset,
   api,
   chainLogic,
   performance,
+  randInt,
   debug
 } from "../global";
 
-import { randInt } from "../global";
 import { playChainSFX, playAudio } from "./audioFunctions";
 
 export function legalMatch(clearLocations) {
@@ -250,6 +251,6 @@ export function updateScore(clearLocationsLength, currentChain) {
   );
   if (game.score > game.highScore) {
     game.highScore = game.score;
-    highScoreDisplay.style.color = "gold";
+    win.highScoreDisplay.style.color = "gold";
   }
 }

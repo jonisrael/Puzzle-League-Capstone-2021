@@ -132,12 +132,6 @@ const preset = {
   stallValues: [24, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6]
 };
 
-const gameData = {
-  name: "",
-  score: "",
-  duration: ""
-};
-
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
 }
@@ -172,10 +166,12 @@ const game = {
   disableSwap: false,
   quickRaise: false,
   raisePressed: false,
-  Music: gameMusic
+  Music: gameMusic,
+  data: {}
 };
 
 const resetGameVar = {
+  // set all game variables to resetGameVar
   rise: 0,
   board: [],
   mute: 0,
@@ -203,7 +199,8 @@ const resetGameVar = {
   disableSwap: false,
   quickRaise: false,
   raisePressed: false,
-  Music: gameMusic
+  Music: gameMusic,
+  data: {}
 };
 
 const api = {
