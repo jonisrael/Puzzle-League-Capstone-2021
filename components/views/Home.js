@@ -22,16 +22,6 @@ export default st => html`
         to work soon). Have fun!
       </h3>
       <button id="click-to-play">Click to Play</button>
-      <div id="stats-display"></div>
-      <div id="canvas-container">
-        <h3 class="stats" id="all-stats"></h3>
-        <h3 class="stats" id="time"></h3>
-        <h3 class="stats" id="score"></h3>
-        <h3 class="stats" id="chain"></h3>
-        <h3 class="stats" id="level"></h3>
-      </div>
-
-      <h2 id="high-score"></h2>
       <div id="debug"></div>
     </body>
   </section>

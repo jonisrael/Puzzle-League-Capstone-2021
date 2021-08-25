@@ -39,13 +39,6 @@ import {
 
 import { currentView } from "./index.js";
 
-win.statDisplay = document.getElementById("all-stats");
-win.scoreDisplay = document.querySelector("#score");
-win.chainDisplay = document.querySelector("#chain");
-win.timeDisplay = document.querySelector("#time");
-win.levelDisplay = document.querySelector("#game.level");
-win.highScoreDisplay = document.querySelector("#high-score");
-win.gameOverMessage = document.querySelector("#high-score");
 // console.log(highScoreDisplay);
 
 // fetching our api.data from an API
@@ -933,19 +926,47 @@ window.addEventListener(
   false
 );
 
+function createHeadsUpDisplay() {
+  let homePage = document.getElementById("home-page");
+  homePage.innerHTML = "";
+  // create HUD elements
+  win.statDisplay = document.createElement("h3");
+  win.chainDisplay = document.createElement("h3");
+  win.timeDisplay = document.createElement("h3");
+  win.levelDisplay = document.createElement("h3");
+  win.highScoreDisplay = document.createElement("h3");
+  win.scoreDisplay = document.createElement("h2");
+  // set HUD element IDs
+  win.statDisplay.setAttribute("id", "all-stats");
+  win.chainDisplay.setAttribute("id", "chain");
+  win.timeDisplay.setAttribute("id", "time");
+  win.levelDisplay.setAttribute("id", "level");
+  win.highScoreDisplay.setAttribute("id", "high-score");
+  win.scoreDisplay.setAttribute("id", "score");
+  // append HUD elements
+  homePage.appendChild(win.statDisplay);
+  homePage.appendChild(win.chainDisplay);
+  homePage.appendChild(win.timeDisplay);
+  homePage.appendChild(win.levelDisplay);
+  homePage.appendChild(win.highScoreDisplay);
+  homePage.appendChild(win.scoreDisplay);
+  // Make Canvas, then append it to home page
+  win.makeCanvas = document.createElement(`canvas`);
+  win.makeCanvas.setAttribute("id", "canvas");
+  win.makeCanvas.setAttribute("width", "192");
+  win.makeCanvas.setAttribute("height", "384");
+  homePage.appendChild(win.makeCanvas);
+  win.cvs = document.getElementById("canvas");
+  win.ctx = win.cvs.getContext("2d");
+}
+
 function startGame() {
   win.running = true;
   let keys = Object.keys(game);
   console.log(keys);
   console.log(Object.keys(resetGameVar));
   for (let key in keys) game[key] = resetGameVar[key];
-  win.makeCanvas = document.createElement(`canvas`);
-  win.makeCanvas.setAttribute("id", "canvas");
-  win.makeCanvas.setAttribute("width", "192");
-  win.makeCanvas.setAttribute("height", "384");
-  document.body.appendChild(win.makeCanvas);
-  win.cvs = document.getElementById("canvas");
-  win.ctx = win.cvs.getContext("2d");
+  createHeadsUpDisplay();
   try {
     game.board = makeOpeningBoard(randInt(2));
     console.log("Fetch successful!");
@@ -959,20 +980,32 @@ function startGame() {
 }
 
 function closeGame(view) {
+  win.running = false;
   let el;
-  if (view == "Home") {
+  if (view === "Home") {
     playMusic(audio.resultsMusic, 0.2);
     game.Music.loop = false;
-    el = document.createElement("p");
+    // createFormSubmission
+    el = document.createElement("form");
     el.innerHTML = "This is a test";
     document.body.append(el);
   } else {
     game.Music.volume = 0;
   }
+  win.statDisplay.remove();
+  win.scoreDisplay.remove();
+  win.chainDisplay.remove();
+  win.timeDisplay.remove();
+  win.levelDisplay.remove();
+  win.highScoreDisplay.remove();
   win.cvs = null;
   win.ctx = null;
   win.running = false;
-  win.makeCanvas = document.getElementById("canvas").remove();
+  win.makeCanvas.remove();
+}
+
+function createForm() {
+  let homePage = document.getElementById("home-page");
 }
 
 let startButton = document.getElementById("click-to-play");
@@ -983,10 +1016,6 @@ startButton.onclick = function() {
     setTimeout(gameLoop(), 1000 / 60);
   }
 };
-// // document.addEventListener("mouseup", MOUSE_CONTROL);
-// // function(MOUSE_CONTROL(event)) {
-// //   if (!win.running)
-// // }
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
@@ -1095,7 +1124,7 @@ function KEYBOARD_CONTROL(event) {
     }
   } else if (win.running && game.over) {
     if (event.keyCode >= 0 && game.frames >= 200) {
-      //any key
+      // press any key after game over
       playAnnouncer(
         announcer.endgameDialogue,
         announcer.endgameIndexLastPicked,
@@ -1358,7 +1387,7 @@ function gameLoop(timestamp) {
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
   } else {
     win.statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
-    win.scoreDisplay.innerHTML = `Score: ${scoreString} | Multiplier: ${multiplierString}`;
+    win.scoreDisplay.innerHTML = `Score: ${scoreString}`;
   }
 
   if (game.currentChain > 0) {

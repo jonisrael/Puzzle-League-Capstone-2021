@@ -117,7 +117,8 @@ const win = {
   timeDisplay: null,
   levelDisplay: null,
   highScoreDisplay: null,
-  gameOverMessage: null
+  gameOverMessage: null,
+  form: null
 };
 
 const grid = {
