@@ -8,6 +8,7 @@
 
 import { sprite, audio } from "./scripts/fileImports";
 import { legalMatch, checkMatch } from "./scripts/functions/matchFunctions";
+import { submitResults } from "./scripts/functions/submitResults.js";
 import {
   playAnnouncer,
   playAudio,
@@ -261,22 +262,6 @@ function fixNextDarkStack() {
 
 function makeOpeningBoard(index) {
   console.log(`Board Index Selected: ${index}`);
-  // game.mute = 0;
-  // game.Music.currentTime = 0;
-  // game.Music.volume = 0.2;
-  // game.Music.play();
-  // cursor.x = 2;
-  // cursor.y = 6;
-  // game.disableRaise = false;
-  // game.level = 1;
-  // game.boardRiseSpeed = preset.speedValues[game.level];
-  // game.blockClearTime = preset.clearValues[game.level];
-  // game.blockStallTime = preset.stallValues[game.level];
-  // game.frames = game.minutes = game.seconds = 0;
-  // game.score = 0;
-  // game.pause = 0;
-  // game.over = false;
-  // game.board = [];
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
@@ -297,18 +282,6 @@ function generateOpeningBoard() {
   cursor.x = 2;
   cursor.y = 6;
 
-  // game.mute = 0;
-  // game.Music.currentTime = 0;
-  // game.Music.volume = 0.2;
-  // game.Music.play();
-  // game.board = [];
-  // game.disableRaise = false;
-  // game.level = 1;
-  // game.frames = -180;
-  // game.minutes = game.seconds = 0;
-  // game.score = 0;
-  // game.pause = 0;
-  // game.over = false;
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
@@ -985,10 +958,6 @@ function closeGame(view) {
   if (view === "Home") {
     playMusic(audio.resultsMusic, 0.2);
     game.Music.loop = false;
-    // createFormSubmission
-    el = document.createElement("form");
-    el.innerHTML = "This is a test";
-    document.body.append(el);
   } else {
     game.Music.volume = 0;
   }
@@ -1002,10 +971,6 @@ function closeGame(view) {
   win.ctx = null;
   win.running = false;
   win.makeCanvas.remove();
-}
-
-function createForm() {
-  let homePage = document.getElementById("home-page");
 }
 
 let startButton = document.getElementById("click-to-play");
@@ -1131,6 +1096,7 @@ function KEYBOARD_CONTROL(event) {
         "endgame"
       );
       closeGame(currentView); // Since game is over, we are on home page
+      submitResults();
     }
   }
 }
