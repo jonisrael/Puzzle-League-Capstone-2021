@@ -31,13 +31,11 @@ const announcer = {
   timeTransitionDialogue: [
     audio.announcerTimeMarchesOn,
     audio.announcerLetsKeepItUp,
-    audio.announcerPickUpPace,
-    audio.announcerBattleContinues
+    audio.announcerPickUpPace
   ],
   hurryUpDialogue: [
     audio.announcerTenSeconds,
     audio.announcerAllBoilsDown,
-    audio.announcerBattleOfEndurance,
     audio.announcerNotMuchTimeLeft
   ],
   panicDialogue: [
@@ -50,13 +48,12 @@ const announcer = {
   overtimeDialogue: [
     audio.announcerBringUsHome,
     audio.announcerIHopeReady,
-    audio.announcerWorldAnticipation
+    audio.announcerBattleOfEndurance
   ],
   endgameDialogue: [
     audio.announcerDeservePraise,
     audio.announcerTraining,
     audio.announcerNeverForgetEvent,
-    audio.announcerAllTheGlory,
     audio.announcerOnlyWordWorthy,
     audio.announcerWatchChampBask
   ],
@@ -96,8 +93,8 @@ const PIECES = [
   blockColor.GREEN,
   blockColor.PURPLE,
   blockColor.RED,
-  blockColor.YELLOW,
-  blockColor.BLUE
+  blockColor.YELLOW
+  // blockColor.BLUE
 ];
 
 const INTERACTIVE_PIECES = [
@@ -107,6 +104,8 @@ const INTERACTIVE_PIECES = [
 ];
 
 const win = {
+  view: "",
+  viewChanged: false,
   running: false,
   makeCanvas: null,
   cvs: null,
@@ -140,6 +139,7 @@ let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
 const game = {
+  // use let instead of const to revert to resetGameVar
   rise: 0,
   board: [],
   mute: 0,

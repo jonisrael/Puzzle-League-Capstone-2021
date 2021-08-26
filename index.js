@@ -6,6 +6,7 @@ import { capitalize } from "lodash";
 import axios from "axios";
 import dotenv from "dotenv";
 import { win } from "./scripts/global";
+import { startGame } from "./app";
 
 dotenv.config();
 
@@ -22,7 +23,8 @@ router
 // render(state.Home);
 
 function render(st) {
-  currentView = st.view;
+  win.view = st.view;
+  win.viewChanged = true;
   console.log("render has been called");
   document.querySelector("#root").innerHTML = `
   ${Header(st)}
@@ -32,7 +34,7 @@ function render(st) {
   `;
   router.updatePageLinks();
 
-  // addEventListeners(st);
+  addEventListeners(st);
 }
 
 function addEventListeners(st) {
@@ -51,55 +53,18 @@ function addEventListeners(st) {
       document.querySelector("nav > ul").classList.toggle("hidden--mobile")
     );
 
-  // event listener for the the photo form
-  if (st.view === "Form") {
-    document.querySelector("form").addEventListener("submit", event => {
-      event.preventDefault();
-      // convert HTML elements to Array
-      let inputList = Array.from(event.target.elements);
-      // remove submit button from list
-      inputList.pop();
-      // construct new picture object
-      let newPic = inputList.reduce((pictureObject, input) => {
-        pictureObject[input.name] = input.value;
-        return pictureObject;
-      }, {});
-      // add new picture to state.Gallery.pictures
-      state.Gallery.pictures.push(newPic);
-      render(state.Gallery);
-    });
-  }
-
-  if (st.view === "Order") {
-    document.querySelector("form").addEventListener("submit", event => {
-      event.preventDefault();
-      const inputList = event.target.elements;
-
-      const toppings = [];
-      for (let input of inputList.toppings) {
-        if (input.checked) {
-          toppings.push(input.value);
-        }
-      }
-
-      const requestData = {
-        crust: inputList.crust.value,
-        cheese: inputList.cheese.value,
-        sauce: inputList.sauce.value,
-        toppings: toppings
-      };
-
-      axios
-        .post(`${process.env.API}/pizzas`, requestData) // process.env.API accesses API
-        .then(response => {
-          state.Pizza.pizzas.push(response.data);
-          router.navigate("/Pizza");
-        })
-        .catch(error => {
-          console.log("It puked", error);
-        });
+  // event listener for the the home/game page
+  if (st.view === "Home") {
+    let homePage = document.getElementById("home-page");
+    console.log(homePage);
+    let startButton = document.createElement("button");
+    startButton.setAttribute("id", "click-to-play");
+    startButton.innerHTML = "Click to play";
+    homePage.appendChild(startButton);
+    startButton.addEventListener("click", () => {
+      startButton.remove();
+      startGame();
     });
   }
 }
-
 export { currentView };

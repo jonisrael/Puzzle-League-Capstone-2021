@@ -1,7 +1,7 @@
 // import fs module in which writeFile function is defined.
 const fsLibrary = require("fs");
 
-const BLUE = "blue";
+// const BLUE = "blue";
 const CYAN = "cyan";
 const GREEN = "green";
 const PURPLE = "purple";
@@ -20,7 +20,7 @@ const PANICKING = "panicking";
 const COLS = 6;
 const ROWS = 12;
 
-const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW, BLUE];
+const PIECES = [CYAN, GREEN, PURPLE, RED, YELLOW];
 
 class Block {
   constructor(

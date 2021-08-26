@@ -504,7 +504,7 @@ function isChainActive() {
   // Test failed, so ending chain.
   game.lastChain = game.currentChain;
   if (game.currentChain > 8) {
-    playAudio(audio.fanfare5);
+    playAudio(audio.fanfare5, 0.25);
     playAudio(audio.announcerUnbelievable);
   } else if (game.currentChain > 6) {
     playAudio(audio.fanfare4);
@@ -940,7 +940,7 @@ function createHeadsUpDisplay() {
   win.ctx = win.cvs.getContext("2d");
 }
 
-function startGame() {
+export function startGame() {
   win.running = true;
   let keys = Object.keys(game);
   console.log(keys);
@@ -957,11 +957,43 @@ function startGame() {
     game.board = generateOpeningBoard();
   }
   playMusic(audio.popcornMusic);
+  setTimeout(gameLoop(), 1000 / 60);
+}
+
+function resetGameVariables() {
+  game.rise = 0;
+  game.board = [];
+  game.mute = 0;
+  game.volume = 1;
+  game.level = 1;
+  game.boardRiseSpeed = preset.speedValues;
+  game.blockClearTime = preset.clearValues;
+  game.blockStallTime = preset.stallValues;
+  game.pause = 0;
+  game.raiseDelay = 0;
+  game.frames = -180;
+  game.seconds = 0;
+  game.minutes = 0;
+  game.score = 0;
+  game.scoreMultiplier = 1;
+  game.currentChain = 0;
+  game.combo = 0;
+  game.lastChain = 0;
+  game.highestChain = 0;
+  game.over = false; //gameOver
+  game.grounded = true;
+  game.addToPrimaryChain = false; // used to start/continue a chain
+  game.highScore = HIGH_SCORE;
+  game.disableRaise = false;
+  game.disableSwap = false;
+  game.quickRaise = false;
+  game.raisePressed = false;
+  game.Music = gameMusic;
+  game.data = {};
 }
 
 function closeGame(view) {
   win.running = false;
-  let el;
   if (view === "Home") {
     playMusic(audio.resultsMusic, 0.2);
     game.Music.loop = false;
@@ -978,16 +1010,19 @@ function closeGame(view) {
   win.ctx = null;
   win.running = false;
   win.makeCanvas.remove();
+  resetGameVariables();
 }
 
-let startButton = document.getElementById("click-to-play");
-startButton.onclick = function() {
-  if (!win.running) {
-    startButton.remove();
-    startGame();
-    setTimeout(gameLoop(), 1000 / 60);
-  }
-};
+// let startButton = document.getElementById("click-to-play");
+// startButton.onclick = function() {
+//   if (!win.running) {
+//     startButton.remove();
+//     startGame();
+//     setTimeout(gameLoop(), 1000 / 60);
+//   }
+// };
+
+// document.addEventListener("click",)
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
@@ -1102,7 +1137,7 @@ function KEYBOARD_CONTROL(event) {
         announcer.endgameIndexLastPicked,
         "endgame"
       );
-      closeGame(currentView); // Since game is over, we are on home page
+      closeGame(win.view); // Since game is over, we are on home page
       submitResults();
     }
   }
@@ -1148,9 +1183,9 @@ function checkTime() {
 
 function gameLoop(timestamp) {
   game.frames++;
-  if (!win.running || currentView != "Home") {
-    console.log("closing game", currentView);
-    closeGame(currentView);
+  if (!win.running || win.view !== "Home") {
+    console.log("closing game", win.view);
+    closeGame(win.view);
     win.running = false;
     return;
   }

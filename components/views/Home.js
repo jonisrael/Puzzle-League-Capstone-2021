@@ -21,7 +21,6 @@ export default st => html`
         However, all point scores will be doubled. Press Enter to play (button
         to work soon). Have fun!
       </h3>
-      <button id="click-to-play">Click to Play</button>
       <div id="debug"></div>
     </body>
   </section>
