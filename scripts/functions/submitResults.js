@@ -12,4 +12,5 @@ export function submitResults() {
   gameOver.setAttribute("id", "game-over");
   gameOver.innerHTML = "Game Over!";
   homePage.appendChild(gameOver);
+  // let name = document.getElementById("")
 }

@@ -185,6 +185,7 @@ import FANFARE1 from ".././assets/Audio/fanfare1.wav";
 import FANFARE2 from ".././assets/Audio/fanfare2.wav";
 import FANFARE3 from ".././assets/Audio/fanfare3.wav";
 import FANFARE4 from ".././assets/Audio/fanfare4.wav";
+import FANFARE5 from ".././assets/Audio/fanfare5.wav";
 import TOPOUT from ".././assets/Audio/topout.wav";
 
 // Images
@@ -315,6 +316,7 @@ const audio = {
   fanfare2: FANFARE2,
   fanfare3: FANFARE3,
   fanfare4: FANFARE4,
+  fanfare5: FANFARE5,
   announcer5: ANN_5,
   announcer4: ANN_4,
   announcer3: ANN_3,

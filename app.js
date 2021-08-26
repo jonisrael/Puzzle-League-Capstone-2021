@@ -504,23 +504,30 @@ function isChainActive() {
   // Test failed, so ending chain.
   game.lastChain = game.currentChain;
   if (game.currentChain > 8) {
-    playAudio(audio.fanfare4);
+    playAudio(audio.fanfare5);
     playAudio(audio.announcerUnbelievable);
-  } else if (game.currentChain >= 6) {
+  } else if (game.currentChain > 6) {
+    playAudio(audio.fanfare4);
+    playAnnouncer(
+      announcer.largeChainDialogue,
+      announcer.largeChainIndexLastPicked,
+      "largeChain"
+    );
+  } else if (game.currentChain > 4) {
     playAudio(audio.fanfare3);
     playAnnouncer(
       announcer.largeChainDialogue,
       announcer.largeChainIndexLastPicked,
       "largeChain"
     );
-  } else if (game.currentChain >= 4) {
+  } else if (game.currentChain > 3) {
     playAudio(audio.fanfare2);
     playAnnouncer(
       announcer.mediumChainDialogue,
       announcer.mediumChainIndexLastPicked,
       "mediumChain"
     );
-  } else if (game.currentChain >= 2) {
+  } else if (game.currentChain > 1) {
     playAudio(audio.fanfare1);
     playAnnouncer(
       announcer.smallChainDialogue,
