@@ -76,15 +76,15 @@ function addEventListeners(st) {
 
 export function sendData(requestData) {
   axios
-    .post(`http://localhost:4040/games`, requestData) // process.env.API accesses API
+    .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
       console.log(response.data);
       state.Home.games.push(response.data);
-      console.log(state.Home.games);
       // router.navigate("/Games");
     })
     .catch(error => {
       console.log("Failed to Post", error);
+      console.log("API:", process.env.API);
     });
 }
 
