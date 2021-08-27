@@ -29,7 +29,6 @@ import {
   win,
   grid,
   game,
-  resetGameVar,
   preset,
   api,
   chainLogic,
@@ -942,10 +941,7 @@ function createHeadsUpDisplay() {
 
 export function startGame() {
   win.running = true;
-  let keys = Object.keys(game);
-  console.log(keys);
-  console.log(Object.keys(resetGameVar));
-  for (let key in keys) game[key] = resetGameVar[key];
+  resetGameVariables();
   createHeadsUpDisplay();
   try {
     game.board = makeOpeningBoard(randInt(2));
@@ -983,16 +979,17 @@ function resetGameVariables() {
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain
-  game.highScore = HIGH_SCORE;
+  // game.highScore = HIGH_SCORE;
   game.disableRaise = false;
   game.disableSwap = false;
   game.quickRaise = false;
   game.raisePressed = false;
-  game.Music = gameMusic;
+  // game.Music = gameMusic;
   game.data = {};
 }
 
 function closeGame(view) {
+  console.log("close game called");
   win.running = false;
   if (view === "Home") {
     playMusic(audio.resultsMusic, 0.2);
@@ -1010,18 +1007,12 @@ function closeGame(view) {
   win.ctx = null;
   win.running = false;
   win.makeCanvas.remove();
-  resetGameVariables();
+  if (view === "Home") {
+    playMusic(audio.resultsMusic, 0.2);
+    game.Music.loop = false;
+    submitResults();
+  }
 }
-
-// let startButton = document.getElementById("click-to-play");
-// startButton.onclick = function() {
-//   if (!win.running) {
-//     startButton.remove();
-//     startGame();
-//     setTimeout(gameLoop(), 1000 / 60);
-//   }
-// };
-
 // document.addEventListener("click",)
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
@@ -1137,8 +1128,7 @@ function KEYBOARD_CONTROL(event) {
         announcer.endgameIndexLastPicked,
         "endgame"
       );
-      closeGame(win.view); // Since game is over, we are on home page
-      submitResults();
+      win.running = false;
     }
   }
 }
