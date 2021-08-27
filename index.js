@@ -37,12 +37,19 @@ function render(st) {
   addEventListeners(st);
 }
 
+// fetch("https://puzzle-league-blitz1.herokuapp.com/")
+// .then(response => response.json)
+// .then(data =>)
+
 function addEventListeners(st) {
   // add event listeners to Nav items for navigation
   document.querySelectorAll("nav a").forEach(navLink =>
     navLink.addEventListener("click", event => {
       event.preventDefault();
-      render(state[event.target.title]);
+      // Failsafe: Do not reload home page if already on home-page
+      if (!(st.view === "Home" && state[event.target.title].view === "Home")) {
+        render(state[event.target.title]);
+      }
     })
   );
 
@@ -56,7 +63,6 @@ function addEventListeners(st) {
   // event listener for the the home/game page
   if (st.view === "Home") {
     let homePage = document.getElementById("home-page");
-    console.log(homePage);
     let startButton = document.createElement("button");
     startButton.setAttribute("id", "click-to-play");
     startButton.innerHTML = "Click to play";
@@ -66,6 +72,20 @@ function addEventListeners(st) {
       startGame();
     });
   }
+}
+
+export function sendData(requestData) {
+  axios
+    .post(`http://localhost:4040/games`, requestData) // process.env.API accesses API
+    .then(response => {
+      console.log(response.data);
+      state.Home.games.push(response.data);
+      console.log(state.Home.games);
+      // router.navigate("/Games");
+    })
+    .catch(error => {
+      console.log("Failed to Post", error);
+    });
 }
 
 // router.hooks({

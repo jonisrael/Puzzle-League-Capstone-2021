@@ -1019,12 +1019,16 @@ document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
   if (win.running) {
     if (event.keyCode == 27) {
-      // escape
-
-      win.makeCanvas = document.getElementById("canvas").remove();
-      win.running = false;
-      win.cvs = null;
-      win.ctx = null;
+      game.frames = 0;
+      game.over = true;
+      for (let c = 0; c < grid.COLS; c++) {
+        for (let r = 0; r < grid.ROWS; r++) {
+          game.board[c][r].type = blockType.LANDING;
+          game.board[c][r].timer = -2;
+        }
+      }
+      gameOverBoard();
+      drawGrid();
     }
   }
   if (win.running & !game.over) {

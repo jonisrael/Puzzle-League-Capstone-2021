@@ -1,4 +1,5 @@
 export default {
   header: "Home",
-  view: "Home"
+  view: "Home",
+  games: []
 };

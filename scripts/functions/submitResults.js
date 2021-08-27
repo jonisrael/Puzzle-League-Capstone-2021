@@ -1,8 +1,9 @@
 import axios from "axios";
 import * as state from "../../store";
 // import router from "../../server/routers/games";
+import { startGame } from "../../app";
 import { game } from "../global";
-import { router } from "../../index";
+import { router, sendData } from "../../index";
 
 export function submitResults() {
   let finalScore = game.score;
@@ -11,11 +12,13 @@ export function submitResults() {
   else duration = `${game.minutes}:${game.seconds}`;
 
   let homePage = document.getElementById("home-page");
+  let container = document.createElement("div");
+  homePage.appendChild(container);
   let form = document.createElement("form");
   form.setAttribute("id", "form");
   form.setAttribute("method", "POST");
   form.setAttribute("action", "");
-  homePage.appendChild(form);
+  container.appendChild(form);
 
   let div1 = document.createElement("div");
   form.appendChild(div1);
@@ -56,6 +59,13 @@ export function submitResults() {
   submitForm.setAttribute("value", "Submit Name");
   div2.appendChild(submitForm);
 
+  let div3 = document.createElement("div");
+  container.appendChild(div3);
+  let restartGame = document.createElement("button");
+  restartGame.setAttribute("id", "restart-game");
+  restartGame.innerHTML = "Restart Game Without Posting Scores";
+  div3.appendChild(restartGame);
+
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
 
@@ -66,15 +76,14 @@ export function submitResults() {
     };
 
     console.log(requestData);
+    sendData(requestData);
+    form.remove();
 
-    axios
-      .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
-      .then(response => {
-        state.Home.games.push(response.data);
-        router.navigate("/Games");
-      })
-      .catch(error => {
-        console.log("Failed to Post", error);
-      });
+    restartGame.innerHTML = "Play again?";
+  });
+
+  document.querySelector("#restart-game").addEventListener("click", event => {
+    container.remove();
+    startGame();
   });
 }
