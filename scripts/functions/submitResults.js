@@ -3,6 +3,7 @@
 import { game } from "../global";
 
 export function submitResults() {
+  let finalScore = game.score;
   let duration = "";
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
   else duration = `${game.minutes}:${game.seconds}`;
@@ -55,7 +56,13 @@ export function submitResults() {
 
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
+
+    let gameData = {
+      name: nameInput.value,
+      score: finalScore,
+      duration: duration
+    };
     // convert HTML elements to Array
-    console.log(nameInput.value);
+    console.log(gameData);
   });
 }
