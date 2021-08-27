@@ -67,4 +67,30 @@ function addEventListeners(st) {
     });
   }
 }
-export { currentView };
+
+// router.hooks({
+//   before: (done, params) => {
+//     const page =
+//       params && params.hasOwnProperty("page")
+//         ? capitalize(params.page)
+//         : "Home";
+
+//     switch (page) {
+//       case "Home" {
+
+//         break;
+//       }
+//       default:
+//         done();
+//     }
+//   }
+// });
+
+router
+  .on({
+    "/": () => render(state.Home),
+    ":page": params => render(state[capitalize(params.page)])
+  })
+  .resolve();
+
+export { router, currentView };

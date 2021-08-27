@@ -6,7 +6,9 @@
   "scripts": {
     "server:watch": "nodemon --watch ./server -e js ./server/index.js",
     "parcel-build": "parcel build index.html && cp _redirects ./dist/",
-    "serve": "parcel index.html"
+    "serve": "parcel index.html",
+    "start": "node ./server/index.js"
+
   },
   "keywords": [],
   "author": "",

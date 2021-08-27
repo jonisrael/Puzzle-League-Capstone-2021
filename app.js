@@ -989,7 +989,7 @@ function resetGameVariables() {
 }
 
 function closeGame(view) {
-  console.log("close game called");
+  console.log("closeGame called");
   win.running = false;
   if (view === "Home") {
     playMusic(audio.resultsMusic, 0.2);
@@ -1219,7 +1219,6 @@ function gameLoop(timestamp) {
       );
       playMusic(audio.overtimeMusic, 0.2);
     } else if (game.frames >= 1200) {
-      console.log(`Current Score: ${game.score}`);
       playAnnouncer(
         announcer.timeTransitionDialogue,
         announcer.timeTransitionIndexLastPicked,

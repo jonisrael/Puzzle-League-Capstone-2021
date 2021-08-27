@@ -1,6 +1,8 @@
-// import axios from "axios";
+import axios from "axios";
+import * as state from "../../store";
 // import router from "../../server/routers/games";
 import { game } from "../global";
+import { router } from "../../index";
 
 export function submitResults() {
   let finalScore = game.score;
@@ -57,12 +59,22 @@ export function submitResults() {
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
 
-    let gameData = {
+    let requestData = {
       name: nameInput.value,
       score: finalScore,
       duration: duration
     };
-    // convert HTML elements to Array
-    console.log(gameData);
+
+    console.log(requestData);
+
+    axios
+      .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
+      .then(response => {
+        state.Home.games.push(response.data);
+        router.navigate("/Games");
+      })
+      .catch(error => {
+        console.log("Failed to Post", error);
+      });
   });
 }
