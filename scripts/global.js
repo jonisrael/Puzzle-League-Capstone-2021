@@ -103,23 +103,6 @@ const INTERACTIVE_PIECES = [
   blockType.PANICKING
 ];
 
-const win = {
-  view: "",
-  viewChanged: false,
-  running: false,
-  makeCanvas: null,
-  cvs: null,
-  ctx: null,
-  statDisplay: null,
-  scoreDisplay: null,
-  chainDisplay: null,
-  timeDisplay: null,
-  levelDisplay: null,
-  highScoreDisplay: null,
-  gameOverMessage: null,
-  form: null
-};
-
 const grid = {
   COLS: 6,
   ROWS: 12,
@@ -138,41 +121,25 @@ if (localStorage.getItem("highScore") === null) {
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
-const game = {
-  // use let instead of const to revert to resetGameVar
-  rise: 0,
-  board: [],
-  mute: 0,
-  volume: 1,
-  level: 1,
-  boardRiseSpeed: preset.speedValues,
-  blockClearTime: preset.clearValues,
-  blockStallTime: preset.stallValues,
-  pause: 0,
-  raiseDelay: 0,
-  frames: -180,
-  seconds: 0,
-  minutes: 0,
-  score: 0,
-  scoreMultiplier: 1,
-  currentChain: 0,
-  combo: 0,
-  lastChain: 0,
-  highestChain: 0,
-  over: false, //gameOver
-  grounded: true,
-  addToPrimaryChain: false, // used to start/continue a chain
-  highScore: HIGH_SCORE,
-  disableRaise: false,
-  disableSwap: false,
-  quickRaise: false,
-  raisePressed: false,
-  Music: gameMusic,
-  data: {}
+const win = {
+  view: "",
+  viewChanged: false,
+  running: false,
+  makeCanvas: null,
+  cvs: null,
+  ctx: null,
+  statDisplay: null,
+  scoreDisplay: null,
+  chainDisplay: null,
+  timeDisplay: null,
+  levelDisplay: null,
+  highScoreDisplay: null,
+  gameOverMessage: null,
+  form: null
 };
 
-const resetGameVar = {
-  // set all game variables to resetGameVar
+const game = {
+  // use let instead of const to revert to resetGameVar
   rise: 0,
   board: [],
   mute: 0,
@@ -247,7 +214,6 @@ export {
   win,
   grid,
   game,
-  resetGameVar,
   preset,
   api,
   chainLogic,

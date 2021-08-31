@@ -78,6 +78,7 @@ export function sendData(requestData) {
   axios
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
+      console.log("Posted!");
       console.log(response.data);
       state.Home.games.push(response.data);
       // router.navigate("/Games");
@@ -97,7 +98,11 @@ export function sendData(requestData) {
 
 //     switch (page) {
 //       case "Home" {
+//         axios
+//         .get(`${process.env.API}/games`)
+//         .then(response =>) {
 
+//         }
 //         break;
 //       }
 //       default:

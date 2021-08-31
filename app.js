@@ -259,24 +259,6 @@ function fixNextDarkStack() {
   }
 }
 
-function makeOpeningBoard(index) {
-  console.log(`Board Index Selected: ${index}`);
-  for (let c = 0; c < grid.COLS; c++) {
-    game.board.push([]);
-    for (let r = 0; r < grid.ROWS + 2; r++) {
-      let block = new Block(
-        c,
-        r,
-        DATABASE[`board${index}`][`x${c}`][`y${r}`].color,
-        DATABASE[`board${index}`][`x${c}`][`y${r}`].type
-      );
-      game.board[c].push(block);
-      block.draw();
-    }
-  }
-  return game.board;
-}
-
 function generateOpeningBoard() {
   cursor.x = 2;
   cursor.y = 6;
@@ -943,15 +925,7 @@ export function startGame() {
   win.running = true;
   resetGameVariables();
   createHeadsUpDisplay();
-  try {
-    game.board = makeOpeningBoard(randInt(2));
-    console.log("Fetch successful!");
-  } catch (error) {
-    console.log(
-      `fetching api.database.json failed. Will randomly generate game.board instead`
-    );
-    game.board = generateOpeningBoard();
-  }
+  game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);
   setTimeout(gameLoop(), 1000 / 60);
 }
@@ -1076,7 +1050,7 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode == 48) {
         // 0 (number)
         game.rise = 0;
-        game.board = makeOpeningBoard(randInt(2));
+        game.board = generateOpeningBoard();
         game.disableRaise = false;
       } else if (event.keyCode == 80 || event.keyCode == 81) {
         // p, q
