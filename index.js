@@ -5,12 +5,12 @@ import Navigo from "navigo";
 import { capitalize } from "lodash";
 import axios from "axios";
 import dotenv from "dotenv";
-import { win } from "./scripts/global";
-import { startGame } from "./app";
+import { win, api } from "./scripts/global";
+import { startGame, generateOpeningBoard } from "./app";
+import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 
 dotenv.config();
 
-let currentView = "";
 const router = new Navigo(window.location.origin);
 
 router
@@ -36,10 +36,6 @@ function render(st) {
 
   addEventListeners(st);
 }
-
-// fetch("https://puzzle-league-blitz1.herokuapp.com/")
-// .then(response => response.json)
-// .then(data =>)
 
 function addEventListeners(st) {
   // add event listeners to Nav items for navigation
@@ -74,18 +70,35 @@ function addEventListeners(st) {
   }
 }
 
+export function getWorldTimeAPI() {
+  console.log("getting worldTimeAPI");
+  let dateTimeString = "";
+  axios
+    .get("https://worldtimeapi.org/api/ip")
+    .then(response => {
+      dateTimeString = response.data.datetime;
+      console.log("Fetch Successful");
+      console.log(dateTimeString);
+      api.data = extractTimeFromAPI(dateTimeString);
+    })
+    .catch(error => {
+      console.log("Fetch failed", error);
+      return error;
+    });
+  // generateOpeningBoard();
+}
+
 export function sendData(requestData) {
+  let dateTimeString;
   axios
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
       console.log("Posted!");
-      console.log(response.data);
       state.Home.games.push(response.data);
       // router.navigate("/Games");
     })
     .catch(error => {
       console.log("Failed to Post", error);
-      console.log("API:", process.env.API);
     });
 }
 
@@ -118,4 +131,4 @@ router
   })
   .resolve();
 
-export { router, currentView };
+export { router };

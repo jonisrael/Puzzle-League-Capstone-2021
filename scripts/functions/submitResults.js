@@ -2,10 +2,11 @@ import axios from "axios";
 import * as state from "../../store";
 // import router from "../../server/routers/games";
 import { startGame } from "../../app";
-import { game } from "../global";
-import { router, sendData } from "../../index";
+import { game, api } from "../global";
+import { router, sendData, getWorldTimeAPI } from "../../index";
 
 export function submitResults() {
+  let dateTimeString = getWorldTimeAPI();
   let finalScore = game.score;
   let duration = "";
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
@@ -37,6 +38,18 @@ export function submitResults() {
   durationMessage.setAttribute = ("id", "duration-message");
   durationMessage.innerHTML = `Duration Survived: ${duration}`;
   div1.appendChild(durationMessage);
+
+  let dateMessage = document.createElement("h2");
+  dateMessage.setAttribute = ("id", "date-message");
+  dateMessage.innerHTML = `Date: ${api.data.month}/${api.data.day}/${api.data.year}`;
+  div1.appendChild(dateMessage);
+
+  let timeMessage = document.createElement("h2");
+  timeMessage.setAttribute = ("id", "time-message");
+  timeMessage.innerHTML = `Game Begin At: ${api.data.hour}:${api.data.minute} ${api.data.meridian}`;
+  div1.appendChild(timeMessage);
+
+  console.log(api.data);
 
   let div2 = document.createElement("div");
   form.appendChild(div2);
@@ -72,11 +85,18 @@ export function submitResults() {
     let requestData = {
       name: nameInput.value,
       score: finalScore,
-      duration: duration
+      duration: duration,
+      month: api.data.month,
+      day: api.data.day,
+      year: api.data.year,
+      hour: api.data.hour,
+      minute: api.data.minute,
+      meridian: api.data.meridian
     };
 
     console.log(requestData);
     sendData(requestData);
+
     form.remove();
 
     restartGame.innerHTML = "Play again?";
@@ -86,4 +106,33 @@ export function submitResults() {
     container.remove();
     startGame();
   });
+}
+
+export function extractTimeFromAPI(dateTimeString) {
+  console.log(dateTimeString);
+
+  let hourStr = `${dateTimeString[11]}${dateTimeString[12]}`;
+  let minStr = `${dateTimeString[14]}${[dateTimeString[15]]}`;
+  let monthStr = `${dateTimeString[5]}${dateTimeString[6]}`;
+  let dayStr = `${dateTimeString[8]}${dateTimeString[9]}`;
+  let yearStr = `${dateTimeString.slice(0, 4)}`;
+
+  let hour = hourStr[0] === "0" ? parseInt(hourStr[1]) : parseInt(hourStr);
+  console.log(hour);
+  let meridian = "A.M.";
+  if (hour === 0) {
+    hourStr = "12";
+  } else if (hour > 12) {
+    hourStr = hour - 12 < 10 ? `0${hour - 12}` : `${hour - 12}`;
+    `${hour - 12}`;
+    meridian = "P.M.";
+  }
+  return {
+    month: monthStr,
+    day: dayStr,
+    year: yearStr,
+    hour: hourStr,
+    minute: minStr,
+    meridian: meridian
+  };
 }

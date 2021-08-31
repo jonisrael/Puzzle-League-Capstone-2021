@@ -37,18 +37,14 @@ import {
   randInt
 } from "./scripts/global.js";
 
-import { currentView } from "./index.js";
+import { getWorldTimeAPI } from "./index.js";
 
 // console.log(highScoreDisplay);
 
 // fetching our api.data from an API
 
-fetch("https://worldtimeapi.org/api/ip")
-  // parsing our response into JSON format
-  .then(response => response.json())
-  // "using" the formatted response in our script
-  .then(json => api.dateTimeAPI.push(json));
-console.log(api.dateTimeAPI);
+getWorldTimeAPI();
+
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
 }
@@ -196,33 +192,6 @@ function timeSinceGameStarted(gameStart) {
   return Math.floor((Date.now() - gameStart) / 1000);
 }
 
-function extractTimeToIndex() {
-  if (api.dateTimeAPI.length == 0) {
-    return console.log("JSON not fetched yet");
-  }
-  let index = 0;
-  let time = api.dateTimeAPI[0].datetime;
-  let hour;
-  let minute;
-  console.log(time);
-  let hourStr = `${time[11]}${time[12]}}`;
-  if (hourStr[0] === "0") {
-    hour = parseInt(hourStr[1]); // if first char is "0", only parse 2nd char
-  } else {
-    hour = parseInt(hourStr);
-  }
-  let minStr = `${time[14]}${[time[15]]}`;
-  if (minStr[0] === "0") {
-    minute = parseInt(minStr[1]); // if first char is "0", only parse 2nd char
-  } else {
-    minute = parseInt(minStr);
-  }
-
-  index = hour * 60 + minute;
-  console.log(hour, minute, index);
-  return index;
-}
-
 function fixNextDarkStack() {
   let aboveAdjacent = true;
   let leftRightAdjacent = true;
@@ -259,7 +228,7 @@ function fixNextDarkStack() {
   }
 }
 
-function generateOpeningBoard() {
+export function generateOpeningBoard() {
   cursor.x = 2;
   cursor.y = 6;
 
@@ -922,6 +891,7 @@ function createHeadsUpDisplay() {
 }
 
 export function startGame() {
+  api.data = getWorldTimeAPI();
   win.running = true;
   resetGameVariables();
   createHeadsUpDisplay();

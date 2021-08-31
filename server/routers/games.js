@@ -44,7 +44,13 @@ router.put("/games/:id", (request, response) => {
       $set: {
         name: body.name,
         score: body.score,
-        duration: body.duration
+        duration: body.duration,
+        month: body.month,
+        day: body.day,
+        year: body.year,
+        hour: body.hour,
+        minute: body.minute,
+        meridian: body.meridian
       }
     },
     (error, data) => {
