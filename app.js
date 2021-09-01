@@ -41,10 +41,6 @@ import { getWorldTimeAPI } from "./index.js";
 
 // console.log(highScoreDisplay);
 
-// fetching our api.data from an API
-
-getWorldTimeAPI();
-
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
 }

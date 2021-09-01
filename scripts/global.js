@@ -172,9 +172,8 @@ const game = {
 };
 
 const api = {
-  database: [],
   data: [],
-  dateTimeAPI: []
+  serverLeaderboardData: []
 };
 
 const chainLogic = {

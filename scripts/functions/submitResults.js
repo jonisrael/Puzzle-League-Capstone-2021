@@ -1,12 +1,8 @@
-import axios from "axios";
-import * as state from "../../store";
-// import router from "../../server/routers/games";
 import { startGame } from "../../app";
 import { game, api } from "../global";
-import { router, sendData, getWorldTimeAPI } from "../../index";
+import { sendData } from "../../index";
 
 export function submitResults() {
-  let dateTimeString = getWorldTimeAPI();
   let finalScore = game.score;
   let duration = "";
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
@@ -63,6 +59,7 @@ export function submitResults() {
   nameInput.setAttribute("type", "text");
   nameInput.setAttribute("name", "player-name");
   nameInput.setAttribute("id", "player-name");
+  nameInput.setAttribute("maxlength", "16");
   nameInput.setAttribute("required", "");
   div2.appendChild(nameInput);
 

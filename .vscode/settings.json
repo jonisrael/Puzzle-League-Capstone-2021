@@ -27,6 +27,8 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.view.alwaysShowHeaderActions": true,
   "cSpell.ignoreWords": [
-    "datetime"
+    "datetime",
+    "leaderboard",
+    "leaderboards"
   ]
 }

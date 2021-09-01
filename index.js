@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import { win, api } from "./scripts/global";
 import { startGame, generateOpeningBoard } from "./app";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
+import { populateLeaderboards } from "./scripts/functions/populateLeaderboard";
 
 dotenv.config();
 
@@ -67,18 +68,19 @@ function addEventListeners(st) {
       startButton.remove();
       startGame();
     });
+  } else if (st.view === "Leaderboard") {
+    populateLeaderboards();
   }
 }
 
 export function getWorldTimeAPI() {
-  console.log("getting worldTimeAPI");
+  console.log("Fetching WorldTime Data...");
   let dateTimeString = "";
   axios
     .get("https://worldtimeapi.org/api/ip")
     .then(response => {
       dateTimeString = response.data.datetime;
-      console.log("Fetch Successful");
-      console.log(dateTimeString);
+      console.log("Fetch Successful!");
       api.data = extractTimeFromAPI(dateTimeString);
     })
     .catch(error => {
@@ -89,7 +91,7 @@ export function getWorldTimeAPI() {
 }
 
 export function sendData(requestData) {
-  let dateTimeString;
+  console.log("Posting data...");
   axios
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
@@ -102,28 +104,6 @@ export function sendData(requestData) {
     });
 }
 
-// router.hooks({
-//   before: (done, params) => {
-//     const page =
-//       params && params.hasOwnProperty("page")
-//         ? capitalize(params.page)
-//         : "Home";
-
-//     switch (page) {
-//       case "Home" {
-//         axios
-//         .get(`${process.env.API}/games`)
-//         .then(response =>) {
-
-//         }
-//         break;
-//       }
-//       default:
-//         done();
-//     }
-//   }
-// });
-
 router
   .on({
     "/": () => render(state.Home),
@@ -132,3 +112,5 @@ router
   .resolve();
 
 export { router };
+
+// Does not contain router.hooks currently
