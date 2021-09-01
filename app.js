@@ -482,8 +482,8 @@ function isChainActive() {
     );
   }
   if (game.currentChain > 1) console.log(`${game.currentChain} chain!`);
-  if (game.currentChain > game.highestChain)
-    game.highestChain = game.currentChain;
+  if (game.currentChain > game.largestChain)
+    game.largestChain = game.currentChain;
   game.currentChain = 0;
   game.combo = 0;
   if (potentialSecondarySuccessor) {
@@ -915,7 +915,8 @@ function resetGameVariables() {
   game.currentChain = 0;
   game.combo = 0;
   game.lastChain = 0;
-  game.highestChain = 0;
+  game.largestChain = 0;
+  game.largestClear = 0;
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain
@@ -1345,7 +1346,7 @@ function gameLoop(timestamp) {
     win.chainDisplay.innerHTML = `${game.currentChain}x chain!`;
     win.chainDisplay.style.color = "red";
   } else {
-    win.chainDisplay.innerHTML = `Highest Chain: ${game.highestChain}`;
+    win.chainDisplay.innerHTML = `Largest Chain: ${game.largestChain}`;
     win.chainDisplay.style.color = "blue";
   }
 

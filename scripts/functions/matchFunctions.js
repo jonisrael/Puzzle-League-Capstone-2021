@@ -194,6 +194,7 @@ export function checkMatch() {
 
       if (clearLocationsLength != 0) {
         game.combo = clearLocationsLength;
+        if (game.combo > game.largestClear) game.largestClear = game.combo;
         if (game.combo > 3 || game.currentChain > 1) {
           game.raiseDelay = 6 * game.boardRiseSpeed;
         }

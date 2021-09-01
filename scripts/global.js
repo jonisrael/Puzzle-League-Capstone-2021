@@ -158,7 +158,8 @@ const game = {
   currentChain: 0,
   combo: 0,
   lastChain: 0,
-  highestChain: 0,
+  largestChain: 0,
+  largestClear: 0,
   over: false, //gameOver
   grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain
