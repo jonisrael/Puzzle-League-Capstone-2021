@@ -66,7 +66,6 @@ export function submitResults() {
   nameInput.setAttribute("id", "player-name");
   nameInput.setAttribute("maxlength", "15");
   nameInput.setAttribute("placeholder", "Anonymous");
-  nameInput.setAttribute("required", "");
   div2.appendChild(nameInput);
 
   let submitForm = document.createElement("input");
@@ -84,6 +83,7 @@ export function submitResults() {
 
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
+    if (nameInput.value === "") nameInput.value = "Anonymous";
 
     let requestData = {
       name: nameInput.value,
