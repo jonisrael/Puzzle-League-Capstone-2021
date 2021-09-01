@@ -20,7 +20,7 @@ export function populateLeaderboardPage() {
       console.log("Leaderboard Fetch Successful!");
       // container.innerHTML = JSON.stringify(sortedData);
       scoreListDisplay.innerHTML =
-        "<pre>|        NAME       |  SCORE  |  ALIVE |           DATE          |<br></pre>";
+        "<pre>|       ALIAS      |  SCORE  |  ALIVE |           DATE          |<br></pre>";
       ("<pre>|  LONGESTNAMEAVAI  |  00000   |  09:59 |  12/31/2021 07:28 P.M.  |<br></pre>");
       for (let entry of sortedData) {
         let displayedEntry = "";

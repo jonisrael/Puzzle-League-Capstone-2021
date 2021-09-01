@@ -57,7 +57,7 @@ export function submitResults() {
 
   let nameLabel = document.createElement("label");
   nameLabel.setAttribute("for", "player-name");
-  nameLabel.innerHTML = "Enter your name: ";
+  nameLabel.innerHTML = "Enter a name to be associated with the score: ";
   div2.append(nameLabel);
 
   let nameInput = document.createElement("input");
@@ -65,6 +65,7 @@ export function submitResults() {
   nameInput.setAttribute("name", "player-name");
   nameInput.setAttribute("id", "player-name");
   nameInput.setAttribute("maxlength", "15");
+  nameInput.setAttribute("placeholder", "Anonymous");
   nameInput.setAttribute("required", "");
   div2.appendChild(nameInput);
 
