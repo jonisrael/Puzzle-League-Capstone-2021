@@ -3,7 +3,7 @@ import html from "html-literal";
 export default st => html`
   <section id="home-page">
     <body>
-      <h1>Welcome to Jonathan Israel's Puzzle League Score Rush!</h1>
+      <h1>Welcome to Jonathan Israel's Puzzle League Blitz!</h1>
       <h2>
         Use the arrow keys to move, x to swap blocks, and z to raise the stack
         when legal.<br />
@@ -18,8 +18,7 @@ export default st => html`
         The stack rise speed will get faster every 20 seconds, which also
         increases the multiplier of combos/chains by 0.1x. At two minutes,
         "overtime" begins, and the stack rise speed will be extremely fast.
-        However, all point scores will be doubled. Press Enter to play (button
-        to work soon). Have fun!
+        However, all point scores will be doubled. Have fun!
       </h3>
       <div id="debug"></div>
     </body>
