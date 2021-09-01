@@ -1117,6 +1117,18 @@ function checkTime() {
 
 function gameLoop(timestamp) {
   game.frames++;
+
+  if (game.over && game.frames == 300) {
+    playAnnouncer(
+      announcer.endgameDialogue,
+      announcer.endgameIndexLastPicked,
+      "endgame"
+    );
+    closeGame(win.view);
+    win.running = false;
+    return;
+  }
+
   if (!win.running || win.view !== "Home") {
     console.log("closing game", win.view);
     closeGame(win.view);
@@ -1303,14 +1315,12 @@ function gameLoop(timestamp) {
   let timeString = `${minutesString}:${secondsString}`;
 
   if (game.score < 10) {
-    scoreString = `00000${game.score}`;
-  } else if (game.score < 100) {
     scoreString = `0000${game.score}`;
-  } else if (game.score < 1000) {
+  } else if (game.score < 100) {
     scoreString = `000${game.score}`;
-  } else if (game.score < 10000) {
+  } else if (game.score < 1000) {
     scoreString = `00${game.score}`;
-  } else if (game.score < 100000) {
+  } else if (game.score < 10000) {
     scoreString = `0${game.score}`;
   } else {
     scoreString = `${game.score}`;

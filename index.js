@@ -5,10 +5,10 @@ import Navigo from "navigo";
 import { capitalize } from "lodash";
 import axios from "axios";
 import dotenv from "dotenv";
-import { win, api } from "./scripts/global";
+import { win, api, game } from "./scripts/global";
 import { startGame, generateOpeningBoard } from "./app";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
-import { populateLeaderboards } from "./scripts/functions/populateLeaderboard";
+import { populateLeaderboardPage } from "./scripts/functions/populateLeaderboardPage";
 
 dotenv.config();
 
@@ -36,6 +36,8 @@ function render(st) {
   router.updatePageLinks();
 
   addEventListeners(st);
+
+  if (st.view !== "Home") game.Music.volume = 0;
 }
 
 function addEventListeners(st) {
@@ -69,7 +71,7 @@ function addEventListeners(st) {
       startGame();
     });
   } else if (st.view === "Leaderboard") {
-    populateLeaderboards();
+    populateLeaderboardPage();
   }
 }
 

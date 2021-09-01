@@ -8,6 +8,16 @@ header {
     display: block;
 }
 
+
+.postgame-info {
+  color: cyan;
+}
+
+#score-list-display {
+    font-family: "Courier New";
+    color: orange;
+}
+
 canvas {
     display: flex;
     justify-content: center;
@@ -34,7 +44,7 @@ h3 {
     text-align: center;
 }
 
-#nav-message{
+#nav-message {
     color: orange;
 }
 

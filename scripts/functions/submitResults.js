@@ -22,26 +22,31 @@ export function submitResults() {
 
   let gameOver = document.createElement("h2");
   gameOver.setAttribute("id", "game-over");
+  gameOver.className = "postgame-info";
   gameOver.innerHTML = "Game Over!";
   div1.appendChild(gameOver);
 
   let scoreMessage = document.createElement("h2");
   scoreMessage.setAttribute = ("id", "score-message");
+  scoreMessage.className = "postgame-info";
   scoreMessage.innerHTML = `Final Score: ${game.score}`;
   div1.appendChild(scoreMessage);
 
   let durationMessage = document.createElement("h2");
   durationMessage.setAttribute = ("id", "duration-message");
+  durationMessage.className = "postgame-info";
   durationMessage.innerHTML = `Duration Survived: ${duration}`;
   div1.appendChild(durationMessage);
 
   let dateMessage = document.createElement("h2");
   dateMessage.setAttribute = ("id", "date-message");
+  dateMessage.className = "postgame-info";
   dateMessage.innerHTML = `Date: ${api.data.month}/${api.data.day}/${api.data.year}`;
   div1.appendChild(dateMessage);
 
   let timeMessage = document.createElement("h2");
   timeMessage.setAttribute = ("id", "time-message");
+  timeMessage.className = "postgame-info";
   timeMessage.innerHTML = `Game Begin At: ${api.data.hour}:${api.data.minute} ${api.data.meridian}`;
   div1.appendChild(timeMessage);
 
@@ -59,7 +64,7 @@ export function submitResults() {
   nameInput.setAttribute("type", "text");
   nameInput.setAttribute("name", "player-name");
   nameInput.setAttribute("id", "player-name");
-  nameInput.setAttribute("maxlength", "16");
+  nameInput.setAttribute("maxlength", "15");
   nameInput.setAttribute("required", "");
   div2.appendChild(nameInput);
 

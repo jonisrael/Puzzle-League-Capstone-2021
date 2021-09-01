@@ -27,8 +27,13 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.view.alwaysShowHeaderActions": true,
   "cSpell.ignoreWords": [
+    "attribute",
+    "class",
     "datetime",
+    "info",
     "leaderboard",
-    "leaderboards"
+    "leaderboards",
+    "postgame",
+    "set"
   ]
 }
