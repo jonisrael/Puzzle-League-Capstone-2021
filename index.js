@@ -14,14 +14,14 @@ dotenv.config();
 
 const router = new Navigo(window.location.origin);
 
-router
-  .on({
-    "/": () => render(state.Home),
-    ":page": params => render(state[capitalize(params.page)])
-  })
-  .resolve();
+// router
+//   .on({
+//     "/": () => render(state.Home),
+//     ":page": params => render(state[capitalize(params.page)])
+//   })
+//   .resolve();
 
-// render(state.Home);
+// // render(state.Home);
 
 function render(st) {
   win.view = st.view;
@@ -106,13 +106,20 @@ export function sendData(requestData) {
     });
 }
 
+// router.hooks({
+//   before: (done, params) => {
+//     const page =
+//       params && params.hasOwnProperty("page")
+//         ? capitalize(params.page)
+//         : "Home";
+
+//     switch (page {
+//       case "Home"
+//     });
+
 router
   .on({
     "/": () => render(state.Home),
     ":page": params => render(state[capitalize(params.page)])
   })
   .resolve();
-
-export { router };
-
-// Does not contain router.hooks currently
