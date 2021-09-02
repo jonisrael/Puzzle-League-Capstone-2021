@@ -148,7 +148,7 @@ export function checkMatch() {
       if (game.currentChain == 0) {
         chainLogic.addToPrimaryChain = true;
         game.currentChain++;
-        if (clearLocationsLength > 3) {
+        if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
           playAudio(
             announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
           );

@@ -44,6 +44,19 @@ import { getWorldTimeAPI } from "./index.js";
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
 }
+if (localStorage.getItem("mute-announcer") === null) {
+  localStorage.setItem("mute-announcer", false);
+}
+if (localStorage.getItem("mute-music") === null) {
+  localStorage.setItem("mute-music", false);
+}
+if (localStorage.getItem("mute-sfx") === null) {
+  localStorage.setItem("mute-sfx", false);
+}
+
+(win.muteAnnouncer = document.getElementById("mute-announcer")),
+  (win.muteMusic = document.getElementById("mute-music")),
+  (win.muteSFX = document.getElementById("mute-sfx"));
 
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
@@ -451,7 +464,7 @@ function isChainActive() {
   game.lastChain = game.currentChain;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
-    playAudio(audio.announcerUnbelievable);
+    if (!win.muteAnnouncer.checked) playAudio(audio.announcerUnbelievable);
   } else if (game.currentChain > 6) {
     playAudio(audio.fanfare4);
     playAnnouncer(
@@ -1079,6 +1092,8 @@ function KEYBOARD_CONTROL(event) {
 }
 
 function checkTime() {
+  win.muteMusic.checked ? (game.Music.volume = 0) : (game.Music.volume = 0.1);
+  if (win.muteAnnouncer.checked) return;
   switch (game.frames) {
     case -178:
       window.scrollTo(0, document.body.scrollHeight);
@@ -1275,7 +1290,7 @@ function gameLoop(timestamp) {
       performance.drawDivisor >= 2 &&
       performance.gameSpeed < 2
     ) {
-      performance.gameSpeed = 2;
+      performance.gameSpeed = 1;
       console.log("game speed has now doubled");
     }
     if (performance.fps <= 55 && performance.drawDivisor < 2) {

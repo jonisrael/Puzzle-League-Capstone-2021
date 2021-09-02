@@ -135,7 +135,10 @@ const win = {
   levelDisplay: null,
   highScoreDisplay: null,
   gameOverMessage: null,
-  form: null
+  form: null,
+  muteAnnouncer: document.getElementById("mute-announcer"),
+  muteMusic: document.getElementById("mute-music"),
+  muteSFX: document.getElementById("mute-sfx")
 };
 
 const game = {

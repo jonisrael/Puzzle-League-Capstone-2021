@@ -1,7 +1,9 @@
 import { audio } from "../fileImports";
-import { game, announcer, randInt } from "../global";
+import { game, win, announcer, randInt } from "../global";
 
 export function playAnnouncer(arr, lastPicked, arrType, mute = 0) {
+  if (win.muteAnnouncer.checked) return;
+
   let selection = randInt(arr.length);
   console.log("selection", selection, "lastPicked", lastPicked);
   while (selection == lastPicked) {
@@ -10,7 +12,7 @@ export function playAnnouncer(arr, lastPicked, arrType, mute = 0) {
   }
   console.log(arr.length);
   console.log(selection, lastPicked);
-  playAudio(arr[selection]);
+  playAudio(arr[selection], 0.1, true);
   switch (arrType) {
     case "opening":
       announcer.openingIndexLastPicked = selection;
@@ -44,7 +46,9 @@ export function playAnnouncer(arr, lastPicked, arrType, mute = 0) {
   }
 }
 
-export function playAudio(file, volume = 0.1) {
+export function playAudio(file, volume = 0.1, announcerBypass = false) {
+  // if sfx is muted but announcer is not, play sound anyway since announcer is not muted
+  if (win.muteSFX.checked && !announcerBypass) return;
   let Sound = new Audio();
   try {
     Sound.volume = volume;
@@ -58,6 +62,7 @@ export function playAudio(file, volume = 0.1) {
 }
 
 export function playChainSFX() {
+  if (win.muteSFX.checked) return;
   let Sound = new Audio();
   if (game.currentChain == 1) {
     return;
@@ -72,6 +77,7 @@ export function playChainSFX() {
 }
 
 export function playMusic(file, volume = 0.1, mute = 0) {
+  if (win.muteMusic.checked) return;
   game.Music.pause = true;
   game.Music.src = file;
   game.Music.play();

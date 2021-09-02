@@ -1,18 +1,4 @@
-import {
-  announcer,
-  blockColor,
-  blockType,
-  PIECES,
-  INTERACTIVE_PIECES,
-  app,
-  grid,
-  game,
-  preset,
-  api,
-  chainLogic,
-  performance,
-  debug
-} from "../global";
+import { blockColor, blockType, grid, game, win } from "../global";
 
 import { audio } from "../fileImports";
 
@@ -35,7 +21,7 @@ export function gameOverBoard() {
     return;
   }
   if (game.frames == 1) {
-    playAudio(audio.announcerKO, 0.2);
+    if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.Music.src = audio.resultsMusic;
   }
   if (game.frames == 4) {
