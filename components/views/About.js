@@ -20,13 +20,9 @@ export default st => html`
           clone a old tetris-similar game series called Planet Puzzle League. I
           also grew up with this game, and since it is kind of a niche game, I
           wanted to try and undertake a new coding challenge that has not been
-          cloned very much. Let me show you more information!
+          cloned very much.
         </p>
       </div>
-      <div>
-        <h2>How the game works</h2>
-      </div>
-      <p></p>
     </body>
   </section>
 `;
