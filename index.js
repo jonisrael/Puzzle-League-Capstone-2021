@@ -14,15 +14,6 @@ dotenv.config();
 
 const router = new Navigo(window.location.origin);
 
-// router
-//   .on({
-//     "/": () => render(state.Home),
-//     ":page": params => render(state[capitalize(params.page)])
-//   })
-//   .resolve();
-
-// // render(state.Home);
-
 function render(st) {
   win.view = st.view;
   win.viewChanged = true;
@@ -68,6 +59,7 @@ function addEventListeners(st) {
     homePage.appendChild(startButton);
     startButton.addEventListener("click", () => {
       startButton.remove();
+      getWorldTimeAPI();
       startGame();
     });
   } else if (st.view === "Leaderboard") {
@@ -89,7 +81,6 @@ export function getWorldTimeAPI() {
       console.log("Fetch failed", error);
       return error;
     });
-  // generateOpeningBoard();
 }
 
 export function sendData(requestData) {
@@ -98,24 +89,44 @@ export function sendData(requestData) {
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
       console.log("Posted!");
+      console.log("request", requestData);
+      console.log("response", response);
       state.Home.games.push(response.data);
-      // router.navigate("/Games");
+      console.log(state.Home.games);
     })
     .catch(error => {
       console.log("Failed to Post", error);
     });
 }
 
-// router.hooks({
-//   before: (done, params) => {
-//     const page =
-//       params && params.hasOwnProperty("page")
-//         ? capitalize(params.page)
-//         : "Home";
+router.hooks({
+  before: (done, params) => {
+    const page =
+      params && params.hasOwnProperty("page")
+        ? capitalize(params.page)
+        : "Home";
 
-//     switch (page {
-//       case "Home"
-//     });
+    switch (page) {
+      case "Leaderboard":
+        axios
+          .get("https://puzzle-league-blitz.herokuapp.com/games")
+          .then(response => {
+            let sortedData = response.data.sort((a, b) =>
+              parseInt(a.score) < parseInt(b.score) ? 1 : -1
+            );
+            state[page].games = sortedData;
+            console.log(state[page]);
+            populateLeaderboardPage(sortedData);
+          })
+          .catch(error => {
+            console.log("Failed to fetch Leaderboard:", error);
+          });
+        break;
+      default:
+        done();
+    }
+  }
+});
 
 router
   .on({

@@ -136,6 +136,7 @@ const win = {
   highScoreDisplay: null,
   gameOverMessage: null,
   form: null,
+  leaderboardInfo: "Fetching Leaderboards...",
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx")
@@ -162,7 +163,8 @@ const game = {
   combo: 0,
   lastChain: 0,
   largestChain: 0,
-  largestClear: 0,
+  largestCombo: 0,
+  totalClears: 0,
   over: false, //gameOver
   grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain

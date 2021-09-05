@@ -89,6 +89,8 @@ export function submitResults() {
       name: nameInput.value,
       score: finalScore,
       duration: duration,
+      largestChain: game.largestChain,
+      totalClears: game.totalClears,
       month: api.data.month,
       day: api.data.day,
       year: api.data.year,
@@ -125,7 +127,11 @@ export function extractTimeFromAPI(dateTimeString) {
   let meridian = "A.M.";
   if (hour === 0) {
     hourStr = "12";
-  } else if (hour > 12) {
+  }
+  if (hour === 12) {
+    meridian = "P.M.";
+  }
+  if (hour > 12) {
     hourStr = hour - 12 < 10 ? `0${hour - 12}` : `${hour - 12}`;
     `${hour - 12}`;
     meridian = "P.M.";

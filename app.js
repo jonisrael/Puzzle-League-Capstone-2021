@@ -929,7 +929,8 @@ function resetGameVariables() {
   game.combo = 0;
   game.lastChain = 0;
   game.largestChain = 0;
-  game.largestClear = 0;
+  game.largestCombo = 0;
+  game.totalClears = 0;
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain
@@ -1361,7 +1362,7 @@ function gameLoop(timestamp) {
     win.chainDisplay.innerHTML = `${game.currentChain}x chain!`;
     win.chainDisplay.style.color = "red";
   } else {
-    win.chainDisplay.innerHTML = `Largest Chain: ${game.largestChain}`;
+    win.chainDisplay.innerHTML = `Largest Chain: ${game.largestChain} | Total Blocks Cleared: ${game.totalClears}`;
     win.chainDisplay.style.color = "blue";
   }
 

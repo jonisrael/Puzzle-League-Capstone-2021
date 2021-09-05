@@ -6,6 +6,9 @@ const router = Router();
 // Create record in MongoDB
 router.post("/games", (request, response) => {
   const newGame = new game.model(request.body);
+  console.log("request", request);
+  console.log("response", response);
+  console.log("newGame", newGame);
   newGame.save((err, game) => {
     return err ? response.sendStatus(500).json(err) : response.json(game);
   });
@@ -45,6 +48,8 @@ router.put("/games/:id", (request, response) => {
         name: body.name,
         score: body.score,
         duration: body.duration,
+        largestChain: body.largestChain,
+        totalClears: body.totalClears,
         month: body.month,
         day: body.day,
         year: body.year,

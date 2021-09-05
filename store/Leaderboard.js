@@ -1,7 +1,7 @@
 export default {
   header: "Leaderboard",
   view: "Leaderboard",
-  highScores: []
+  games: []
 };
 
 // underneath view
