@@ -6,7 +6,7 @@ import { capitalize } from "lodash";
 import axios from "axios";
 import dotenv from "dotenv";
 import { win, api, game } from "./scripts/global";
-import { startGame, generateOpeningBoard } from "./app";
+import { startGame } from "./scripts/functions/beginGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboardPage } from "./scripts/functions/populateLeaderboardPage";
 
@@ -63,7 +63,7 @@ function addEventListeners(st) {
       startGame();
     });
   } else if (st.view === "Leaderboard") {
-    populateLeaderboardPage();
+    win.leaderboardInfo = populateLeaderboardPage();
   }
 }
 

@@ -4,10 +4,12 @@ export default st => html`
   <section id="home-page">
     <body>
       <h1>Welcome to Jonathan Israel's Puzzle League Blitz!</h1>
-      <h2>
-        Use the arrow keys to move, x to swap blocks, and z to raise the stack
-        when legal.<br />
-      </h2>
+      <h2>Controls:<br />
+      <ul style="list-style-type:none;">
+        <li>Press Arrow keys to move the Rectangle Cursor</li>
+        <li>Press S to swap blocks at the Cursor</li>
+        <li>Press R to raise the stack one row.</li>
+      </ul>
       <h3>
         Clear blocks by matching 3 adjacent blocks. If you match 4 or more you
         will get more points. Create chains by matching a second combo on top of

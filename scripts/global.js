@@ -144,6 +144,7 @@ const win = {
 
 const game = {
   // use let instead of const to revert to resetGameVar
+  cursor: null,
   rise: 0,
   board: [],
   mute: 0,
