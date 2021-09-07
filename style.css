@@ -4,6 +4,7 @@ body {
 }
 
 #click-to-play {
+    margin: 20px;
     border-radius: 10px;
     padding: 50px;
     background-color: greenyellow;
@@ -75,6 +76,10 @@ h3 {
     text-align: center;
 }
 
+#hud-elements h3 {
+    text-align: center;
+}
+
 #nav-message {
     color: orange;
 }
@@ -90,10 +95,6 @@ footer {
     color: purple;
     font-weight: bold;
     /* font-size: large; */
-}
-
-canvas {
-    outline: red solid 2px;
 }
 
 #nav-bar {

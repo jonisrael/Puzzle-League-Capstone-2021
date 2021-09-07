@@ -1,3 +1,4 @@
+export { default as Tutorials } from "./Tutorials";
 export { default as Scoring } from "./Scoring";
 export { default as About } from "./About";
 export { default as Home } from "./Home";

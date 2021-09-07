@@ -10,7 +10,8 @@ import { sprite, audio } from "./scripts/fileImports";
 import { legalMatch, checkMatch } from "./scripts/functions/matchFunctions";
 import {
   generateOpeningBoard,
-  fixNextDarkStack
+  fixNextDarkStack,
+  resetGameVariables
 } from "./scripts/functions/beginGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity } from "./scripts/functions/gravity";
@@ -117,7 +118,7 @@ class Block {
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
     if (this.type == blockType.CLEARING) {
-      if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || game.pause == 1) {
+      if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.pause == 1) {
         animationIndex = 0;
       } else {
         animationIndex = 1;
@@ -159,7 +160,7 @@ class Block {
     };
 
     //Debug Visuals
-    if (debug.enabled == 1) {
+    if (debug.show == 1) {
       if (this.availableForPrimaryChain && this.availableForSecondaryChain) {
         DEBUGB_IMAGE.src = sprite.debugBrown;
         DEBUGB_IMAGE.onload = () => {
@@ -242,7 +243,7 @@ function updateGrid(frameAdvance = false) {
       }
 
       if (!frameAdvance) {
-        if (game.board[x][y].timer > 0 && game.pause == 0) {
+        if (game.board[x][y].timer > 0 && debug.pause == 0) {
           game.board[x][y].timer -= 1 * performance.gameSpeed;
           game.disableRaise = true;
         } else if (game.board[x][y].timer == 0) {
@@ -377,7 +378,7 @@ function checkClearing() {
 function doPanic() {
   let panic = false;
   for (let c = 0; c < grid.COLS; c++) {
-    if (game.board[c][1].color != blockColor.VACANT) {
+    if (game.board[c][1].color != blockColor.VACANT && game.raiseDelay == 0) {
       for (let r = 0; r < grid.ROWS; r++) {
         if (game.board[c][r].type == blockType.NORMAL) {
           game.board[c][r].type = blockType.PANICKING;
@@ -396,7 +397,7 @@ function doPanic() {
 }
 
 function raiseStack() {
-  if (game.disableRaise || game.pause == 1) {
+  if (game.disableRaise || debug.pause == 1) {
     return false;
   } else if (game.raiseDelay > 0) {
     game.raiseDelay -= 1 * performance.gameSpeed;
@@ -457,11 +458,13 @@ function checkTime() {
   switch (game.frames) {
     case -178:
       window.scrollTo(0, document.body.scrollHeight);
-      playAnnouncer(
-        announcer.openingDialogue,
-        announcer.openingIndexLastPicked,
-        "opening"
-      );
+      playAudio(audio.announcer3, (game.volume = 0.3));
+      break;
+    case -120:
+      playAudio(audio.announcer2, (game.volume = 0.3));
+      break;
+    case -60:
+      playAudio(audio.announcer1, (game.volume = 0.3));
       break;
     case 0:
       playAudio(audio.announcerGo);
@@ -581,12 +584,22 @@ function KEYBOARD_CONTROL(event) {
       // tilda `~
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
+        debug.show = 1;
+        game.boardRiseSpeed = preset.speedValues[0];
+        game.blockClearTime = preset.clearValues[0];
+        game.blockStallTime = preset.stallValues[0];
         console.log("debug ON");
         console.log(`fps: ${performance.fps}`);
         console.log(`Draw Divisor: ${performance.drawDivisor}`);
         console.log(`Time: ${game.minutes}, ${game.seconds}`);
       } else {
+        game.boardRiseSpeed = preset.speedValues[game.level];
+        game.blockClearTime = preset.clearValues[game.level];
+        game.blockStallTime = preset.stallValues[game.level];
         console.log("debug OFF");
+        debug.slowdown = 0;
+        debug.pause = 0;
+        debug.show = 0;
       }
     }
     if (debug.enabled == 1) {
@@ -597,7 +610,7 @@ function KEYBOARD_CONTROL(event) {
         game.disableRaise = false;
       } else if (event.keyCode == 80 || event.keyCode == 81) {
         // p, q
-        game.pause = (game.pause + 1) % 2;
+        debug.pause = (debug.pause + 1) % 2;
       } else if (event.keyCode == 77 && game.level < 10) {
         //+
         game.level += 1 * performance.gameSpeed;
@@ -614,13 +627,13 @@ function KEYBOARD_CONTROL(event) {
         // Debug codes
       } else if (event.keyCode == 70) {
         // f
-        if (game.pause == 1) {
-          updateGrid((debug.frameAdvance = true));
+        if (debug.pause == 1) {
+          updateGrid(true);
         }
       } else if (event.keyCode == 84) {
         // t
-        debug.enabled = (debug.enabled + 1) % 2;
-        if (debug.enabled) {
+        debug.slowdown = (debug.slowdown + 1) % 2;
+        if (debug.slowdown) {
           console.log("developer mode enabled");
           game.boardRiseSpeed = preset.speedValues[0];
           game.blockStallTime = 120;
@@ -631,6 +644,8 @@ function KEYBOARD_CONTROL(event) {
           game.blockClearTime = preset.clearValues[game.level];
           game.blockStallTime = preset.stallValues[game.level];
         }
+      } else if (event.keyCode == 79) {
+        debug.show = (debug.show + 1) % 2;
       } else if (event.keyCode == 16) {
         // LShift to empty game.board
         for (let i = 0; i < grid.COLS; i++) {
@@ -678,6 +693,10 @@ export function gameLoop(timestamp) {
 
   if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
     game.seconds++;
+    if (debug.enabled === 1) {
+      game.seconds--;
+      game.frames -= 60;
+    }
   }
   if (game.seconds % 60 == 0 && game.seconds != 0) {
     game.minutes++;
@@ -685,7 +704,7 @@ export function gameLoop(timestamp) {
   }
 
   if (game.frames % game.boardRiseSpeed == 0) {
-    if (!game.disableRaise && game.grounded && game.pause == 0) {
+    if (!game.disableRaise && game.grounded && debug.pause == 0) {
       if (game.raiseDelay > 0) {
         if (!checkClearing().includes(true)) {
           game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
@@ -701,7 +720,7 @@ export function gameLoop(timestamp) {
     game.frames % 1200 == 0 &&
     game.level < 10 &&
     game.level > 0 &&
-    debug.enabled == 0 &&
+    debug.enabled === 0 &&
     !game.over
   ) {
     // Speed the stack up every 20 seconds
@@ -744,7 +763,7 @@ export function gameLoop(timestamp) {
   updateGrid();
   checkMatch();
   isChainActive();
-  if (game.frames % 12 == 0) {
+  if (game.frames % 6 == 0) {
     doPanic();
   }
 
@@ -813,7 +832,7 @@ export function gameLoop(timestamp) {
       performance.drawDivisor >= 2 &&
       performance.gameSpeed < 2
     ) {
-      performance.gameSpeed = 2;
+      performance.gameSpeed = 1;
       console.log("game speed has now doubled");
     }
     if (performance.fps <= 55 && performance.drawDivisor < 2) {
@@ -872,7 +891,7 @@ export function gameLoop(timestamp) {
   } else {
     multiplierString = `${game.scoreMultiplier}x`;
   }
-  if (debug.enabled) {
+  if (debug.show == 1) {
     win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
   } else {

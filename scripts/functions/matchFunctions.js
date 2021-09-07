@@ -4,18 +4,14 @@ import {
   announcer,
   blockColor,
   blockType,
-  PIECES,
   INTERACTIVE_PIECES,
-  app,
   grid,
   game,
   win,
   preset,
-  api,
   chainLogic,
   performance,
-  randInt,
-  debug
+  randInt
 } from "../global";
 
 import { playChainSFX, playAudio } from "./audioFunctions";

@@ -1,4 +1,4 @@
-import { startGame } from "../../app";
+import { startGame } from "./beginGame";
 import { game, api } from "../global";
 import { sendData } from "../../index";
 

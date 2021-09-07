@@ -110,9 +110,9 @@ const grid = {
 };
 
 const preset = {
-  speedValues: [60, 20, 15, 12, 10, 6, 4, 2, 2, 2, 1],
+  speedValues: [40, 20, 15, 12, 10, 6, 4, 2, 2, 2, 1],
   clearValues: [60, 50, 45, 40, 35, 30, 25, 20, 16, 12, 8], // iterate twice
-  stallValues: [24, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6]
+  stallValues: [16, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6]
 };
 
 if (localStorage.getItem("highScore") === null) {
@@ -122,7 +122,7 @@ let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
 const win = {
-  view: "",
+  view: "Home",
   viewChanged: false,
   running: false,
   makeCanvas: null,
@@ -153,7 +153,6 @@ const game = {
   boardRiseSpeed: preset.speedValues,
   blockClearTime: preset.clearValues,
   blockStallTime: preset.stallValues,
-  pause: 0,
   raiseDelay: 0,
   frames: -180,
   seconds: 0,
@@ -200,6 +199,9 @@ const performance = {
 
 const debug = {
   enabled: 0,
+  slowdown: 0,
+  pause: 0,
+  show: 0,
   frameAdvance: false
 };
 

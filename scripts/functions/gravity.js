@@ -1,10 +1,10 @@
 import {
   blockColor,
-  debug,
   blockType,
   grid,
   game,
-  INTERACTIVE_PIECES
+  INTERACTIVE_PIECES,
+  debug
 } from "../global";
 
 export function doGravity() {
@@ -62,9 +62,9 @@ export function doGravity() {
           possibleLandedLocations.push([c, r + 1]);
 
           //Debug
-          if (game.pause == 1) {
+          if (debug.pause == 1) {
             game.board[c][r + 1].timer += 1;
-          } else if (debug.enabled == 1) {
+          } else if (debug.slowdown == 1) {
             game.board[c][r + 1].timer = 120;
           }
 
@@ -82,7 +82,7 @@ export function doGravity() {
         game.board[x][y].type = blockType.LANDING;
         game.board[x][y].timer = 10;
         //DEBUG
-        if (debug.enabled == 1) {
+        if (debug.slowdown == 1) {
           game.board[x][y].timer = 120;
         }
       }

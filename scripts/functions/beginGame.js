@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import {
   PIECES,
   randInt,
@@ -27,6 +28,10 @@ export function startGame() {
 function createHeadsUpDisplay() {
   let homePage = document.getElementById("home-page");
   homePage.innerHTML = "";
+  // create container
+  let container = document.createElement("div");
+  container.setAttribute("id", "hud-elements");
+  homePage.append(container);
   // create HUD elements
   win.statDisplay = document.createElement("h3");
   win.chainDisplay = document.createElement("h3");
@@ -42,12 +47,12 @@ function createHeadsUpDisplay() {
   win.highScoreDisplay.setAttribute("id", "high-score");
   win.scoreDisplay.setAttribute("id", "score");
   // append HUD elements
-  homePage.appendChild(win.statDisplay);
-  homePage.appendChild(win.chainDisplay);
-  homePage.appendChild(win.timeDisplay);
-  homePage.appendChild(win.levelDisplay);
-  homePage.appendChild(win.highScoreDisplay);
-  homePage.appendChild(win.scoreDisplay);
+  container.appendChild(win.statDisplay);
+  container.appendChild(win.chainDisplay);
+  container.appendChild(win.timeDisplay);
+  container.appendChild(win.levelDisplay);
+  container.appendChild(win.highScoreDisplay);
+  container.appendChild(win.scoreDisplay);
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
@@ -67,7 +72,6 @@ export function resetGameVariables() {
   game.boardRiseSpeed = preset.speedValues;
   game.blockClearTime = preset.clearValues;
   game.blockStallTime = preset.stallValues;
-  game.pause = 0;
   game.raiseDelay = 0;
   game.frames = -180;
   game.seconds = 0;

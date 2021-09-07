@@ -6,9 +6,9 @@ export default st => html`
       <h1>Welcome to Jonathan Israel's Puzzle League Blitz!</h1>
       <h2>Controls:<br />
       <ul style="list-style-type:none;">
-        <li>Press Arrow keys to move the Rectangle Cursor</li>
-        <li>Press S to swap blocks at the Cursor</li>
-        <li>Press R to raise the stack one row.</li>
+        <li>Press Arrow keys to <strong>move</strong> the Rectangle Cursor</li>
+        <li>Press S or X to <strong>swap</strong> blocks at the Cursor</li>
+        <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
       <h3>
         Clear blocks by matching 3 adjacent blocks. If you match 4 or more you

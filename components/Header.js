@@ -2,7 +2,7 @@ import html from "html-literal";
 
 export default st => html`
   <header>
-    <h1>Jonathan Israel SPA ${st.header}</h1>
+    <h1>PUZZLE LEAGUE BLITZ -- ${st.header} Page</h1>
 
     <ul id="sound-mute-menu">
       <input type="checkbox" id="mute-announcer"></input>
