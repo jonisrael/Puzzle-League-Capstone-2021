@@ -1,7 +1,8 @@
 export default {
   header: "Leaderboard",
   view: "Leaderboard",
-  games: []
+  games: [],
+  markup: ""
 };
 
 // underneath view

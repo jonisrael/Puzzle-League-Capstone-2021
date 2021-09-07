@@ -1,5 +1,4 @@
 import html from "html-literal";
-import win from "../scripts/global";
 
 export default links => html`
   <nav id="nav-bar">
