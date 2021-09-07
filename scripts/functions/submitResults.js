@@ -125,11 +125,11 @@ export function extractTimeFromAPI(dateTimeString) {
   let hour = hourStr[0] === "0" ? parseInt(hourStr[1]) : parseInt(hourStr);
   console.log(hour);
   let meridian = "A.M.";
-  if (hour === 0) {
-    hourStr = "12";
-  }
   if (hour === 12) {
     meridian = "P.M.";
+  }
+  if (hour === 0) {
+    hourStr = "12";
   }
   if (hour > 12) {
     hourStr = hour - 12 < 10 ? `0${hour - 12}` : `${hour - 12}`;

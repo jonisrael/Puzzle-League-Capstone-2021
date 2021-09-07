@@ -26,12 +26,23 @@ export function startGame() {
 }
 
 function createHeadsUpDisplay() {
-  let homePage = document.getElementById("home-page");
-  homePage.innerHTML = "";
-  // create container
-  let container = document.createElement("div");
-  container.setAttribute("id", "hud-elements");
-  homePage.append(container);
+  let container = document.getElementById("container");
+  container.innerHTML = "";
+  let gameContainer = document.createElement("div");
+  gameContainer.setAttribute("id", "game-container");
+  container.append(gameContainer);
+
+  let column1 = document.createElement("div");
+  column1.setAttribute("id", "column1");
+  gameContainer.append(column1);
+  let column2 = document.createElement("div");
+  column2.setAttribute("id", "column2");
+  gameContainer.append(column2);
+
+  // create hudElements
+  let hudElements = document.createElement("div");
+  hudElements.setAttribute("id", "hud-elements");
+  column1.append(hudElements);
   // create HUD elements
   win.statDisplay = document.createElement("h3");
   win.chainDisplay = document.createElement("h3");
@@ -47,18 +58,18 @@ function createHeadsUpDisplay() {
   win.highScoreDisplay.setAttribute("id", "high-score");
   win.scoreDisplay.setAttribute("id", "score");
   // append HUD elements
-  container.appendChild(win.statDisplay);
-  container.appendChild(win.chainDisplay);
-  container.appendChild(win.timeDisplay);
-  container.appendChild(win.levelDisplay);
-  container.appendChild(win.highScoreDisplay);
-  container.appendChild(win.scoreDisplay);
+  hudElements.appendChild(win.statDisplay);
+  hudElements.appendChild(win.chainDisplay);
+  hudElements.appendChild(win.timeDisplay);
+  hudElements.appendChild(win.levelDisplay);
+  hudElements.appendChild(win.highScoreDisplay);
+  hudElements.appendChild(win.scoreDisplay);
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
   win.makeCanvas.setAttribute("width", "192");
   win.makeCanvas.setAttribute("height", "384");
-  homePage.appendChild(win.makeCanvas);
+  column2.appendChild(win.makeCanvas);
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
 }

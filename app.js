@@ -59,9 +59,9 @@ if (localStorage.getItem("mute-sfx") === null) {
   localStorage.setItem("mute-sfx", false);
 }
 
-(win.muteAnnouncer = document.getElementById("mute-announcer")),
-  (win.muteMusic = document.getElementById("mute-music")),
-  (win.muteSFX = document.getElementById("mute-sfx"));
+win.muteAnnouncer = document.getElementById("mute-announcer");
+win.muteMusic = document.getElementById("mute-music");
+win.muteSFX = document.getElementById("mute-sfx");
 
 function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {

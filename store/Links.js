@@ -1,9 +1,9 @@
 export default [
-  { title: "Tutorials", text: "Tutorials" },
-  { title: "Scoring", text: "Scoring" },
-  { title: "About", text: "About" },
   { title: "Home", text: "Home / Play Game" },
-  { title: "History", text: "History" },
+  { title: "Tutorials", text: "Tutorials" },
   { title: "Leaderboard", text: "Leaderboard" },
-  { title: "Credits", text: "Music & SFX Credits" }
+  { title: "Scoring", text: "Scoring" },
+  { title: "History", text: "History" },
+  { title: "Credits", text: "Music & SFX Credits" },
+  { title: "About", text: "About Me" }
 ];
