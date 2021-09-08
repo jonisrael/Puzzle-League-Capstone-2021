@@ -93,8 +93,8 @@ const PIECES = [
   blockColor.GREEN,
   blockColor.PURPLE,
   blockColor.RED,
-  blockColor.YELLOW
-  // blockColor.BLUE
+  blockColor.YELLOW,
+  blockColor.BLUE
 ];
 
 const INTERACTIVE_PIECES = [
@@ -128,6 +128,8 @@ const win = {
   makeCanvas: null,
   cvs: null,
   ctx: null,
+  mainInfoDisplay: null,
+  fpsDisplay: null,
   statDisplay: null,
   scoreDisplay: null,
   chainDisplay: null,
@@ -168,6 +170,7 @@ const game = {
   over: false, //gameOver
   grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain
+  mainInfo: "",
   highScore: HIGH_SCORE,
   disableRaise: false,
   disableSwap: false,
@@ -178,7 +181,7 @@ const game = {
 };
 
 const api = {
-  data: [],
+  data: "",
   serverLeaderboardData: []
 };
 

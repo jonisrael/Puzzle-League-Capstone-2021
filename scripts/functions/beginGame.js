@@ -5,6 +5,7 @@ import {
   game,
   win,
   preset,
+  performance,
   grid,
   blockColor,
   blockType,
@@ -28,6 +29,19 @@ export function startGame() {
 function createHeadsUpDisplay() {
   let container = document.getElementById("container");
   container.innerHTML = "";
+  win.fpsDisplay = document.createElement("p");
+  win.fpsDisplay.setAttribute("id", "fps-display");
+  container.append(win.fpsDisplay);
+
+  win.mainInfoDisplay = document.createElement("h2");
+  win.mainInfoDisplay.setAttribute("id", "main-info");
+  win.mainInfoDisplay.innerHTML = "hello";
+  container.append(win.mainInfoDisplay);
+
+  win.scoreDisplay = document.createElement("h2");
+  win.scoreDisplay.setAttribute("id", "score");
+  container.append(win.scoreDisplay);
+
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
   container.append(gameContainer);
@@ -38,6 +52,9 @@ function createHeadsUpDisplay() {
   let column2 = document.createElement("div");
   column2.setAttribute("id", "column2");
   gameContainer.append(column2);
+  let column3 = document.createElement("div");
+  column3.setAttribute("id", "column3");
+  gameContainer.append(column3);
 
   // create hudElements
   let hudElements = document.createElement("div");
@@ -49,21 +66,18 @@ function createHeadsUpDisplay() {
   win.timeDisplay = document.createElement("h3");
   win.levelDisplay = document.createElement("h3");
   win.highScoreDisplay = document.createElement("h3");
-  win.scoreDisplay = document.createElement("h2");
   // set HUD element IDs
   win.statDisplay.setAttribute("id", "all-stats");
   win.chainDisplay.setAttribute("id", "chain");
   win.timeDisplay.setAttribute("id", "time");
   win.levelDisplay.setAttribute("id", "level");
   win.highScoreDisplay.setAttribute("id", "high-score");
-  win.scoreDisplay.setAttribute("id", "score");
   // append HUD elements
   hudElements.appendChild(win.statDisplay);
   hudElements.appendChild(win.chainDisplay);
   hudElements.appendChild(win.timeDisplay);
   hudElements.appendChild(win.levelDisplay);
   hudElements.appendChild(win.highScoreDisplay);
-  hudElements.appendChild(win.scoreDisplay);
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
@@ -95,6 +109,7 @@ export function resetGameVariables() {
   game.largestChain = 0;
   game.largestCombo = 0;
   game.totalClears = 0;
+  game.mainInfo = "";
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain

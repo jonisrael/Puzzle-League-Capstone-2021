@@ -55,6 +55,7 @@ function addEventListeners(st) {
     let container = document.getElementById("container");
     let startButton = document.createElement("button");
     startButton.setAttribute("id", "click-to-play");
+    startButton.className = "default-button";
     startButton.innerHTML = "Click to play";
     container.appendChild(startButton);
     startButton.addEventListener("click", () => {

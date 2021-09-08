@@ -1,6 +1,4 @@
-// import DATABASE from ".././database2.json";
-
-// Image Sprites
+// Import Image Sprites
 import CURSOR from ".././assets/Sprites/cursor.png";
 import CLEARING_0_B from ".././assets/Sprites/blueTriangle/clearing/0.png";
 import CLEARING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
@@ -58,7 +56,6 @@ import PANICKING_1_P from ".././assets/Sprites/purpleDiamond/panicking/1.png";
 import PANICKING_2_P from ".././assets/Sprites/purpleDiamond/panicking/2.png";
 import PANICKING_3_P from ".././assets/Sprites/purpleDiamond/panicking/3.png";
 
-// Image Sprites
 import CLEARING_0_R from ".././assets/Sprites/redHeart/clearing/0.png";
 import CLEARING_1_R from ".././assets/Sprites/redHeart/clearing/1.png";
 import DARK_R from ".././assets/Sprites/redHeart/dark.png";
@@ -73,7 +70,6 @@ import PANICKING_1_R from ".././assets/Sprites/redHeart/panicking/1.png";
 import PANICKING_2_R from ".././assets/Sprites/redHeart/panicking/2.png";
 import PANICKING_3_R from ".././assets/Sprites/redHeart/panicking/3.png";
 
-// Image Sprites
 import CLEARING_0_Y from ".././assets/Sprites/yellowLightning/clearing/0.png";
 import CLEARING_1_Y from ".././assets/Sprites/yellowLightning/clearing/1.png";
 import DARK_Y from ".././assets/Sprites/yellowLightning/dark.png";
@@ -107,12 +103,12 @@ import DEBUGP from ".././assets/Extras/DebugSprites/debugP.png";
 import DEBUGO from ".././assets/Extras/DebugSprites/debugO.png";
 import DEBUGB from ".././assets/Extras/DebugSprites/debugB.png";
 
-// Music
+// Import Music
 import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
 import POPCORN_SONG from ".././assets/Audio/Music/popcorn.mp3";
 import RESULTS_SONG from ".././assets/Audio/Music/results.wav";
 
-// Audio
+// Import Audio
 import ANN_5 from ".././assets/Audio/Announcer/5.wav";
 import ANN_4 from ".././assets/Audio/Announcer/4.wav";
 import ANN_3 from ".././assets/Audio/Announcer/3.wav";

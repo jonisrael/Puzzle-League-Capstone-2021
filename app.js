@@ -503,12 +503,7 @@ function closeGame(view) {
   } else {
     game.Music.volume = 0;
   }
-  win.statDisplay.remove();
-  win.scoreDisplay.remove();
-  win.chainDisplay.remove();
-  win.timeDisplay.remove();
-  win.levelDisplay.remove();
-  win.highScoreDisplay.remove();
+  document.getElementById("container").innerHTML = "";
   win.cvs = null;
   win.ctx = null;
   win.running = false;
@@ -537,37 +532,27 @@ window.addEventListener(
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
-  if (win.running) {
-    if (event.keyCode == 27) {
-      game.frames = 0;
-      game.over = true;
-      for (let c = 0; c < grid.COLS; c++) {
-        for (let r = 0; r < grid.ROWS; r++) {
-          game.board[c][r].type = blockType.LANDING;
-          game.board[c][r].timer = -2;
-        }
-      }
-      gameOverBoard();
-      drawGrid();
-    }
-  }
   if (win.running & !game.over) {
     if (event.keyCode == 37) {
+      // left
       if (game.cursor.x - 1 >= 0) {
         game.cursor.x -= 1;
         playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 38) {
+      // up
       if (game.cursor.y - 1 >= 1) {
         game.cursor.y -= 1;
         playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 39) {
+      // right
       if (game.cursor.x + 1 <= 4) {
         game.cursor.x += 1;
         playAudio(audio.moveCursor);
       }
     } else if (event.keyCode == 40) {
+      // bottom
       if (game.cursor.y + 1 <= 11) {
         game.cursor.y += 1;
         playAudio(audio.moveCursor);
@@ -603,6 +588,19 @@ function KEYBOARD_CONTROL(event) {
       }
     }
     if (debug.enabled == 1) {
+      if (event.keyCode == 27) {
+        // escape
+        game.frames = 0;
+        game.over = true;
+        for (let c = 0; c < grid.COLS; c++) {
+          for (let r = 0; r < grid.ROWS; r++) {
+            game.board[c][r].type = blockType.LANDING;
+            game.board[c][r].timer = -2;
+          }
+        }
+        gameOverBoard();
+        drawGrid();
+      }
       if (event.keyCode == 48) {
         // 0 (number)
         game.rise = 0;
@@ -672,7 +670,7 @@ function KEYBOARD_CONTROL(event) {
 export function gameLoop(timestamp) {
   game.frames++;
 
-  if (game.over && game.frames == 300) {
+  if (game.over && game.frames > 300 && api.data !== undefined) {
     playAnnouncer(
       announcer.endgameDialogue,
       announcer.endgameIndexLastPicked,
@@ -808,8 +806,7 @@ export function gameLoop(timestamp) {
     // fps counter
     performance.secondsPerLoop =
       Math.floor(100 * (timestamp / 1000 - performance.prev)) / 100;
-    performance.fps =
-      Math.floor(10 * 5 * (1 / performance.secondsPerLoop)) / 10;
+    performance.fps = Math.floor(1 * 5 * (1 / performance.secondsPerLoop)) / 1;
     if (performance.fps < 40 && performance.gameSpeed == 1) {
       // If the game is running at below 0.9x speed, there's a problem.
       performance.slowdownTracker += 1; // for each frame, if there is low frame rate 2
@@ -894,9 +891,11 @@ export function gameLoop(timestamp) {
   if (debug.show == 1) {
     win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
-  } else {
+  }
+  if (debug.show == 0) {
     win.statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
     win.scoreDisplay.innerHTML = `Score: ${scoreString}`;
+    win.fpsDisplay.innerHTML = `${performance.fps} fps`;
   }
 
   if (game.currentChain > 0) {

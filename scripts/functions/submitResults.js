@@ -9,7 +9,7 @@ export function submitResults() {
   else duration = `${game.minutes}:${game.seconds}`;
 
   let homePage = document.getElementById("home-page");
-  let container = document.createElement("div");
+  let container = document.getElementById("container");
   homePage.appendChild(container);
   let form = document.createElement("form");
   form.setAttribute("id", "form");
@@ -29,6 +29,7 @@ export function submitResults() {
   let scoreMessage = document.createElement("h2");
   scoreMessage.setAttribute = ("id", "score-message");
   scoreMessage.className = "postgame-info";
+  scoreMessage.style.color = "red";
   scoreMessage.innerHTML = `Final Score: ${game.score}`;
   div1.appendChild(scoreMessage);
 
@@ -57,6 +58,7 @@ export function submitResults() {
 
   let nameLabel = document.createElement("label");
   nameLabel.setAttribute("for", "player-name");
+  nameLabel.setAttribute("id", "enter-name");
   nameLabel.innerHTML = "Enter a name to be associated with the score: ";
   div2.append(nameLabel);
 
@@ -69,15 +71,18 @@ export function submitResults() {
   div2.appendChild(nameInput);
 
   let submitForm = document.createElement("input");
+  submitForm.setAttribute("id", "submit-name");
   submitForm.setAttribute("type", "submit");
-  submitForm.setAttribute("name", "submit");
+  submitForm.setAttribute("name", "submit-name");
   submitForm.setAttribute("value", "Submit Name");
+  submitForm.className = "default-button";
   div2.appendChild(submitForm);
 
   let div3 = document.createElement("div");
   container.appendChild(div3);
   let restartGame = document.createElement("button");
   restartGame.setAttribute("id", "restart-game");
+  restartGame.className = "default-button";
   restartGame.innerHTML = "Restart Game Without Posting Scores";
   div3.appendChild(restartGame);
 

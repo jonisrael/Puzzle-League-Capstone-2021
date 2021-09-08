@@ -3,18 +3,28 @@ body {
     /* text-align: center; */
 }
 
-#click-to-play {
+.default-button {
     margin: 20px;
     border-radius: 10px;
     padding: 50px;
     background-color: greenyellow;
     font-size: x-large;
 }
-#click-to-play:hover {
+.default-button:hover {
     border-radius: 10px;
     padding: 50px;
     background-color: green;
     font-size: x-large;
+}
+
+#player-name {
+    font-size: large;
+    border-radius: 3px;
+}
+
+#enter-name {
+    font-size: x-large;
+    color: blue;
 }
 
 section {
@@ -38,8 +48,14 @@ section {
     font-size: .6vw;
 }
 
-#column1, #column2 {
-    flex: 50%;
+#fps-display {
+    font-size: x-small;
+    text-align: left;
+    padding-top: 5px;
+}
+
+#column1, #column2, #column3 {
+    flex: 33%;
 }
 #column1 {
     padding-left: 100px;
@@ -63,19 +79,24 @@ header {
     text-align: center;
 }
 
-.postgame-info {
-  color: cyan;
-}
-
 #score-list-display {
 
     color: blue;
 }
 
+iframe {
+    display: flex;
+    padding: 30px 10px 10px 10px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
 canvas {
     display: flex;
     justify-content: center;
-    align-items: center;
     padding-top: 30px;
     padding-bottom: 30px;
     margin: 0 auto;
