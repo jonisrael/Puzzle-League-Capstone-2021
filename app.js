@@ -7,7 +7,10 @@
 */
 
 import { sprite, audio } from "./scripts/fileImports";
-import { legalMatch, checkMatch } from "./scripts/functions/matchFunctions";
+import {
+  legalMatch,
+  checkMatch
+} from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
