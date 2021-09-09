@@ -55,34 +55,36 @@ function createHeadsUpDisplay() {
   column3.setAttribute("id", "column3");
   gameContainer.append(column3);
 
-  // create hudElements
-  let hudElements = document.createElement("div");
-  hudElements.setAttribute("id", "hud-elements");
-  column1.append(hudElements);
+  // create leftHudElements
+  let leftHudElements = document.createElement("div");
+  leftHudElements.setAttribute("id", "left-hud-elements");
+  column1.append(leftHudElements);
+  let rightHudElements = document.createElement("div");
+  rightHudElements.setAttribute("id", "right-hud-elements");
+  column3.append(rightHudElements);
   // create HUD elements
-  win.statDisplay = document.createElement("h3");
-  win.chainDisplay = document.createElement("h3");
-  win.timeDisplay = document.createElement("h3");
-  win.levelDisplay = document.createElement("h3");
-  win.highScoreDisplay = document.createElement("h3");
+  win.statDisplay = document.createElement("h2");
+  win.chainDisplay = document.createElement("h2");
+  win.timeDisplay = document.createElement("h2");
+  win.levelDisplay = document.createElement("h2");
+
   // set HUD element IDs
   win.statDisplay.setAttribute("id", "all-stats");
-  win.chainDisplay.setAttribute("id", "chain");
   win.timeDisplay.setAttribute("id", "time");
   win.levelDisplay.setAttribute("id", "level");
-  win.highScoreDisplay.setAttribute("id", "high-score");
   // append HUD elements
-  hudElements.appendChild(win.statDisplay);
-  hudElements.appendChild(win.chainDisplay);
-  hudElements.appendChild(win.timeDisplay);
-  hudElements.appendChild(win.levelDisplay);
-  hudElements.appendChild(win.highScoreDisplay);
+  leftHudElements.appendChild(win.statDisplay);
+  leftHudElements.appendChild(win.levelDisplay);
+  leftHudElements.appendChild(win.timeDisplay);
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
   win.makeCanvas.setAttribute("width", "192");
   win.makeCanvas.setAttribute("height", "384");
   column2.appendChild(win.makeCanvas);
+  win.highScoreDisplay = document.createElement("h3");
+  win.highScoreDisplay.setAttribute("id", "high-score-display");
+  container.appendChild(win.highScoreDisplay);
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
 }

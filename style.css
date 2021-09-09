@@ -5,7 +5,7 @@ body {
 
 #main-info {
     color: blue;
-    font-size: x-xdxlarge;
+    font-size: xx-large;
 }
 
 .default-button {
@@ -70,11 +70,14 @@ section {
 #column1, #column2, #column3 {
     flex: 33%;
 }
+
 #column1, #yes-option {
     padding-left: 100px;
+    padding-top: 40px;
 }
-#column2, #no-option {
+#column3, #no-option {
     padding-right: 100px;
+    padding-top: 20px;
 }
 
 header {
@@ -93,8 +96,12 @@ header {
 }
 
 #score-list-display {
-
     color: blue;
+}
+
+#score {
+    font-size: xxx-large;
+    color: blueviolet;
 }
 
 iframe {
@@ -111,10 +118,17 @@ canvas {
     display: flex;
     justify-content: center;
     padding-top: 30px;
-    padding-bottom: 30px;
+    padding-bottom: 10px;
     margin: 0 auto;
     outline: 10px;
     outline-color: white;
+}
+
+#high-score-display {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 30px;
 }
 
 p {
@@ -145,8 +159,22 @@ h3 {
     text-indent: 50px;
 }
 
-#hud-elements h3 {
-    text-align: center;
+#left-hud-elements h2 {
+    text-align: right;
+    font-size: xxx-large;
+    color:blue;
+}
+
+#left-hud-elements {
+    background-color: greenyellow;
+    border: solid grey 10px;
+    border-radius: 10px;
+    padding-right: 5px;
+}
+
+#right-hud-elements h2 {
+    text-align: left;
+    font-size: x-large;
 }
 
 #nav-message {

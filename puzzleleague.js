@@ -792,7 +792,7 @@ export function gameLoop(timestamp) {
       );
       playMusic(audio.overtimeMusic, 0.2);
     } else if (game.frames >= 1200) {
-      game.message = `Level ${game.level}, Game Speed has Increased...`;
+      game.message = `Level ${game.level + 1}, Game Speed has Increased...`;
       game.messageChangeDelay = 120;
       playAnnouncer(
         announcer.timeTransitionDialogue,
@@ -962,13 +962,24 @@ export function gameLoop(timestamp) {
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
   }
   if (debug.show == 0) {
-    win.statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
+    win.statDisplay.innerHTML = ``;
+    win.levelDisplay.innerHTML = `Level: ${game.level}`;
+    win.timeDisplay.innerHTML = `Time: ${timeString}`;
+    if (
+      game.frames > 60 &&
+      (game.frames % 1200 <= 60 || game.frames % 1200 >= 1080)
+    ) {
+      win.timeDisplay.style.color = "red";
+    } else {
+      win.timeDisplay.style.color = "blue";
+    }
     win.scoreDisplay.innerHTML = `Score: ${scoreString}`;
     win.fpsDisplay.innerHTML = `${performance.fps} fps`;
     win.mainInfoDisplay.innerHTML = `${game.message}`;
     if (game.messageChangeDelay > 0) {
       game.messageChangeDelay -= 1 * performance.gameSpeed;
-    } else {
+    }
+    if (game.messageChangeDelay <= 0 && frames < 6600) {
       game.message = game.defaultMessage;
     }
   }
