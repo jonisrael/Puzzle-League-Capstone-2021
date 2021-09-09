@@ -13,7 +13,7 @@ import {
 import { playMusic } from "./audioFunctions";
 import { audio } from "../fileImports";
 import { getWorldTimeAPI } from "../../index";
-import { gameLoop, newBlock } from "../../app";
+import { gameLoop, newBlock } from "../../puzzleleague";
 
 export function startGame() {
   api.data = getWorldTimeAPI();

@@ -147,6 +147,7 @@ router.hooks({
               }    |      ${largestChain}      |       ${totalClears}        |  ${
                 entry.month
               }/${entry.day}/${entry.year.slice(2.4)} ${entry.hour}:${
+                // slice used to not overwrite old leaderboard data
                 entry.minute
               } ${entry.meridian}  |<br>`;
             }
