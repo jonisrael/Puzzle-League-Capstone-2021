@@ -514,26 +514,31 @@ function checkTime() {
       break;
     case 6900:
       game.message = "5 seconds before overtime...";
+      game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
       playAudio(audio.announcer5, (game.volume = 0.3));
       break;
     case 6960:
       game.message = "4 seconds before overtime...";
       game.messageChangeDelay = 90;
+      game.defaultMessage = game.message;
       playAudio(audio.announcer4, (game.volume = 0.3));
       break;
     case 7020:
       game.message = "3 seconds before overtime...";
+      game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
       playAudio(audio.announcer3, (game.volume = 0.3));
       break;
     case 7080:
       game.message = "2 seconds before overtime...";
+      game.defaultMessage = game.message;
       playAudio(audio.announcer2, (game.volume = 0.3));
       game.messageChangeDelay = 90;
       break;
     case 7140:
       game.message = "1 second before overtime...";
+      game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
       playAudio(audio.announcer1, (game.volume = 0.3));
       break;
@@ -778,6 +783,7 @@ export function gameLoop(timestamp) {
 
     if (game.frames == 7200) {
       game.message = "Overtime, I hope you're ready!";
+      game.defaultMessage = game.message;
       game.messageChangeDelay = 300;
       playAnnouncer(
         announcer.overtimeDialogue,
