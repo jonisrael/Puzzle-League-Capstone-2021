@@ -5,7 +5,6 @@ import {
   game,
   win,
   preset,
-  performance,
   grid,
   blockColor,
   blockType,
@@ -103,13 +102,15 @@ export function resetGameVariables() {
   game.minutes = 0;
   game.score = 0;
   game.scoreMultiplier = 1;
+  game.chainScoreAdded = 0;
   game.currentChain = 0;
   game.combo = 0;
   game.lastChain = 0;
   game.largestChain = 0;
   game.largestCombo = 0;
   game.totalClears = 0;
-  game.mainInfo = "";
+  game.message = "";
+  game.defaultMessage = "";
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain

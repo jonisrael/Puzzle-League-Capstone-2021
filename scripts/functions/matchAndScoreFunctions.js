@@ -142,6 +142,7 @@ export function checkMatch() {
       }
       clearLocationsString += `[${clearLocations[clearLocationsLength - 1]}].`;
       if (game.currentChain == 0) {
+        game.chainScoreAdded = 0;
         chainLogic.addToPrimaryChain = true;
         game.currentChain++;
         if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
@@ -167,6 +168,9 @@ export function checkMatch() {
       }
 
       updateScore(clearLocationsLength, game.currentChain);
+      win.mainInfoDisplay.style.color = "red";
+      game.message = `${game.currentChain} chain! Current Chain Score: ${game.chainScoreAdded}`;
+      game.messageChangeDelay = 90;
       if (add1ToChain) {
         chainLogic.addToPrimaryChain = true;
         game.currentChain++;
@@ -242,6 +246,7 @@ export function updateScore(clearLocationsLength, currentChain) {
   } else {
     game.scoreMultiplier = 2 + (game.level - 7) / 5;
   }
+  game.chainScoreAdded += game.scoreMultiplier * addToScore;
   game.score += game.scoreMultiplier * addToScore;
   console.log(`+${game.scoreMultiplier * addToScore} | Score: ${game.score}`);
   console.log(

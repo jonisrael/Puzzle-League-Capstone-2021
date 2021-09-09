@@ -351,6 +351,13 @@ function isChainActive() {
     game.largestChain = game.currentChain;
   game.currentChain = 0;
   game.combo = 0;
+  if (game.chainScoreAdded !== 0) {
+    game.message = `Nice! Your previous chain added ${game.chainScoreAdded} to your score`;
+    game.messageChangeDelay = 90;
+    if (game.chainScoreAdded != 0)
+      game.defaultMessage = `Previous chain score added: ${game.chainScoreAdded}`;
+    win.mainInfoDisplay.style.color = "blue";
+  }
   if (potentialSecondarySuccessor) {
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
@@ -395,6 +402,14 @@ function doPanic() {
         }
       }
     }
+  }
+  if (panic) {
+    game.message = "Danger! Watch your stack!";
+    game.messageChangeDelay = 90;
+    win.mainInfoDisplay.style.color = "red";
+  }
+  if (!panic && game.message === "Danger! Watch your stack") {
+    game.message = game.defaultMessage;
   }
   return panic;
 }
@@ -461,18 +476,36 @@ function checkTime() {
   switch (game.frames) {
     case -178:
       window.scrollTo(0, document.body.scrollHeight);
+      game.message = "3...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer3, (game.volume = 0.3));
       break;
     case -120:
+      game.message = "2...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer2, (game.volume = 0.3));
       break;
     case -60:
+      game.message = "1...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer1, (game.volume = 0.3));
       break;
     case 0:
+      game.message = "Go!";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcerGo);
       break;
+    case 60:
+      if (game.message === "Go!") {
+        game.defaultMessage =
+          "Arrow Keys to Move, X to swap, and Z to lift the stack";
+        game.message = game.defaultMessage;
+      }
+
+      break;
     case 6600:
+      game.message = "10 seconds before overtime!";
+      game.messageChangeDelay = 400;
       playAnnouncer(
         announcer.hurryUpDialogue,
         announcer.hurryUpIndexLastPicked,
@@ -480,18 +513,28 @@ function checkTime() {
       );
       break;
     case 6900:
+      game.message = "5 seconds before overtime...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer5, (game.volume = 0.3));
       break;
     case 6960:
+      game.message = "4 seconds before overtime...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer4, (game.volume = 0.3));
       break;
     case 7020:
+      game.message = "3 seconds before overtime...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer3, (game.volume = 0.3));
       break;
     case 7080:
+      game.message = "2 seconds before overtime...";
       playAudio(audio.announcer2, (game.volume = 0.3));
+      game.messageChangeDelay = 90;
       break;
     case 7140:
+      game.message = "1 second before overtime...";
+      game.messageChangeDelay = 90;
       playAudio(audio.announcer1, (game.volume = 0.3));
       break;
   }
@@ -591,6 +634,14 @@ function KEYBOARD_CONTROL(event) {
       }
     }
     if (debug.enabled == 1) {
+      if (event.keyCode == 50) {
+        // Number 2
+        performance.gameSpeed =
+          performance.gameSpeed == 1
+            ? (performance.gameSpeed = 2)
+            : (performance.gameSpeed = 1);
+        console.log("Speed:", performance.gameSpeed);
+      }
       if (event.keyCode == 27) {
         // escape
         game.frames = 0;
@@ -727,6 +778,8 @@ export function gameLoop(timestamp) {
     // Speed the stack up every 20 seconds
 
     if (game.frames == 7200) {
+      game.message = "Overtime, I hope you're ready!";
+      game.messageChangeDelay = 300;
       playAnnouncer(
         announcer.overtimeDialogue,
         announcer.overtimeIndexLastPicked,
@@ -734,6 +787,8 @@ export function gameLoop(timestamp) {
       );
       playMusic(audio.overtimeMusic, 0.2);
     } else if (game.frames >= 1200) {
+      game.message = `Level ${game.level}, Game Speed has Increased...`;
+      game.messageChangeDelay = 120;
       playAnnouncer(
         announcer.timeTransitionDialogue,
         announcer.timeTransitionIndexLastPicked,
@@ -749,9 +804,15 @@ export function gameLoop(timestamp) {
 
   if (game.quickRaise) {
     game.disableSwap = true;
+    game.message = "Quick-Raise Initiated";
+    game.messageChangeDelay = 1000;
+    win.mainInfoDisplay.style.color = "blue";
     if (game.rise == 0) {
       game.disableSwap = false;
       game.quickRaise = false;
+      game.message = "Quick-Raise Complete";
+      game.messageChangeDelay = 90;
+      win.mainInfoDisplay.style.color = "blue";
       game.raiseDelay = 0;
       game.boardRiseSpeed = Math.floor(
         preset.speedValues[game.level] / performance.gameSpeed
@@ -813,9 +874,9 @@ export function gameLoop(timestamp) {
     if (performance.fps < 40 && performance.gameSpeed == 1) {
       // If the game is running at below 0.9x speed, there's a problem.
       performance.slowdownTracker += 1; // for each frame, if there is low frame rate 2
-      console.log(
-        `${performance.slowdownTracker} times under 40 fps every 2 seconds (3 needed)`
-      );
+      // console.log(
+      //   `${performance.slowdownTracker} times under 40 fps every 2 seconds (3 needed)`
+      // );
     }
     performance.prev = timestamp / 1000;
   }
@@ -828,7 +889,7 @@ export function gameLoop(timestamp) {
     // If fps is below 50 fps for 2 seconds in the next 10, lower settings
     performance.slowdownTracker = 0;
     if (
-      performance.fps <= 40 &&
+      performance.fps <= 45 &&
       performance.drawDivisor >= 2 &&
       performance.gameSpeed < 2
     ) {
@@ -837,13 +898,13 @@ export function gameLoop(timestamp) {
     }
     if (performance.fps <= 55 && performance.drawDivisor < 2) {
       performance.drawDivisor += 1;
-      console.log(
-        `computer running slow, fps ${performance.fps}, draw divisor=${performance.drawDivisor}`
-      );
+      // console.log(
+      //   `computer running slow, fps ${performance.fps}, draw divisor=${performance.drawDivisor}`
+      // );
     }
     if (performance.fps > 80) drawGrid();
     if (performance.fps > 120) {
-      console.log(`computer running fast, fps ${performance.fps}`);
+      // console.log(`computer running fast, fps ${performance.fps}`);
 
       drawGrid();
       if (performance.drawDivisor > 1) performance.drawDivisor -= 1;
@@ -899,6 +960,12 @@ export function gameLoop(timestamp) {
     win.statDisplay.innerHTML = `Level: ${game.level} | Time ${timeString}`;
     win.scoreDisplay.innerHTML = `Score: ${scoreString}`;
     win.fpsDisplay.innerHTML = `${performance.fps} fps`;
+    win.mainInfoDisplay.innerHTML = `${game.message}`;
+    if (game.messageChangeDelay > 0) {
+      game.messageChangeDelay -= 1 * performance.gameSpeed;
+    } else {
+      game.message = game.defaultMessage;
+    }
   }
 
   if (game.currentChain > 0) {

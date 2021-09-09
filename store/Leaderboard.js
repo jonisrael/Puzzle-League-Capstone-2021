@@ -2,7 +2,7 @@ export default {
   header: "Leaderboard",
   view: "Leaderboard",
   games: [],
-  markup: ""
+  markup: "Fetching Leaderboard Data from Heroku..."
 };
 
 // underneath view

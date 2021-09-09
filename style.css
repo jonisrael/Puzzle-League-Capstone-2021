@@ -3,6 +3,11 @@ body {
     /* text-align: center; */
 }
 
+#main-info {
+    color: blue;
+    font-size: x-xdxlarge;
+}
+
 .default-button {
     margin: 20px;
     border-radius: 10px;
@@ -38,7 +43,7 @@ section {
     margin-right: auto;
 }
 
-#game-container {
+#game-container, #options-menu {
     display: flex;
 }
 
@@ -54,13 +59,17 @@ section {
     padding-top: 5px;
 }
 
+#yes-option, #no-option {
+    flex: 50%;
+}
+
 #column1, #column2, #column3 {
     flex: 33%;
 }
-#column1 {
+#column1, #yes-option {
     padding-left: 100px;
 }
-#column2 {
+#column2, #no-option {
     padding-right: 100px;
 }
 
@@ -120,6 +129,11 @@ h2 {
 
 h3 {
     color: blue;
+}
+
+#controls {
+    list-style-type: none;
+    font-size: large;
 }
 
 #home-page h3 {

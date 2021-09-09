@@ -3,7 +3,8 @@ import {
   game,
   grid,
   blockColor,
-  blockType
+  blockType,
+  win
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -21,6 +22,8 @@ export function trySwappingBlocks(x, y) {
     game.board[x + 1][y].color == blockColor.VACANT
   ) {
     swap = false;
+    game.message = "Swap Failed: You cannot swap two empty squares!";
+    game.messageChangeDelay = 90;
   }
 
   // Check if blocks are clearing
@@ -29,6 +32,8 @@ export function trySwappingBlocks(x, y) {
     !INTERACTIVE_PIECES.includes(game.board[x + 1][y].type)
   ) {
     swap = false;
+    game.message = "Swap Failed: You cannot swap a clearing block!";
+    game.messageChangeDelay = 90;
   }
 
   // Do not swap if ANY block below is falling
@@ -40,6 +45,8 @@ export function trySwappingBlocks(x, y) {
       for (let j = y; j < grid.ROWS; j++) {
         if (game.board[x][j].color == blockColor.VACANT) {
           swap = false;
+          game.message = "Swap Failed: You cannot swap a mid-air block!";
+          game.messageChangeDelay = 90;
           break;
         }
       }
@@ -51,6 +58,8 @@ export function trySwappingBlocks(x, y) {
       for (let j = y; j < grid.ROWS; j++) {
         if (game.board[x + 1][j].color == blockColor.VACANT) {
           swap = false;
+          game.message = "Swap Failed: You cannot swap a mid-air block!";
+          game.messageChangeDelay = 90;
           break;
         }
       }
@@ -64,16 +73,22 @@ export function trySwappingBlocks(x, y) {
       game.board[x][y].color == blockColor.VACANT
     ) {
       swap = false;
+      game.message =
+        "Swap Failed: You cannot swap one row below a mid-air block!";
+      game.messageChangeDelay = 90;
     } else if (
       INTERACTIVE_PIECES.includes(game.board[x + 1][y - 1].type) &&
       game.board[x + 1][y - 1].color != blockColor.VACANT &&
       game.board[x + 1][y].color == blockColor.VACANT
     ) {
       swap = false;
+      game.message =
+        "Swap Failed: You cannot swap one row below a mid-air block!";
+      game.messageChangeDelay = 90;
     }
   }
 
-  // WILL WORK ON THIS LATER
+  // FOR FUTURE UPDATE
   // Do not swap if a falling block is less than two units BELOW the cursor (rare)
   // if (y > 0) {
   //     if (INTERACTIVE_PIECES.includes(game.board[x][y].type) &&
@@ -154,6 +169,7 @@ export function trySwappingBlocks(x, y) {
       }
     }
   } else {
+    win.mainInfoDisplay.style.color = "purple";
     playAudio(audio.swapFailed);
   }
 }

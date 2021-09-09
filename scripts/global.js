@@ -161,6 +161,7 @@ const game = {
   minutes: 0,
   score: 0,
   scoreMultiplier: 1,
+  chainScoreAdded: 0,
   currentChain: 0,
   combo: 0,
   lastChain: 0,
@@ -170,7 +171,9 @@ const game = {
   over: false, //gameOver
   grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain
-  mainInfo: "",
+  message: "",
+  defaultMessage: "",
+  messageChangeDelay: 90,
   highScore: HIGH_SCORE,
   disableRaise: false,
   disableSwap: false,
@@ -190,7 +193,7 @@ const chainLogic = {
 };
 
 const performance = {
-  gameSpeedDoubled: false,
+  performanceQuestionAsked: false,
   gameSpeed: 1,
   fps: 0,
   prev: 0,
