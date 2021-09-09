@@ -43,14 +43,18 @@ section {
     margin-right: auto;
 }
 
+#leaderboard-page {
+    width: 200ch;
+}
+
 #game-container, #options-menu {
     display: flex;
 }
 
 #leaderboard-container {
-    text-align: center;
+    /* text-align: center; */
     font-family: "Courier New";
-    font-size: .6vw;
+    font-size: .7vw;
 }
 
 #fps-display {
