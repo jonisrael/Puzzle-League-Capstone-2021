@@ -10,6 +10,7 @@ export function submitResults() {
 
   let homePage = document.getElementById("home-page");
   let container = document.getElementById("container");
+  container.innerHTML = "";
   homePage.appendChild(container);
   let form = document.createElement("form");
   form.setAttribute("id", "form");
@@ -113,7 +114,7 @@ export function submitResults() {
   });
 
   document.querySelector("#restart-game").addEventListener("click", event => {
-    container.remove();
+    container.innerHTML = "";
     startGame();
   });
 }
