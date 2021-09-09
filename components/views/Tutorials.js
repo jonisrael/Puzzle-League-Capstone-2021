@@ -3,7 +3,7 @@ import html from "html-literal";
 export default st => html`
   <section id="tutorials-page">
     <h1 id="tutorials-header" style="font-size: xx-large;">
-      Tutorials (3 currently)
+      Tutorials
     </h1>
     <h2>How to play</h2>
     <div id="container">
