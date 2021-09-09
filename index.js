@@ -89,10 +89,7 @@ export function sendData(requestData) {
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
       console.log("Posted!");
-      console.log("request", requestData);
-      console.log("response", response);
       state.Home.games.push(response.data);
-      console.log(state.Home.games);
     })
     .catch(error => {
       console.log("Failed to Post", error);

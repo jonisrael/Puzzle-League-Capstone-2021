@@ -549,7 +549,6 @@ function closeGame(view) {
   } else {
     game.Music.volume = 0;
   }
-  document.getElementById("container").innerHTML = "";
   win.cvs = null;
   win.ctx = null;
   win.running = false;

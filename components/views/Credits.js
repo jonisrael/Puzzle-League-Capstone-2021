@@ -13,10 +13,14 @@ export default st => html`
       <h2>Audio Samples</h2>
       <ul>
         <li>Announcer Voice Samples from Super Street Fighter IV (2010)</li>
-        <li>Red Coin 1-8 SFX from Super Mario 64 (1996)</li>
-        <li>"Menu Move","Menu Select" SFX from Super Smash Bros (1998)</li>
-        <li>"Hurt" SFX from Undertale (2015)</li>
-        <li>"Fanfare 1-5", "Topout" SFX from Planet Puzzle League (2007)</li>
+        <li>Red Coin 1-8 sound effects from Super Mario 64 (1996)</li>
+        <li>
+          "Menu Move","Menu Select" sound effects from Super Smash Bros (1998)
+        </li>
+        <li>"Player Damaged" sound effects from Undertale (2015)</li>
+        <li>
+          "Fanfare 1-5", "Topout" sound effects from Planet Puzzle League (2007)
+        </li>
       </ul>
     </body>
   </section>
