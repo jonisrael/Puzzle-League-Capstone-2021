@@ -384,6 +384,8 @@ let loadedAudios = [];
 for (let i = 0; i < audioList.length; i++) {
   let audio = new Audio();
   audio.src = audioList[i];
+  audio.volume = 0;
+  audio.play();
   loadedAudios[i] = audio;
 }
 

@@ -66,7 +66,7 @@ win.muteAnnouncer = document.getElementById("mute-announcer");
 win.muteMusic = document.getElementById("mute-music");
 win.muteSFX = document.getElementById("mute-sfx");
 
-function  (color, type, animationIndex = -1) {
+function blockKeyOf(color, type, animationIndex = -1) {
   if (animationIndex === -1) {
     return `${color}_${type}`;
   } else {
@@ -475,10 +475,12 @@ function checkTime() {
   if (win.muteAnnouncer.checked) return;
   switch (game.frames) {
     case -178:
-      window.scrollTo(0, document.body.scrollHeight);
       game.message = "3...";
       game.messageChangeDelay = 90;
       playAudio(audio.announcer3, (game.volume = 0.3));
+      break;
+    case -177:
+      win.cvs.scrollIntoView({ block: "nearest" });
       break;
     case -120:
       game.message = "2...";
@@ -963,17 +965,33 @@ export function gameLoop(timestamp) {
   }
   if (debug.show == 0) {
     win.statDisplay.innerHTML = ``;
-    win.levelDisplay.innerHTML = `Level: ${game.level}`;
-    win.timeDisplay.innerHTML = `Time: ${timeString}`;
-    if (
-      game.frames > 60 &&
-      (game.frames % 1200 <= 60 || game.frames % 1200 >= 1080)
-    ) {
-      win.timeDisplay.style.color = "red";
-    } else {
-      win.timeDisplay.style.color = "blue";
+    win.levelDisplay.innerHTML = `${game.level}`;
+    win.timeDisplay.innerHTML = timeString;
+    if (game.frames > 60) {
+      if (game.frames % 1200 >= 1020) {
+        win.timeDisplay.style.color = "red";
+      } else {
+        if (win.timeDisplay.style.color !== "black") {
+          win.timeDisplay.style.color = "black";
+        }
+      }
+      if (game.frames % 1200 < 60) {
+        win.levelDisplay.style.color = "red";
+      } else {
+        if (win.levelDisplay.style.color !== "black") {
+          win.levelDisplay.style.color = "black";
+        }
+      }
+
+      if (game.currentChain > 0) {
+        win.scoreDisplay.style.color = "red";
+      } else {
+        if (win.scoreDisplay.style.color !== "black") {
+          win.scoreDisplay.style.color = "black";
+        }
+      }
     }
-    win.scoreDisplay.innerHTML = `Score: ${scoreString}`;
+    win.scoreDisplay.innerHTML = scoreString;
     win.fpsDisplay.innerHTML = `${performance.fps} fps`;
     win.mainInfoDisplay.innerHTML = `${game.message}`;
     if (game.messageChangeDelay > 0) {

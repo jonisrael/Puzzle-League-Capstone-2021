@@ -75,6 +75,13 @@ section {
     padding-left: 100px;
     padding-top: 40px;
 }
+
+#column2 {
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+}
+
 #column3, #no-option {
     padding-right: 100px;
     padding-top: 20px;
@@ -100,7 +107,7 @@ header {
 }
 
 #score {
-    font-size: xxx-large;
+    font-size: x-large;
     color: blueviolet;
 }
 
@@ -117,11 +124,7 @@ iframe {
 canvas {
     display: flex;
     justify-content: center;
-    padding-top: 30px;
-    padding-bottom: 10px;
-    margin: 0 auto;
-    outline: 10px;
-    outline-color: white;
+    border: 10px solid burlywood;
 }
 
 #high-score-display {
@@ -160,21 +163,22 @@ h3 {
 }
 
 #left-hud-elements h2 {
-    text-align: right;
-    font-size: xxx-large;
-    color:blue;
+    text-align: center;
+    font-size: x-large;
+    color:black;
 }
 
 #left-hud-elements {
     background-color: greenyellow;
-    border: solid grey 10px;
+    border: solid burlywood 10px;
     border-radius: 10px;
     padding-right: 5px;
+    outline: 1px solid red;
 }
 
 #right-hud-elements h2 {
     text-align: left;
-    font-size: x-large;
+    font-size: large;
 }
 
 #nav-message {

@@ -37,10 +37,6 @@ function createHeadsUpDisplay() {
   win.mainInfoDisplay.innerHTML = "hello";
   container.append(win.mainInfoDisplay);
 
-  win.scoreDisplay = document.createElement("h2");
-  win.scoreDisplay.setAttribute("id", "score");
-  container.append(win.scoreDisplay);
-
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
   container.append(gameContainer);
@@ -65,17 +61,35 @@ function createHeadsUpDisplay() {
   // create HUD elements
   win.statDisplay = document.createElement("h2");
   win.chainDisplay = document.createElement("h2");
+  win.scoreHeader = document.createElement("h2");
+  win.scoreDisplay = document.createElement("h2");
+  win.timeHeader = document.createElement("h2");
   win.timeDisplay = document.createElement("h2");
+  win.levelHeader = document.createElement("h2");
   win.levelDisplay = document.createElement("h2");
+
+  win.scoreHeader.innerHTML = "SCORE";
+  win.scoreHeader.style.color = "blue";
+  win.timeHeader.innerHTML = "TIME";
+  win.timeHeader.style.color = "blue";
+  win.levelHeader.innerHTML = "LEVEL";
+  win.levelHeader.style.color = "blue";
 
   // set HUD element IDs
   win.statDisplay.setAttribute("id", "all-stats");
+  win.scoreDisplay.setAttribute("id", "score");
   win.timeDisplay.setAttribute("id", "time");
   win.levelDisplay.setAttribute("id", "level");
   // append HUD elements
+
   leftHudElements.appendChild(win.statDisplay);
-  leftHudElements.appendChild(win.levelDisplay);
+  leftHudElements.appendChild(win.scoreHeader);
+  leftHudElements.appendChild(win.scoreDisplay);
+  leftHudElements.appendChild(win.timeHeader);
   leftHudElements.appendChild(win.timeDisplay);
+  leftHudElements.appendChild(win.levelHeader);
+  leftHudElements.appendChild(win.levelDisplay);
+
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
