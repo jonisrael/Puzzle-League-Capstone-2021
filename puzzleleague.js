@@ -625,10 +625,29 @@ function KEYBOARD_CONTROL(event) {
         game.boardRiseSpeed = preset.speedValues[0];
         game.blockClearTime = preset.clearValues[0];
         game.blockStallTime = preset.stallValues[0];
-        console.log("debug ON");
-        console.log(`fps: ${performance.fps}`);
-        console.log(`Draw Divisor: ${performance.drawDivisor}`);
+        console.log("debug ON -- Score Posting Disabled");
+        console.log(`Game Frame: ${game.frames}`);
+        console.log(`Grid Draw Divisor: ${performance.drawDivisor}`);
+        console.log(`Game Event Speed: ${performance.gameSpeed}`);
         console.log(`Time: ${game.minutes}, ${game.seconds}`);
+        console.log(`-`);
+        console.log(`Debug Controls:`);
+        console.log("M -- Raise Game Level");
+        console.log("N -- Lower Game Level");
+        console.log("P -- Pause/Unpause Block Event Delay Timers");
+        console.log("F -- Advance All Block Event Delay Timers by 1 frame");
+        console.log("T -- Enable/Disable Block Timer Slowdown");
+        console.log("O -- Enable/Disable Chainable Block Visuals (Default ON)");
+        console.log("Shift -- Empty Game Board");
+        console.log("ESC -- End Game");
+        console.log("-");
+        console.log("Chainable Block Info Guide:");
+        console.log("Orange: Eligible for Main Chain");
+        console.log("Pink -- Eligible for Secondary Chain");
+        console.log("Brown -- Both Orange and Pink attributes are true");
+        console.log(
+          "White -- Block Delay Timer greater than 0 but block is not chainable"
+        );
       } else {
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
@@ -640,12 +659,14 @@ function KEYBOARD_CONTROL(event) {
       }
     }
     if (debug.enabled == 1) {
+      if (event.keyCode == 49) {
+        // Number 1
+        performance.gameSpeed = 1;
+        console.log("Speed:", performance.gameSpeed);
+      }
       if (event.keyCode == 50) {
         // Number 2
-        performance.gameSpeed =
-          performance.gameSpeed == 1
-            ? (performance.gameSpeed = 2)
-            : (performance.gameSpeed = 1);
+        performance.gameSpeed = 2;
         console.log("Speed:", performance.gameSpeed);
       }
       if (event.keyCode == 27) {
@@ -670,34 +691,34 @@ function KEYBOARD_CONTROL(event) {
         // p, q
         debug.pause = (debug.pause + 1) % 2;
       } else if (event.keyCode == 77 && game.level < 10) {
-        //+
+        //m
         game.level += 1 * performance.gameSpeed;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
       } else if (event.keyCode == 78 && game.level > 0) {
-        //-
+        //n
         game.level -= 1 * performance.gameSpeed;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
 
         // Debug codes
-      } else if (event.keyCode == 70) {
-        // f
-        if (debug.pause == 1) {
-          updateGrid(true);
-        }
+      } else if (event.keyCode == 70 && debug.pause == 1) {
+        updateGrid(true);
       } else if (event.keyCode == 84) {
         // t
         debug.slowdown = (debug.slowdown + 1) % 2;
         if (debug.slowdown) {
-          console.log("developer mode enabled");
+          console.log("slowdown mode enabled");
+          console.log(
+            "In slowdown mode, block clear, block gravity, and block stall timers are set to 2 seconds."
+          );
           game.boardRiseSpeed = preset.speedValues[0];
           game.blockStallTime = 120;
           game.blockClearTime = 120;
         } else {
-          console.log("developer mode disabled");
+          console.log("slowdown mode disabled");
           game.boardRiseSpeed = preset.speedValues[game.level];
           game.blockClearTime = preset.clearValues[game.level];
           game.blockStallTime = preset.stallValues[game.level];

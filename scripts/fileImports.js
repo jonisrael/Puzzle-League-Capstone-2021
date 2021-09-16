@@ -379,7 +379,7 @@ for (let i = 0; i < imageList.length; i++) {
   img.src = imageList[i];
   loadedImages[i] = img;
 }
-// Load all audios
+// Preload all audios, then play them at zero volume.
 let loadedAudios = [];
 for (let i = 0; i < audioList.length; i++) {
   let audio = new Audio();

@@ -5,5 +5,6 @@ export default [
   { title: "Scoring", text: "Scoring" },
   { title: "History", text: "History" },
   { title: "Credits", text: "Music & SFX Credits" },
-  { title: "About", text: "About Me" }
+  { title: "About", text: "About Me" },
+  { title: "Bugs", text: "Known Bugs" }
 ];

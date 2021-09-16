@@ -20,7 +20,18 @@ export default st => html`
         The stack rise speed will get faster every 20 seconds, which also
         increases the multiplier of combos/chains by 0.1x. At two minutes,
         "overtime" begins, and the stack rise speed will be extremely fast.
-        However, all point scores will be doubled. Have fun!
+        However, all point scores will be doubled. After the game ends, you can
+        submit your score to the leaderboard. Practice up, and see if you can
+        get that #1 spot!
+      </h3>
+      <h3>
+        It should be noted that pure javascript is not the most consistent at
+        running the game. There are issues with the game both running too slow,
+        fast, or sometimes both. If the app detects that the frame rate has been
+        low for a significant portion of the game, you may be notified that your
+        score will have a * next to it and may need to be reviewed based on your
+        computer's performance information that is sent to the server upon
+        posting a score.
       </h3>
       <div id="debug"></div>
     </div>
