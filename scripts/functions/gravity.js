@@ -45,7 +45,7 @@ export function doGravity() {
         game.board[c][r + 1].color == blockColor.VACANT &&
         INTERACTIVE_PIECES.includes(game.board[c][r].type)
       ) {
-        // fall one unit
+        // if normal block, fall one unit
         falling = true;
         game.disableRaise = false;
         // When a block is ready to fall
@@ -80,7 +80,7 @@ export function doGravity() {
         game.board[x][y + 1].color != blockColor.VACANT
       ) {
         game.board[x][y].type = blockType.LANDING;
-        game.board[x][y].timer = 10;
+        game.board[x][y].timer = 10; // 10 frames is length of landing animation
         //DEBUG
         if (debug.slowdown == 1) {
           game.board[x][y].timer = 120;

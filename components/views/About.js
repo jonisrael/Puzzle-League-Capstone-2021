@@ -70,10 +70,9 @@ export default st => html`
           <a href="https://www.linkedin.com/in/jonathan-israel-3ba281159/"
             >LinkedIn</a
           >
-          for business inquiries.<br />
+          for business inquiries, and my Discord tag is GiefKid#0722 for
+          anything else. Thank you so much for playing my game!
         </p>
-        and my Discord tag is GiefKid#0722 for anything else. Thank you so much
-        for playing my game!
       </div>
     </body>
   </section>

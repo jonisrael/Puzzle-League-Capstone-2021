@@ -164,11 +164,14 @@ class Block {
 
     //Debug Visuals
     if (debug.show == 1) {
-      if (this.availableForPrimaryChain && this.availableForSecondaryChain) {
-        DEBUGB_IMAGE.src = sprite.debugBrown;
-        DEBUGB_IMAGE.onload = () => {
+      if (
+        this.timer > game.blockClearTime / 2 ||
+        this.timer > game.blockStallTime / 2
+      ) {
+        DEBUGW_IMAGE.src = sprite.debugWhite;
+        DEBUGW_IMAGE.onload = () => {
           win.ctx.drawImage(
-            DEBUGB_IMAGE,
+            DEBUGW_IMAGE,
             grid.SQ * this.x,
             grid.SQ * this.y - game.rise
           );
@@ -192,10 +195,10 @@ class Block {
           );
         };
       } else if (this.timer > 0 && this.type == blockType.NORMAL) {
-        DEBUGW_IMAGE.src = sprite.debugWhite;
-        DEBUGW_IMAGE.onload = () => {
+        DEBUGB_IMAGE.src = sprite.debugBrown;
+        DEBUGB_IMAGE.onload = () => {
           win.ctx.drawImage(
-            DEBUGW_IMAGE,
+            DEBUGB_IMAGE,
             grid.SQ * this.x,
             grid.SQ * this.y - game.rise
           );
@@ -256,7 +259,12 @@ function updateGrid(frameAdvance = false) {
           } else if (game.board[x][y].type == blockType.FACE) {
             game.board[x][y].color = blockColor.VACANT;
             game.board[x][y].type = blockType.NORMAL;
-            if (y > 0 && game.board[x][y - 1].color != blockColor.VACANT) {
+            if (
+              y > 0 &&
+              game.board[x][y - 1].color != blockColor.VACANT &&
+              INTERACTIVE_PIECES.includes(game.board[x][y - 1].type)
+            ) {
+              // Give interactive pieces a slight delay timer
               game.board[x][y - 1].timer = game.blockStallTime;
             }
             game.disableRaise = false;
@@ -642,11 +650,11 @@ function KEYBOARD_CONTROL(event) {
         console.log("ESC -- End Game");
         console.log("-");
         console.log("Chainable Block Info Guide:");
+        console.log("White -- First half of Block Delay Timer");
         console.log("Orange: Eligible for Main Chain");
         console.log("Pink -- Eligible for Secondary Chain");
-        console.log("Brown -- Both Orange and Pink attributes are true");
         console.log(
-          "White -- Block Delay Timer greater than 0 but block is not chainable"
+          "Brown -- Block Delay Timer greater than 0 but block is not chainable"
         );
       } else {
         game.boardRiseSpeed = preset.speedValues[game.level];

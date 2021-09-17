@@ -7,9 +7,7 @@ export default links => html`
       ${links.map(
         link =>
           `<li><a href="/${link.title}" title="${link.title}" style="color:${
-            link.title === "Home" || link.title === "Tutorials"
-              ? "yellow"
-              : "white"
+            link.title === "Home" ? "yellow" : "white"
           }" data-navigo>${link.text}</a></li>`
       )}
     </ul>

@@ -138,7 +138,7 @@ export function trySwappingBlocks(x, y) {
     }
 
     if (y > 0) {
-      // Check to see if there are blocks above a blockColor.VACANT block
+      // Check to see if there are blocks above a vacant block
       // Check left column
       if (
         game.board[x][y].color == blockColor.VACANT &&

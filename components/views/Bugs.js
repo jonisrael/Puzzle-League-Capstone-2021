@@ -50,10 +50,6 @@ export default st => html`
         even though it should stop immediately.
       </li>
       <li>
-        When a block is clearing, if a vacant block occurs below it, the block
-        may disappear slower or faster than intended.
-      </li>
-      <li>
         Mute buttons only work while game is running.
       </li>
     </ul>
