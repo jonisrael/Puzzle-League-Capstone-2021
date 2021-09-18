@@ -19,6 +19,7 @@ import {
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
+import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
@@ -121,7 +122,7 @@ class Block {
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
     if (this.type == blockType.CLEARING) {
-      if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.pause == 1) {
+      if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
         animationIndex = 0;
       } else {
         animationIndex = 1;
@@ -249,7 +250,7 @@ function updateGrid(frameAdvance = false) {
       }
 
       if (!frameAdvance) {
-        if (game.board[x][y].timer > 0 && debug.pause == 0) {
+        if (game.board[x][y].timer > 0 && debug.freeze == 0) {
           game.board[x][y].timer -= 1 * performance.gameSpeed;
           game.disableRaise = true;
         } else if (game.board[x][y].timer == 0) {
@@ -390,21 +391,6 @@ function isClearing() {
   return false;
 }
 
-function checkClearing() {
-  let clearingColumns = [];
-  for (let c = 0; c < grid.COLS; c++) {
-    clearingColumns[c] = false;
-    for (let r = 0; r < grid.ROWS; r++) {
-      if (!INTERACTIVE_PIECES.includes(game.board[c][r].type)) {
-        clearingColumns[c] = true;
-        console.log("clearingColumns:", clearingColumns);
-        break;
-      }
-    }
-  }
-  return clearingColumns;
-}
-
 function doPanic() {
   let panic = false;
   for (let c = 0; c < grid.COLS; c++) {
@@ -441,7 +427,7 @@ function raiseStack() {
     );
     return false;
   }
-  if (game.disableRaise || debug.pause == 1) {
+  if (game.disableRaise || debug.freeze == 1) {
     return false;
   } else if (game.raiseDelay > 0) {
     game.raiseDelay -= 1 * performance.gameSpeed;
@@ -609,6 +595,12 @@ window.addEventListener(
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
   if (win.running & !game.over) {
+    if (event.keyCode == 80) {
+      // p
+      game.paused ? unpause() : pause();
+    }
+  }
+  if (win.running & !game.over && game.paused == 0) {
     if (event.keyCode == 37) {
       // left
       if (game.cursor.x - 1 >= 0) {
@@ -658,7 +650,7 @@ function KEYBOARD_CONTROL(event) {
         console.log(`Debug Controls:`);
         console.log("M -- Raise Game Level");
         console.log("N -- Lower Game Level");
-        console.log("P -- Pause/Unpause Block Event Delay Timers");
+        console.log("P -- Freeze/Unfreeze Block Event Delay Timers");
         console.log("F -- Advance All Block Event Delay Timers by 1 frame");
         console.log("T -- Enable/Disable Block Timer Slowdown");
         console.log("O -- Enable/Disable Chainable Block Visuals (Default ON)");
@@ -678,7 +670,7 @@ function KEYBOARD_CONTROL(event) {
         game.blockStallTime = preset.stallValues[game.level];
         console.log("debug OFF");
         debug.slowdown = 0;
-        debug.pause = 0;
+        debug.freeze = 0;
         // debug.show = 0;
       }
     }
@@ -712,9 +704,9 @@ function KEYBOARD_CONTROL(event) {
         game.rise = 0;
         game.board = generateOpeningBoard();
         game.disableRaise = false;
-      } else if (event.keyCode == 80 || event.keyCode == 81) {
-        // p, q
-        debug.pause = (debug.pause + 1) % 2;
+      } else if (event.keyCode == 70 || event.keyCode == 81) {
+        // f, q
+        debug.freeze = (debug.freeze + 1) % 2;
       } else if (event.keyCode == 77 && game.level < 10) {
         //m
         game.level += 1 * performance.gameSpeed;
@@ -729,7 +721,8 @@ function KEYBOARD_CONTROL(event) {
         game.blockStallTime = preset.stallValues[game.level];
 
         // Debug codes
-      } else if (event.keyCode == 70 && debug.pause == 1) {
+      } else if (event.keyCode == 67 && debug.freeze == 1) {
+        // c
         updateGrid(true);
       } else if (event.keyCode == 84) {
         // t
@@ -775,293 +768,303 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function gameLoop(timestamp) {
-  game.frames += 1 * performance.gameSpeed;
-
-  if (game.over && game.frames > 300 && api.data !== undefined) {
-    playAnnouncer(
-      announcer.endgameDialogue,
-      announcer.endgameIndexLastPicked,
-      "endgame"
-    );
-    closeGame(win.view);
-    win.running = false;
-    return;
+  if (game.paused) {
   }
+  if (!game.paused) {
+    game.frames += 1 * performance.gameSpeed;
 
-  if (!win.running || win.view !== "Home") {
-    console.log("closing game", win.view);
-    closeGame(win.view);
-    win.running = false;
-    return;
-  }
-  checkTime();
-
-  if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
-    game.seconds++;
-    if (debug.enabled === 1) {
-      game.seconds--;
-      game.frames -= 60;
-    }
-  }
-  if (game.seconds % 60 == 0 && game.seconds != 0) {
-    game.minutes++;
-    game.seconds = 0;
-  }
-
-  if (game.frames % game.boardRiseSpeed == 0) {
-    if (!game.disableRaise && game.grounded && debug.pause == 0) {
-      if (game.raiseDelay > 0) {
-        // ! New code:
-        game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
-        // ! Old code:
-        // if (!checkClearing().includes(true)) {
-        //   game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
-        // }
-      } else if (game.frames > 0) game.rise = (game.rise + 2) % 32;
-    }
-    if (game.rise == 0 && !game.over && game.frames > 0) {
-      raiseStack();
-    }
-  }
-
-  if (
-    game.frames % 1200 == 0 &&
-    game.level < 10 &&
-    game.level > 0 &&
-    debug.enabled === 0 &&
-    !game.over
-  ) {
-    // Speed the stack up every 20 seconds
-
-    if (game.frames == 7200) {
-      game.message = "Overtime, I hope you're ready!";
-      game.defaultMessage = game.message;
-      game.messageChangeDelay = 300;
+    if (game.over && game.frames > 300 && api.data !== undefined) {
       playAnnouncer(
-        announcer.overtimeDialogue,
-        announcer.overtimeIndexLastPicked,
-        "overtime"
+        announcer.endgameDialogue,
+        announcer.endgameIndexLastPicked,
+        "endgame"
       );
-      playMusic(audio.overtimeMusic, 0.2);
-    } else if (game.frames >= 1200) {
-      game.message = `Level ${game.level + 1}, Game Speed has Increased...`;
-      game.messageChangeDelay = 120;
-      playAnnouncer(
-        announcer.timeTransitionDialogue,
-        announcer.timeTransitionIndexLastPicked,
-        "timeTransition"
-      );
+      closeGame(win.view);
+      win.running = false;
+      return;
     }
 
-    if (game.frames > 0) game.level++;
-    game.boardRiseSpeed = preset.speedValues[game.level];
-    game.blockClearTime = preset.clearValues[game.level];
-    game.blockStallTime = preset.stallValues[game.level];
-  }
-
-  if (game.quickRaise) {
-    game.disableSwap = true;
-    game.message = "Quick-Raise Initiated";
-    game.messageChangeDelay = 1000;
-    win.mainInfoDisplay.style.color = "blue";
-    if (game.rise == 0) {
-      game.disableSwap = false;
-      game.quickRaise = false;
-      game.message = "Quick-Raise Complete";
-      game.messageChangeDelay = 90;
-      win.mainInfoDisplay.style.color = "blue";
-      game.raiseDelay = 0;
-      game.boardRiseSpeed = Math.floor(
-        preset.speedValues[game.level] / performance.gameSpeed
-      );
-    } else {
-      game.boardRiseSpeed = 1;
+    if (!win.running || win.view !== "Home") {
+      console.log("closing game", win.view);
+      closeGame(win.view);
+      win.running = false;
+      return;
     }
-  }
-  game.grounded = areAllBlocksGrounded();
-  doGravity();
-  updateGrid();
-  checkMatch();
-  isChainActive();
-  if (game.frames % 6 == 0) {
-    doPanic();
-  }
+    checkTime();
 
-  if (game.raisePressed) {
-    game.raisePressed = false;
-    if (!game.disableRaise) {
-      game.quickRaise = true;
-      game.raiseDelay = 0;
-    }
-  }
-
-  if (!game.over && isGameOver(game.score)) {
-    game.frames = 0;
-    game.over = true;
-    for (let c = 0; c < grid.COLS; c++) {
-      for (let r = 0; r < grid.ROWS; r++) {
-        game.board[c][r].type = blockType.LANDING;
-        game.board[c][r].timer = -2;
+    if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
+      game.seconds++;
+      if (debug.enabled === 1) {
+        game.seconds--;
+        game.frames -= 60;
       }
     }
-    gameOverBoard();
-    drawGrid();
-  }
-  if (game.over && game.frames < 25) {
-    gameOverBoard();
-    drawGrid();
-  }
-
-  // Try and control a frame rate based
-  // on computer performance by decreasing or increasing
-  // the amount of times the game.board is drawn per second
-  if (!game.over) {
-    if (game.frames % performance.drawDivisor == 0) {
-      drawGrid();
+    if (game.seconds % 60 == 0 && game.seconds != 0) {
+      game.minutes++;
+      game.seconds = 0;
     }
-    if (performance.fps >= 80) {
-      drawGrid();
-    }
-  }
 
-  if (game.frames % 5 == 0) {
-    // fps counter
-    performance.secondsPerLoop =
-      Math.floor(100 * (timestamp / 1000 - performance.prev)) / 100;
-    performance.fps = Math.floor(1 * 5 * (1 / performance.secondsPerLoop)) / 1;
-    if (performance.fps < 40 && performance.gameSpeed == 1) {
-      // If the game is running at below 0.9x speed, there's a problem.
-      performance.slowdownTracker += 1; // for each frame, if there is low frame rate 2
-      // console.log(
-      //   `${performance.slowdownTracker} times under 40 fps every 2 seconds (3 needed)`
-      // );
+    if (game.frames % game.boardRiseSpeed == 0) {
+      if (!game.disableRaise && game.grounded && debug.freeze == 0) {
+        if (game.raiseDelay > 0) {
+          // ! New code:
+          game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+          // ! Old code:
+          // if (!checkClearing().includes(true)) {
+          //   game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+          // }
+        } else if (game.frames > 0) game.rise = (game.rise + 2) % 32;
+      }
+      if (game.rise == 0 && !game.over && game.frames > 0) {
+        raiseStack();
+      }
     }
-    performance.prev = timestamp / 1000;
-  }
 
-  if (game.seconds % 2 == 0) {
-    performance.slowdownTracker -= 1;
-    if (performance.slowdownTracker < 0) performance.slowdownTracker = 0;
-  } // Check # of frame rate drops every 600 frames
-  if (performance.slowdownTracker > 2) {
-    // If fps is below 50 fps for 2 seconds in the next 10, lower settings
-    performance.slowdownTracker = 0;
     if (
-      performance.fps <= 45 &&
-      performance.drawDivisor >= 2 &&
-      performance.gameSpeed < 2
+      game.frames % 1200 == 0 &&
+      game.level < 10 &&
+      game.level > 0 &&
+      debug.enabled === 0 &&
+      !game.over
     ) {
-      performance.gameSpeed = 1;
-      console.log("game speed has now doubled");
-    }
-    if (performance.fps <= 55 && performance.drawDivisor < 2) {
-      performance.drawDivisor += 1;
-      // console.log(
-      //   `computer running slow, fps ${performance.fps}, draw divisor=${performance.drawDivisor}`
-      // );
-    }
-    if (performance.fps > 80) drawGrid();
-    if (performance.fps > 120) {
-      // console.log(`computer running fast, fps ${performance.fps}`);
+      // Speed the stack up every 20 seconds
 
+      if (game.frames == 7200) {
+        game.message = "Overtime, I hope you're ready!";
+        game.defaultMessage = game.message;
+        game.messageChangeDelay = 300;
+        playAnnouncer(
+          announcer.overtimeDialogue,
+          announcer.overtimeIndexLastPicked,
+          "overtime"
+        );
+        playMusic(audio.overtimeMusic, 0.2);
+      } else if (game.frames >= 1200) {
+        game.message = `Level ${game.level + 1}, Game Speed has Increased...`;
+        game.messageChangeDelay = 120;
+        playAnnouncer(
+          announcer.timeTransitionDialogue,
+          announcer.timeTransitionIndexLastPicked,
+          "timeTransition"
+        );
+      }
+
+      if (game.frames > 0) game.level++;
+      game.boardRiseSpeed = preset.speedValues[game.level];
+      game.blockClearTime = preset.clearValues[game.level];
+      game.blockStallTime = preset.stallValues[game.level];
+    }
+
+    if (game.quickRaise) {
+      game.disableSwap = true;
+      game.message = "Quick-Raise Initiated";
+      game.messageChangeDelay = 1000;
+      win.mainInfoDisplay.style.color = "blue";
+      if (game.rise == 0) {
+        game.disableSwap = false;
+        game.quickRaise = false;
+        game.message = "Quick-Raise Complete";
+        game.messageChangeDelay = 90;
+        win.mainInfoDisplay.style.color = "blue";
+        game.raiseDelay = 0;
+        game.boardRiseSpeed = Math.floor(
+          preset.speedValues[game.level] / performance.gameSpeed
+        );
+      } else {
+        game.boardRiseSpeed = 1;
+      }
+    }
+    game.grounded = areAllBlocksGrounded();
+    doGravity();
+    updateGrid();
+    checkMatch();
+    isChainActive();
+    if (game.frames % 6 == 0) {
+      doPanic();
+    }
+
+    if (game.raisePressed) {
+      game.raisePressed = false;
+      if (!game.disableRaise) {
+        game.quickRaise = true;
+        game.raiseDelay = 0;
+      }
+    }
+
+    if (!game.over && isGameOver(game.score)) {
+      game.frames = 0;
+      game.over = true;
+      for (let c = 0; c < grid.COLS; c++) {
+        for (let r = 0; r < grid.ROWS; r++) {
+          game.board[c][r].type = blockType.LANDING;
+          game.board[c][r].timer = -2;
+        }
+      }
+      gameOverBoard();
       drawGrid();
-      if (performance.drawDivisor > 1) performance.drawDivisor -= 1;
     }
-    if (performance.fps > 150) drawGrid();
-    // } else if (performance.drawsPerSecond == 30) {
-    //     performance.drawsPerSecond = 20
-    // } else if (performance.drawsPerSecond == 20) {
-    //     performance.drawsPerSecond = -1
-    //     console.log("Performance of device is too low for accurate play.")
-    // }
-  }
-  let minutesString = "";
-  let secondsString = "";
-  let scoreString = "";
-  let multiplierString = "";
-  if (game.minutes < 10) {
-    minutesString = `0${game.minutes}`;
-  } else {
-    minutesString = `${game.minutes}`;
-  }
-  if (game.seconds < 10) {
-    secondsString = `0${game.seconds}`;
-  } else {
-    secondsString = `${game.seconds}`;
-  }
-  let timeString = `${minutesString}:${secondsString}`;
+    if (game.over && game.frames < 25) {
+      gameOverBoard();
+      drawGrid();
+    }
 
-  if (game.score < 10) {
-    scoreString = `0000${game.score}`;
-  } else if (game.score < 100) {
-    scoreString = `000${game.score}`;
-  } else if (game.score < 1000) {
-    scoreString = `00${game.score}`;
-  } else if (game.score < 10000) {
-    scoreString = `0${game.score}`;
-  } else {
-    scoreString = `${game.score}`;
-  }
+    // Try and control a frame rate based
+    // on computer performance by decreasing or increasing
+    // the amount of times the game.board is drawn per second
+    if (!game.over) {
+      if (game.frames % performance.drawDivisor == 0) {
+        drawGrid();
+      }
+      if (performance.fps >= 80) {
+        drawGrid();
+      }
+    }
 
-  if (game.scoreMultiplier == 1) {
-    multiplierString = "1.0x";
-  } else if (game.scoreMultiplier == 2) {
-    multiplierString = "2.0x";
-  } else {
-    multiplierString = `${game.scoreMultiplier}x`;
-  }
-  if (debug.enabled == 1) {
-    win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
+    if (game.frames % 5 == 0) {
+      // fps counter
+      performance.secondsPerLoop =
+        Math.floor(100 * (timestamp / 1000 - performance.prev)) / 100;
+      performance.fps =
+        Math.floor(1 * 5 * (1 / performance.secondsPerLoop)) / 1;
+      if (performance.fps < 40 && performance.gameSpeed == 1) {
+        // If the game is running at below 0.9x speed, there's a problem.
+        performance.slowdownTracker += 1; // for each frame, if there is low frame rate 2
+        // console.log(
+        //   `${performance.slowdownTracker} times under 40 fps every 2 seconds (3 needed)`
+        // );
+      }
+      performance.prev = timestamp / 1000;
+    }
+
+    if (game.seconds % 2 == 0) {
+      performance.slowdownTracker -= 1;
+      if (performance.slowdownTracker < 0) performance.slowdownTracker = 0;
+    } // Check # of frame rate drops every 600 frames
+    if (performance.slowdownTracker > 2) {
+      // If fps is below 50 fps for 2 seconds in the next 10, lower settings
+      performance.slowdownTracker = 0;
+      if (
+        performance.fps <= 45 &&
+        performance.drawDivisor >= 2 &&
+        performance.gameSpeed < 2
+      ) {
+        performance.gameSpeed = 1;
+        console.log("game speed has now doubled");
+      }
+      if (performance.fps <= 55 && performance.drawDivisor < 2) {
+        performance.drawDivisor += 1;
+        // console.log(
+        //   `computer running slow, fps ${performance.fps}, draw divisor=${performance.drawDivisor}`
+        // );
+      }
+      if (performance.fps > 80) drawGrid();
+      if (performance.fps > 120) {
+        // console.log(`computer running fast, fps ${performance.fps}`);
+
+        drawGrid();
+        if (performance.drawDivisor > 1) performance.drawDivisor -= 1;
+      }
+      if (performance.fps > 150) drawGrid();
+      // } else if (performance.drawsPerSecond == 30) {
+      //     performance.drawsPerSecond = 20
+      // } else if (performance.drawsPerSecond == 20) {
+      //     performance.drawsPerSecond = -1
+      //     console.log("Performance of device is too low for accurate play.")
+      // }
+    }
+    let minutesString = "";
+    let secondsString = "";
+    let scoreString = "";
+    let multiplierString = "";
+    if (game.minutes < 10) {
+      minutesString = `0${game.minutes}`;
+    } else {
+      minutesString = `${game.minutes}`;
+    }
+    if (game.seconds < 10) {
+      secondsString = `0${game.seconds}`;
+    } else {
+      secondsString = `${game.seconds}`;
+    }
+    let timeString = `${minutesString}:${secondsString}`;
+
+    if (game.score < 10) {
+      scoreString = `0000${game.score}`;
+    } else if (game.score < 100) {
+      scoreString = `000${game.score}`;
+    } else if (game.score < 1000) {
+      scoreString = `00${game.score}`;
+    } else if (game.score < 10000) {
+      scoreString = `0${game.score}`;
+    } else {
+      scoreString = `${game.score}`;
+    }
+
+    if (game.scoreMultiplier == 1) {
+      multiplierString = "1.0x";
+    } else if (game.scoreMultiplier == 2) {
+      multiplierString = "2.0x";
+    } else {
+      multiplierString = `${game.scoreMultiplier}x`;
+    }
+    if (debug.enabled == 1) {
+      win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
-  }
-  if (debug.enabled == 0) {
-    win.statDisplay.innerHTML = ``;
-    win.levelDisplay.innerHTML = `${game.level}`;
-    win.timeDisplay.innerHTML = timeString;
-    if (game.frames > 60) {
-      if (game.frames % 1200 >= 1020) {
-        win.timeDisplay.style.color = "red";
-      } else {
-        if (win.timeDisplay.style.color !== "black") {
-          win.timeDisplay.style.color = "black";
+    }
+    if (debug.enabled == 0) {
+      win.statDisplay.innerHTML = ``;
+      win.levelDisplay.innerHTML = `${game.level}`;
+      win.timeDisplay.innerHTML = timeString;
+      if (game.frames > 60) {
+        if (game.frames % 1200 >= 1020) {
+          win.timeDisplay.style.color = "red";
+        } else {
+          if (win.timeDisplay.style.color !== "black") {
+            win.timeDisplay.style.color = "black";
+          }
+        }
+        if (game.frames % 1200 < 60) {
+          win.levelDisplay.style.color = "red";
+        } else {
+          if (win.levelDisplay.style.color !== "black") {
+            win.levelDisplay.style.color = "black";
+          }
+        }
+
+        if (game.currentChain > 0) {
+          win.scoreDisplay.style.color = "red";
+        } else {
+          if (win.scoreDisplay.style.color !== "black") {
+            win.scoreDisplay.style.color = "black";
+          }
         }
       }
-      if (game.frames % 1200 < 60) {
-        win.levelDisplay.style.color = "red";
-      } else {
-        if (win.levelDisplay.style.color !== "black") {
-          win.levelDisplay.style.color = "black";
-        }
+      win.scoreDisplay.innerHTML = scoreString;
+      win.fpsDisplay.innerHTML = `${performance.fps} fps`;
+      win.mainInfoDisplay.innerHTML = `${game.message}`;
+      if (game.messageChangeDelay > 0) {
+        game.messageChangeDelay -= 1 * performance.gameSpeed;
       }
-
-      if (game.currentChain > 0) {
-        win.scoreDisplay.style.color = "red";
-      } else {
-        if (win.scoreDisplay.style.color !== "black") {
-          win.scoreDisplay.style.color = "black";
-        }
+      if (game.messageChangeDelay <= 0 && frames < 6600) {
+        game.message = game.defaultMessage;
       }
     }
-    win.scoreDisplay.innerHTML = scoreString;
-    win.fpsDisplay.innerHTML = `${performance.fps} fps`;
-    win.mainInfoDisplay.innerHTML = `${game.message}`;
-    if (game.messageChangeDelay > 0) {
-      game.messageChangeDelay -= 1 * performance.gameSpeed;
+
+    if (game.currentChain > 0) {
+      win.chainDisplay.innerHTML = `${game.currentChain}x chain!`;
+      win.chainDisplay.style.color = "red";
+    } else {
+      win.chainDisplay.innerHTML = `Largest Chain: ${game.largestChain} | Total Blocks Cleared: ${game.totalClears}`;
+      win.chainDisplay.style.color = "blue";
     }
-    if (game.messageChangeDelay <= 0 && frames < 6600) {
-      game.message = game.defaultMessage;
+
+    win.highScoreDisplay.innerHTML = `High Score: ${game.highScore}`;
+    if (!document.hasFocus() && !debug.enabled) {
+      game.paused = 1;
+      pause();
     }
   }
-
-  if (game.currentChain > 0) {
-    win.chainDisplay.innerHTML = `${game.currentChain}x chain!`;
-    win.chainDisplay.style.color = "red";
-  } else {
-    win.chainDisplay.innerHTML = `Largest Chain: ${game.largestChain} | Total Blocks Cleared: ${game.totalClears}`;
-    win.chainDisplay.style.color = "blue";
-  }
-
-  win.highScoreDisplay.innerHTML = `High Score: ${game.highScore}`;
+  // outside pause loop
   requestAnimationFrame(gameLoop);
 }
 

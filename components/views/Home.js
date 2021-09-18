@@ -33,7 +33,6 @@ export default st => html`
         computer's performance information that is sent to the server upon
         posting a score.
       </h3>
-      <div id="debug"></div>
     </div>
   </section>
 `;

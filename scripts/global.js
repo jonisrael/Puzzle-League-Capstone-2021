@@ -171,6 +171,7 @@ const game = {
   largestChain: 0,
   largestCombo: 0,
   totalClears: 0,
+  paused: false,
   over: false, //gameOver
   grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain
@@ -209,7 +210,7 @@ const performance = {
 const debug = {
   enabled: 0,
   slowdown: 0,
-  pause: 0,
+  freeze: 0,
   show: 0,
   frameAdvance: false
 };

@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import { win, api, game } from "./scripts/global";
 import { startGame } from "./scripts/functions/beginGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
-
+import { pause, unpause } from "./scripts/functions/pauseFunctions";
 dotenv.config();
 
 const router = new Navigo(window.location.origin);
@@ -55,6 +55,7 @@ function addEventListeners(st) {
     win.muteMusic = document.getElementById("mute-music");
     win.muteSFX = document.getElementById("mute-sfx");
     let container = document.getElementById("container");
+
     let startButton = document.createElement("button");
     startButton.setAttribute("id", "click-to-play");
     startButton.className = "default-button";
@@ -63,7 +64,17 @@ function addEventListeners(st) {
     startButton.addEventListener("click", () => {
       startButton.remove();
       getWorldTimeAPI();
-      startGame();
+      startGame(1);
+    });
+    let doubleButton = document.createElement("button");
+    doubleButton.setAttribute("id", "double-to-play");
+    doubleButton.className = "default-button";
+    doubleButton.innerHTML = "Double to play";
+    container.appendChild(doubleButton);
+    doubleButton.addEventListener("click", () => {
+      doubleButton.remove();
+      getWorldTimeAPI();
+      startGame(2);
     });
   }
   if (st.view !== "Home") game.Music.volume = 0;

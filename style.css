@@ -14,12 +14,18 @@ body {
     padding: 50px;
     background-color: greenyellow;
     font-size: x-large;
+    align-items: center;
 }
 .default-button:hover {
     border-radius: 10px;
     padding: 50px;
     background-color: green;
     font-size: x-large;
+}
+
+#resume-button {
+    text-align: center;
+    padding: 10px;
 }
 
 #player-name {
@@ -169,7 +175,7 @@ h3 {
 }
 
 #left-hud-elements {
-    background-color: greenyellow;
+    background-color: ghostwhite;
     border: solid burlywood 10px;
     border-radius: 10px;
     padding-right: 5px;

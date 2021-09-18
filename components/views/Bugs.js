@@ -60,9 +60,9 @@ export default st => html`
       If you are interested in messing around with the game, you can enable
       debug mode by pressing the ~ key, located above the TAB key. This will
       allow you to stop the game timer and view game information. Upon enabling
-      debug mode, you can mess with event timers, pause the game, and display
-      the chain logic on blocks. The controls will be posted in the developer
-      console, which you can access on your browser by pressing F12.
+      debug mode, you can mess with event timers, freeze the game event timers,
+      and display the chain logic on blocks. The controls will be posted in the
+      developer console, which you can access on your browser by pressing F12.
     </p>
   </section>
 `;

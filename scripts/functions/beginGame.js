@@ -15,6 +15,7 @@ import { playMusic } from "./audioFunctions";
 import { audio } from "../fileImports";
 import { getWorldTimeAPI } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
+import { pause, unpause } from "./pauseFunctions";
 
 export function startGame(selectedGameSpeed) {
   api.data = getWorldTimeAPI();
@@ -100,9 +101,20 @@ function createHeadsUpDisplay() {
   column2.appendChild(win.makeCanvas);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
-  container.appendChild(win.highScoreDisplay);
+  column3.appendChild(win.highScoreDisplay);
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
+
+  // Add invisible "Resume play" button, to be visible when game is paused
+  let resumeButton = document.createElement("button");
+  resumeButton.setAttribute("id", "resume-button");
+  resumeButton.className = "default-button";
+  resumeButton.style.display = "none";
+  resumeButton.innerHTML = "Click to Resume Game";
+  column2.appendChild(resumeButton);
+  resumeButton.addEventListener("click", event => {
+    unpause();
+  });
 }
 
 export function resetGameVariables() {
@@ -119,6 +131,7 @@ export function resetGameVariables() {
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;
+  game.paused = false;
   game.scoreMultiplier = 1;
   game.chainScoreAdded = 0;
   game.currentChain = 0;
