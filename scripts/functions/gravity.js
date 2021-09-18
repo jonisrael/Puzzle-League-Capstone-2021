@@ -60,7 +60,7 @@ export function doGravity() {
           possibleLandedLocations.push([c, r + 1]);
 
           //Debug
-          if (debug.pause == 1) {
+          if (debug.freeze == 1) {
             game.board[c][r + 1].timer += 1;
           } else if (debug.slowdown == 1) {
             game.board[c][r + 1].timer = 120;
@@ -89,6 +89,7 @@ export function doGravity() {
 }
 
 export function areAllBlocksGrounded() {
+  // check below all blocks, except for final row.
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 0; r < grid.ROWS - 1; r++) {
       if (
@@ -97,7 +98,10 @@ export function areAllBlocksGrounded() {
       ) {
         return false;
       }
+      if (game.board[c][r].type == blockType.LANDING) return false;
     }
+    // dont forget to check bottom row
+    if (game.board[c][grid.ROWS - 1].type == blockType.LANDING) return false;
   }
   // all blocks are grounded, so make sure there are no blocks touched
   // make sure chainables are gone if

@@ -1,5 +1,5 @@
 import { startGame } from "./beginGame";
-import { game, api } from "../global";
+import { game, api, performance } from "../global";
 import { sendData } from "../../index";
 
 export function submitResults() {
@@ -115,7 +115,7 @@ export function submitResults() {
 
   document.querySelector("#restart-game").addEventListener("click", event => {
     container.innerHTML = "";
-    startGame();
+    startGame(performance.gameSpeed);
   });
 }
 

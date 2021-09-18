@@ -1,4 +1,4 @@
-import { blockColor, blockType, grid, game, win } from "../global";
+import { blockColor, blockType, grid, game, win, debug } from "../global";
 
 import { audio } from "../fileImports";
 
@@ -7,6 +7,17 @@ import { playAudio } from "./audioFunctions";
 export function isGameOver(scoreOfThisGame) {
   for (let c = 0; c < grid.COLS; c++) {
     if (game.board[c][0].color != blockColor.VACANT) {
+      if (debug.enabled) {
+        game.cursor.y += 8;
+        if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
+        for (let x = 0; x < grid.COLS; x++) {
+          for (let y = grid.ROWS - 1; y > 3; y--) {
+            game.board[x][y].color = blockColor.VACANT;
+            game.board[x][y].type = blockType.NORMAL;
+          }
+        }
+        return false;
+      }
       game.Music.volume = 0;
       endGame();
       return true;

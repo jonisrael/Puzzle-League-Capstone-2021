@@ -3,6 +3,7 @@ import {
   PIECES,
   randInt,
   game,
+  performance,
   win,
   preset,
   grid,
@@ -15,14 +16,15 @@ import { audio } from "../fileImports";
 import { getWorldTimeAPI } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
 
-export function startGame() {
+export function startGame(selectedGameSpeed) {
   api.data = getWorldTimeAPI();
   win.running = true;
   resetGameVariables();
   createHeadsUpDisplay();
+  performance.gameSpeed = selectedGameSpeed;
   game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);
-  setTimeout(gameLoop(), 1000 / 60);
+  setInterval(gameLoop(), (1000 * selectedGameSpeed) / 60);
 }
 
 function createHeadsUpDisplay() {

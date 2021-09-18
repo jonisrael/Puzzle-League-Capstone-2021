@@ -52,7 +52,7 @@ export function playAudio(file, volume = 0.1, announcerBypass = false) {
   let Sound = new Audio();
   try {
     Sound.volume = volume;
-    Sound.pause = true;
+    Sound.freeze = true;
     Sound.currentTime = 0;
     Sound.src = file;
     Sound.play();
@@ -78,7 +78,7 @@ export function playChainSFX() {
 
 export function playMusic(file, volume = 0.1, mute = 0) {
   if (win.muteMusic.checked) return;
-  game.Music.pause = true;
+  game.Music.freeze = true;
   game.Music.src = file;
   game.Music.play();
   game.Music.loop = true;
