@@ -33,9 +33,11 @@ function addEventListeners(st) {
   document.querySelectorAll("nav a").forEach(navLink =>
     navLink.addEventListener("click", event => {
       event.preventDefault();
-      // Failsafe: Do not reload home page if already on home-page
+      // Failsafe: If already on home page, do not reload it upon clicking it.
       if (!(st.view === "Home" && state[event.target.title].view === "Home")) {
         render(state[event.target.title]);
+      } else {
+        location.reload();
       }
     })
   );

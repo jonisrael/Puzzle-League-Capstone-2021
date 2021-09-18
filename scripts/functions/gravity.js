@@ -8,7 +8,6 @@ import {
 } from "../global";
 
 export function doGravity() {
-  let falling = false;
   let possibleLandedLocations = [];
   let c;
   let r;
@@ -46,7 +45,6 @@ export function doGravity() {
         INTERACTIVE_PIECES.includes(game.board[c][r].type)
       ) {
         // if normal block, fall one unit
-        falling = true;
         game.disableRaise = false;
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
@@ -88,16 +86,25 @@ export function doGravity() {
       }
     }
   }
+}
 
-  if (!falling) {
-    c = 0;
-    r = 0;
-    for (let c = 0; c < grid.COLS; c++) {
-      for (let r = 0; r < grid.ROWS; r++) {
-        game.board[c][r].touched = false;
+export function areAllBlocksGrounded() {
+  for (let c = 0; c < grid.COLS; c++) {
+    for (let r = 0; r < grid.ROWS - 1; r++) {
+      if (
+        game.board[c][r].color != blockColor.VACANT &&
+        game.board[c][r + 1].color == blockColor.VACANT
+      ) {
+        return false;
       }
     }
   }
-
-  return !falling;
+  // all blocks are grounded, so make sure there are no blocks touched
+  // make sure chainables are gone if
+  for (let c = 0; c < grid.COLS; c++) {
+    for (let r = 0; r < grid.ROWS; r++) {
+      game.board[c][r].touched = false;
+    }
+  }
+  return true;
 }

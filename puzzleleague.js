@@ -17,7 +17,7 @@ import {
   resetGameVariables
 } from "./scripts/functions/beginGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
-import { doGravity } from "./scripts/functions/gravity";
+import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import {
   playAnnouncer,
@@ -379,6 +379,17 @@ function isChainActive() {
   return false;
 }
 
+function isClearing() {
+  for (let c = 0; c < grid.COLS; c++) {
+    for (let r = 0; r < grid.ROWS; r++) {
+      if (!INTERACTIVE_PIECES.includes(game.board[c][r].type)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function checkClearing() {
   let clearingColumns = [];
   for (let c = 0; c < grid.COLS; c++) {
@@ -386,6 +397,7 @@ function checkClearing() {
     for (let r = 0; r < grid.ROWS; r++) {
       if (!INTERACTIVE_PIECES.includes(game.board[c][r].type)) {
         clearingColumns[c] = true;
+        console.log("clearingColumns:", clearingColumns);
         break;
       }
     }
@@ -423,13 +435,17 @@ function doPanic() {
 }
 
 function raiseStack() {
+  if (isClearing() || !areAllBlocksGrounded) {
+    console.log(
+      "Will not raise stack due to blocks clearing or airborne block"
+    );
+    return false;
+  }
   if (game.disableRaise || debug.pause == 1) {
     return false;
   } else if (game.raiseDelay > 0) {
     game.raiseDelay -= 1 * performance.gameSpeed;
-    if (game.raiseDelay < 0) {
-      game.raiseDelay = 0;
-    }
+    if (game.raiseDelay < 0) game.raiseDelay = 0;
     return false;
   }
 
@@ -487,7 +503,7 @@ function checkTime() {
       game.messageChangeDelay = 90;
       playAudio(audio.announcer3, (game.volume = 0.3));
       break;
-    case -177:
+    case -176:
       win.cvs.scrollIntoView({ block: "nearest" });
       break;
     case -120:
@@ -663,7 +679,7 @@ function KEYBOARD_CONTROL(event) {
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.pause = 0;
-        debug.show = 0;
+        // debug.show = 0;
       }
     }
     if (debug.enabled == 1) {
@@ -675,6 +691,7 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode == 50) {
         // Number 2
         performance.gameSpeed = 2;
+        if (game.frames % 2 == 1) game.frames++; // keep frame count even
         console.log("Speed:", performance.gameSpeed);
       }
       if (event.keyCode == 27) {
@@ -732,6 +749,7 @@ function KEYBOARD_CONTROL(event) {
           game.blockStallTime = preset.stallValues[game.level];
         }
       } else if (event.keyCode == 79) {
+        // o
         debug.show = (debug.show + 1) % 2;
       } else if (event.keyCode == 16) {
         // LShift to empty game.board
@@ -757,7 +775,7 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function gameLoop(timestamp) {
-  game.frames++;
+  game.frames += 1 * performance.gameSpeed;
 
   if (game.over && game.frames > 300 && api.data !== undefined) {
     playAnnouncer(
@@ -793,9 +811,12 @@ export function gameLoop(timestamp) {
   if (game.frames % game.boardRiseSpeed == 0) {
     if (!game.disableRaise && game.grounded && debug.pause == 0) {
       if (game.raiseDelay > 0) {
-        if (!checkClearing().includes(true)) {
-          game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
-        }
+        // ! New code:
+        game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+        // ! Old code:
+        // if (!checkClearing().includes(true)) {
+        //   game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+        // }
       } else if (game.frames > 0) game.rise = (game.rise + 2) % 32;
     }
     if (game.rise == 0 && !game.over && game.frames > 0) {
@@ -857,7 +878,8 @@ export function gameLoop(timestamp) {
       game.boardRiseSpeed = 1;
     }
   }
-  game.grounded = doGravity();
+  game.grounded = areAllBlocksGrounded();
+  doGravity();
   updateGrid();
   checkMatch();
   isChainActive();
@@ -988,11 +1010,11 @@ export function gameLoop(timestamp) {
   } else {
     multiplierString = `${game.scoreMultiplier}x`;
   }
-  if (debug.show == 1) {
+  if (debug.enabled == 1) {
     win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
         Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
   }
-  if (debug.show == 0) {
+  if (debug.enabled == 0) {
     win.statDisplay.innerHTML = ``;
     win.levelDisplay.innerHTML = `${game.level}`;
     win.timeDisplay.innerHTML = timeString;
