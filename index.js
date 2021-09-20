@@ -34,11 +34,8 @@ function addEventListeners(st) {
     navLink.addEventListener("click", event => {
       event.preventDefault();
       // Failsafe: If already on home page, do not reload it upon clicking it.
-      if (!(st.view === "Home" && state[event.target.title].view === "Home")) {
-        render(state[event.target.title]);
-      } else {
-        location.reload();
-      }
+      win.running = false;
+      render(state[event.target.title]);
     })
   );
 
@@ -54,25 +51,13 @@ function addEventListeners(st) {
     win.muteAnnouncer = document.getElementById("mute-announcer");
     win.muteMusic = document.getElementById("mute-music");
     win.muteSFX = document.getElementById("mute-sfx");
-    let container = document.getElementById("container");
-
-    let startButton = document.createElement("button");
-    startButton.setAttribute("id", "click-to-play");
-    startButton.className = "default-button";
-    startButton.innerHTML = "Click to play";
-    container.appendChild(startButton);
-    startButton.addEventListener("click", () => {
-      startButton.remove();
+    document.getElementById("start-button").addEventListener("click", () => {
+      document.getElementById("start-button").remove();
       getWorldTimeAPI();
       startGame(1);
     });
-    let doubleButton = document.createElement("button");
-    doubleButton.setAttribute("id", "double-to-play");
-    doubleButton.className = "default-button";
-    doubleButton.innerHTML = "Double to play";
-    container.appendChild(doubleButton);
-    doubleButton.addEventListener("click", () => {
-      doubleButton.remove();
+    document.getElementById("double-button").addEventListener("click", () => {
+      document.getElementById("double-button").remove();
       getWorldTimeAPI();
       startGame(2);
     });

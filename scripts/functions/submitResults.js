@@ -114,7 +114,6 @@ export function submitResults() {
   });
 
   document.querySelector("#restart-game").addEventListener("click", event => {
-    container.innerHTML = "";
     startGame(performance.gameSpeed);
   });
 }

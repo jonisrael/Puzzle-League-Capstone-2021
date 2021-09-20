@@ -24,15 +24,29 @@ export default st => html`
         submit your score to the leaderboard. Practice up, and see if you can
         get that #1 spot!
       </h3>
-      <h3>
+      <hr />
+      <h3 style="color:red">
         It should be noted that pure javascript is not the most consistent at
-        running the game. There are issues with the game both running too slow,
-        fast, or sometimes both. If the app detects that the frame rate has been
-        low for a significant portion of the game, you may be notified that your
-        score will have a * next to it and may need to be reviewed based on your
-        computer's performance information that is sent to the server upon
-        posting a score.
+        running the game. There are issues with the game both running too slow.
+        If the app detects that the frame rate has been low for a significant
+        portion of the game, you may be notified that your score will have a *
+        next to it and may need to be reviewed based on your computer's
+        performance information that is sent to the server upon posting a score.
       </h3>
+      <div id="game-container">
+        <div id="left-column">
+          <button id="start-button" class="default-button">
+            Click to Play<br />
+            60FPS (Default)
+          </button>
+        </div>
+        <div id="right-column">
+          <button id="double-button" class="default-button">
+            Click to Play<br />
+            30 FPS (Recommended)
+          </button>
+        </div>
+      </div>
     </div>
   </section>
 `;

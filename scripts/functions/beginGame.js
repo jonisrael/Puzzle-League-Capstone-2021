@@ -13,7 +13,7 @@ import {
 } from "../global";
 import { playMusic } from "./audioFunctions";
 import { audio } from "../fileImports";
-import { getWorldTimeAPI } from "../../index";
+import { getWorldTimeAPI, render } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
 import { pause, unpause } from "./pauseFunctions";
 
@@ -22,27 +22,31 @@ export function startGame(selectedGameSpeed) {
   win.running = true;
   resetGameVariables();
   createHeadsUpDisplay();
-  performance.gameSpeed = selectedGameSpeed;
   game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);
-  setInterval(gameLoop(), (1000 * selectedGameSpeed) / 60);
+  // Set up game loop
+  performance.gameSpeed = selectedGameSpeed;
+  performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
+  performance.then = Date.now();
+  performance.gameStartTime = performance.then;
+  requestAnimationFrame(gameLoop);
 }
 
 function createHeadsUpDisplay() {
   let container = document.getElementById("container");
-  container.innerHTML = "";
+  container.innerHTML = ""; // Empties the home page
   win.fpsDisplay = document.createElement("p");
   win.fpsDisplay.setAttribute("id", "fps-display");
-  container.append(win.fpsDisplay);
+  container.appendChild(win.fpsDisplay);
 
   win.mainInfoDisplay = document.createElement("h2");
   win.mainInfoDisplay.setAttribute("id", "main-info");
-  win.mainInfoDisplay.innerHTML = "hello";
-  container.append(win.mainInfoDisplay);
+  win.mainInfoDisplay.innerHTML = "Main Info Display Here";
+  container.appendChild(win.mainInfoDisplay);
 
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
-  container.append(gameContainer);
+  container.appendChild(gameContainer);
 
   let column1 = document.createElement("div");
   column1.setAttribute("id", "column1");
@@ -58,6 +62,7 @@ function createHeadsUpDisplay() {
   let leftHudElements = document.createElement("div");
   leftHudElements.setAttribute("id", "left-hud-elements");
   column1.append(leftHudElements);
+  // create rightHudElements
   let rightHudElements = document.createElement("div");
   rightHudElements.setAttribute("id", "right-hud-elements");
   column3.append(rightHudElements);
@@ -93,6 +98,15 @@ function createHeadsUpDisplay() {
   leftHudElements.appendChild(win.levelHeader);
   leftHudElements.appendChild(win.levelDisplay);
 
+  let controls = document.createElement("h1");
+  controls.setAttribute("id", "controls");
+  controls.innerHTML = `<ul style="font-size:large;">
+  <li>Press Arrow keys to <strong>MOVE</strong> the Rectangle Cursor</li>
+  <li>Press S or X to <strong>SWAP</strong> blocks at the Cursor</li>
+  <li>Press R or Z to <strong>RAISE</strong> the stack one row.</li>
+</ul>`;
+  rightHudElements.appendChild(controls);
+
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);
   win.makeCanvas.setAttribute("id", "canvas");
@@ -110,10 +124,22 @@ function createHeadsUpDisplay() {
   resumeButton.setAttribute("id", "resume-button");
   resumeButton.className = "default-button";
   resumeButton.style.display = "none";
-  resumeButton.innerHTML = "Click to Resume Game";
+  resumeButton.innerHTML = "Continue Game";
   column2.appendChild(resumeButton);
   resumeButton.addEventListener("click", event => {
     unpause();
+  });
+
+  // Add invisible "Main Menu" button, to be visible when game is paused
+  let restartButton = document.createElement("button");
+  restartButton.setAttribute("id", "restart-button");
+  restartButton.className = "default-button";
+  restartButton.style.display = "none";
+  restartButton.innerHTML = "Restart Game";
+  column2.appendChild(restartButton);
+  restartButton.addEventListener("click", event => {
+    win.restartGame = true;
+    win.running = false;
   });
 }
 

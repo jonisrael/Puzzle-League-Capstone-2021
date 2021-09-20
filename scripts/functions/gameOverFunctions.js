@@ -31,7 +31,7 @@ export function gameOverBoard() {
   if (game.board[5][11].type == blockType.DEAD) {
     return;
   }
-  if (game.frames == 1) {
+  if (game.frames == 2) {
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.Music.src = audio.resultsMusic;
   }

@@ -125,6 +125,7 @@ const win = {
   view: "Home",
   viewChanged: false,
   running: false,
+  restartGame: false,
   makeCanvas: null,
   cvs: null,
   ctx: null,
@@ -204,7 +205,12 @@ const performance = {
   secondsPerLoop: 1,
   slowdownTracker: 0,
   drawsPerSecond: 60, // not used yet
-  drawDivisor: 1
+  drawDivisor: 1,
+  gameStartTime: 0,
+  fpsInterval: 1000 / 60,
+  then: 0,
+  now: 0,
+  delta: 0
 };
 
 const debug = {

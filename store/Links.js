@@ -4,7 +4,7 @@ export default [
   { title: "Leaderboard", text: "Leaderboard" },
   { title: "Scoring", text: "Scoring" },
   { title: "History", text: "History" },
-  { title: "Credits", text: "Music & SFX Credits" },
+  { title: "Credits", text: "Credits" },
   { title: "About", text: "About" },
   { title: "Bugs", text: "Known Bugs" }
 ];

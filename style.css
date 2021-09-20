@@ -1,5 +1,5 @@
 body {
-    background-color:grey;
+    background-image: url("./assets/Images/backgroundPallete.png")
     /* text-align: center; */
 }
 
@@ -44,13 +44,19 @@ section {
     padding: 10px;
     margin-top: 30px;
     margin-bottom: 30px;
-    width: 128ch;
+    width: 85%;
     margin-left: auto;
     margin-right: auto;
 }
 
+#page-body {
+    background-color: grey;
+    padding-right: 40px;
+    padding-left: 20px;
+}
+
 #leaderboard-page {
-    width: 200ch;
+    overflow:hidden;
 }
 
 #game-container, #options-menu {
@@ -69,8 +75,10 @@ section {
     padding-top: 5px;
 }
 
-#yes-option, #no-option {
+#left-column, #right-column {
     flex: 50%;
+    flex-direction: row;
+    justify-content: center;
 }
 
 #column1, #column2, #column3 {
@@ -86,6 +94,7 @@ section {
     display: flex;
     justify-content: center;
     padding: 1em;
+    flex-direction: column;
 }
 
 #column3, #no-option {
@@ -142,6 +151,7 @@ canvas {
 
 p {
     text-indent: 50px;
+    font-size: large;
 }
 
 h1 {
@@ -209,7 +219,6 @@ footer {
     display: flex;
     list-style-type: none;
     flex-direction: column;
-    position: sticky;
     top: 0;
     align-items: center;
 }

@@ -8,6 +8,7 @@ export function pause() {
   win.cvs.style.display = "none";
   game.Music.pause();
   document.getElementById("resume-button").style.display = "flex";
+  // document.getElementById("restart-button").style.display = "flex";
 }
 
 export function unpause() {
@@ -16,6 +17,7 @@ export function unpause() {
   win.cvs.style.display = "flex";
   game.Music.play();
   document.getElementById("resume-button").style.display = "none";
+  // document.getElementById("restart-button").style.display = "none";
 }
 
 // For some reason pausing audio is backwards, Music.play() for pause() and Music.play for unpause

@@ -7,7 +7,7 @@ import {
   debug
 } from "../global";
 
-export function doGravity() {
+export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
   let c;
   let r;
@@ -86,6 +86,7 @@ export function doGravity() {
       }
     }
   }
+  if (gameSpeed == 2) doGravity(1);
 }
 
 export function areAllBlocksGrounded() {
