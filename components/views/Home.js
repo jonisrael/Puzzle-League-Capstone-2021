@@ -37,7 +37,7 @@ export default st => html`
         <div id="left-column">
           <button id="start-button" class="default-button">
             Click to Play<br />
-            60FPS (Default)
+            60FPS (Smoothest)
           </button>
         </div>
         <div id="right-column">

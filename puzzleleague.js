@@ -562,7 +562,7 @@ function closeGame(gameFinished) {
     game.Music.loop = false;
     submitResults();
   } else {
-    game.Music.pause();
+    game.Music.volume = 0;
   }
   win.cvs = null;
   win.ctx = null;
