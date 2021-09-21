@@ -175,6 +175,7 @@ import CHAIN6 from ".././assets/Audio/Super Mario 64 Red Coin 5.wav";
 import CHAIN7 from ".././assets/Audio/Super Mario 64 Red Coin 6.wav";
 import CHAIN8 from ".././assets/Audio/Super Mario 64 Red Coin 7.wav";
 import CHAIN9 from ".././assets/Audio/Super Mario 64 Red Coin 8.wav";
+import PAUSE from ".././assets/Audio/pause.wav";
 import SWAP_SUCCESS from ".././assets/Audio/SwapSuccess.wav";
 import SWAP_FAILED from ".././assets/Audio/SwapFailed.wav";
 import FANFARE1 from ".././assets/Audio/fanfare1.wav";
@@ -296,6 +297,7 @@ const audio = {
   popcornMusic: POPCORN_SONG,
   overtimeMusic: OVERTIME_SONG,
   resultsMusic: RESULTS_SONG,
+  pause: PAUSE,
   moveCursor: MOVE_CURSOR,
   swapSuccess: SWAP_SUCCESS,
   swapFailed: SWAP_FAILED,

@@ -25,6 +25,7 @@ export function startGame(selectedGameSpeed) {
   game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);
   // Set up game loop
+  performance.canPostToLeaderboard = true;
   performance.gameSpeed = selectedGameSpeed;
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();

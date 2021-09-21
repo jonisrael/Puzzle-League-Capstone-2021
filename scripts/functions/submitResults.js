@@ -1,6 +1,7 @@
 import { startGame } from "./beginGame";
 import { game, api, performance } from "../global";
 import { sendData } from "../../index";
+import { performanceNotifier } from "./performanceNotifier";
 
 export function submitResults() {
   let finalScore = game.score;
@@ -12,6 +13,10 @@ export function submitResults() {
   let container = document.getElementById("container");
   container.innerHTML = "";
   homePage.appendChild(container);
+  if (!performance.canPostToLeaderboard) {
+    performanceNotifier();
+    location.reload();
+  }
   let form = document.createElement("form");
   form.setAttribute("id", "form");
   form.setAttribute("method", "POST");

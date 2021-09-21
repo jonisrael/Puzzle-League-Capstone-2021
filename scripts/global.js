@@ -209,7 +209,7 @@ const chainLogic = {
 };
 
 const performance = {
-  performanceQuestionAsked: false,
+  canPostToLeaderboard: false,
   gameSpeed: 1,
   fps: 0,
   prev: 0,
@@ -221,7 +221,8 @@ const performance = {
   fpsInterval: 1000 / 60,
   then: 0,
   now: 0,
-  delta: 0
+  delta: 0,
+  value: 0
 };
 
 const debug = {

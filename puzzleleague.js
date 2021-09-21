@@ -49,6 +49,7 @@ import {
   randInt,
   action
 } from "./scripts/global.js";
+import { performanceNotifier } from "./scripts/functions/performanceNotifier";
 
 // console.log(highScoreDisplay);
 
@@ -787,17 +788,9 @@ export function gameLoop() {
     game.frames >= 0
       ? (realTimer = Math.floor(realTimer / 100) / 10)
       : (realTimer = 0);
-    if (game.frames % 60 == 0)
+    if (game.frames % 60 == 0 && !game.paused)
       console.log(
-        "runtime",
-        runtime,
-        "|",
-        "seconds",
-        game.frames / 60,
-        "|",
-        "realTime",
-        "realTimer",
-        realTimer
+        `runtime: ${runtime}, gameSeconds = ${game.seconds}, realTimer = ${realTimer}`
       );
     if (!win.running || win.view !== "Home") {
       console.log("closing game", win.view);
@@ -852,7 +845,8 @@ export function gameLoop() {
               game.rise != 0 &&
               (game.quickRaise || game.level == 9)
             ) {
-              game.rise = (game.rise + 2) % 32;
+              // game.rise = (game.rise + 2) % 32;
+              // if (game.rise == 0) game.quickRaise = false;
             }
           }
         }
@@ -964,11 +958,20 @@ export function gameLoop() {
         if (game.frames % performance.drawDivisor == 0) {
           drawGrid();
         }
-        if (performance.fps >= 80) {
-          drawGrid();
+      }
+      if (
+        game.frames > 0 &&
+        game.frames % 60 == 0 &&
+        performance.canPostToLeaderboard
+      ) {
+        performance.value = Math.abs(realTimer - game.frames / 60);
+        if (performance.value >= 3) performance.drawDivisor = 2;
+        if (performance.value >= 5) {
+          performance.canPostToLeaderboard = false;
+          performanceNotifier();
+          pause();
         }
       }
-
       if (game.frames % 5 == 0) {
         // fps counter
         performance.secondsPerLoop =
@@ -985,42 +988,28 @@ export function gameLoop() {
         performance.prev = runtime / 1000;
       }
 
-      if (game.seconds % 2 == 0) {
-        performance.slowdownTracker -= 1;
-        if (performance.slowdownTracker < 0) performance.slowdownTracker = 0;
-      } // Check # of frame rate drops every 600 frames
-      if (performance.slowdownTracker > 2) {
-        // If fps is below 50 fps for 2 seconds in the next 10, lower settings
-        performance.slowdownTracker = 0;
-        if (
-          performance.fps <= 45 &&
-          performance.drawDivisor >= 2 &&
-          performance.gameSpeed < 2
-        ) {
-          performance.gameSpeed = 1;
-          console.log("game speed has now doubled");
-        }
-        if (performance.fps <= 55 && performance.drawDivisor < 2) {
-          performance.drawDivisor += 1;
-          // console.log(
-          //   `computer running slow, fps ${performance.fps}, draw divisor=${performance.drawDivisor}`
-          // );
-        }
-        if (performance.fps > 80) drawGrid();
-        if (performance.fps > 120) {
-          // console.log(`computer running fast, fps ${performance.fps}`);
-
-          drawGrid();
-          if (performance.drawDivisor > 1) performance.drawDivisor -= 1;
-        }
-        if (performance.fps > 150) drawGrid();
-        // } else if (performance.drawsPerSecond == 30) {
-        //     performance.drawsPerSecond = 20
-        // } else if (performance.drawsPerSecond == 20) {
-        //     performance.drawsPerSecond = -1
-        //     console.log("Performance of device is too low for accurate play.")
-        // }
-      }
+      // if (game.seconds % 2 == 0) {
+      //   performance.slowdownTracker -= 1;
+      //   if (performance.slowdownTracker < 0) performance.slowdownTracker = 0;
+      // } // Check # of frame rate drops every 600 frames
+      // if (performance.slowdownTracker > 2) {
+      //   // If fps is below 50 fps for 2 seconds in the next 10, lower settings
+      //   performance.slowdownTracker = 0;
+      //   if (
+      //     performance.fps <= 45 &&
+      //     performance.drawDivisor >= 2 &&
+      //     performance.gameSpeed < 2
+      //   ) {
+      //     performance.gameSpeed = 1;
+      //     console.log("game speed has now doubled");
+      //   }
+      // } else if (performance.drawsPerSecond == 30) {
+      //     performance.drawsPerSecond = 20
+      // } else if (performance.drawsPerSecond == 20) {
+      //     performance.drawsPerSecond = -1
+      //     console.log("Performance of device is too low for accurate play.")
+      // }
+      // }
       let minutesString = "";
       let secondsString = "";
       let scoreString = "";
