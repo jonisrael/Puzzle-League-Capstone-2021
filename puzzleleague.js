@@ -561,8 +561,6 @@ function closeGame(gameFinished) {
     playMusic(audio.resultsMusic, 0.2);
     game.Music.loop = false;
     submitResults();
-  } else {
-    game.Music.volume = 0;
   }
   win.cvs = null;
   win.ctx = null;
