@@ -184,6 +184,7 @@ const game = {
   disableSwap: false,
   quickRaise: false,
   raisePressed: false,
+  readyForNewRow: false,
   Music: gameMusic,
   data: {}
 };

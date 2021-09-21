@@ -186,8 +186,8 @@ export function checkMatch() {
           game.board[c][r].availableForPrimaryChain = true;
           game.board[c][r].availableForSecondaryChain = false;
         } else {
-          game.board[c][r].availableForSecondaryChain = true;
           game.board[c][r].availableForPrimaryChain = false;
+          game.board[c][r].availableForSecondaryChain = true;
         }
         // else (game.board[c][r].availableForSecondaryChain = true) // if new chain doesn't start
       }

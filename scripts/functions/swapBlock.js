@@ -14,14 +14,14 @@ export function trySwappingBlocks(x, y) {
     return;
   }
 
-  let swap = true;
+  let legalSwap = true;
 
   // Make sure both blocks aren't blockColor.VACANT
   if (
     game.board[x][y].color == blockColor.VACANT &&
     game.board[x + 1][y].color == blockColor.VACANT
   ) {
-    swap = false;
+    legalSwap = false;
     game.message = "Swap Failed: You cannot swap two empty squares!";
     game.messageChangeDelay = 90;
   }
@@ -31,20 +31,21 @@ export function trySwappingBlocks(x, y) {
     !INTERACTIVE_PIECES.includes(game.board[x][y].type) ||
     !INTERACTIVE_PIECES.includes(game.board[x + 1][y].type)
   ) {
-    swap = false;
+    legalSwap = false;
     game.message = "Swap Failed: You cannot swap a clearing block!";
     game.messageChangeDelay = 90;
   }
 
-  // Do not swap if ANY block below is falling
+  // Do not swap if not on a clearing block and a vacant block is detected.
   if (y < 11) {
     if (
+      game.board[x][y].color != blockColor.VACANT &&
       INTERACTIVE_PIECES.includes(game.board[x][y].type) &&
-      game.board[x][y].color != blockColor.VACANT
+      INTERACTIVE_PIECES.includes(game.board[x][y + 1].type)
     ) {
       for (let j = y; j < grid.ROWS; j++) {
         if (game.board[x][j].color == blockColor.VACANT) {
-          swap = false;
+          legalSwap = false;
           game.message = "Swap Failed: You cannot swap a mid-air block!";
           game.messageChangeDelay = 90;
           break;
@@ -52,12 +53,13 @@ export function trySwappingBlocks(x, y) {
       }
     }
     if (
+      game.board[x + 1][y].color != blockColor.VACANT &&
       INTERACTIVE_PIECES.includes(game.board[x + 1][y].type) &&
-      game.board[x + 1][y].color != blockColor.VACANT
+      INTERACTIVE_PIECES.includes(game.board[x + 1][y + 1].type)
     ) {
       for (let j = y; j < grid.ROWS; j++) {
         if (game.board[x + 1][j].color == blockColor.VACANT) {
-          swap = false;
+          legalSwap = false;
           game.message = "Swap Failed: You cannot swap a mid-air block!";
           game.messageChangeDelay = 90;
           break;
@@ -65,14 +67,14 @@ export function trySwappingBlocks(x, y) {
       }
     }
   }
-  // Do not swap if a falling block is less than two units ABOVE the cursor
+  // Do not swap if a falling block is one unit ABOVE the cursor
   if (y > 0) {
     if (
       INTERACTIVE_PIECES.includes(game.board[x][y - 1].type) &&
       game.board[x][y - 1].color != blockColor.VACANT &&
       game.board[x][y].color == blockColor.VACANT
     ) {
-      swap = false;
+      legalSwap = false;
       game.message =
         "Swap Failed: You cannot swap one row below a mid-air block!";
       game.messageChangeDelay = 90;
@@ -81,7 +83,7 @@ export function trySwappingBlocks(x, y) {
       game.board[x + 1][y - 1].color != blockColor.VACANT &&
       game.board[x + 1][y].color == blockColor.VACANT
     ) {
-      swap = false;
+      legalSwap = false;
       game.message =
         "Swap Failed: You cannot swap one row below a mid-air block!";
       game.messageChangeDelay = 90;
@@ -89,19 +91,19 @@ export function trySwappingBlocks(x, y) {
   }
 
   // FOR FUTURE UPDATE
-  // Do not swap if a falling block is less than two units BELOW the cursor (rare)
+  // Do not swap if a falling block is one unit BELOW the cursor (rare)
   // if (y > 0) {
   //     if (INTERACTIVE_PIECES.includes(game.board[x][y].type) &&
   //         game.board[x+1][y].color == blockColor.VACANT &&
   //         game.board[x+1][y+1].color != blockColor.VACANT &&
-  //         game.board[x+1][y+1].timer>0) {swap = false; console.log("right here!") }
+  //         game.board[x+1][y+1].timer>0) {legalSwap = false; console.log("right here!") }
   //     else if (INTERACTIVE_PIECES.includes(game.board[x+1][y].type) &&
   //         game.board[x][y].color == blockColor.VACANT &&
   //         game.board[x][y+1].color != blockColor.VACANT &&
-  //         game.board[x][y+1].timer>0) {swap = false; console.log("right here!") }
+  //         game.board[x][y+1].timer>0) {legalSwap = false; console.log("right here!") }
   // }
 
-  if (swap) {
+  if (legalSwap) {
     playAudio(audio.swapSuccess);
     swapProperties(game.board[x][y], game.board[x + 1][y]);
     // if landing, shorten timer to end the landing animation next frame.

@@ -169,7 +169,8 @@ class Block {
     if (debug.show == 1) {
       if (
         this.timer > game.blockClearTime / 2 ||
-        this.timer > game.blockStallTime / 2
+        this.timer > game.blockStallTime / 2 ||
+        (this.x == 0 && this.y == 1 && game.grounded)
       ) {
         DEBUGW_IMAGE.src = sprite.debugWhite;
         DEBUGW_IMAGE.onload = () => {
@@ -216,7 +217,7 @@ export function newBlock(c, r) {
   return block;
 }
 
-function updateGrid(frameAdvance = false) {
+export function updateGrid(frameAdvance = false) {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       // Check to see if a block is still legally in a landing animation
@@ -249,7 +250,7 @@ function updateGrid(frameAdvance = false) {
 
       if (!frameAdvance) {
         if (game.board[x][y].timer > 0 && debug.freeze == 0) {
-          game.board[x][y].timer -= 1 * performance.gameSpeed;
+          game.board[x][y].timer -= 1;
           game.disableRaise = true;
         } else if (game.board[x][y].timer == 0) {
           if (game.board[x][y].type == blockType.CLEARING) {
@@ -267,8 +268,10 @@ function updateGrid(frameAdvance = false) {
               game.board[x][y - 1].timer = game.blockStallTime;
             }
             game.disableRaise = false;
-            for (let i = 0; i <= y; i++) {
+            for (let i = y - 1; i > 0; i--) {
               // create chain available blocks above current
+              // If clearing piece detected, break loop since no more chainable blocks.
+              if (!INTERACTIVE_PIECES.includes(game.board[x][y].type)) break;
               if (game.board[x][y].availableForPrimaryChain) {
                 game.board[x][i].availableForPrimaryChain = true;
               } else if (game.board[x][y].availableForSecondaryChain)
@@ -300,7 +303,7 @@ function drawGrid() {
   }
 }
 
-function isChainActive() {
+export function isChainActive() {
   // if (game.grounded) { // failsafe to end chain
   //     for (let c=0; c<grid.COLS; c++) {
   //         for (let r=0; r<grid.ROWS; r++) {
@@ -559,28 +562,38 @@ function playerAction(input) {
   if (!input.pause && (input.up || input.down || input.left || input.right))
     playAudio(audio.moveCursor);
 
-  // first input checker, "else if" is required for priority.
+  // first input checker, "else if" is required for priority, so case does not work.
   if (input.pause) {
+    action.pause = false;
     game.paused ? unpause() : pause();
   } else if (input.up && !input.down) {
+    action.up = false;
     if (game.cursor.y - 1 >= 1) game.cursor.y -= 1;
   } else if (input.down && !input.up) {
+    action.down = false;
     if (game.cursor.y + 1 <= 11) game.cursor.y += 1;
   } else if (input.left && !input.right) {
+    action.left = false;
     if (game.cursor.x - 1 >= 0) game.cursor.x -= 1;
   } else if (input.right && !input.left) {
+    action.right = false;
     if (game.cursor.x + 1 <= 4) game.cursor.x += 1;
   } else if (input.swap) {
+    action.swap = false;
     trySwappingBlocks(game.cursor.x, game.cursor.y);
   }
 
   // second input checker
-  if (input.lift) game.raisePressed = true;
+  if (input.quickRaise) {
+    action.quickRaise = false;
+    game.raisePressed = true;
+  }
 
+  // ! REMOVED
   // reset all keys
-  Object.keys(action).forEach(key => {
-    action[key] = false;
-  });
+  // Object.keys(action).forEach(key => {
+  //   action[key] = false;
+  // });
 }
 
 function closeGame(gameFinished) {
@@ -623,7 +636,7 @@ function KEYBOARD_CONTROL(event) {
     if (event.keyCode == 39) action.right = true; // right
     if (event.keyCode == 40) action.down = true;
     if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
-    if (event.keyCode == 82 || event.keyCode == 90) action.lift = true; // r or z
+    if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
     if (event.keyCode == 192) {
       // tilda `~
       debug.enabled = (debug.enabled + 1) % 2;
@@ -832,7 +845,7 @@ export function gameLoop() {
             // if (!checkClearing().includes(true)) {
             //   game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
             // }
-          } else if (game.frames > 0) {
+          } else if (game.frames > 0 && game.grounded) {
             game.rise = (game.rise + 2) % 32;
             if (
               performance.gameSpeed == 2 &&
@@ -843,8 +856,15 @@ export function gameLoop() {
             }
           }
         }
-        if (game.rise == 0 && !game.over && game.frames > 0) {
+        if (game.rise >= 28) game.readyForNewRow = true;
+        if (
+          game.readyForNewRow &&
+          game.rise == 0 &&
+          !game.over &&
+          game.frames > 0
+        ) {
           raiseStack();
+          game.readyForNewRow = false;
         }
       }
 
@@ -904,9 +924,9 @@ export function gameLoop() {
       }
       game.grounded = areAllBlocksGrounded();
       playerAction(action);
-      doGravity(performance.gameSpeed);
-      updateGrid();
+      doGravity(performance.gameSpeed); // may need to run twice
       checkMatch();
+      updateGrid();
       isChainActive();
       if (game.frames % 6 == 0) {
         doPanic();

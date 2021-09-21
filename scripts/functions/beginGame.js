@@ -172,6 +172,7 @@ export function resetGameVariables() {
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain
   // game.highScore = HIGH_SCORE;
+  game.readyForNewRow = false;
   game.disableRaise = false;
   game.disableSwap = false;
   game.quickRaise = false;

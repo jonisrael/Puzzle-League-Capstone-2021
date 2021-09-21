@@ -7,6 +7,9 @@ import {
   debug
 } from "../global";
 
+import { checkMatch } from "./matchAndScoreFunctions";
+import { updateGrid, isChainActive } from "../../puzzleleague";
+
 export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
   let c;
@@ -86,23 +89,44 @@ export function doGravity(gameSpeed) {
       }
     }
   }
-  if (gameSpeed == 2) doGravity(1);
+  // if double speed, will need to check function twice
+  if (gameSpeed == 2) {
+    doGravity(1);
+    checkMatch();
+    updateGrid();
+    isChainActive();
+  }
 }
 
 export function areAllBlocksGrounded() {
   // check below all blocks, except for final row.
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 0; r < grid.ROWS - 1; r++) {
+      // If there is a vacant block below, a block is NOT grounded.
       if (
         game.board[c][r].color != blockColor.VACANT &&
         game.board[c][r + 1].color == blockColor.VACANT
       ) {
         return false;
       }
-      if (game.board[c][r].type == blockType.LANDING) return false;
+      // for the first two frames of landing, blocks are NOT grounded.
+      if (
+        game.board[c][r].type == blockType.LANDING &&
+        game.board[c][r].color != blockColor.VACANT &&
+        game.board[c][r + 1].color != blockColor.VACANT &&
+        game.board[c][r].timer > 9
+      )
+        return false;
+      // If a block is clearing, not every piece is grounded.
+      if (!INTERACTIVE_PIECES.includes(game.board[c][r].type)) return false;
     }
     // dont forget to check bottom row
-    if (game.board[c][grid.ROWS - 1].type == blockType.LANDING) return false;
+    if (
+      (game.board[c][grid.ROWS - 1].type == blockType.LANDING &&
+        game.board[c][grid.ROWS - 1].timer < 9) ||
+      !INTERACTIVE_PIECES.includes(game.board[c][grid.ROWS - 1].type)
+    )
+      return false;
   }
   // all blocks are grounded, so make sure there are no blocks touched
   // make sure chainables are gone if
