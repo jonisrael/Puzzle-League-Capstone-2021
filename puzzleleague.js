@@ -773,18 +773,18 @@ export function gameLoop() {
     game.frames >= 0
       ? (realTimer = Math.floor(realTimer / 100) / 10)
       : (realTimer = 0);
-    // if (game.frames % 60 == 0)
-    //   console.log(
-    //     "runtime",
-    //     runtime,
-    //     "|",
-    //     "seconds",
-    //     game.seconds,
-    //     "|",
-    //     "realTime",
-    //     "realTimer",
-    //     realTimer
-    //   );
+    if (game.frames % 60 == 0)
+      console.log(
+        "runtime",
+        runtime,
+        "|",
+        "seconds",
+        game.frames / 60,
+        "|",
+        "realTime",
+        "realTimer",
+        realTimer
+      );
     if (!win.running || win.view !== "Home") {
       console.log("closing game", win.view);
       closeGame(false);
