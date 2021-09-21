@@ -271,7 +271,7 @@ export function updateGrid(frameAdvance = false) {
             for (let i = y - 1; i > 0; i--) {
               // create chain available blocks above current
               // If clearing piece detected, break loop since no more chainable blocks.
-              if (!INTERACTIVE_PIECES.includes(game.board[x][y].type)) break;
+              if (!INTERACTIVE_PIECES.includes(game.board[x][i].type)) break;
               if (game.board[x][y].availableForPrimaryChain) {
                 game.board[x][i].availableForPrimaryChain = true;
               } else if (game.board[x][y].availableForSecondaryChain)

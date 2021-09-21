@@ -187,14 +187,19 @@ function swapProperties(FirstBlock, SecondBlock) {
   ];
   FirstBlock.color = SecondBlock.color;
   SecondBlock.color = tempProperties[0];
+
   FirstBlock.type = SecondBlock.type;
   SecondBlock.type = tempProperties[1];
+
   FirstBlock.timer = SecondBlock.timer;
   SecondBlock.timer = tempProperties[2];
+
   FirstBlock.touched = SecondBlock.touched;
   SecondBlock.touched = tempProperties[3];
+
   FirstBlock.availableForPrimaryChain = SecondBlock.availableForPrimaryChain;
   SecondBlock.availableForPrimaryChain = tempProperties[4];
+
   FirstBlock.availableForSecondaryChain =
     SecondBlock.availableForSecondaryChain;
   SecondBlock.availableForPrimaryChain = tempProperties[5];
