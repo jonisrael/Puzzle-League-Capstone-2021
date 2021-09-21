@@ -188,6 +188,16 @@ const game = {
   data: {}
 };
 
+const action = {
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+  swap: false,
+  quickRaise: false,
+  pause: false
+};
+
 const api = {
   data: "",
   serverLeaderboardData: []
@@ -238,6 +248,7 @@ export {
   win,
   grid,
   game,
+  action,
   preset,
   api,
   chainLogic,

@@ -46,7 +46,8 @@ import {
   chainLogic,
   performance,
   debug,
-  randInt
+  randInt,
+  action
 } from "./scripts/global.js";
 
 // console.log(highScoreDisplay);
@@ -554,6 +555,34 @@ function checkTime() {
   }
 }
 
+function playerAction(input) {
+  if (!input.pause && (input.up || input.down || input.left || input.right))
+    playAudio(audio.moveCursor);
+
+  // first input checker, "else if" is required for priority.
+  if (input.pause) {
+    game.paused ? unpause() : pause();
+  } else if (input.up && !input.down) {
+    if (game.cursor.y - 1 >= 1) game.cursor.y -= 1;
+  } else if (input.down && !input.up) {
+    if (game.cursor.y + 1 <= 11) game.cursor.y += 1;
+  } else if (input.left && !input.right) {
+    if (game.cursor.x - 1 >= 0) game.cursor.x -= 1;
+  } else if (input.right && !input.left) {
+    if (game.cursor.x + 1 <= 4) game.cursor.x += 1;
+  } else if (input.swap) {
+    trySwappingBlocks(game.cursor.x, game.cursor.y);
+  }
+
+  // second input checker
+  if (input.lift) game.raisePressed = true;
+
+  // reset all keys
+  Object.keys(action).forEach(key => {
+    action[key] = false;
+  });
+}
+
 function closeGame(gameFinished) {
   console.log("closeGame called");
   win.running = false;
@@ -585,45 +614,17 @@ window.addEventListener(
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
   if (win.running & !game.over) {
-    if (event.keyCode == 80) {
-      // p
-      game.paused ? unpause() : pause();
-    }
+    // p
+    if (event.keyCode == 80) action.pause = true;
   }
   if (win.running & !game.over && game.paused == 0) {
-    if (event.keyCode == 37) {
-      // left
-      if (game.cursor.x - 1 >= 0) {
-        game.cursor.x -= 1;
-        playAudio(audio.moveCursor);
-      }
-    } else if (event.keyCode == 38) {
-      // up
-      if (game.cursor.y - 1 >= 1) {
-        game.cursor.y -= 1;
-        playAudio(audio.moveCursor);
-      }
-    } else if (event.keyCode == 39) {
-      // right
-      if (game.cursor.x + 1 <= 4) {
-        game.cursor.x += 1;
-        playAudio(audio.moveCursor);
-      }
-    } else if (event.keyCode == 40) {
-      // bottom
-      if (game.cursor.y + 1 <= 11) {
-        game.cursor.y += 1;
-        playAudio(audio.moveCursor);
-      }
-    } else if (event.keyCode == 88 || event.keyCode == 83) {
-      // x, s
-      if (game.frames > 0) {
-        trySwappingBlocks(game.cursor.x, game.cursor.y);
-      }
-    } else if (event.keyCode == 82 || event.keyCode == 90) {
-      // r, z
-      game.raisePressed = true; // run raise function on next frame
-    } else if (event.keyCode == 192) {
+    if (event.keyCode == 37) action.left = true; // left
+    if (event.keyCode == 38) action.up = true; // up
+    if (event.keyCode == 39) action.right = true; // right
+    if (event.keyCode == 40) action.down = true;
+    if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
+    if (event.keyCode == 82 || event.keyCode == 90) action.lift = true; // r or z
+    if (event.keyCode == 192) {
       // tilda `~
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
@@ -902,6 +903,7 @@ export function gameLoop() {
         }
       }
       game.grounded = areAllBlocksGrounded();
+      playerAction(action);
       doGravity(performance.gameSpeed);
       updateGrid();
       checkMatch();

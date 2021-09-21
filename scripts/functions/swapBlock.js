@@ -10,7 +10,7 @@ import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
 
 export function trySwappingBlocks(x, y) {
-  if (game.disableSwap) {
+  if (game.disableSwap || game.frames < 0) {
     return;
   }
 
