@@ -38,6 +38,7 @@ function createHeadsUpDisplay() {
   container.innerHTML = ""; // Empties the home page
   win.fpsDisplay = document.createElement("p");
   win.fpsDisplay.setAttribute("id", "fps-display");
+  win.fpsDisplay.style.color = "black";
   container.appendChild(win.fpsDisplay);
 
   win.mainInfoDisplay = document.createElement("h2");

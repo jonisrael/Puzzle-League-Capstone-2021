@@ -35,15 +35,15 @@ export default st => html`
       </h3>
       <div id="game-container">
         <div id="left-column">
-          <button id="start-button" class="default-button">
-            Click to Play<br />
-            60FPS (Smoothest)
-          </button>
-        </div>
-        <div id="right-column">
           <button id="double-button" class="default-button">
             Click to Play<br />
             30 FPS (Recommended)
+          </button>
+        </div>
+        <div id="right-column">
+          <button id="start-button" class="default-button">
+            Click to Play<br />
+            60FPS (Smoothest)
           </button>
         </div>
       </div>

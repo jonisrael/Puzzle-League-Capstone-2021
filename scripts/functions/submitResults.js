@@ -13,10 +13,6 @@ export function submitResults() {
   let container = document.getElementById("container");
   container.innerHTML = "";
   homePage.appendChild(container);
-  if (!performance.canPostToLeaderboard) {
-    performanceNotifier();
-    location.reload();
-  }
   let form = document.createElement("form");
   form.setAttribute("id", "form");
   form.setAttribute("method", "POST");
@@ -95,6 +91,12 @@ export function submitResults() {
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
     if (nameInput.value === "") nameInput.value = "Anonymous";
+    if (!performance.canPostToLeaderboard) {
+      if (nameInput.value.length == 15) {
+        nameInput.value = nameInput.value.slice(0, 14);
+      }
+      nameInput.value = `*${nameInput.value}`;
+    }
 
     let requestData = {
       name: nameInput.value,
@@ -107,7 +109,8 @@ export function submitResults() {
       year: api.data.year,
       hour: api.data.hour,
       minute: api.data.minute,
-      meridian: api.data.meridian
+      meridian: api.data.meridian,
+      ranked: performance.canPostToLeaderboard
     };
 
     console.log(requestData);

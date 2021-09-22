@@ -93,8 +93,6 @@ export function doGravity(gameSpeed) {
   if (gameSpeed == 2) {
     doGravity(1);
     checkMatch();
-    updateGrid();
-    isChainActive();
   }
 }
 

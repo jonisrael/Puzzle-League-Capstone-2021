@@ -251,7 +251,7 @@ export function updateGrid(frameAdvance = false) {
 
       if (!frameAdvance) {
         if (game.board[x][y].timer > 0 && debug.freeze == 0) {
-          game.board[x][y].timer -= 1;
+          game.board[x][y].timer -= performance.gameSpeed;
           game.disableRaise = true;
         } else if (game.board[x][y].timer == 0) {
           if (game.board[x][y].type == blockType.CLEARING) {
@@ -423,7 +423,7 @@ function doPanic() {
 }
 
 function raiseStack() {
-  if (isClearing() || !areAllBlocksGrounded) {
+  if (!areAllBlocksGrounded) {
     console.log(
       "Will not raise stack due to blocks clearing or airborne block"
     );
@@ -632,10 +632,34 @@ function KEYBOARD_CONTROL(event) {
     if (event.keyCode == 80) action.pause = true;
   }
   if (win.running & !game.over && game.paused == 0) {
-    if (event.keyCode == 37) action.left = true; // left
-    if (event.keyCode == 38) action.up = true; // up
-    if (event.keyCode == 39) action.right = true; // right
-    if (event.keyCode == 40) action.down = true;
+    if (event.keyCode == 37) {
+      // left
+      if (game.cursor.x - 1 >= 0) {
+        game.cursor.x -= 1;
+        playAudio(audio.moveCursor, 0.2);
+      }
+    }
+    if (event.keyCode == 38) {
+      // up
+      if (game.cursor.y - 1 >= 1) {
+        game.cursor.y -= 1;
+        playAudio(audio.moveCursor, 0.2);
+      }
+    }
+    if (event.keyCode == 39) {
+      // right
+      if (game.cursor.x + 1 <= grid.COLS - 2) {
+        game.cursor.x += 1;
+        playAudio(audio.moveCursor, 0.2);
+      }
+    }
+    if (event.keyCode == 40) {
+      // down
+      if (game.cursor.y + 1 <= grid.ROWS - 1) {
+        game.cursor.y += 1;
+        playAudio(audio.moveCursor, 0.2);
+      }
+    }
     if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
     if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
     if (event.keyCode == 192) {
@@ -789,9 +813,7 @@ export function gameLoop() {
       ? (realTimer = Math.floor(realTimer / 100) / 10)
       : (realTimer = 0);
     if (game.frames % 60 == 0 && !game.paused)
-      console.log(
-        `runtime: ${runtime}, gameSeconds = ${game.seconds}, realTimer = ${realTimer}`
-      );
+      console.log(`gameTime = ${game.frames / 60}, realTime = ${realTimer}`);
     if (!win.running || win.view !== "Home") {
       console.log("closing game", win.view);
       closeGame(false);
@@ -968,8 +990,7 @@ export function gameLoop() {
         if (performance.value >= 3) performance.drawDivisor = 2;
         if (performance.value >= 5) {
           performance.canPostToLeaderboard = false;
-          performanceNotifier();
-          pause();
+          win.fpsDisplay.style.color = "red";
         }
       }
       if (game.frames % 5 == 0) {
@@ -1078,7 +1099,9 @@ export function gameLoop() {
           }
         }
         win.scoreDisplay.innerHTML = scoreString;
-        win.fpsDisplay.innerHTML = `${performance.fps} fps`;
+        win.fpsDisplay.innerHTML = `${performance.fps} fps${
+          performance.canPostToLeaderboard ? "" : " -- unranked"
+        }`;
         win.mainInfoDisplay.innerHTML = `${game.message}`;
         if (game.messageChangeDelay > 0) {
           game.messageChangeDelay -= 1 * performance.gameSpeed;

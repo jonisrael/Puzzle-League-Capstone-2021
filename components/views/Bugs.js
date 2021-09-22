@@ -8,14 +8,31 @@ export default st => html`
       <li>
         Game speed is not consistent at 60 frames per second. Javascript is not
         an efficient language and browsers do not seem to like spending a lot of
-        resources on running this game, especially if other tabs are open. In
-        rare cases, the game can also run too fast. I have implemented a couple
-        of measures for the game to try and fix performance when the game runs
-        too fast or too slow, but unfortunately this seems like a fundamental
-        problem with javascript, and I do not see how I can fix this in the
-        forseeable future. If you have any ideas for improving performance,
-        please shoot me an email at
-        <a href="mailto:jonisrael45@gmail.com">jonisrael45@gmail.com</a>.<br />
+        resources on running this game.
+        <mark
+          ><strong
+            >If enough performance slowdown is detected, a player will have an
+            unfair advantage since all game-speed elements will run
+            slower.</strong
+          ></mark
+        >
+        Therefore, a background performance checker will be running.
+        <strong
+          >Along with the in-game timer, a real timer is running internally
+          within the game (viewable in debug mode). If there is a 5 second
+          difference, submitting a score to the leaderboard will be unranked.
+        </strong>
+        In rare cases, the game can also run too fast. I have implemented a
+        couple of measures for the game to try and fix performance when the game
+        runs too fast or too slow, but unfortunately this seems like a
+        fundamental problem with javascript, and I do not see how I can fix this
+        in the forseeable future. If you have any ideas for improving
+        performance, please shoot me an email at
+        <a href="mailto:jonisrael45@gmail.com">jonisrael45@gmail.com</a>. You
+        can also pull the code yourself from
+        <a href="https://github.com/jonisrael/Puzzle-League-Capstone-2021"
+          >my GitHub link here</a
+        >.<br />
       </li>
       <li>
         Sometimes the stack will stop rising, and you will not be able to
@@ -25,7 +42,8 @@ export default st => html`
       <li>
         Sometimes the stack will create an extra line while rising. This seems
         to be most common during overtime, when the stack is rising very fast.
-        It is very unfair and cruel T_T.
+        It is very unfair and cruel T_T. (Update 9/20), a "flag" was implemented
+        to hopefully prevent this from occurring.
       </li>
       <li>
         The logic for detecting chains is not completely perfect in regards to
@@ -34,6 +52,7 @@ export default st => html`
         it is more generous than harmful to your score. If this bug happens and
         you gain a lot of unintentional points...please be nice to your fellow
         junior programmer and consider not posting the score on the leaderboard.
+        (Update 9/21), chain logic has been improved.
       </li>
     </ul>
     <br />
