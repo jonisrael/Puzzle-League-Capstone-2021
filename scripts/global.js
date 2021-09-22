@@ -109,10 +109,16 @@ const grid = {
   SQ: 32
 };
 
+// Old values  00, 00, 20, 40, 60,80,100,120,08,09,10
+// speedValues: [40, 20, 15, 12, 10,  6,   4, 2,  2,  2, 1],
+// clearValues: [60, 50, 45, 40, 35, 30, 25, 20, 16, 12, 8], // iterate twice
+// stallValues: [16, 12, 11, 10,  9,  8,  7,  6,  5,  4, 6]
+
 const preset = {
-  speedValues: [40, 20, 15, 12, 10, 6, 4, 2, 2, 2, 1],
-  clearValues: [60, 50, 45, 40, 35, 30, 25, 20, 16, 12, 8], // iterate twice
-  stallValues: [16, 12, 11, 10, 9, 8, 7, 6, 5, 4, 6]
+  //            00, 00, 20, 40, 60,80,100,120,08,09,10
+  speedValues: [60, 60, 40, 20, 12, 8, 6, 2, 2, 2, 1],
+  clearValues: [60, 60, 50, 40, 36, 32, 28, 24, 20, 16, 12], // iterate twice
+  stallValues: [16, 14, 14, 14, 12, 12, 12, 10, 8, 6, 4]
 };
 
 if (localStorage.getItem("highScore") === null) {
