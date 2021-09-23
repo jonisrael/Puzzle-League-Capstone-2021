@@ -372,7 +372,6 @@ const audio = {
 };
 
 const imageList = Object.values(sprite);
-const audioList = Object.values(audio);
 
 // Load all images
 let loadedImages = [];
@@ -381,17 +380,9 @@ for (let i = 0; i < imageList.length; i++) {
   img.src = imageList[i];
   loadedImages[i] = img;
 }
-// Preload all audios, then play them at zero volume.
-let loadedAudios = [];
-for (let i = 0; i < audioList.length; i++) {
-  let audio = new Audio();
-  audio.src = audioList[i];
-  audio.volume = 0;
-  audio.play();
-  loadedAudios[i] = audio;
-}
 
-export { sprite, audio, loadedImages, loadedAudios };
+const audioList = Object.values(audio); // used to preload audios upon first game launch
+export { sprite, audio, loadedImages, audioList };
 
 /* Fun note for programmer: EXPORTING the loaded Images here
 are what allow the program to preload the images for use, even

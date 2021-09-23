@@ -93,6 +93,7 @@ export function doGravity(gameSpeed) {
   if (gameSpeed == 2) {
     doGravity(1);
     checkMatch();
+    updateGrid();
   }
 }
 
@@ -133,5 +134,6 @@ export function areAllBlocksGrounded() {
       game.board[c][r].touched = false;
     }
   }
+  game.disableRaise = false;
   return true;
 }

@@ -9,7 +9,9 @@ import {
   grid,
   blockColor,
   blockType,
-  api
+  api,
+  loadedAudios,
+  loadAllAudios
 } from "../global";
 import { playMusic } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -21,6 +23,8 @@ export function startGame(selectedGameSpeed) {
   api.data = getWorldTimeAPI();
   win.running = true;
   resetGameVariables();
+  document.getElementById("container").innerHTML = "Loading...";
+  if (loadedAudios.length == 0) loadAllAudios();
   createHeadsUpDisplay();
   game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);
@@ -155,7 +159,7 @@ export function resetGameVariables() {
   game.blockClearTime = preset.clearValues;
   game.blockStallTime = preset.stallValues;
   game.raiseDelay = 0;
-  game.frames = -180;
+  game.frames = -200;
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;
@@ -168,8 +172,9 @@ export function resetGameVariables() {
   game.largestChain = 0;
   game.largestCombo = 0;
   game.totalClears = 0;
-  game.message = "";
+  game.message = "Loading...";
   game.defaultMessage = "";
+  game.canvasOutlineColor = "style:grey";
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain

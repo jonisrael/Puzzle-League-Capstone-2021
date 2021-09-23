@@ -251,7 +251,7 @@ export function updateGrid(frameAdvance = false) {
 
       if (!frameAdvance) {
         if (game.board[x][y].timer > 0 && debug.freeze == 0) {
-          game.board[x][y].timer -= performance.gameSpeed;
+          game.board[x][y].timer -= 1;
           game.disableRaise = true;
         } else if (game.board[x][y].timer == 0) {
           if (game.board[x][y].type == blockType.CLEARING) {
@@ -360,15 +360,15 @@ export function isChainActive() {
   if (game.currentChain > 1) console.log(`${game.currentChain} chain!`);
   if (game.currentChain > game.largestChain)
     game.largestChain = game.currentChain;
-  game.currentChain = 0;
-  game.combo = 0;
   if (game.chainScoreAdded !== 0) {
-    game.message = `Nice! Your previous chain added ${game.chainScoreAdded} to your score`;
+    game.message = `Combo/Chain added ${game.chainScoreAdded} to your score`;
     game.messageChangeDelay = 90;
     if (game.chainScoreAdded != 0)
       game.defaultMessage = `Previous chain score added: ${game.chainScoreAdded}`;
     win.mainInfoDisplay.style.color = "blue";
   }
+  game.currentChain = 0;
+  game.combo = 0;
   if (potentialSecondarySuccessor) {
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
@@ -431,10 +431,6 @@ function raiseStack() {
   }
   if (game.disableRaise || debug.freeze == 1) {
     return false;
-  } else if (game.raiseDelay > 0) {
-    game.raiseDelay -= 1 * performance.gameSpeed;
-    if (game.raiseDelay < 0) game.raiseDelay = 0;
-    return false;
   }
 
   if (game.cursor.y > 1) {
@@ -487,6 +483,7 @@ function checkTime() {
   if (win.muteAnnouncer.checked) return;
   switch (game.frames) {
     case -178:
+      debug.show = false;
       game.message = "3...";
       game.messageChangeDelay = 90;
       playAudio(audio.announcer3, (game.volume = 0.3));
@@ -511,8 +508,7 @@ function checkTime() {
       break;
     case 60:
       if (game.message === "Go!") {
-        game.defaultMessage =
-          "Arrow Keys to Move, X to swap, and Z to lift the stack";
+        game.defaultMessage = "X to swap Z to lift the stack!";
         game.message = game.defaultMessage;
       }
 
@@ -556,6 +552,10 @@ function checkTime() {
       game.messageChangeDelay = 90;
       playAudio(audio.announcer1, (game.volume = 0.3));
       break;
+    case 7200:
+      game.message = "I hope you're ready...";
+      game.defaultMessage = game.message;
+      game.messageChangeDelay = 90;
   }
 }
 
@@ -567,27 +567,17 @@ function playerAction(input) {
   if (input.pause) {
     action.pause = false;
     game.paused ? unpause() : pause();
-  } else if (input.up && !input.down) {
-    action.up = false;
-    if (game.cursor.y - 1 >= 1) game.cursor.y -= 1;
-  } else if (input.down && !input.up) {
-    action.down = false;
-    if (game.cursor.y + 1 <= 11) game.cursor.y += 1;
-  } else if (input.left && !input.right) {
-    action.left = false;
-    if (game.cursor.x - 1 >= 0) game.cursor.x -= 1;
-  } else if (input.right && !input.left) {
-    action.right = false;
-    if (game.cursor.x + 1 <= 4) game.cursor.x += 1;
   } else if (input.swap) {
     action.swap = false;
     trySwappingBlocks(game.cursor.x, game.cursor.y);
+    win.cvs.scrollIntoView({ block: "nearest" });
   }
 
   // second input checker
   if (input.quickRaise) {
     action.quickRaise = false;
-    game.raisePressed = true;
+    if (game.frames > 0) game.raisePressed = true;
+    win.cvs.scrollIntoView({ block: "nearest" });
   }
 
   // ! REMOVED
@@ -638,6 +628,7 @@ function KEYBOARD_CONTROL(event) {
         game.cursor.x -= 1;
         playAudio(audio.moveCursor, 0.2);
       }
+      win.cvs.scrollIntoView({ block: "nearest" });
     }
     if (event.keyCode == 38) {
       // up
@@ -645,6 +636,7 @@ function KEYBOARD_CONTROL(event) {
         game.cursor.y -= 1;
         playAudio(audio.moveCursor, 0.2);
       }
+      win.cvs.scrollIntoView({ block: "nearest" });
     }
     if (event.keyCode == 39) {
       // right
@@ -652,6 +644,7 @@ function KEYBOARD_CONTROL(event) {
         game.cursor.x += 1;
         playAudio(audio.moveCursor, 0.2);
       }
+      win.cvs.scrollIntoView({ block: "nearest" });
     }
     if (event.keyCode == 40) {
       // down
@@ -659,6 +652,7 @@ function KEYBOARD_CONTROL(event) {
         game.cursor.y += 1;
         playAudio(audio.moveCursor, 0.2);
       }
+      win.cvs.scrollIntoView({ block: "nearest" });
     }
     if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
     if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
@@ -667,9 +661,9 @@ function KEYBOARD_CONTROL(event) {
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
         debug.show = 1;
-        game.boardRiseSpeed = preset.speedValues[0];
-        game.blockClearTime = preset.clearValues[0];
-        game.blockStallTime = preset.stallValues[0];
+        // game.boardRiseSpeed = preset.speedValues[0];
+        // game.blockClearTime = preset.clearValues[0];
+        // game.blockStallTime = preset.stallValues[0];
         console.log("debug ON -- Score Posting Disabled");
         console.log(`Game Frame: ${game.frames}`);
         console.log(`Grid Draw Divisor: ${performance.drawDivisor}`);
@@ -697,6 +691,7 @@ function KEYBOARD_CONTROL(event) {
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
+        // game.canvasOutlineColor = preset.outlineValues[game.level];
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.freeze = 0;
@@ -738,16 +733,18 @@ function KEYBOARD_CONTROL(event) {
         debug.freeze = (debug.freeze + 1) % 2;
       } else if (event.keyCode == 77 && game.level < 10) {
         //m
-        game.level += 1 * performance.gameSpeed;
+        game.level++;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
+        // game.canvasOutlineColor = preset.outlineValues[game.level];
       } else if (event.keyCode == 78 && game.level > 0) {
         //n
-        game.level -= 1 * performance.gameSpeed;
+        game.level--;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
+        // game.canvasOutlineColor = preset.outlineValues[game.level];
 
         // Debug codes
       } else if (event.keyCode == 67 && debug.freeze == 1) {
@@ -764,11 +761,13 @@ function KEYBOARD_CONTROL(event) {
           game.boardRiseSpeed = preset.speedValues[0];
           game.blockStallTime = 120;
           game.blockClearTime = 120;
+          // game.canvasOutlineColor = preset.outlineValues[0];
         } else {
           console.log("slowdown mode disabled");
           game.boardRiseSpeed = preset.speedValues[game.level];
           game.blockClearTime = preset.clearValues[game.level];
           game.blockStallTime = preset.stallValues[game.level];
+          // game.canvasOutlineColor = preset.outlineValues[game.level];
         }
       } else if (event.keyCode == 79) {
         // o
@@ -856,6 +855,7 @@ export function gameLoop() {
           if (game.raiseDelay > 0) {
             // ! New code:
             game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+            if (game.raiseDelay < 0) game.raiseDelay = 0;
             // ! Old code:
             // if (!checkClearing().includes(true)) {
             //   game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
@@ -865,10 +865,10 @@ export function gameLoop() {
             if (
               performance.gameSpeed == 2 &&
               game.rise != 0 &&
-              (game.quickRaise || game.level == 9)
+              (game.quickRaise || game.level > 8)
             ) {
-              // game.rise = (game.rise + 2) % 32;
-              // if (game.rise == 0) game.quickRaise = false;
+              // For gameSpeed2, if gameRise = 0, do not surpass stack.
+              game.rise = (game.rise + 2) % 32;
             }
           }
         }
@@ -917,6 +917,7 @@ export function gameLoop() {
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
+        // game.canvasOutlineColor = preset.outlineValues[game.level];
       }
 
       if (game.quickRaise) {
@@ -931,9 +932,7 @@ export function gameLoop() {
           game.messageChangeDelay = 90;
           win.mainInfoDisplay.style.color = "blue";
           game.raiseDelay = 0;
-          game.boardRiseSpeed = Math.floor(
-            preset.speedValues[game.level] / performance.gameSpeed
-          );
+          game.boardRiseSpeed = preset.speedValues[game.level];
         } else {
           game.boardRiseSpeed = 1;
         }
@@ -951,6 +950,7 @@ export function gameLoop() {
       if (game.raisePressed) {
         game.raisePressed = false;
         if (!game.disableRaise) {
+          if (game.rise == 0) game.rise = 2;
           game.quickRaise = true;
           game.raiseDelay = 0;
         }
@@ -1109,6 +1109,8 @@ export function gameLoop() {
         if (game.messageChangeDelay <= 0 && frames < 6600) {
           game.message = game.defaultMessage;
         }
+      } else if (debug.enabled) {
+        win.timeDisplay.innerHTML = `${game.disableRaise}`;
       }
 
       if (game.currentChain > 0) {
@@ -1121,7 +1123,7 @@ export function gameLoop() {
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled) {
-        game.paused = 1;
+        game.paused = true;
         pause();
       }
     }

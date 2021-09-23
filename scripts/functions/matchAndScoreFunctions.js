@@ -169,7 +169,7 @@ export function checkMatch() {
 
       updateScore(clearLocationsLength, game.currentChain);
       win.mainInfoDisplay.style.color = "red";
-      game.message = `${game.currentChain} chain! Current Chain Score: ${game.chainScoreAdded}`;
+      game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
       if (add1ToChain) {
         chainLogic.addToPrimaryChain = true;
@@ -246,8 +246,8 @@ export function updateScore(clearLocationsLength, currentChain) {
   } else {
     game.scoreMultiplier = 2 + (game.level - 7) / 5;
   }
-  game.chainScoreAdded += game.scoreMultiplier * addToScore;
-  game.score += game.scoreMultiplier * addToScore;
+  game.chainScoreAdded += Math.round(game.scoreMultiplier * addToScore);
+  game.score += Math.round(game.scoreMultiplier * addToScore);
   console.log(`+${game.scoreMultiplier * addToScore} | Score: ${game.score}`);
   console.log(
     `Current Time: ${game.minutes}:${game.seconds} | Current fps: ${performance.fps}`

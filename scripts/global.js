@@ -1,4 +1,4 @@
-import { audio } from "./fileImports";
+import { audio, audioList } from "./fileImports";
 
 const announcer = {
   openingDialogue: [
@@ -118,7 +118,20 @@ const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
   speedValues: [60, 60, 40, 20, 12, 8, 6, 2, 2, 2, 1],
   clearValues: [60, 60, 50, 40, 36, 32, 28, 24, 20, 16, 12], // iterate twice
-  stallValues: [16, 14, 14, 14, 12, 12, 12, 10, 8, 6, 4]
+  stallValues: [16, 14, 14, 14, 12, 12, 12, 10, 8, 6, 4],
+  outlineValues: [
+    "border:solid 10px white",
+    "border:solid 2px blue",
+    "border:solid 10px cyan",
+    "border:solid 10px rgb(0,255,0)",
+    "border:solid 10px yellow",
+    "border:solid 10px orange",
+    "border:solid 10px red",
+    "border:solid 10px red",
+    "border:solid 10px red",
+    "border:solid 10px red",
+    "border:solid 10px red"
+  ]
 };
 
 if (localStorage.getItem("highScore") === null) {
@@ -135,6 +148,7 @@ const win = {
   makeCanvas: null,
   cvs: null,
   ctx: null,
+  canvasOutlineDisplay: "color:grey",
   mainInfoDisplay: null,
   fpsDisplay: null,
   statDisplay: null,
@@ -165,6 +179,7 @@ const game = {
   boardRiseSpeed: preset.speedValues,
   blockClearTime: preset.clearValues,
   blockStallTime: preset.stallValues,
+  canvasOutlineColor: preset.outlineValues,
   raiseDelay: 0,
   frames: -180,
   seconds: 0,
@@ -239,7 +254,21 @@ const debug = {
   frameAdvance: false
 };
 
-function randInt(max) {
+const loadedAudios = [];
+
+// Preload all audios, then play them at zero volume.
+export function loadAllAudios() {
+  for (let i = 0; i < audioList.length; i++) {
+    let audio = new Audio();
+    audio.src = audioList[i];
+    audio.volume = 0;
+    audio.play();
+    loadedAudios[i] = audio;
+    console.log(`${audio.src} loaded.`);
+  }
+}
+
+export function randInt(max) {
   return Math.floor(Math.random() * max);
 }
 
@@ -261,6 +290,6 @@ export {
   api,
   chainLogic,
   performance,
-  randInt,
+  loadedAudios,
   debug
 };

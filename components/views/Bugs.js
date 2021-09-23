@@ -27,7 +27,7 @@ export default st => html`
         runs too fast or too slow, but unfortunately this seems like a
         fundamental problem with javascript, and I do not see how I can fix this
         in the forseeable future. If you have any ideas for improving
-        performance, please shoot me an email at
+        performance or you see either a new bug, please shoot me an email at
         <a href="mailto:jonisrael45@gmail.com">jonisrael45@gmail.com</a>. You
         can also pull the code yourself from
         <a href="https://github.com/jonisrael/Puzzle-League-Capstone-2021"
@@ -37,14 +37,19 @@ export default st => html`
       <li>
         Sometimes the stack will stop rising, and you will not be able to
         self-raise the stack either. This can be fixed by dropping a block or
-        clearing a set of blocks.
+        clearing a set of blocks. (Update 9/23): This most often happened when
+        swapping two blocks when one of them was currently in their landing
+        animation. This should be fixed.
       </li>
       <li>
         Sometimes the stack will create an extra line while rising. This seems
         to be most common during overtime, when the stack is rising very fast.
-        It is very unfair and cruel T_T. (Update 9/20), a "flag" was implemented
-        to hopefully prevent this from occurring.
+        It is very unfair and cruel T_T. (Update 9/20), a failsafe game flag
+        called "readyForNewRow" has been implemented such that the stack must
+        passed a certain point before it is eligible to be ready for the next
+        row.
       </li>
+
       <li>
         The logic for detecting chains is not completely perfect in regards to
         the original games. Sometimes chains end later than they should, do not
@@ -52,7 +57,9 @@ export default st => html`
         it is more generous than harmful to your score. If this bug happens and
         you gain a lot of unintentional points...please be nice to your fellow
         junior programmer and consider not posting the score on the leaderboard.
-        (Update 9/21), chain logic has been improved.
+        (Update 9/21), chain logic has been improved, as a match disappearing
+        will no longer add a chainable property to or above non-interactive
+        blocks. It is still not fullproof.
       </li>
     </ul>
     <br />
@@ -66,7 +73,8 @@ export default st => html`
       </li>
       <li>
         Sometimes the stack will rise 1/16th of a line when clearing a block,
-        even though it should stop immediately.
+        even though it should stop immediately. This can lead to an unintended
+        KO even if you clear a block just before the stack tops out.
       </li>
       <li>
         Mute buttons only work while game is running.
