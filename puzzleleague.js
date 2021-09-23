@@ -6,6 +6,8 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
+import { render, getWorldTimeAPI } from "./index";
+import * as state from "./store";
 import { sprite, audio } from "./scripts/fileImports";
 import {
   legalMatch,
@@ -564,10 +566,7 @@ function playerAction(input) {
     playAudio(audio.moveCursor);
 
   // first input checker, "else if" is required for priority, so case does not work.
-  if (input.pause) {
-    action.pause = false;
-    game.paused ? unpause() : pause();
-  } else if (input.swap) {
+  if (input.swap) {
     action.swap = false;
     trySwappingBlocks(game.cursor.x, game.cursor.y);
     win.cvs.scrollIntoView({ block: "nearest" });
@@ -588,6 +587,8 @@ function playerAction(input) {
 }
 
 function closeGame(gameFinished) {
+  console.log("game finished:", gameFinished);
+  if (!gameFinished) game.Music.volume = 0;
   console.log("closeGame called");
   win.running = false;
   if (gameFinished) {
@@ -617,11 +618,64 @@ window.addEventListener(
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
-  if (win.running & !game.over) {
-    // p
-    if (event.keyCode == 80) action.pause = true;
+  // When on home page, before game start
+  if (win.view == "Home" && !!document.getElementById("start-button")) {
+    if (
+      event.keyCode == 54 ||
+      event.keyCode == 65 ||
+      event.keyCode == 66 ||
+      event.keyCode == 81
+    ) {
+      // 6, b, a, or q
+      playAudio(audio.select, 0.2);
+      document.getElementById("start-button").remove();
+      document.getElementById("double-button").remove();
+      getWorldTimeAPI();
+      startGame(1);
+    } else if (
+      event.keyCode == 32 ||
+      event.keyCode == 13 ||
+      event.keyCode == 67 ||
+      event.keyCode == 82 ||
+      event.keyCode == 51
+    ) {
+      // space, enter, c, r, or 3 to launch game at 30fps.
+      playAudio(audio.select, 0.2);
+      document.getElementById("start-button").remove();
+      document.getElementById("double-button").remove();
+      getWorldTimeAPI();
+      startGame(2);
+    }
   }
-  if (win.running & !game.over && game.paused == 0) {
+  // If on form page, quick restart
+  if (win.view == "Home" && !!document.getElementById("form")) {
+    if (event.keyCode == 27) {
+      playAudio(audio.selectionFailed, 0.2);
+      game.Music.volume = 0;
+      render(state.Home);
+    }
+  }
+  if (win.running & !game.over) {
+    // p or pause/break or esc
+    if (event.keyCode == 80 || event.keyCode == 19 || event.keyCode == 27)
+      game.paused ? unpause() : pause();
+  }
+  if (game.paused) {
+    if (event.keyCode == 67) unpause(); // c
+    if (event.keyCode == 82) {
+      // r
+      playAudio(audio.select);
+      win.running = false;
+      win.restartGame = true;
+    }
+    if (event.keyCode == 77) {
+      playAudio(audio.select);
+      win.running = false;
+      render(state.Home);
+    }
+  }
+  // Game Controls
+  if (win.running & !game.over && !game.paused) {
     if (event.keyCode == 37) {
       // left
       if (game.cursor.x - 1 >= 0) {
@@ -677,8 +731,9 @@ function KEYBOARD_CONTROL(event) {
         console.log("F -- Advance All Block Event Delay Timers by 1 frame");
         console.log("T -- Enable/Disable Block Timer Slowdown");
         console.log("O -- Enable/Disable Chainable Block Visuals (Default ON)");
+        console.log("K -- Kill Game");
         console.log("Shift -- Empty Game Board");
-        console.log("ESC -- End Game");
+
         console.log("-");
         console.log("Chainable Block Info Guide:");
         console.log("White -- First half of Block Delay Timer");
@@ -710,8 +765,8 @@ function KEYBOARD_CONTROL(event) {
         if (game.frames % 2 == 1) game.frames++; // keep frame count even
         console.log("Speed:", performance.gameSpeed);
       }
-      if (event.keyCode == 27) {
-        // escape
+      if (event.keyCode == 75) {
+        // k
         game.frames = 0;
         game.over = true;
         for (let c = 0; c < grid.COLS; c++) {
@@ -796,9 +851,13 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function gameLoop() {
-  if (!win.running) {
-    closeGame(false);
+  if (!win.running || win.view != "Home") {
+    closeGame(game.over);
     win.running = false;
+    if (win.restartGame) {
+      win.restartGame = false;
+      startGame(performance.gameSpeed);
+    }
     return;
   }
   requestAnimationFrame(gameLoop);
@@ -813,16 +872,6 @@ export function gameLoop() {
       : (realTimer = 0);
     if (game.frames % 60 == 0 && !game.paused)
       console.log(`gameTime = ${game.frames / 60}, realTime = ${realTimer}`);
-    if (!win.running || win.view !== "Home") {
-      console.log("closing game", win.view);
-      closeGame(false);
-      win.running = false;
-      if (win.restartGame) {
-        win.restartGame = false;
-        startGame(performance.gameSpeed);
-      }
-      console.log("game will now close");
-    }
     if (!game.paused) {
       game.frames += 1 * performance.gameSpeed;
 
@@ -832,8 +881,8 @@ export function gameLoop() {
           announcer.endgameIndexLastPicked,
           "endgame"
         );
-        closeGame(true);
         win.running = false;
+        return;
       }
 
       checkTime();
@@ -949,6 +998,7 @@ export function gameLoop() {
 
       if (game.raisePressed) {
         game.raisePressed = false;
+        win.cvs.scrollIntoView({ block: "nearest" });
         if (!game.disableRaise) {
           if (game.rise == 0) game.rise = 2;
           game.quickRaise = true;
@@ -1124,7 +1174,7 @@ export function gameLoop() {
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled) {
         game.paused = true;
-        pause();
+        pause(true);
       }
     }
     // outside pause loop

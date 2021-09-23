@@ -79,7 +79,6 @@ export function playMusic(file, volume = 0.1, mute = 0) {
   if (win.muteMusic.checked) return;
   game.Music.src = file;
   game.Music.play();
-  console.log(`Playing Music: ${game.Music.src}`);
   game.Music.loop = true;
   game.Music.playbackRate = 1.0;
   game.Music.volume = volume;

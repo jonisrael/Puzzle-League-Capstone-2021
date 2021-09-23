@@ -264,7 +264,6 @@ export function loadAllAudios() {
     audio.volume = 0;
     audio.play();
     loadedAudios[i] = audio;
-    console.log(`${audio.src} loaded.`);
   }
 }
 

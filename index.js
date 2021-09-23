@@ -13,10 +13,9 @@ dotenv.config();
 
 const router = new Navigo(window.location.origin);
 
-function render(st) {
+export function render(st) {
   win.view = st.view;
   win.viewChanged = true;
-  console.log("render has been called");
   document.querySelector("#root").innerHTML = `
   ${Header(st)}
   ${Nav(state.Links)}

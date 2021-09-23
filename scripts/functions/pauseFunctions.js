@@ -3,15 +3,18 @@ import { audio } from "../fileImports";
 import { gameLoop } from "../../puzzleleague";
 import { playAudio } from "./audioFunctions";
 
-export function pause() {
+export function pause(lostFocus = false) {
   game.paused = true;
   playAudio(audio.pause, 0.1);
-  win.mainInfoDisplay.innerHTML = "Pause";
+  lostFocus
+    ? (win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus")
+    : (win.mainInfoDisplay.innerHTML = "Pause");
   win.mainInfoDisplay.style.color = "blue";
   win.cvs.style.display = "none";
   game.Music.pause();
   document.getElementById("resume-button").style.display = "flex";
   document.getElementById("restart-button").style.display = "flex";
+  document.getElementById("menu-button").style.display = "flex";
 }
 
 export function unpause() {
@@ -21,6 +24,7 @@ export function unpause() {
   game.Music.play();
   document.getElementById("resume-button").style.display = "none";
   document.getElementById("restart-button").style.display = "none";
+  document.getElementById("menu-button").style.display = "none";
 }
 
 // For some reason pausing audio is backwards, Music.play() for pause() and Music.play for unpause

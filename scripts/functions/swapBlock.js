@@ -104,7 +104,7 @@ export function trySwappingBlocks(x, y) {
   // }
 
   if (legalSwap) {
-    playAudio(audio.swapSuccess);
+    playAudio(audio.select);
     swapProperties(game.board[x][y], game.board[x + 1][y]);
     // if landing, shorten timer to end the landing animation next frame.
     if (game.board[x][y].timer > 1) game.board[x][y].timer = 0;
@@ -171,7 +171,7 @@ export function trySwappingBlocks(x, y) {
     }
   } else {
     win.mainInfoDisplay.style.color = "purple";
-    playAudio(audio.swapFailed);
+    playAudio(audio.selectionFailed);
   }
 }
 

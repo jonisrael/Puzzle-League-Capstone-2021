@@ -12,6 +12,9 @@ export default st => html`
         <li>Press S or X to <strong>swap</strong> blocks at the Cursor</li>
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
+      <h2>
+        <strong style="color:yellow">Press Enter to play!</strong>
+      </h2>
       <hr />
       <h1>How to play</h1>
       <p>
@@ -73,14 +76,14 @@ export default st => html`
       <div id="game-container">
         <div id="left-column">
           <button id="double-button" class="default-button">
-            Click to Play<br />
-            30 FPS<br />(Recommended)
+            <u>C</u>lick to Play<br />
+            <u>3</u>0 FPS<br />(<u>R</u>ecommended)
           </button>
         </div>
         <div id="right-column">
           <button id="start-button" class="default-button">
             Click to Play<br />
-            60FPS<br />(Highest Animation Quality)
+            <u>6</u>0FPS<br />(<u>B</u>est <u>A</u>nimation <u>Q</u>uality)
           </button>
         </div>
       </div>

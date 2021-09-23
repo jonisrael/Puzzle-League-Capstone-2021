@@ -13,6 +13,7 @@ import {
   loadedAudios,
   loadAllAudios
 } from "../global";
+import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio } from "../fileImports";
 import { getWorldTimeAPI, render } from "../../index";
@@ -128,9 +129,9 @@ function createHeadsUpDisplay() {
   // Add invisible "Resume play" button, to be visible when game is paused
   let resumeButton = document.createElement("button");
   resumeButton.setAttribute("id", "resume-button");
-  resumeButton.className = "default-button";
+  resumeButton.className = "pause-buttons default-button";
   resumeButton.style.display = "none";
-  resumeButton.innerHTML = "Continue Game";
+  resumeButton.innerHTML = "<u>C</u>ontinue";
   column2.appendChild(resumeButton);
   resumeButton.addEventListener("click", event => {
     unpause();
@@ -139,13 +140,24 @@ function createHeadsUpDisplay() {
   // Add invisible "Main Menu" button, to be visible when game is paused
   let restartButton = document.createElement("button");
   restartButton.setAttribute("id", "restart-button");
-  restartButton.className = "default-button";
+  restartButton.className = "pause-buttons default-button";
   restartButton.style.display = "none";
-  restartButton.innerHTML = "Restart Game";
+  restartButton.innerHTML = "<u>R</u>estart";
   column2.appendChild(restartButton);
   restartButton.addEventListener("click", event => {
-    win.restartGame = true;
     win.running = false;
+    win.restartGame = true;
+  });
+
+  let mainMenuButton = document.createElement("button");
+  mainMenuButton.setAttribute("id", "menu-button");
+  mainMenuButton.className = "pause-buttons default-button";
+  mainMenuButton.style.display = "none";
+  mainMenuButton.innerHTML = "<u>M</u>enu";
+  column2.appendChild(mainMenuButton);
+  mainMenuButton.addEventListener("click", event => {
+    win.running = false;
+    render(state.Home);
   });
 }
 
@@ -159,6 +171,7 @@ export function resetGameVariables() {
   game.blockClearTime = preset.clearValues;
   game.blockStallTime = preset.stallValues;
   game.raiseDelay = 0;
+  loadedAudios.length == 0 ? (game.frames = -200) : (game.frames = -180);
   game.frames = -200;
   game.seconds = 0;
   game.minutes = 0;

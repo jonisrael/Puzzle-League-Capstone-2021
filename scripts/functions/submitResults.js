@@ -1,6 +1,7 @@
 import { startGame } from "./beginGame";
 import { game, api, performance } from "../global";
-import { sendData } from "../../index";
+import { render, sendData } from "../../index";
+import * as state from "../../store";
 import { performanceNotifier } from "./performanceNotifier";
 
 export function submitResults() {
@@ -115,8 +116,8 @@ export function submitResults() {
 
     console.log(requestData);
     sendData(requestData);
-
-    form.remove();
+    game.Music.volume = 0;
+    render(state.Home);
 
     restartGame.innerHTML = "Play again?";
   });
