@@ -66,7 +66,7 @@ export default st => html`
         <span style="color:red; font-weight:bold;"
           ><u>it is recommended to run the game at 30 FPS</u></span
         >. In this mode I have doubled the speed of all animations and game
-        events to simulate it running at 60fps. Some animations may not look at
+        events to simulate it running at 60fps. Some animations may not look as
         smooth, but it is more guaranteed to run the game at its intended full
         speed.
       </p>

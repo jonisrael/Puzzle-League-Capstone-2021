@@ -47,7 +47,7 @@ function createHeadsUpDisplay() {
 
   win.mainInfoDisplay = document.createElement("h2");
   win.mainInfoDisplay.setAttribute("id", "main-info");
-  win.mainInfoDisplay.innerHTML = "Main Info Display Here";
+  win.mainInfoDisplay.innerHTML = "Loading...";
   container.appendChild(win.mainInfoDisplay);
 
   let gameContainer = document.createElement("div");
