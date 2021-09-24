@@ -10,15 +10,14 @@ import {
   blockColor,
   blockType,
   api,
-  loadedAudios,
-  loadAllAudios
+  loadedAudios
 } from "../global";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio } from "../fileImports";
 import { getWorldTimeAPI, render } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
-import { pause, unpause } from "./pauseFunctions";
+import { unpause } from "./pauseFunctions";
 
 export function startGame(selectedGameSpeed) {
   api.data = getWorldTimeAPI();

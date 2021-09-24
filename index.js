@@ -61,7 +61,12 @@ function addEventListeners(st) {
       getWorldTimeAPI();
       startGame(2);
     });
-    if (loadedAudios.length == 0) loadAllAudios();
+    document.addEventListener("mousemove", () => {
+      if (loadedAudios.length == 0) {
+        console.log("move");
+        loadAllAudios();
+      }
+    });
   }
   if (st.view !== "Home") game.Music.volume = 0;
 }
