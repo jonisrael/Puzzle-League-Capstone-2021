@@ -57,7 +57,7 @@ export default st => html`
         * in front of the name and be placed at the bottom of the leaderboards.
       </p>
       <p>
-        I have implemented diffeerent frame-rates for running the game. You can
+        I have implemented different frame-rates for running the game. You can
         run it at 60 FPS (frames per second), which is the original intended way
         I programmed it, and will make the in-game animations the smoothest.
         However, I have found that many computers cannot run it at full speed,
@@ -72,6 +72,9 @@ export default st => html`
         events to simulate it running at 60fps. Some animations may not look as
         smooth, but it is more guaranteed to run the game at its intended full
         speed.
+      </p>
+      <p style="color:black; font-weight:bold;">
+        This game is not supported by Firefox.
       </p>
       <div id="game-container">
         <div id="left-column">
@@ -90,6 +93,3 @@ export default st => html`
     </div>
   </section>
 `;
-
-//<!-- <canvas id ="canvas" width="192" height="384", background-color></canvas>  -->
-//<!-- <canvas id ="canvas" width="192" height="448", background-color></canvas>  -->

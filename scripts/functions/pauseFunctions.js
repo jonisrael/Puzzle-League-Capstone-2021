@@ -1,10 +1,10 @@
-import { game, win } from "../global";
+import { game, win, performance } from "../global";
 import { audio } from "../fileImports";
-import { gameLoop } from "../../puzzleleague";
 import { playAudio } from "./audioFunctions";
 
 export function pause(lostFocus = false) {
   game.paused = true;
+  performance.pauseStartTime = Date.now();
   playAudio(audio.pause, 0.1);
   lostFocus
     ? (win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus")
@@ -19,6 +19,10 @@ export function pause(lostFocus = false) {
 
 export function unpause() {
   game.paused = false;
+  let pauseTime = Date.now() - performance.pauseStartTime;
+  pauseTime = Math.floor(pauseTime / 100) / 10;
+  performance.sumOfPauseTimes += pauseTime;
+  // realTimer = Math.floor(realTimer / 100) / 10
   win.mainInfoDisplay.innerHTML = game.message;
   win.cvs.style.display = "flex";
   game.Music.play();
@@ -26,5 +30,3 @@ export function unpause() {
   document.getElementById("restart-button").style.display = "none";
   document.getElementById("menu-button").style.display = "none";
 }
-
-// For some reason pausing audio is backwards, Music.play() for pause() and Music.play for unpause

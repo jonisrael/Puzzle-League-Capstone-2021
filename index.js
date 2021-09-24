@@ -61,6 +61,12 @@ function addEventListeners(st) {
       getWorldTimeAPI();
       startGame(2);
     });
+    document.addEventListener("wheel", () => {
+      if (loadedAudios.length == 0) {
+        console.log("wheel");
+        loadAllAudios();
+      }
+    });
     document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {
         console.log("click");
@@ -115,11 +121,20 @@ router.hooks({
             let sortedData = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
-            state[page].games = sortedData;
-            console.log(state[page]);
+            let rankedData = [];
+            let unrankedData = [];
+            sortedData.filter(entry => {
+              entry.name.includes("*")
+                ? unrankedData.push(entry)
+                : rankedData.push(entry);
+            });
+            let leaderboardData = rankedData.concat(unrankedData);
+            state[page].games = leaderboardData;
             console.log(sortedData);
+            console.log(leaderboardData);
+
             state[page].markup = "";
-            for (let entry of sortedData) {
+            for (let entry of leaderboardData) {
               let score = entry.score;
               if (parseInt(score) > 99999) score = "99999";
               while (score.length < 5) {

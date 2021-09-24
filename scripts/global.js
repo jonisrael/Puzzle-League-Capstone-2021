@@ -239,11 +239,13 @@ const performance = {
   drawsPerSecond: 60, // not used yet
   drawDivisor: 1,
   gameStartTime: 0,
+  pauseStartTime: 0,
+  sumOfPauseTimes: 0,
   fpsInterval: 1000 / 60,
   then: 0,
   now: 0,
   delta: 0,
-  value: 0
+  differenceFromRealTime: 0
 };
 
 const debug = {

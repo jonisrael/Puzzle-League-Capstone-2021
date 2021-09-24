@@ -10,7 +10,8 @@ import {
   blockColor,
   blockType,
   api,
-  loadedAudios
+  loadedAudios,
+  loadAllAudios
 } from "../global";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
@@ -27,12 +28,14 @@ export function startGame(selectedGameSpeed) {
   createHeadsUpDisplay();
   game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);
+  if (loadedAudios.length == 0) loadAllAudios();
   // Set up game loop
   performance.canPostToLeaderboard = true;
   performance.gameSpeed = selectedGameSpeed;
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();
   performance.gameStartTime = performance.then;
+  performance.totalPauseTime = 0;
   requestAnimationFrame(gameLoop);
 }
 

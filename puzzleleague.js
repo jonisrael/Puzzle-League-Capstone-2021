@@ -871,7 +871,11 @@ export function gameLoop() {
       ? (realTimer = Math.floor(realTimer / 100) / 10)
       : (realTimer = 0);
     if (game.frames % 60 == 0 && !game.paused)
-      console.log(`gameTime = ${game.frames / 60}, realTime = ${realTimer}`);
+      console.log(
+        `gameTime = ${game.frames / 60}, realTime = ${realTimer}, pauseTime = ${
+          performance.sumOfPauseTimes
+        }, timeDifference = ${performance.differenceFromRealTime}`
+      );
     if (!game.paused) {
       game.frames += 1 * performance.gameSpeed;
 
@@ -1036,9 +1040,11 @@ export function gameLoop() {
         game.frames % 60 == 0 &&
         performance.canPostToLeaderboard
       ) {
-        performance.value = Math.abs(realTimer - game.frames / 60);
-        if (performance.value >= 3) performance.drawDivisor = 2;
-        if (performance.value >= 5) {
+        performance.differenceFromRealTime = Math.abs(
+          realTimer - performance.sumOfPauseTimes - game.frames / 60
+        );
+
+        if (performance.differenceFromRealTime >= 5) {
           performance.canPostToLeaderboard = false;
           win.fpsDisplay.style.color = "red";
         }
@@ -1046,41 +1052,11 @@ export function gameLoop() {
       if (game.frames % 5 == 0) {
         // fps counter
         performance.secondsPerLoop =
-          Math.floor(100 * (runtime / 1000 - performance.prev)) / 100;
+          Math.round(100 * (runtime / 1000 - performance.prev)) / 100;
         performance.fps =
-          Math.floor(1 * 5 * (1 / performance.secondsPerLoop)) / 1;
-        if (performance.fps < 40 && performance.gameSpeed == 1) {
-          // If the game is running at below 0.9x speed, there's a problem.
-          performance.slowdownTracker += 1; // for each frame, if there is low frame rate 2
-          // console.log(
-          //   `${performance.slowdownTracker} times under 40 fps every 2 seconds (3 needed)`
-          // );
-        }
+          Math.round(1 * 5 * (1 / performance.secondsPerLoop)) / 1;
         performance.prev = runtime / 1000;
       }
-
-      // if (game.seconds % 2 == 0) {
-      //   performance.slowdownTracker -= 1;
-      //   if (performance.slowdownTracker < 0) performance.slowdownTracker = 0;
-      // } // Check # of frame rate drops every 600 frames
-      // if (performance.slowdownTracker > 2) {
-      //   // If fps is below 50 fps for 2 seconds in the next 10, lower settings
-      //   performance.slowdownTracker = 0;
-      //   if (
-      //     performance.fps <= 45 &&
-      //     performance.drawDivisor >= 2 &&
-      //     performance.gameSpeed < 2
-      //   ) {
-      //     performance.gameSpeed = 1;
-      //     console.log("game speed has now doubled");
-      //   }
-      // } else if (performance.drawsPerSecond == 30) {
-      //     performance.drawsPerSecond = 20
-      // } else if (performance.drawsPerSecond == 20) {
-      //     performance.drawsPerSecond = -1
-      //     console.log("Performance of device is too low for accurate play.")
-      // }
-      // }
       let minutesString = "";
       let secondsString = "";
       let scoreString = "";
@@ -1179,9 +1155,7 @@ export function gameLoop() {
     }
     // outside pause loop
   }
+  // update realtime variables
   performance.then =
     performance.now - (performance.delta % performance.fpsInterval);
 }
-
-// game.board = generateOpeningBoard()
-// setTimeout(gameLoop(),1000/60)
