@@ -61,9 +61,9 @@ function addEventListeners(st) {
       getWorldTimeAPI();
       startGame(2);
     });
-    document.addEventListener("mousemove", () => {
+    document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {
-        console.log("move");
+        console.log("click");
         loadAllAudios();
       }
     });
