@@ -5,7 +5,7 @@ import Navigo from "navigo";
 import { capitalize } from "lodash";
 import axios from "axios";
 import dotenv from "dotenv";
-import { win, api, game } from "./scripts/global";
+import { win, api, game, loadAllAudios, loadedAudios } from "./scripts/global";
 import { startGame } from "./scripts/functions/beginGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
@@ -14,6 +14,7 @@ dotenv.config();
 const router = new Navigo(window.location.origin);
 
 export function render(st) {
+  console.log(`loaded audios: ${loadedAudios.length}`);
   win.view = st.view;
   win.viewChanged = true;
   document.querySelector("#root").innerHTML = `
@@ -60,6 +61,7 @@ function addEventListeners(st) {
       getWorldTimeAPI();
       startGame(2);
     });
+    if (loadedAudios.length == 0) loadAllAudios();
   }
   if (st.view !== "Home") game.Music.volume = 0;
 }

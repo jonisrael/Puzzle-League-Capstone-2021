@@ -25,7 +25,6 @@ export function startGame(selectedGameSpeed) {
   win.running = true;
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";
-  if (loadedAudios.length == 0) loadAllAudios();
   createHeadsUpDisplay();
   game.board = generateOpeningBoard();
   playMusic(audio.popcornMusic);

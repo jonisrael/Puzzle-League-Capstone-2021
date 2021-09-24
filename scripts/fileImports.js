@@ -294,9 +294,13 @@ const sprite = {
 };
 
 const audio = {
+  announcer3: ANN_3, // loading first
+  announcer2: ANN_2,
+  announcer1: ANN_1,
+  announcer5: ANN_5,
+  announcer4: ANN_4,
+  announcerGo: ANN_GO,
   popcornMusic: POPCORN_SONG,
-  overtimeMusic: OVERTIME_SONG,
-  resultsMusic: RESULTS_SONG,
   pause: PAUSE,
   moveCursor: MOVE_CURSOR,
   select: SWAP_SUCCESS,
@@ -315,12 +319,6 @@ const audio = {
   fanfare3: FANFARE3,
   fanfare4: FANFARE4,
   fanfare5: FANFARE5,
-  announcer5: ANN_5,
-  announcer4: ANN_4,
-  announcer3: ANN_3,
-  announcer2: ANN_2,
-  announcer1: ANN_1,
-  announcerGo: ANN_GO,
   announcerWatchChampBask: ANN_WATCH_CHAMP_BASK,
   announcerOnlyWordWorthy: ANN_ONLY_WORD_WORTHY,
   announcerAllTheGlory: ANN_ALL_THE_GLORY,
@@ -368,7 +366,9 @@ const audio = {
   announcerWhatARush: ANN_WHAT_RUSH,
   announcerWhereComeFrom: ANN_WHERE_COME_FROM,
   announcerDeservePraise: ANN_DESERVE_PRAISE,
-  announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES
+  announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES,
+  overtimeMusic: OVERTIME_SONG,
+  resultsMusic: RESULTS_SONG
 };
 
 const imageList = Object.values(sprite);

@@ -3,7 +3,7 @@ import html from "html-literal";
 export default st => html`
   <section id="sound-credits-page">
     <body>
-      <h1 id="sound-credits-page-header">Music and Sound Credits</h1>
+      <h1 id="sound-credits-page-header">Credits</h1>
       <h2>Music</h2>
       <ul>
         <li>"Popcorn" by Hot Butter (1972)</li>
@@ -20,6 +20,13 @@ export default st => html`
         <li>"Player Damaged" sound effects from Undertale (2015)</li>
         <li>
           "Fanfare 1-5", "Topout" sound effects from Planet Puzzle League (2007)
+        </li>
+      </ul>
+      <h2>Images</h2>
+      <ul>
+        <li>
+          Images were created by me, but influenced from the original Panel de
+          Pon.
         </li>
       </ul>
     </body>
