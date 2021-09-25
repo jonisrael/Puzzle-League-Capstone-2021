@@ -36,7 +36,7 @@ export function startGame(selectedGameSpeed) {
   performance.then = Date.now();
   performance.gameStartTime = performance.then;
   performance.sumOfPauseTimes = 0;
-  performance.differenceFromRealTime = 0;
+  performance.diffFromRealTime = 0;
   requestAnimationFrame(gameLoop);
 }
 
@@ -189,7 +189,6 @@ export function resetGameVariables() {
   game.totalClears = 0;
   game.message = "Loading...";
   game.defaultMessage = "";
-  game.canvasOutlineColor = "style:grey";
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain

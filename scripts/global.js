@@ -116,22 +116,9 @@ const grid = {
 
 const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [60, 60, 40, 20, 12, 8, 6, 2, 2, 2, 1],
-  clearValues: [60, 60, 50, 40, 36, 32, 28, 24, 20, 16, 12], // iterate twice
-  stallValues: [16, 14, 14, 14, 12, 12, 12, 10, 8, 6, 4],
-  outlineValues: [
-    "border:solid 10px white",
-    "border:solid 2px blue",
-    "border:solid 10px cyan",
-    "border:solid 10px rgb(0,255,0)",
-    "border:solid 10px yellow",
-    "border:solid 10px orange",
-    "border:solid 10px red",
-    "border:solid 10px red",
-    "border:solid 10px red",
-    "border:solid 10px red",
-    "border:solid 10px red"
-  ]
+  speedValues: [60, 60, 40, 20, 12, 8, 6, 4, 4, 4, 2, 2, 2, 1],
+  clearValues: [60, 60, 54, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8],
+  stallValues: [16, 14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 8]
 };
 
 if (localStorage.getItem("highScore") === null) {
@@ -148,7 +135,6 @@ const win = {
   makeCanvas: null,
   cvs: null,
   ctx: null,
-  canvasOutlineDisplay: "color:grey",
   mainInfoDisplay: null,
   fpsDisplay: null,
   statDisplay: null,
@@ -179,9 +165,9 @@ const game = {
   boardRiseSpeed: preset.speedValues,
   blockClearTime: preset.clearValues,
   blockStallTime: preset.stallValues,
-  canvasOutlineColor: preset.outlineValues,
   raiseDelay: 0,
   frames: -180,
+  finalTime: 0,
   seconds: 0,
   minutes: 0,
   score: 0,
@@ -231,6 +217,7 @@ const chainLogic = {
 
 const performance = {
   canPostToLeaderboard: false,
+  unrankedReason: "",
   gameSpeed: 1,
   fps: 0,
   prev: 0,
@@ -238,6 +225,7 @@ const performance = {
   slowdownTracker: 0,
   drawsPerSecond: 60, // not used yet
   drawDivisor: 1,
+  realTime: 0,
   gameStartTime: 0,
   pauseStartTime: 0,
   sumOfPauseTimes: 0,
@@ -245,7 +233,7 @@ const performance = {
   then: 0,
   now: 0,
   delta: 0,
-  differenceFromRealTime: 0
+  diffFromRealTime: 0
 };
 
 const debug = {

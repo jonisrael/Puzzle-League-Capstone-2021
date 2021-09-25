@@ -14,6 +14,20 @@ export function submitResults() {
   let container = document.getElementById("container");
   container.innerHTML = "";
   homePage.appendChild(container);
+
+  let messageAboutPosting = document.createElement("div");
+  container.appendChild(messageAboutPosting);
+  messageAboutPosting.style.display = performance.canPostToLeaderboard
+    ? "none"
+    : "static";
+  messageAboutPosting.innerHTML = `<p>Unfortunately this score cannot be posted to the ranked leaderboards. This is because either debug mode was activated <strong>or</strong> the in-game clock was over five seconds behind a real clock. The real time of the game was <strong>${
+    performance.realTime
+  } seconds</strong> while the in-game timer was <strong>${
+    game.finalTime
+  } seconds</strong>, which is a difference of <span style="color:red; font-weight:bold">${Math.abs(
+    performance.realTime - game.finalTime
+  ).toFixed(1)} seconds</span>.</p><hr>`;
+
   let form = document.createElement("form");
   form.setAttribute("id", "form");
   form.setAttribute("method", "POST");
@@ -34,6 +48,7 @@ export function submitResults() {
   scoreMessage.className = "postgame-info";
   scoreMessage.style.color = "red";
   scoreMessage.innerHTML = `Final Score: ${game.score}`;
+  scoreMessage.style.color = performance.canPostToLeaderboard ? "blue" : "red";
   div1.appendChild(scoreMessage);
 
   let durationMessage = document.createElement("h2");
@@ -77,7 +92,11 @@ export function submitResults() {
   submitForm.setAttribute("id", "submit-name");
   submitForm.setAttribute("type", "submit");
   submitForm.setAttribute("name", "submit-name");
-  submitForm.setAttribute("value", "Submit Name");
+  submitForm.setAttribute(
+    "value",
+    `Submit Name${performance.canPostToLeaderboard ? " " : " (Unranked)"}`
+  );
+  submitForm.style.color = performance.canPostToLeaderboard ? "black" : "red";
   submitForm.className = "default-button";
   div2.appendChild(submitForm);
 
@@ -118,8 +137,6 @@ export function submitResults() {
     sendData(requestData);
     game.Music.volume = 0;
     render(state.Home);
-
-    restartGame.innerHTML = "Play again?";
   });
 
   document.querySelector("#restart-game").addEventListener("click", event => {

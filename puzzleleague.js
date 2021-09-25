@@ -244,7 +244,6 @@ export function updateGrid(frameAdvance = false) {
       ) {
         if (
           game.board[x][y].color == blockColor.VACANT ||
-          game.board[x][y].touched ||
           (game.board[x][y].type == blockType.LANDING &&
             game.board[x][y].timer > 8 &&
             game.board[x][y].timer < 11)
@@ -483,13 +482,13 @@ function raiseStack() {
 
 function checkTime() {
   win.muteMusic.checked ? (game.Music.volume = 0) : (game.Music.volume = 0.1);
-  if (win.muteAnnouncer.checked) return;
   switch (game.frames) {
     case -178:
       debug.show = false;
       game.message = "3...";
       game.messageChangeDelay = 90;
-      playAudio(audio.announcer3, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer3, (game.volume = 0.3));
       break;
     case -176:
       win.cvs.scrollIntoView({ block: "nearest" });
@@ -497,17 +496,19 @@ function checkTime() {
     case -120:
       game.message = "2...";
       game.messageChangeDelay = 90;
-      playAudio(audio.announcer2, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer2, (game.volume = 0.3));
       break;
     case -60:
       game.message = "1...";
       game.messageChangeDelay = 90;
-      playAudio(audio.announcer1, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer1, (game.volume = 0.3));
       break;
     case 0:
       game.message = "Go!";
       game.messageChangeDelay = 90;
-      playAudio(audio.announcerGo);
+      if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo);
       break;
     case 60:
       if (game.message === "Go!") {
@@ -529,31 +530,36 @@ function checkTime() {
       game.message = "5 seconds before overtime...";
       game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
-      playAudio(audio.announcer5, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer5, (game.volume = 0.3));
       break;
     case 6960:
       game.message = "4 seconds before overtime...";
       game.messageChangeDelay = 90;
       game.defaultMessage = game.message;
-      playAudio(audio.announcer4, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer4, (game.volume = 0.3));
       break;
     case 7020:
       game.message = "3 seconds before overtime...";
       game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
-      playAudio(audio.announcer3, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer3, (game.volume = 0.3));
       break;
     case 7080:
       game.message = "2 seconds before overtime...";
       game.defaultMessage = game.message;
-      playAudio(audio.announcer2, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer2, (game.volume = 0.3));
       game.messageChangeDelay = 90;
       break;
     case 7140:
       game.message = "1 second before overtime...";
       game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
-      playAudio(audio.announcer1, (game.volume = 0.3));
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcer1, (game.volume = 0.3));
       break;
     case 7200:
       game.message = "I hope you're ready...";
@@ -588,6 +594,7 @@ function playerAction(input) {
 }
 
 function closeGame(gameFinished) {
+  win.running = false;
   console.log("game finished:", gameFinished);
   if (!gameFinished) game.Music.volume = 0;
   console.log("closeGame called");
@@ -653,11 +660,10 @@ function KEYBOARD_CONTROL(event) {
     // esc
     if (event.keyCode == 27) {
       game.Music.volume = 0;
-      playAudio(audio.selectionFailed, 0.2);
       render(state.Home);
     }
   }
-  if (win.running & !game.over) {
+  if (win.running && !!document.getElementById("canvas")) {
     // p or pause/break or esc
     if (event.keyCode == 80 || event.keyCode == 19 || event.keyCode == 27)
       game.paused ? unpause() : pause();
@@ -717,6 +723,9 @@ function KEYBOARD_CONTROL(event) {
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
         debug.show = 1;
+        performance.canPostToLeaderboard = false;
+        performance.unrankedReason = "debug mode was activated.";
+        win.fpsDisplay.style.color = "red";
         // game.boardRiseSpeed = preset.speedValues[0];
         // game.blockClearTime = preset.clearValues[0];
         // game.blockStallTime = preset.stallValues[0];
@@ -748,7 +757,6 @@ function KEYBOARD_CONTROL(event) {
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
-        // game.canvasOutlineColor = preset.outlineValues[game.level];
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.freeze = 0;
@@ -769,6 +777,7 @@ function KEYBOARD_CONTROL(event) {
       }
       if (event.keyCode == 75) {
         // k
+        game.finalTime = (game.frames / 60).toFixed(1);
         game.frames = 0;
         game.over = true;
         for (let c = 0; c < grid.COLS; c++) {
@@ -788,20 +797,21 @@ function KEYBOARD_CONTROL(event) {
       } else if (event.keyCode == 70 || event.keyCode == 81) {
         // f, q
         debug.freeze = (debug.freeze + 1) % 2;
-      } else if (event.keyCode == 77 && game.level < 10) {
+      } else if (
+        event.keyCode == 77 &&
+        game.level < preset.speedValues.length
+      ) {
         //m
         game.level++;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
-        // game.canvasOutlineColor = preset.outlineValues[game.level];
       } else if (event.keyCode == 78 && game.level > 0) {
         //n
         game.level--;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
-        // game.canvasOutlineColor = preset.outlineValues[game.level];
 
         // Debug codes
       } else if (event.keyCode == 67 && debug.freeze == 1) {
@@ -818,13 +828,11 @@ function KEYBOARD_CONTROL(event) {
           game.boardRiseSpeed = preset.speedValues[0];
           game.blockStallTime = 120;
           game.blockClearTime = 120;
-          // game.canvasOutlineColor = preset.outlineValues[0];
         } else {
           console.log("slowdown mode disabled");
           game.boardRiseSpeed = preset.speedValues[game.level];
           game.blockClearTime = preset.clearValues[game.level];
           game.blockStallTime = preset.stallValues[game.level];
-          // game.canvasOutlineColor = preset.outlineValues[game.level];
         }
       } else if (event.keyCode == 79) {
         // o
@@ -855,7 +863,6 @@ function KEYBOARD_CONTROL(event) {
 export function gameLoop() {
   if (!win.running || win.view != "Home") {
     closeGame(game.over);
-    win.running = false;
     if (win.restartGame) {
       win.restartGame = false;
       startGame(performance.gameSpeed);
@@ -865,19 +872,25 @@ export function gameLoop() {
   requestAnimationFrame(gameLoop);
   performance.now = Date.now();
   performance.delta = performance.now - performance.then;
+  let runtime;
   if (performance.delta > performance.fpsInterval) {
     if (game.frames == 0) performance.gameStartTime = Date.now();
-    let runtime = Date.now() - performance.gameStartTime;
-    let realTimer = runtime;
-    game.frames >= 0
-      ? (realTimer = Math.floor(realTimer / 100) / 10)
-      : (realTimer = 0);
-    if (game.frames % 60 == 0 && !game.paused)
-      console.log(
-        `gameTime = ${game.frames / 60}, realTime = ${realTimer}, pauseTime = ${
-          performance.sumOfPauseTimes
-        }, timeDifference = ${performance.differenceFromRealTime}`
-      );
+    if (!game.over) {
+      runtime = Date.now() - performance.gameStartTime;
+      if (!game.over) performance.realTime = runtime;
+      game.frames >= 0
+        ? (performance.realTime = Math.round(performance.realTime / 100) / 10)
+        : (performance.realTime = 0);
+      if (game.frames % 60 == 0 && !game.paused)
+        console.log(
+          `gameTime = ${game.frames / 60}, realTime = ${
+            performance.realTime
+          }, pauseTime = ${performance.sumOfPauseTimes}, timeDifference = ${
+            performance.diffFromRealTime
+          }`
+        );
+    }
+
     if (!game.paused) {
       game.frames += 1 * performance.gameSpeed;
 
@@ -920,7 +933,7 @@ export function gameLoop() {
             if (
               performance.gameSpeed == 2 &&
               game.rise != 0 &&
-              (game.quickRaise || game.level > 8)
+              (game.quickRaise || game.level == preset.speedValues.length - 1)
             ) {
               // For gameSpeed2, if gameRise = 0, do not surpass stack.
               game.rise = (game.rise + 2) % 32;
@@ -941,7 +954,7 @@ export function gameLoop() {
 
       if (
         game.frames % 1200 == 0 &&
-        game.level < 10 &&
+        game.level < preset.speedValues.length &&
         game.level > 0 &&
         debug.enabled === 0 &&
         !game.over
@@ -972,7 +985,6 @@ export function gameLoop() {
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
-        // game.canvasOutlineColor = preset.outlineValues[game.level];
       }
 
       if (game.quickRaise) {
@@ -1013,6 +1025,7 @@ export function gameLoop() {
       }
 
       if (!game.over && isGameOver(game.score)) {
+        game.finalTime = (game.frames / 60).toFixed(1);
         game.frames = 0;
         game.over = true;
         for (let c = 0; c < grid.COLS; c++) {
@@ -1037,21 +1050,18 @@ export function gameLoop() {
           drawGrid();
         }
       }
-      if (
-        game.frames > 0 &&
-        game.frames % 60 == 0 &&
-        performance.canPostToLeaderboard
-      ) {
-        performance.differenceFromRealTime = Math.abs(
-          realTimer - performance.sumOfPauseTimes - game.frames / 60
+      if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
+        performance.diffFromRealTime = Math.abs(
+          performance.realTime - performance.sumOfPauseTimes - game.frames / 60
         );
-
-        if (performance.differenceFromRealTime >= 5) {
+        if (performance.diffFromRealTime >= 5) {
           performance.canPostToLeaderboard = false;
+          performance.unrankedReason = `game running too slowly, behind real clock by
+          ${performance.diffFromRealTime.toFixed(1)} seconds`;
           win.fpsDisplay.style.color = "red";
         }
       }
-      if (game.frames % 5 == 0) {
+      if (game.frames % 6 == 0) {
         // fps counter
         performance.secondsPerLoop =
           Math.round(100 * (runtime / 1000 - performance.prev)) / 100;
@@ -1095,50 +1105,47 @@ export function gameLoop() {
         multiplierString = `${game.scoreMultiplier}x`;
       }
       if (debug.enabled == 1) {
-        win.statDisplay.innerHTML = `fps: ${performance.fps} | Level: ${game.level} | Time: ${timeString} |
-          Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+        win.statDisplay.innerHTML = `Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
       }
-      if (debug.enabled == 0) {
-        win.statDisplay.innerHTML = ``;
-        win.levelDisplay.innerHTML = `${game.level}`;
-        win.timeDisplay.innerHTML = timeString;
-        if (game.frames > 60) {
-          if (game.frames % 1200 >= 1020) {
-            win.timeDisplay.style.color = "red";
-          } else {
-            if (win.timeDisplay.style.color !== "black") {
-              win.timeDisplay.style.color = "black";
-            }
+      win.statDisplay.innerHTML = ``;
+      win.levelDisplay.innerHTML = `${game.level}`;
+      win.timeDisplay.innerHTML = timeString;
+      if (game.frames > 60) {
+        if (game.frames % 1200 >= 1020) {
+          win.timeDisplay.style.color = "red";
+        } else {
+          if (win.timeDisplay.style.color !== "black") {
+            win.timeDisplay.style.color = "black";
           }
-          if (game.frames % 1200 < 60) {
-            win.levelDisplay.style.color = "red";
-          } else {
-            if (win.levelDisplay.style.color !== "black") {
-              win.levelDisplay.style.color = "black";
-            }
+        }
+        if (game.frames % 1200 < 60) {
+          win.levelDisplay.style.color = "red";
+        } else {
+          if (win.levelDisplay.style.color !== "black") {
+            win.levelDisplay.style.color = "black";
           }
+        }
 
-          if (game.currentChain > 0) {
-            win.scoreDisplay.style.color = "red";
-          } else {
-            if (win.scoreDisplay.style.color !== "black") {
-              win.scoreDisplay.style.color = "black";
-            }
+        if (game.currentChain > 0) {
+          win.scoreDisplay.style.color = "red";
+        } else {
+          if (win.scoreDisplay.style.color !== "black") {
+            win.scoreDisplay.style.color = "black";
           }
         }
-        win.scoreDisplay.innerHTML = scoreString;
-        win.fpsDisplay.innerHTML = `${performance.fps} fps${
-          performance.canPostToLeaderboard ? "" : " -- unranked"
-        }`;
-        win.mainInfoDisplay.innerHTML = `${game.message}`;
-        if (game.messageChangeDelay > 0) {
-          game.messageChangeDelay -= 1 * performance.gameSpeed;
-        }
-        if (game.messageChangeDelay <= 0 && frames < 6600) {
-          game.message = game.defaultMessage;
-        }
-      } else if (debug.enabled) {
-        win.timeDisplay.innerHTML = `${game.disableRaise}`;
+      }
+      win.scoreDisplay.innerHTML = scoreString;
+      win.fpsDisplay.innerHTML = `${performance.fps} fps${
+        performance.canPostToLeaderboard
+          ? ""
+          : ` unranked -- ${performance.unrankedReason}`
+      }`;
+      win.mainInfoDisplay.innerHTML = `${game.message}`;
+      if (game.messageChangeDelay > 0) {
+        game.messageChangeDelay -= 1 * performance.gameSpeed;
+      }
+      if (game.messageChangeDelay <= 0 && frames < 6600) {
+        game.message = game.defaultMessage;
       }
 
       if (game.currentChain > 0) {

@@ -9,6 +9,7 @@ import { win, api, game, loadAllAudios, loadedAudios } from "./scripts/global";
 import { startGame } from "./scripts/functions/beginGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
+import { audio } from "./scripts/fileImports";
 dotenv.config();
 
 const router = new Navigo(window.location.origin);
@@ -35,6 +36,7 @@ function addEventListeners(st) {
       event.preventDefault();
       // Failsafe: If already on home page, do not reload it upon clicking it.
       win.running = false;
+      game.Music.volume = 0;
       render(state[event.target.title]);
     })
   );

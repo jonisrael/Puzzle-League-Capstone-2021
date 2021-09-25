@@ -7,6 +7,7 @@ import { playAudio } from "./audioFunctions";
 export function isGameOver(scoreOfThisGame) {
   for (let c = 0; c < grid.COLS; c++) {
     if (game.board[c][0].color != blockColor.VACANT) {
+      // if debug, do not game over.
       if (debug.enabled) {
         game.cursor.y += 8;
         if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
@@ -34,6 +35,8 @@ export function gameOverBoard() {
   if (game.frames == 2) {
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.Music.src = audio.resultsMusic;
+    game.defaultMessage = "Game Over!";
+    game.message = "Game Over!";
   }
   if (game.frames == 4) {
     playAudio(audio.topout);
