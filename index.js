@@ -61,12 +61,6 @@ function addEventListeners(st) {
       getWorldTimeAPI();
       startGame(2);
     });
-    document.addEventListener("wheel", () => {
-      if (loadedAudios.length == 0) {
-        console.log("wheel");
-        loadAllAudios();
-      }
-    });
     document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {
         console.log("click");
