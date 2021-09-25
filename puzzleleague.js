@@ -650,9 +650,10 @@ function KEYBOARD_CONTROL(event) {
   }
   // If on form page, quick restart
   if (win.view == "Home" && !!document.getElementById("form")) {
+    // esc
     if (event.keyCode == 27) {
-      playAudio(audio.selectionFailed, 0.2);
       game.Music.volume = 0;
+      playAudio(audio.selectionFailed, 0.2);
       render(state.Home);
     }
   }

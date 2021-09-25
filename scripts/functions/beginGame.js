@@ -35,7 +35,8 @@ export function startGame(selectedGameSpeed) {
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();
   performance.gameStartTime = performance.then;
-  performance.totalPauseTime = 0;
+  performance.sumOfPauseTimes = 0;
+  performance.differenceFromRealTime = 0;
   requestAnimationFrame(gameLoop);
 }
 
