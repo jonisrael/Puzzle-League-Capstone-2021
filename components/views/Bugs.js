@@ -2,7 +2,7 @@ import html from "html-literal";
 
 export default st => html`
   <section id="bugs-page">
-    <h1>Known bugs and glitches</h1>
+    <h1>Known bugs and glitches (Page made September 21,2021)</h1>
     <h2>Major Bugs</h2>
     <ul>
       <li>
@@ -18,15 +18,15 @@ export default st => html`
         >
         Therefore, a background performance checker will be running.
         <strong
-          >Along with the in-game timer, a real timer is running internally
-          within the game (viewable in debug mode). If there is a 5 second
-          difference, submitting a score to the leaderboard will be unranked.
+          >Along with the in-game timer, a real timer is kept track of
+          internally within the game (viewable in debug mode). If there is a 5
+          second difference, submitting a score to the leaderboard will be
+          unranked.
         </strong>
-        In rare cases, the game can also run too fast. I have implemented a
-        couple of measures for the game to try and fix performance when the game
-        runs too fast or too slow, but unfortunately this seems like a
-        fundamental problem with javascript, and I do not see how I can fix this
-        in the forseeable future. If you have any ideas for improving
+        I have implemented a couple of measures for the game to try and fix
+        performance when the game runs too slow, but unfortunately this seems
+        like a fundamental problem with javascript, and I do not see how I can
+        fix this in the forseeable future. If you have any ideas for improving
         performance or you see either a new bug, please shoot me an email at
         <a href="mailto:jonisrael45@gmail.com">jonisrael45@gmail.com</a>. You
         can also pull the code yourself from
@@ -39,15 +39,19 @@ export default st => html`
         self-raise the stack either. This can be fixed by dropping a block or
         clearing a set of blocks. (Update 9/23): This most often happened when
         swapping two blocks when one of them was currently in their landing
-        animation. This should be fixed.
+        animation. This should be fixed. I have also implemented a failsafe
+        where if the stack stops rising for five seconds, it will re-enable
+        itself and resume moving regardless of game state.
       </li>
       <li>
         Sometimes the stack will create an extra line while rising. This seems
         to be most common during overtime, when the stack is rising very fast.
-        It is very unfair and cruel T_T. (Update 9/20), a failsafe game flag
-        called "readyForNewRow" has been implemented such that the stack must
-        passed a certain point before it is eligible to be ready for the next
-        row.
+        It is very unfair and cruel T_T.
+        <strong
+          >(Update 9/20), I implemented a failsafe flag called "readyForNewRow",
+          which has been implemented such that the stack must pass a checkpoint
+          before it is eligible to have a new row added below it.</strong
+        >
       </li>
 
       <li>
@@ -57,9 +61,15 @@ export default st => html`
         it is more generous than harmful to your score. If this bug happens and
         you gain a lot of unintentional points...please be nice to your fellow
         junior programmer and consider not posting the score on the leaderboard.
-        (Update 9/21), chain logic has been improved, as a match disappearing
-        will no longer add a chainable property to or above non-interactive
-        blocks. It is still not fullproof.
+        <strong
+          >(Update 9/21) Chain logic has been improved, as a match disappearing
+          will no longer add a chainable property to or above non-interactive
+          blocks, ending the chain at the proper time. It is still not
+          fullproof, and there are probably edge cases to prove it is
+          exploitable. (Update 9/24) When a chain ends, if another block is
+          clearing the chain counter is now properly set to 1 instead of
+          0.</strong
+        >
       </li>
     </ul>
     <br />
@@ -68,8 +78,20 @@ export default st => html`
     <ul>
       <li>
         When first running the game, sound does not always preload upon loading
-        the website. This means that when a sound effect or voice is played for
-        the first time, it may be delayed.
+        the website, even when importing sound files. This means that when a
+        sound effect or voice is played for the first time, it may be
+        delayed.<strong>
+          (Update 9/24) I probably came up with a terrible way to solve this,
+          but it seems to work. Basically, all 70+ sounds imported into the game
+          play immediately upon the user interacting with any part of my website
+          for the first time -- but it is at 0 volume, so the user won't hear
+          anything. This seems to solve the problem once they are all loaded.
+          However, the problem is that some computers can take as long as 10-15
+          seconds to load all of the audio, which means that if you launch the
+          game quickly after loading the website, the audio may not be ready. If
+          anyone knows of another way to do this,
+          <u>please let me know!!!</u></strong
+        >
       </li>
       <li>
         Sometimes the stack will rise 1/16th of a line when clearing a block,

@@ -135,6 +135,8 @@ export function checkMatch() {
       JSON.parse
     );
     let clearLocationsLength = clearLocations.length;
+
+    // now determine chain
     if (legalMatch(clearLocations)) {
       chainLogic.addToPrimaryChain = false;
       for (let i = 0; i < clearLocationsLength - 1; i++) {
@@ -145,13 +147,6 @@ export function checkMatch() {
         game.chainScoreAdded = 0;
         chainLogic.addToPrimaryChain = true;
         game.currentChain++;
-        if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
-          playAudio(
-            announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
-          );
-        } else {
-          playChainSFX();
-        }
       } else {
         add1ToChain = false;
         for (let i = 0; i < clearLocationsLength; i++) {
@@ -175,6 +170,10 @@ export function checkMatch() {
         chainLogic.addToPrimaryChain = true;
         game.currentChain++;
         playChainSFX(game.currentChain);
+      } else if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
+        playAudio(
+          announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
+        );
       }
 
       for (let i = 0; i < clearLocationsLength; i++) {
@@ -189,7 +188,6 @@ export function checkMatch() {
           game.board[c][r].availableForPrimaryChain = false;
           game.board[c][r].availableForSecondaryChain = true;
         }
-        // else (game.board[c][r].availableForSecondaryChain = true) // if new chain doesn't start
       }
 
       if (clearLocationsLength != 0) {

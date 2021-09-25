@@ -22,7 +22,7 @@ export function trySwappingBlocks(x, y) {
     game.board[x + 1][y].color == blockColor.VACANT
   ) {
     legalSwap = false;
-    game.message = "Swap Failed: You cannot swap two empty squares!";
+    game.message = "Swap Failed: Both Squares Empty";
     game.messageChangeDelay = 90;
   }
 
@@ -32,7 +32,7 @@ export function trySwappingBlocks(x, y) {
     !INTERACTIVE_PIECES.includes(game.board[x + 1][y].type)
   ) {
     legalSwap = false;
-    game.message = "Swap Failed: You cannot swap a clearing block!";
+    game.message = "Swap Failed: Clearing Block";
     game.messageChangeDelay = 90;
   }
 
@@ -46,7 +46,7 @@ export function trySwappingBlocks(x, y) {
       for (let j = y; j < grid.ROWS; j++) {
         if (game.board[x][j].color == blockColor.VACANT) {
           legalSwap = false;
-          game.message = "Swap Failed: You cannot swap a mid-air block!";
+          game.message = "Swap Failed: Airborne Block";
           game.messageChangeDelay = 90;
           break;
         }
@@ -60,7 +60,7 @@ export function trySwappingBlocks(x, y) {
       for (let j = y; j < grid.ROWS; j++) {
         if (game.board[x + 1][j].color == blockColor.VACANT) {
           legalSwap = false;
-          game.message = "Swap Failed: You cannot swap a mid-air block!";
+          game.message = "Swap Failed: Airborne Block";
           game.messageChangeDelay = 90;
           break;
         }
@@ -75,8 +75,7 @@ export function trySwappingBlocks(x, y) {
       game.board[x][y].color == blockColor.VACANT
     ) {
       legalSwap = false;
-      game.message =
-        "Swap Failed: You cannot swap one row below a mid-air block!";
+      game.message = "Swap Failed: Below an Airborne Block";
       game.messageChangeDelay = 90;
     } else if (
       INTERACTIVE_PIECES.includes(game.board[x + 1][y - 1].type) &&
@@ -84,8 +83,7 @@ export function trySwappingBlocks(x, y) {
       game.board[x + 1][y].color == blockColor.VACANT
     ) {
       legalSwap = false;
-      game.message =
-        "Swap Failed: You cannot swap one row below a mid-air block!";
+      game.message = "Swap Failed: Below an Airborne Block";
       game.messageChangeDelay = 90;
     }
   }

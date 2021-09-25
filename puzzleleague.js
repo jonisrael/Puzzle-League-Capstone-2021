@@ -170,11 +170,7 @@ class Block {
 
     //Debug Visuals
     if (debug.show == 1) {
-      if (
-        this.timer > game.blockClearTime / 2 ||
-        this.timer > game.blockStallTime / 2 ||
-        (this.x == 0 && this.y == 1 && game.grounded)
-      ) {
+      if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
         DEBUGW_IMAGE.src = sprite.debugWhite;
         DEBUGW_IMAGE.onload = () => {
           win.ctx.drawImage(
@@ -192,7 +188,10 @@ class Block {
             grid.SQ * this.y - game.rise
           );
         };
-      } else if (this.availableForSecondaryChain) {
+      } else if (
+        this.availableForSecondaryChain ||
+        (this.x == 0 && this.y == 1 && game.currentChain > 1)
+      ) {
         DEBUGP_IMAGE.src = sprite.debugPink;
         DEBUGP_IMAGE.onload = () => {
           win.ctx.drawImage(
@@ -201,7 +200,10 @@ class Block {
             grid.SQ * this.y - game.rise
           );
         };
-      } else if (this.timer > 0 && this.type == blockType.NORMAL) {
+      } else if (
+        (this.timer > 0 && this.type == blockType.NORMAL) ||
+        (this.x == 0 && this.y == 1 && game.currentChain < 1)
+      ) {
         DEBUGB_IMAGE.src = sprite.debugBrown;
         DEBUGB_IMAGE.onload = () => {
           win.ctx.drawImage(
@@ -242,6 +244,7 @@ export function updateGrid(frameAdvance = false) {
       ) {
         if (
           game.board[x][y].color == blockColor.VACANT ||
+          game.board[x][y].touched ||
           (game.board[x][y].type == blockType.LANDING &&
             game.board[x][y].timer > 8 &&
             game.board[x][y].timer < 11)
@@ -307,14 +310,6 @@ function drawGrid() {
 }
 
 export function isChainActive() {
-  // if (game.grounded) { // failsafe to end chain
-  //     for (let c=0; c<grid.COLS; c++) {
-  //         for (let r=0; r<grid.ROWS; r++) {
-  //             game.board[c][r].availableForPrimaryChain = false
-  //             game.board[c][r].availableForSecondaryChain = false
-  //         }
-  //     }
-  // }
   let potentialSecondarySuccessor = false;
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
@@ -325,7 +320,12 @@ export function isChainActive() {
       }
     }
   }
-  // Test failed, so ending chain.
+  // Test failed, so ending chain. Proceed with new code.
+  endChain(potentialSecondarySuccessor);
+  return false;
+}
+
+export function endChain(potentialSecondarySuccessor) {
   game.lastChain = game.currentChain;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
@@ -369,8 +369,10 @@ export function isChainActive() {
       game.defaultMessage = `Previous chain score added: ${game.chainScoreAdded}`;
     win.mainInfoDisplay.style.color = "blue";
   }
-  game.currentChain = 0;
+  // if another chain is currently clearing, chain is 1. Otherwise, chain is 0.
+  game.currentChain = potentialSecondarySuccessor ? 1 : 0;
   game.combo = 0;
+  // If a potential secondary successor is detected, run this loop...
   if (potentialSecondarySuccessor) {
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
@@ -381,7 +383,6 @@ export function isChainActive() {
       }
     }
   }
-  return false;
 }
 
 function isClearing() {

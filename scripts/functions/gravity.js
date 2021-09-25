@@ -94,6 +94,7 @@ export function doGravity(gameSpeed) {
     doGravity(1);
     checkMatch();
     updateGrid();
+    isChainActive();
   }
 }
 

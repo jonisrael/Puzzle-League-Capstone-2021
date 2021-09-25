@@ -63,7 +63,13 @@ function addEventListeners(st) {
     });
     document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {
-        console.log("click");
+        console.log("user has clicked the document, loading audios.");
+        loadAllAudios();
+      }
+    });
+    document.addEventListener("keydown", () => {
+      if (loadedAudios.length == 0) {
+        console.log("user has pressed a key, loading audios.");
         loadAllAudios();
       }
     });

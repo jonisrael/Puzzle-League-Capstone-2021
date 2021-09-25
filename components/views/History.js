@@ -9,9 +9,9 @@ export default st => html`
       Japan. The player arranges 3 or more adjacent blocks (also known as
       panels) with the same color to create a combo and clear them from the
       board. You can also do more advanced techniques such as chains to gain
-      more points. Usually the main game is multiplayer, where upon creating
-      combos and chains, it will send garbage blocks to your opponent on top of
-      their stack to top them out.
+      more points. Usually the main game is multiplayer, where creating combos
+      and chains sends garbage blocks to your opponent on top of their stack to
+      top them out.
     </p>
     <p>
       Since 1995, there have been a couple of Puzzle League games released. It
