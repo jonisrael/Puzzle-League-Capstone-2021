@@ -48,11 +48,11 @@ function addEventListeners(st) {
       document.querySelector("nav > ul").classList.toggle("hidden--mobile")
     );
 
-  // event listener for the the home/game page
+  // add event listener for the the home/game page
+  win.muteAnnouncer = document.getElementById("mute-announcer");
+  win.muteMusic = document.getElementById("mute-music");
+  win.muteSFX = document.getElementById("mute-sfx");
   if (st.view === "Home") {
-    win.muteAnnouncer = document.getElementById("mute-announcer");
-    win.muteMusic = document.getElementById("mute-music");
-    win.muteSFX = document.getElementById("mute-sfx");
     document.getElementById("start-button").addEventListener("click", () => {
       document.getElementById("start-button").remove();
       getWorldTimeAPI();
@@ -74,6 +74,29 @@ function addEventListeners(st) {
         console.log("user has pressed a key, loading audios.");
         loadAllAudios();
       }
+    });
+    win.muteAnnouncer.checked =
+      eval(localStorage.getItem("mute-announcer")) || false;
+    win.muteMusic.checked = eval(localStorage.getItem("mute-music")) || false;
+    win.muteSFX.checked = eval(localStorage.getItem("mute-sfx")) || false;
+
+    document.getElementById("mute-announcer").addEventListener("click", () => {
+      localStorage.setItem(
+        "mute-announcer",
+        document.getElementById("mute-announcer").checked
+      );
+    });
+    document.getElementById("mute-music").addEventListener("click", () => {
+      localStorage.setItem(
+        "mute-music",
+        document.getElementById("mute-music").checked
+      );
+    });
+    document.getElementById("mute-sfx").addEventListener("click", () => {
+      localStorage.setItem(
+        "mute-sfx",
+        document.getElementById("mute-sfx").checked
+      );
     });
   }
   if (st.view !== "Home") game.Music.volume = 0;

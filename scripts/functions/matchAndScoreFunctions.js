@@ -240,9 +240,9 @@ export function updateScore(clearLocationsLength, currentChain) {
 
   let addToScore = blockBonus + comboBonus + chainBonus;
   if (game.level < 7) {
-    game.scoreMultiplier = 1 + (game.level - 1) / 10;
+    game.scoreMultiplier = 1 + 0.15 * (game.level - 1);
   } else {
-    game.scoreMultiplier = 2 + (game.level - 7) / 5;
+    game.scoreMultiplier = 2 + 0.25 * (game.level - 7);
   }
   game.chainScoreAdded += Math.round(game.scoreMultiplier * addToScore);
   game.score += Math.round(game.scoreMultiplier * addToScore);

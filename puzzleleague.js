@@ -54,18 +54,8 @@ import {
 import { performanceNotifier } from "./scripts/functions/performanceNotifier";
 
 // console.log(highScoreDisplay);
-
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
-}
-if (localStorage.getItem("mute-announcer") === null) {
-  localStorage.setItem("mute-announcer", false);
-}
-if (localStorage.getItem("mute-music") === null) {
-  localStorage.setItem("mute-music", false);
-}
-if (localStorage.getItem("mute-sfx") === null) {
-  localStorage.setItem("mute-sfx", false);
 }
 
 win.muteAnnouncer = document.getElementById("mute-announcer");
@@ -488,7 +478,7 @@ function checkTime() {
       game.message = "3...";
       game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer3, (game.volume = 0.3));
+        playAudio(audio.announcer3, ((game.volume = 0.3), true));
       break;
     case -176:
       win.cvs.scrollIntoView({ block: "nearest" });
@@ -497,18 +487,19 @@ function checkTime() {
       game.message = "2...";
       game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer2, (game.volume = 0.3));
+        playAudio(audio.announcer2, (game.volume = 0.3), true);
       break;
     case -60:
       game.message = "1...";
       game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer1, (game.volume = 0.3));
+        playAudio(audio.announcer1, (game.volume = 0.3), true);
       break;
     case 0:
       game.message = "Go!";
       game.messageChangeDelay = 90;
-      if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo);
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcerGo, (game.volume = 0.3), true);
       break;
     case 60:
       if (game.message === "Go!") {
@@ -531,27 +522,27 @@ function checkTime() {
       game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer5, (game.volume = 0.3));
+        playAudio(audio.announcer5, (game.volume = 0.3), true);
       break;
     case 6960:
       game.message = "4 seconds before overtime...";
       game.messageChangeDelay = 90;
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer4, (game.volume = 0.3));
+        playAudio(audio.announcer4, (game.volume = 0.3), true);
       break;
     case 7020:
       game.message = "3 seconds before overtime...";
       game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer3, (game.volume = 0.3));
+        playAudio(audio.announcer3, (game.volume = 0.3), true);
       break;
     case 7080:
       game.message = "2 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer2, (game.volume = 0.3));
+        playAudio(audio.announcer2, (game.volume = 0.3), true);
       game.messageChangeDelay = 90;
       break;
     case 7140:
@@ -559,7 +550,7 @@ function checkTime() {
       game.defaultMessage = game.message;
       game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcer1, (game.volume = 0.3));
+        playAudio(audio.announcer1, (game.volume = 0.3), true);
       break;
     case 7200:
       game.message = "I hope you're ready...";
@@ -874,7 +865,10 @@ export function gameLoop() {
   performance.delta = performance.now - performance.then;
   let runtime;
   if (performance.delta > performance.fpsInterval) {
-    if (game.frames == 0) performance.gameStartTime = Date.now();
+    if (game.frames == 0) {
+      performance.gameStartTime = Date.now();
+      performance.sumOfPauseTimes = 0;
+    }
     if (!game.over) {
       runtime = Date.now() - performance.gameStartTime;
       if (!game.over) performance.realTime = runtime;
@@ -1061,7 +1055,7 @@ export function gameLoop() {
           win.fpsDisplay.style.color = "red";
         }
       }
-      if (game.frames % 6 == 0) {
+      if (game.frames % 5 == 0) {
         // fps counter
         performance.secondsPerLoop =
           Math.round(100 * (runtime / 1000 - performance.prev)) / 100;
