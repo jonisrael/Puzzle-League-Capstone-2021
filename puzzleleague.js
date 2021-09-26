@@ -49,7 +49,8 @@ import {
   performance,
   debug,
   randInt,
-  action
+  action,
+  leaderboard
 } from "./scripts/global.js";
 import { performanceNotifier } from "./scripts/functions/performanceNotifier";
 
@@ -581,7 +582,7 @@ function closeGame(gameFinished) {
   if (!gameFinished) game.Music.volume = 0;
   console.log("closeGame called");
   win.running = false;
-  if (gameFinished) {
+  if (gameFinished && game.score > leaderboard.minRankedScore) {
     playMusic(audio.resultsMusic, 0.2);
     game.Music.loop = false;
     submitResults();

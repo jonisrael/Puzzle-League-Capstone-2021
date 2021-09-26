@@ -1,8 +1,10 @@
 export default {
   header: "Leaderboard",
   view: "Leaderboard",
-  games: [],
-  markup: "Fetching Leaderboard Data from Heroku..."
+  rankedGames: [],
+  unrankedGames: [],
+  rankedMarkup: "Fetching Ranked Data from Heroku...",
+  unrankedMarkup: "Fetching Unranked Data from Heroku..."
 };
 
 // underneath view

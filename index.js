@@ -5,7 +5,14 @@ import Navigo from "navigo";
 import { capitalize } from "lodash";
 import axios from "axios";
 import dotenv from "dotenv";
-import { win, api, game, loadAllAudios, loadedAudios } from "./scripts/global";
+import {
+  win,
+  api,
+  game,
+  loadAllAudios,
+  loadedAudios,
+  leaderboard
+} from "./scripts/global";
 import { startGame } from "./scripts/functions/beginGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
@@ -140,6 +147,29 @@ router.hooks({
         : "Home";
 
     switch (page) {
+      case "Home":
+        axios
+          .get("https://puzzle-league-blitz.herokuapp.com/games")
+          .then(response => {
+            let sortedData = response.data.sort((a, b) =>
+              parseInt(a.score) < parseInt(b.score) ? 1 : -1
+            );
+            let rankedData = [];
+            let unrankedData = [];
+            sortedData.filter(entry => {
+              entry.ranked ? rankedData.push(entry) : unrankedData.push(entry);
+            });
+            for (let i = 0; i < 10; i++) {
+              leaderboard.topRankedList.push(rankedData[i]);
+            }
+            if (rankedData.length > 50) {
+              leaderboard.minRankedScore = rankedData[49];
+            }
+            if (unrankedData.length > 50) {
+              leaderboard.minRankedScore = rankedData[49];
+            }
+          });
+        break;
       case "Leaderboard":
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
@@ -150,75 +180,68 @@ router.hooks({
             let rankedData = [];
             let unrankedData = [];
             sortedData.filter(entry => {
-              entry.name.includes("*")
-                ? unrankedData.push(entry)
-                : rankedData.push(entry);
+              entry.ranked ? rankedData.push(entry) : unrankedData.push(entry);
             });
-            let leaderboardData = rankedData.concat(unrankedData);
-            state[page].games = leaderboardData;
-            console.log(sortedData);
-            console.log(leaderboardData);
+            state[page].rankedGames = rankedData;
+            state[page].unrankedGames = unrankedData;
+            let leaderboardData = [rankedData, unrankedData];
 
-            state[page].markup = "";
-            for (let entry of leaderboardData) {
-              let score = entry.score;
-              if (parseInt(score) > 99999) score = "99999";
-              while (score.length < 5) {
-                score = "0" + score;
-              }
+            state[page].rankedMarkup = "a";
+            state[page].unrankedMarkup = "b";
 
-              let name = entry.name;
-              while (name.length < 15) {
-                if (name.length % 2 == 0) {
-                  name += " ";
-                } else {
-                  name = " " + name;
+            for (let i = 0; i < 2; i++) {
+              let markup = "";
+              for (let rank = 0; rank < leaderboardData[i].length; rank++) {
+                let entry = leaderboardData[i][rank];
+                let score = entry.score;
+                if (parseInt(score) > 99999) score = "99999";
+                while (score.length < 5) {
+                  score = "0" + score;
                 }
+
+                let largestChain = `${entry.largestChain}`;
+                if (largestChain.length === 1)
+                  largestChain = `0${largestChain}`;
+
+                let totalClears = `${entry.totalClears}`;
+                if (totalClears.length === 1) totalClears = `00${totalClears}`;
+                if (totalClears.length === 2) totalClears = `0${totalClears}`;
+                if (totalClears.length > 3) totalClears = "999";
+
+                markup += `
+                <tr>
+                  <td>
+                    ${rank + 1}
+                  </td>
+                  <td>
+                    ${score}
+                  </td>
+                  <td>
+                    ${entry.name}
+                  </td>
+                  <td>
+                    ${entry.duration}
+                  </td>
+                  <td>
+                    ${largestChain}
+                  </td>
+                  <td>
+                    ${totalClears}
+                  </td>
+                  <td>
+                  ${entry.month}/${entry.day}/${entry.year.slice(2.4)}
+                  </td>
+                  <td>
+                  ${entry.hour}:${entry.minute} ${entry.meridian}
+                  </td>
+                </tr>
+                `;
               }
-
-              let largestChain = `${entry.largestChain}`;
-              if (largestChain.length === 1) largestChain = `0${largestChain}`;
-
-              let totalClears = `${entry.totalClears}`;
-              if (totalClears.length === 1) totalClears = `00${totalClears}`;
-              if (totalClears.length === 2) totalClears = `0${totalClears}`;
-              if (totalClears.length > 3) totalClears = "999";
-
-              state[page].markup += `
-              <tr>
-                <td>
-                  ${name}
-                </td>
-                <td>
-                  ${score}
-                </td>
-                <td>
-                  ${entry.duration}
-                </td>
-                <td>
-                  ${largestChain}
-                </td>
-                <td>
-                  ${totalClears}
-                </td>
-                <td>
-                ${entry.month}/${entry.day}/${entry.year.slice(2.4)}
-                </td>
-                <td>
-                ${entry.hour}:${entry.minute} ${entry.meridian}
-                </td>
-              </tr>
-              `;
-
-              // state[page].markup += `|  ${name}  |  ${score}  |    ${
-              //   entry.duration
-              // }    |      ${largestChain}      |       ${totalClears}        |  ${
-              //   entry.month
-              // }/${entry.day}/${entry.year.slice(2.4)} ${entry.hour}:${
-              //   // slice used to not overwrite old leaderboard data
-              //   entry.minute
-              // } ${entry.meridian}  |<br>`;
+              i == 0
+                ? (state[page].rankedMarkup = markup)
+                : (state[page].unrankedMarkup = markup);
             }
+
             done();
           })
           .catch(error => {

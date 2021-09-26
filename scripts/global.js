@@ -245,6 +245,14 @@ const debug = {
   frameAdvance: false
 };
 
+const leaderboard = {
+  rankedSize: 0,
+  unrankedSize: 0,
+  minRankedScore: 0,
+  topRankedList: [],
+  minUnrankedScore: 0
+};
+
 const loadedAudios = [];
 
 // Preload all audios, then play them at zero volume.
@@ -281,5 +289,6 @@ export {
   chainLogic,
   performance,
   loadedAudios,
-  debug
+  debug,
+  leaderboard
 };
