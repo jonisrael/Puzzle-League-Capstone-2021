@@ -136,7 +136,7 @@ export function submitResults() {
     console.log(requestData);
     sendData(requestData);
     game.Music.volume = 0;
-    render(state.Home);
+    render(state.Leaderboard);
   });
 
   document.querySelector("#restart-game").addEventListener("click", event => {
