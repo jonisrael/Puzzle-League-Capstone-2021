@@ -8,11 +8,17 @@ export default st => html`
       could have given the player an advantage, and so these names are placed at
       the bottom of the leaderboard. For more information, see "Known Bugs".
     </p>
-    <div id="leaderboard-container">
-      <h2 id="score-list-header">
-        <pre>|       ALIAS       |  SCORE  |  SURVIVED  |  BEST CHAIN  |  BLOCKS CLEARED  |          DATE         |<br /></pre>
-      </h2>
-      <h2 id="score-list-display"><pre>${st.markup}</pre></h2>
-    </div>
+    <table id="ranked-table">
+      <tr>
+        <th>ALIAS</th>
+        <th>SCORE</th>
+        <th>SURVIVED</th>
+        <th>BEST CHAIN</th>
+        <th>BLOCKS CLEARED</th>
+        <th>DATE</th>
+        <th>TIME</th>
+      </tr>
+      <span id="score-list-display">${st.markup}</span>
+    </table>
   </section>
 `;

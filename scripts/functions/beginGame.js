@@ -21,7 +21,6 @@ import { gameLoop, newBlock } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
 
 export function startGame(selectedGameSpeed) {
-  api.data = getWorldTimeAPI();
   win.running = true;
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";

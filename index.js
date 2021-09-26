@@ -53,14 +53,15 @@ function addEventListeners(st) {
   win.muteMusic = document.getElementById("mute-music");
   win.muteSFX = document.getElementById("mute-sfx");
   if (st.view === "Home") {
-    document.getElementById("start-button").addEventListener("click", () => {
-      document.getElementById("start-button").remove();
-      getWorldTimeAPI();
-      startGame(1);
+    document.getElementById("arcade-button").addEventListener("click", () => {
+      document.getElementById("arcade-button").remove();
+      api.data = getWorldTimeAPI();
+      game.mode = "arcade";
+      startGame(2);
     });
-    document.getElementById("double-button").addEventListener("click", () => {
-      document.getElementById("double-button").remove();
-      getWorldTimeAPI();
+    document.getElementById("training-button").addEventListener("click", () => {
+      document.getElementById("training-button").remove();
+      game.mode = "training";
       startGame(2);
     });
     document.addEventListener("click", () => {
@@ -183,14 +184,40 @@ router.hooks({
               if (totalClears.length === 2) totalClears = `0${totalClears}`;
               if (totalClears.length > 3) totalClears = "999";
 
-              state[page].markup += `|  ${name}  |  ${score}  |    ${
-                entry.duration
-              }    |      ${largestChain}      |       ${totalClears}        |  ${
-                entry.month
-              }/${entry.day}/${entry.year.slice(2.4)} ${entry.hour}:${
-                // slice used to not overwrite old leaderboard data
-                entry.minute
-              } ${entry.meridian}  |<br>`;
+              state[page].markup += `
+              <tr>
+                <td>
+                  ${name}
+                </td>
+                <td>
+                  ${score}
+                </td>
+                <td>
+                  ${entry.duration}
+                </td>
+                <td>
+                  ${largestChain}
+                </td>
+                <td>
+                  ${totalClears}
+                </td>
+                <td>
+                ${entry.month}/${entry.day}/${entry.year.slice(2.4)}
+                </td>
+                <td>
+                ${entry.hour}:${entry.minute} ${entry.meridian}
+                </td>
+              </tr>
+              `;
+
+              // state[page].markup += `|  ${name}  |  ${score}  |    ${
+              //   entry.duration
+              // }    |      ${largestChain}      |       ${totalClears}        |  ${
+              //   entry.month
+              // }/${entry.day}/${entry.year.slice(2.4)} ${entry.hour}:${
+              //   // slice used to not overwrite old leaderboard data
+              //   entry.minute
+              // } ${entry.meridian}  |<br>`;
             }
             done();
           })

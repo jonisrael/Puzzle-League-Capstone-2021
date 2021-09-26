@@ -609,40 +609,22 @@ window.addEventListener(
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
   // When on home page, before game start
-  if (win.view == "Home" && !!document.getElementById("start-button")) {
-    if (
-      event.keyCode == 54 ||
-      event.keyCode == 65 ||
-      event.keyCode == 66 ||
-      event.keyCode == 81
-    ) {
-      // 6, b, a, or q
-      playAudio(audio.select, 0.2);
-      document.getElementById("start-button").remove();
-      document.getElementById("double-button").remove();
-      getWorldTimeAPI();
-      startGame(1);
-    } else if (
-      event.keyCode == 32 ||
-      event.keyCode == 13 ||
-      event.keyCode == 67 ||
-      event.keyCode == 82 ||
-      event.keyCode == 51
-    ) {
-      // space, enter, c, r, or 3 to launch game at 30fps.
-      playAudio(audio.select, 0.2);
-      document.getElementById("start-button").remove();
-      document.getElementById("double-button").remove();
+  if (document.getElementById("arcade-button")) {
+    if (event.keyCode == 32 || event.keyCode == 13) {
+      // space or enter
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-button").remove();
       getWorldTimeAPI();
       startGame(2);
     }
   }
-  // If on form page, quick restart
-  if (win.view == "Home" && !!document.getElementById("form")) {
-    // esc
-    if (event.keyCode == 27) {
-      game.Music.volume = 0;
-      render(state.Home);
+  if (document.getElementById("training-button")) {
+    if (event.keyCode == 83 || event.keyCode == 84) {
+      // s or t
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-button").remove();
+      getWorldTimeAPI();
+      startGame(2);
     }
   }
   if (win.running && !!document.getElementById("canvas")) {

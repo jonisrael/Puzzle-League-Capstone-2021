@@ -43,7 +43,7 @@ section {
     padding: 5px;
     margin-top: 30px;
     margin-bottom: 30px;
-    width: 75%;
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -60,12 +60,6 @@ section {
 
 #game-container, #options-menu {
     display: flex;
-}
-
-#leaderboard-container {
-    /* text-align: center; */
-    font-family: "Courier New";
-    font-size: .7vw;
 }
 
 #fps-display {
@@ -118,6 +112,10 @@ header {
     text-align: center;
 }
 
+#home-page p {
+    text-align: left;
+}
+
 #scoring-page {
     text-align: center;
 }
@@ -130,6 +128,24 @@ header {
     font-size: x-large;
     color: blueviolet;
 }
+
+table {
+    display: flex;
+    border-collapse: collapse;
+    justify-content: center;
+  }
+
+  td, th {
+    border: 1px solid black;
+    font-family: arial, sans-serif;
+    font-size: large;
+    text-align: center;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
 
 iframe {
     display: flex;
@@ -145,6 +161,7 @@ canvas {
     display: flex;
     justify-content: center;
     border: 10px solid burlywood;
+    /* width: 75% */
 }
 
 #high-score-display {

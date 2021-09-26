@@ -156,6 +156,7 @@ const win = {
 
 const game = {
   // use let instead of const to revert to resetGameVar
+  mode: "arcade",
   cursor: null,
   rise: 0,
   board: [],
