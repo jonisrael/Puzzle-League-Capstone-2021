@@ -1,5 +1,5 @@
 import { startGame } from "./beginGame";
-import { game, api, performance } from "../global";
+import { game, api, performance, leaderboard } from "../global";
 import { render, sendData } from "../../index";
 import * as state from "../../store";
 import { performanceNotifier } from "./performanceNotifier";

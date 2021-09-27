@@ -136,7 +136,7 @@ table {
   }
 
   td, th {
-    border: 1px solid black;
+    border: 2px solid black;
     font-family: arial, sans-serif;
     font-size: large;
     text-align: center;
@@ -144,7 +144,10 @@ table {
   }
 
   tr:nth-child(even) {
-    background-color: #dddddd;
+    background-color: #ADD8E6;
+  }
+  tr:nth-child(odd) {
+    background-color: whitesmoke;
   }
 
 iframe {
