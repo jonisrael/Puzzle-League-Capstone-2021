@@ -1,8 +1,34 @@
-import { blockColor, blockType, grid, game, win, debug } from "../global";
+import {
+  blockColor,
+  blockType,
+  grid,
+  announcer,
+  game,
+  win,
+  debug,
+  leaderboard
+} from "../global";
 
 import { audio } from "../fileImports";
+import { checkCanUserPost } from "./checkCanUserPost";
+import { submitResults } from "./submitResults";
 
-import { playAudio } from "./audioFunctions";
+import { playAudio, playMusic } from "./audioFunctions";
+
+export function closeGame(gameFinished) {
+  win.running = false;
+  console.log("game finished:", gameFinished);
+  if (!gameFinished) game.Music.volume = 0;
+  console.log("closeGame called");
+  win.running = false;
+  if (gameFinished) {
+    if (leaderboard.data.length > 0) checkCanUserPost();
+    else location.reload();
+  }
+  win.cvs = null;
+  win.ctx = null;
+  win.makeCanvas.remove();
+}
 
 export function isGameOver(scoreOfThisGame) {
   for (let c = 0; c < grid.COLS; c++) {

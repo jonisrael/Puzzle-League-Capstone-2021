@@ -17,9 +17,7 @@ export function submitResults() {
 
   let messageAboutPosting = document.createElement("div");
   container.appendChild(messageAboutPosting);
-  messageAboutPosting.style.display = performance.canPostToLeaderboard
-    ? "none"
-    : "static";
+  messageAboutPosting.style.display = leaderboard.canPost ? "none" : "static";
   messageAboutPosting.innerHTML = `<p>Unfortunately this score cannot be posted to the ranked leaderboards. This is because either debug mode was activated <strong>or</strong> the in-game clock was over five seconds behind a real clock. The real time of the game was <strong>${
     performance.realTime
   } seconds</strong> while the in-game timer was <strong>${
@@ -48,7 +46,7 @@ export function submitResults() {
   scoreMessage.className = "postgame-info";
   scoreMessage.style.color = "red";
   scoreMessage.innerHTML = `Final Score: ${game.score}`;
-  scoreMessage.style.color = performance.canPostToLeaderboard ? "blue" : "red";
+  scoreMessage.style.color = leaderboard.canPost ? "blue" : "red";
   div1.appendChild(scoreMessage);
 
   let durationMessage = document.createElement("h2");
@@ -94,9 +92,9 @@ export function submitResults() {
   submitForm.setAttribute("name", "submit-name");
   submitForm.setAttribute(
     "value",
-    `Submit Name${performance.canPostToLeaderboard ? " " : " (Unranked)"}`
+    `Submit Name${leaderboard.canPost ? " " : " (Unranked)"}`
   );
-  submitForm.style.color = performance.canPostToLeaderboard ? "black" : "red";
+  submitForm.style.color = leaderboard.canPost ? "black" : "red";
   submitForm.className = "default-button";
   div2.appendChild(submitForm);
 
@@ -111,7 +109,7 @@ export function submitResults() {
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
     if (nameInput.value === "") nameInput.value = "Anonymous";
-    if (!performance.canPostToLeaderboard) {
+    if (!leaderboard.canPost) {
       if (nameInput.value.length == 15) {
         nameInput.value = nameInput.value.slice(0, 14);
       }
@@ -130,7 +128,7 @@ export function submitResults() {
       hour: api.data.hour,
       minute: api.data.minute,
       meridian: api.data.meridian,
-      ranked: performance.canPostToLeaderboard
+      ranked: leaderboard.canPost
     };
 
     console.log(requestData);

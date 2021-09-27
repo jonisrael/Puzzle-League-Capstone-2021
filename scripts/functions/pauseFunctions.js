@@ -24,7 +24,6 @@ export function unpause() {
   let pauseTime = Date.now() - performance.pauseStartTime;
   pauseTime = Math.floor(pauseTime / 100) / 10;
   performance.sumOfPauseTimes += pauseTime;
-  // realTimer = Math.floor(realTimer / 100) / 10
   win.mainInfoDisplay.innerHTML = game.message;
   win.cvs.style.display = "flex";
   game.Music.play();

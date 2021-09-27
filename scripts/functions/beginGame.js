@@ -10,17 +10,20 @@ import {
   blockColor,
   blockType,
   api,
+  leaderboard,
   loadedAudios,
   loadAllAudios
 } from "../global";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
-import { audio } from "../fileImports";
+import { audio, audioList } from "../fileImports";
 import { getWorldTimeAPI, render } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
 
 export function startGame(selectedGameSpeed) {
+  document.getElementById("arcade-button").remove();
+  document.getElementById("training-button").remove();
   win.running = true;
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";
@@ -29,7 +32,7 @@ export function startGame(selectedGameSpeed) {
   playMusic(audio.popcornMusic);
   if (loadedAudios.length == 0) loadAllAudios();
   // Set up game loop
-  performance.canPostToLeaderboard = true;
+  leaderboard.canPost = true;
   performance.gameSpeed = selectedGameSpeed;
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();
@@ -172,8 +175,7 @@ export function resetGameVariables() {
   game.blockClearTime = preset.clearValues;
   game.blockStallTime = preset.stallValues;
   game.raiseDelay = 0;
-  loadedAudios.length == 0 ? (game.frames = -200) : (game.frames = -180);
-  game.frames = -200;
+  game.frames = loadedAudios.length == audioList.length ? -186 : -210;
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;

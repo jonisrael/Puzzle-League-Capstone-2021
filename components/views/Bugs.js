@@ -2,31 +2,29 @@ import html from "html-literal";
 
 export default st => html`
   <section id="bugs-page">
-    <h1>Known bugs and glitches (Page made September 21,2021)</h1>
+    <h1>
+      Known bugs and glitches since graduation (Page made after Savvy Coder
+      Graduation, September 15, 2021)
+    </h1>
     <h2>Major Bugs</h2>
     <ul>
       <li>
-        Game speed is not consistent at 60 frames per second. Javascript is not
-        an efficient language and browsers do not seem to like spending a lot of
-        resources on running this game.
-        <mark
-          ><strong
-            >If enough performance slowdown is detected, a player will have an
-            unfair advantage since all game-speed elements will run
-            slower.</strong
-          ></mark
+        Game speed is not consistent at 60 frames per second and was converted
+        to 30 frames per second for performance. Javascript is not an efficient
+        language and browsers do not seem to like spending a lot of resources on
+        running this game.<strong
+          >If enough performance slowdown is detected, a player will have an
+          unfair advantage since all game-speed elements will run
+          slower.</strong
         >
-        Therefore, a background performance checker will be running.
-        <strong
-          >Along with the in-game timer, a real timer is kept track of
-          internally within the game (viewable in debug mode). If there is a 5
-          second difference, submitting a score to the leaderboard will be
-          unranked.
-        </strong>
-        I have implemented a couple of measures for the game to try and fix
-        performance when the game runs too slow, but unfortunately this seems
-        like a fundamental problem with javascript, and I do not see how I can
-        fix this in the forseeable future. If you have any ideas for improving
+        Therefore, a background performance checker will be running. Along with
+        the in-game timer, a real timer is kept track of internally within the
+        game (viewable in debug mode). If there is a 5 second difference,
+        submitting a score to the leaderboard will be unranked. I have
+        implemented a couple of measures for the game to try and fix performance
+        when the game runs too slow, but unfortunately this seems like a
+        fundamental problem with javascript, and I do not see how I can fix this
+        in the forseeable future. If you have any ideas for improving
         performance or you see either a new bug, please shoot me an email at
         <a href="mailto:jonisrael45@gmail.com">jonisrael45@gmail.com</a>. You
         can also pull the code yourself from

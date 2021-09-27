@@ -44,7 +44,16 @@ function addEventListeners(st) {
       // Failsafe: If already on home page, do not reload it upon clicking it.
       win.running = false;
       game.Music.volume = 0;
-      render(state[event.target.title]);
+      // If on homepage and game playing, revert to homepage. If game not playing, start game.t
+      if (st.view == "Home" && state[event.target.title].view == "Home") {
+        if (document.getElementById("canvas"))
+          render(state[event.target.title]);
+        else {
+          api.data = getWorldTimeAPI();
+          game.mode = "arcade";
+          startGame(2);
+        }
+      }
     })
   );
 
@@ -61,13 +70,11 @@ function addEventListeners(st) {
   win.muteSFX = document.getElementById("mute-sfx");
   if (st.view === "Home") {
     document.getElementById("arcade-button").addEventListener("click", () => {
-      document.getElementById("arcade-button").remove();
       api.data = getWorldTimeAPI();
       game.mode = "arcade";
       startGame(2);
     });
     document.getElementById("training-button").addEventListener("click", () => {
-      document.getElementById("training-button").remove();
       game.mode = "training";
       startGame(2);
     });
@@ -127,12 +134,22 @@ export function getWorldTimeAPI() {
 }
 
 export function sendData(requestData) {
+  console.log("Deleting data...");
+  axios
+    .delete(`${process.env.API}/games/${leaderboard.minRankedId}`) // process.env.API accesses API
+    .then(response => {
+      console.log(
+        `Deleted: ${leaderboard.minRankedId}, ${leaderboard.minRankedName}, ${leaderboard.minRankedScore}`
+      );
+    })
+    .catch(error => {
+      console.log("Failed to Delete", error);
+    });
   console.log("Posting data...");
   axios
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then(response => {
       console.log("Posted!");
-      state.Home.games.push(response.data);
     })
     .catch(error => {
       console.log("Failed to Post", error);
@@ -147,6 +164,33 @@ router.hooks({
         : "Home";
 
     switch (page) {
+      case "Home":
+        axios
+          .get("https://puzzle-league-blitz.herokuapp.com/games")
+          .then(response => {
+            let sortedData = response.data.sort((a, b) =>
+              parseInt(a.score) < parseInt(b.score) ? 1 : -1
+            );
+            sortedData.filter(entry => {
+              if (entry.ranked) leaderboard.data.push(entry);
+            });
+            leaderboard.minRankedName =
+              leaderboard.data[leaderboard.data.length - 1].name;
+            leaderboard.minRankedScore =
+              leaderboard.data[leaderboard.data.length - 1].score;
+            leaderboard.minRankedId =
+              leaderboard.data[leaderboard.data.length - 1]._id;
+            console.log(
+              leaderboard.minRankedScore,
+              leaderboard.minRankedName,
+              leaderboard.minRankedId
+            );
+            done();
+          })
+          .catch(error => {
+            console.log("Failed to fetch Leaderboard Data:", error);
+          });
+        break;
       case "Leaderboard":
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
@@ -155,19 +199,13 @@ router.hooks({
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
             let rankedData = [];
-            let unrankedData = [];
             sortedData.filter(entry => {
-              entry.ranked ? rankedData.push(entry) : unrankedData.push(entry);
+              if (entry.ranked) rankedData.push(entry);
             });
-
             state[page].markup = "";
             for (let rank = 0; rank < rankedData.length; rank++) {
               let entry = rankedData[rank];
-              let score = entry.score >= 0 ? entry.score : "00000";
-              if (parseInt(score) > 99999) score = "99999";
-              while (score.length < 5) {
-                score = "0" + score;
-              }
+              if (entry.score >= 999999) entry.score = "999999";
 
               let largestChain = `${entry.largestChain}`;
               if (largestChain.length === 1) largestChain = `0${largestChain}`;
@@ -183,7 +221,7 @@ router.hooks({
                     ${rank + 1}
                   </td>
                   <td>
-                    ${score}
+                    ${entry.score}
                   </td>
                   <td>
                     ${entry.name}
@@ -210,7 +248,7 @@ router.hooks({
             done();
           })
           .catch(error => {
-            console.log("Failed to fetch Leaderboard:", error);
+            console.log("Failed to fetch Leaderboard Data:", error);
           });
         break;
       default:

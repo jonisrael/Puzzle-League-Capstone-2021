@@ -116,7 +116,7 @@ const grid = {
 
 const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [60, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  speedValues: [60, 48, 34, 20, 12, 8, 6, 4, 3, 2, 1],
   clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16],
   stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12]
 };
@@ -151,7 +151,8 @@ const win = {
   leaderboardInfo: "Fetching Leaderboards...",
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
-  muteSFX: document.getElementById("mute-sfx")
+  muteSFX: document.getElementById("mute-sfx"),
+  audioLoaded: false
 };
 
 const game = {
@@ -246,11 +247,12 @@ const debug = {
 };
 
 const leaderboard = {
-  rankedSize: 0,
-  unrankedSize: 0,
+  data: [],
+  minRankedName: "N/A",
   minRankedScore: 0,
-  topRankedList: [],
-  minUnrankedScore: 0
+  minRankedId: "",
+  canPost: true,
+  reason: ""
 };
 
 const loadedAudios = [];

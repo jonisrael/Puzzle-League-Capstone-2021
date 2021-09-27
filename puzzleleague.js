@@ -8,7 +8,7 @@
 
 import { render, getWorldTimeAPI } from "./index";
 import * as state from "./store";
-import { sprite, audio } from "./scripts/fileImports";
+import { sprite, audio, audioList } from "./scripts/fileImports";
 import {
   legalMatch,
   checkMatch
@@ -30,6 +30,7 @@ import {
   playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
+  closeGame,
   isGameOver,
   gameOverBoard
 } from "./scripts/functions/gameOverFunctions";
@@ -50,9 +51,9 @@ import {
   debug,
   randInt,
   action,
-  leaderboard
+  leaderboard,
+  loadedAudios
 } from "./scripts/global.js";
-import { performanceNotifier } from "./scripts/functions/performanceNotifier";
 
 // console.log(highScoreDisplay);
 if (localStorage.getItem("highScore") === null) {
@@ -474,7 +475,7 @@ function raiseStack() {
 function checkTime() {
   win.muteMusic.checked ? (game.Music.volume = 0) : (game.Music.volume = 0.1);
   switch (game.frames) {
-    case -178:
+    case -180:
       debug.show = false;
       game.message = "3...";
       game.messageChangeDelay = 90;
@@ -496,7 +497,7 @@ function checkTime() {
     case 0:
       game.message = "Go!";
       game.messageChangeDelay = 90;
-      if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.2, true);
+      if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.1, true);
       break;
     case 60:
       if (game.message === "Go!") {
@@ -576,22 +577,6 @@ function playerAction(input) {
   // });
 }
 
-function closeGame(gameFinished) {
-  win.running = false;
-  console.log("game finished:", gameFinished);
-  if (!gameFinished) game.Music.volume = 0;
-  console.log("closeGame called");
-  win.running = false;
-  if (gameFinished && game.score > leaderboard.minRankedScore) {
-    playMusic(audio.resultsMusic, 0.2);
-    game.Music.loop = false;
-    submitResults();
-  }
-  win.cvs = null;
-  win.ctx = null;
-  win.makeCanvas.remove();
-}
-
 // prevent browser scroll from arrow keys
 window.addEventListener(
   "keydown",
@@ -622,10 +607,10 @@ function KEYBOARD_CONTROL(event) {
   if (document.getElementById("training-button")) {
     if (event.keyCode == 83 || event.keyCode == 84) {
       // s or t
-      document.getElementById("arcade-button").remove();
-      document.getElementById("training-button").remove();
-      getWorldTimeAPI();
-      startGame(2);
+      // document.getElementById("arcade-button").remove();
+      // document.getElementById("training-button").remove();
+      // getWorldTimeAPI();
+      // startGame(2);
     }
   }
   if (win.running && !!document.getElementById("canvas")) {
@@ -688,7 +673,8 @@ function KEYBOARD_CONTROL(event) {
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
         debug.show = 1;
-        performance.canPostToLeaderboard = false;
+        leaderboard.canPost = false;
+        leaderboard.reason = "debug";
         performance.unrankedReason = "debug mode was activated.";
         win.fpsDisplay.style.color = "red";
         // game.boardRiseSpeed = preset.speedValues[0];
@@ -825,7 +811,17 @@ function KEYBOARD_CONTROL(event) {
   }
 }
 
+export function displayError(error) {
+  let displayedError = document.createElement("p");
+  displayedError.style.color = "red";
+  displayedError.innerHTML = error;
+  document.append(displayedError);
+}
+
 export function gameLoop() {
+  if (!win.audioLoaded) {
+    if (audioList.length == loadedAudios.length) win.audioLoaded = true;
+  }
   if (!win.running || win.view != "Home") {
     closeGame(game.over);
     if (win.restartGame) {
@@ -859,17 +855,17 @@ export function gameLoop() {
         );
     }
 
-    if (!game.paused) {
+    if (!game.paused && win.audioLoaded) {
       game.frames += 1 * performance.gameSpeed;
 
       if (game.over && game.frames > 180 && api.data !== undefined) {
-        playAnnouncer(
-          announcer.endgameDialogue,
-          announcer.endgameIndexLastPicked,
-          "endgame"
-        );
+        // playAnnouncer(
+        //   announcer.endgameDialogue,
+        //   announcer.endgameIndexLastPicked,
+        //   "endgame"
+        // );
         win.running = false;
-        return;
+        // return;
       }
 
       checkTime();
@@ -898,14 +894,17 @@ export function gameLoop() {
             // }
           } else if (game.frames > 0 && game.grounded) {
             game.rise = (game.rise + 2) % 32;
-            if (
-              performance.gameSpeed == 2 &&
-              game.rise != 0 &&
-              (game.quickRaise || game.level == preset.speedValues.length - 1)
-            ) {
-              // For gameSpeed2, if gameRise = 0, do not surpass stack.
-              game.rise = (game.rise + 2) % 32;
+            if (performance.gameSpeed == 2 && game.rise != 0) {
+              if (
+                game.quickRaise ||
+                game.level == preset.speedValues.length - 1
+              )
+                game.rise = (game.rise + 2) % 32;
             }
+            // } else if (game.boardRiseSpeed == 3) {
+            //   if (game.frames%4 == 0)
+            // }
+            // For gameSpeed2, if gameRise = 0, do not surpass stack.
           }
         }
         if (game.rise >= 28) game.readyForNewRow = true;
@@ -1023,7 +1022,8 @@ export function gameLoop() {
           performance.realTime - performance.sumOfPauseTimes - game.frames / 60
         );
         if (performance.diffFromRealTime >= 5) {
-          performance.canPostToLeaderboard = false;
+          leaderboard.canPost = false;
+          leaderboard.reason = "slow";
           performance.unrankedReason = `game running too slowly, behind real clock by
           ${performance.diffFromRealTime.toFixed(1)} seconds`;
           win.fpsDisplay.style.color = "red";
@@ -1073,11 +1073,22 @@ export function gameLoop() {
         multiplierString = `${game.scoreMultiplier}x`;
       }
       if (debug.enabled == 1) {
-        win.statDisplay.innerHTML = `Speed/Clear/Stall ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+        win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+      } else {
+        win.statDisplay.innerHTML = ``;
+        win.timeDisplay.innerHTML = timeString;
       }
-      win.statDisplay.innerHTML = ``;
+      if (debug.show) {
+        win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
+          game.seconds} seconds<br />Real Time: ${
+          performance.realTime
+        } seconds`;
+      } else {
+        win.timeDisplay.innerHTML = timeString;
+      }
+
       win.levelDisplay.innerHTML = `${game.level}`;
-      win.timeDisplay.innerHTML = timeString;
+
       if (game.frames > 60) {
         if (game.frames % 1200 >= 1020) {
           win.timeDisplay.style.color = "red";
@@ -1104,10 +1115,12 @@ export function gameLoop() {
       }
       win.scoreDisplay.innerHTML = scoreString;
       win.fpsDisplay.innerHTML = `${performance.fps} fps${
-        performance.canPostToLeaderboard
-          ? ""
-          : ` unranked -- ${performance.unrankedReason}`
+        leaderboard.canPost ? "" : ` unranked -- ${performance.unrankedReason}`
       }`;
+      if (game.over) {
+        win.fpsDisplay.innerHTML = `Real Game Clock Time: ${performance.realTime -
+          performance.sumOfPauseTimes} seconds`;
+      }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.messageChangeDelay > 0) {
         game.messageChangeDelay -= 1 * performance.gameSpeed;
