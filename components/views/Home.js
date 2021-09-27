@@ -60,8 +60,7 @@ export default st => html`
         computers and can lead to an <strong>unintended advantage</strong>. If
         the app detects that the in-game timer is five or more seconds behind a
         real timer,
-        <strong>your score will not be ranked.</strong>
-        You can still post to the unranked leaderboards.
+        <strong>your score cannot be ranked.</strong>
       </p>
       <div id="game-container">
         <div id="left-column">

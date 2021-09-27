@@ -147,29 +147,6 @@ router.hooks({
         : "Home";
 
     switch (page) {
-      case "Home":
-        axios
-          .get("https://puzzle-league-blitz.herokuapp.com/games")
-          .then(response => {
-            let sortedData = response.data.sort((a, b) =>
-              parseInt(a.score) < parseInt(b.score) ? 1 : -1
-            );
-            let rankedData = [];
-            let unrankedData = [];
-            sortedData.filter(entry => {
-              entry.ranked ? rankedData.push(entry) : unrankedData.push(entry);
-            });
-            for (let i = 0; i < 10; i++) {
-              leaderboard.topRankedList.push(rankedData[i]);
-            }
-            if (rankedData.length > 50) {
-              leaderboard.minRankedScore = rankedData[49];
-            }
-            if (unrankedData.length > 50) {
-              leaderboard.minRankedScore = rankedData[49];
-            }
-          });
-        break;
       case "Leaderboard":
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
@@ -182,33 +159,25 @@ router.hooks({
             sortedData.filter(entry => {
               entry.ranked ? rankedData.push(entry) : unrankedData.push(entry);
             });
-            state[page].rankedGames = rankedData;
-            state[page].unrankedGames = unrankedData;
-            let leaderboardData = [rankedData, unrankedData];
 
-            state[page].rankedMarkup = "a";
-            state[page].unrankedMarkup = "b";
+            state[page].markup = "";
+            for (let rank = 0; rank < rankedData.length; rank++) {
+              let entry = rankedData[rank];
+              let score = entry.score >= 0 ? entry.score : "00000";
+              if (parseInt(score) > 99999) score = "99999";
+              while (score.length < 5) {
+                score = "0" + score;
+              }
 
-            for (let i = 0; i < 2; i++) {
-              let markup = "";
-              for (let rank = 0; rank < leaderboardData[i].length; rank++) {
-                let entry = leaderboardData[i][rank];
-                let score = entry.score;
-                if (parseInt(score) > 99999) score = "99999";
-                while (score.length < 5) {
-                  score = "0" + score;
-                }
+              let largestChain = `${entry.largestChain}`;
+              if (largestChain.length === 1) largestChain = `0${largestChain}`;
 
-                let largestChain = `${entry.largestChain}`;
-                if (largestChain.length === 1)
-                  largestChain = `0${largestChain}`;
+              let totalClears = `${entry.totalClears}`;
+              if (totalClears.length === 1) totalClears = `00${totalClears}`;
+              if (totalClears.length === 2) totalClears = `0${totalClears}`;
+              if (totalClears.length > 3) totalClears = "999";
 
-                let totalClears = `${entry.totalClears}`;
-                if (totalClears.length === 1) totalClears = `00${totalClears}`;
-                if (totalClears.length === 2) totalClears = `0${totalClears}`;
-                if (totalClears.length > 3) totalClears = "999";
-
-                markup += `
+              state[page].markup += `
                 <tr>
                   <td>
                     ${rank + 1}
@@ -236,10 +205,6 @@ router.hooks({
                   </td>
                 </tr>
                 `;
-              }
-              i == 0
-                ? (state[page].rankedMarkup = markup)
-                : (state[page].unrankedMarkup = markup);
             }
 
             done();

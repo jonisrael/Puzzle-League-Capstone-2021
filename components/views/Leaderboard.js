@@ -20,24 +20,7 @@ export default st => html`
         <th>DATE</th>
         <th>TIME</th>
       </tr>
-      <span id="ranked-scores-display">${st.rankedMarkup}</span>
-    </table>
-
-    <br />
-    <hr />
-    <h2 style="color:red">Unranked</h2>
-    <table id="ranked-table">
-      <tr style="color:red">
-        <th>RANK</th>
-        <th>SCORE</th>
-        <th>NAME</th>
-        <th>SURVIVED</th>
-        <th>BEST CHAIN</th>
-        <th>BLOCKS CLEARED</th>
-        <th>DATE</th>
-        <th>TIME</th>
-      </tr>
-      <span id="ranked-scores-display">${st.unrankedMarkup}</span>
+      <span id="ranked-scores-display">${st.markup}</span>
     </table>
   </section>
 `;
