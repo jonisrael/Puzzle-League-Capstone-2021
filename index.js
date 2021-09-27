@@ -192,6 +192,7 @@ router.hooks({
           });
         break;
       case "Leaderboard":
+        console.log("fetching leaderboard data");
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
           .then(response => {

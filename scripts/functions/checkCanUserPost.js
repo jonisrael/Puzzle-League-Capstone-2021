@@ -40,7 +40,7 @@ export function checkCanUserPost() {
   } else if (game.score == 0) {
     container.innerHTML += `This is because you did not score any points!`;
   } else if (game.score <= leaderboard.minRankedScore) {
-    container.innerHTML += `This is because your score is below the 50th leaderboard spot. Your score is ${game.score}, while ${leaderboard.minRankedName}'s score on the leaderboard spot's is ${leaderboard.minRankedScore}. Keep practicing and try again!</p>`;
+    container.innerHTML += `This is because your score is below the 50th leaderboard spot. Your score is ${game.score}, while "${leaderboard.minRankedName}'s" score on the leaderboard spot's is ${leaderboard.minRankedScore}. Keep practicing and try again!</p>`;
   } else {
     container.innerHTML = "";
     playAnnouncer(

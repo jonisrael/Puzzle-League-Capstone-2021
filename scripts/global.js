@@ -252,6 +252,7 @@ const leaderboard = {
   minRankedScore: 0,
   minRankedId: "",
   canPost: true,
+  userPostedScore: "",
   reason: ""
 };
 

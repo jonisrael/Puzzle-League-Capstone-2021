@@ -135,10 +135,7 @@ export function submitResults() {
     sendData(requestData);
     game.Music.volume = 0;
     render(state.Leaderboard);
-  });
-
-  document.querySelector("#restart-game").addEventListener("click", event => {
-    startGame(performance.gameSpeed);
+    return;
   });
 }
 
