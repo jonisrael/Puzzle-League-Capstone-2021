@@ -5,10 +5,7 @@ import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
 import * as state from "../../store";
 import { checkCanUserPost } from "./checkCanUserPost";
-import {
-  updateBestScores,
-  getBestScores,
-} from "./updateBestScores";
+import { updateBestScores, getBestScores } from "./updateBestScores";
 
 export function afterGame() {
   let duration = "";
@@ -153,8 +150,7 @@ export function submitResults() {
       year: api.data.year,
       hour: api.data.hour,
       minute: api.data.minute,
-      meridian: api.data.meridian,
-      ranked: leaderboard.canPost
+      meridian: api.data.meridian
     };
 
     console.log(requestData);

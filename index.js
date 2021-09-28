@@ -175,7 +175,7 @@ router.hooks({
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
             sortedData.filter(entry => {
-              if (entry.ranked) leaderboard.data.push(entry);
+              leaderboard.data.push(entry);
             });
             leaderboard.minRankedName =
               leaderboard.data[leaderboard.data.length - 1].name;
@@ -198,7 +198,7 @@ router.hooks({
             );
             let rankedData = [];
             sortedData.filter(entry => {
-              if (entry.ranked) rankedData.push(entry);
+              rankedData.push(entry);
             });
             state[page].markup = "";
             for (let rank = 0; rank < rankedData.length; rank++) {

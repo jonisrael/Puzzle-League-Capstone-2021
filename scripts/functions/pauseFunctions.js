@@ -5,6 +5,7 @@ import { playAudio } from "./audioFunctions";
 export function pause(lostFocus = false) {
   document.getElementById("fps-display").style.display = "none";
   game.paused = true;
+  console.log(game);
   performance.pauseStartTime = Date.now();
   playAudio(audio.pause, 0.1);
   lostFocus

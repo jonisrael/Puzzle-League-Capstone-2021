@@ -12,8 +12,7 @@ const gameSchema = new mongoose.Schema({
   year: String,
   hour: String,
   minute: String,
-  meridian: String,
-  ranked: Boolean
+  meridian: String
 });
 
 const Game = mongoose.model("Game", gameSchema);

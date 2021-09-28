@@ -677,6 +677,7 @@ function KEYBOARD_CONTROL(event) {
         console.log("O -- Enable/Disable Chainable Block Visuals (Default ON)");
         console.log("K -- Kill Game");
         console.log("Shift -- Empty Game Board");
+        console.log(game);
 
         console.log("-");
         console.log("Chainable Block Info Guide:");
@@ -810,16 +811,6 @@ export function gameLoop() {
       game.frames >= 0
         ? (performance.realTime = Math.round(performance.realTime / 100) / 10)
         : (performance.realTime = 0);
-      if (game.frames % 60 == 0 && !game.paused) {
-        console.log(game);
-        console.log(
-          `gameTime = ${game.frames / 60}, realTime = ${
-            performance.realTime
-          }, pauseTime = ${performance.sumOfPauseTimes}, timeDifference = ${
-            performance.diffFromRealTime
-          }`
-        );
-      }
     }
 
     if (!game.paused && win.audioLoaded) {
@@ -891,7 +882,7 @@ export function gameLoop() {
         game.frames % 1200 == 0 &&
         game.level < preset.speedValues.length &&
         game.level > 0 &&
-        debug.enabled === 0 &&
+        !debug.enabled &&
         !game.over
       ) {
         // Speed the stack up every 20 seconds
@@ -904,6 +895,13 @@ export function gameLoop() {
             announcer.timeTransitionDialogue,
             announcer.timeTransitionIndexLastPicked,
             "timeTransition"
+          );
+          console.log(
+            `gameTime = ${game.frames / 60}, realTime = ${
+              performance.realTime
+            }, pauseTime = ${performance.sumOfPauseTimes}, timeDifference = ${
+              performance.diffFromRealTime
+            }`
           );
         }
 
@@ -986,11 +984,12 @@ export function gameLoop() {
           performance.unrankedReason = `leaderboard posting disabled, behind real clock by
           ${performance.diffFromRealTime.toFixed(1)} seconds`;
           win.fpsDisplay.style.color = "red";
-        } else if (performance.diffFromRealTime >= 3) {
-          performance.unrankedReason = `warning, game is running slowly, behind real clock by
-          ${performance.diffFromRealTime.toFixed(1)} seconds`;
-          win.fpsDisplay.style.color = "blue";
         }
+        //  else if (performance.diffFromRealTime >= 3) {
+        //   performance.unrankedReason = `warning, game is running slowly, behind real clock by
+        //   ${performance.diffFromRealTime.toFixed(1)} seconds`;
+        //   win.fpsDisplay.style.color = "blue";
+        // }
       }
       if (game.frames % 5 == 0) {
         // fps counter
