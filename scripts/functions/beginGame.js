@@ -200,9 +200,9 @@ export function resetGameVariables() {
   game.mute = 0;
   game.volume = 1;
   game.level = 1;
-  game.boardRiseSpeed = preset.speedValues;
-  game.blockClearTime = preset.clearValues;
-  game.blockStallTime = preset.stallValues;
+  game.boardRiseSpeed = preset.speedValues[game.level];
+  game.blockClearTime = preset.clearValues[game.level];
+  game.blockStallTime = preset.stallValues[game.level];
   game.raiseDelay = 0;
   game.frames = loadedAudios.length == audioList.length ? -186 : -210;
   game.seconds = 0;
