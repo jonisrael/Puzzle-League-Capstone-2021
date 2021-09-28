@@ -116,14 +116,11 @@ const grid = {
 
 const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [60, 48, 34, 20, 12, 8, 6, 4, 3, 2, 1],
-  clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16],
-  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12]
+  speedValues: [60, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16, 12],
+  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 10]
 };
 
-if (localStorage.getItem("highScore") === null) {
-  localStorage.setItem("highScore", "1000");
-}
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
@@ -252,6 +249,7 @@ const leaderboard = {
   minRankedScore: 0,
   minRankedId: "",
   canPost: true,
+  userPostedName: "",
   userPostedScore: "",
   reason: ""
 };

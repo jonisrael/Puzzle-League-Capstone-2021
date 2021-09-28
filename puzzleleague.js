@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import { render, getWorldTimeAPI } from "./index";
+import { render } from "./index";
 import * as state from "./store";
 import { sprite, audio, audioList } from "./scripts/fileImports";
 import {
@@ -350,7 +350,6 @@ export function endChain(potentialSecondarySuccessor) {
       "smallChain"
     );
   }
-  if (game.currentChain > 1) console.log(`${game.currentChain} chain!`);
   if (game.currentChain > game.largestChain)
     game.largestChain = game.currentChain;
   if (game.chainScoreAdded !== 0) {
@@ -600,7 +599,6 @@ function KEYBOARD_CONTROL(event) {
       // space or enter
       document.getElementById("arcade-button").remove();
       document.getElementById("training-button").remove();
-      getWorldTimeAPI();
       startGame(2);
     }
   }
@@ -609,7 +607,6 @@ function KEYBOARD_CONTROL(event) {
       // s or t
       // document.getElementById("arcade-button").remove();
       // document.getElementById("training-button").remove();
-      // getWorldTimeAPI();
       // startGame(2);
     }
   }
@@ -682,9 +679,6 @@ function KEYBOARD_CONTROL(event) {
         // game.blockStallTime = preset.stallValues[0];
         console.log("debug ON -- Score Posting Disabled");
         console.log(`Game Frame: ${game.frames}`);
-        console.log(`Grid Draw Divisor: ${performance.drawDivisor}`);
-        console.log(`Game Event Speed: ${performance.gameSpeed}`);
-        console.log(`Time: ${game.minutes}, ${game.seconds}`);
         console.log(`-`);
         console.log(`Debug Controls:`);
         console.log("M -- Raise Game Level");
@@ -715,17 +709,6 @@ function KEYBOARD_CONTROL(event) {
       }
     }
     if (debug.enabled == 1) {
-      if (event.keyCode == 49) {
-        // Number 1
-        performance.gameSpeed = 1;
-        console.log("Speed:", performance.gameSpeed);
-      }
-      if (event.keyCode == 50) {
-        // Number 2
-        performance.gameSpeed = 2;
-        if (game.frames % 2 == 1) game.frames++; // keep frame count even
-        console.log("Speed:", performance.gameSpeed);
-      }
       if (event.keyCode == 75) {
         // k
         game.finalTime = (game.frames / 60).toFixed(1);
@@ -740,12 +723,7 @@ function KEYBOARD_CONTROL(event) {
         gameOverBoard();
         drawGrid();
       }
-      if (event.keyCode == 48) {
-        // 0 (number)
-        game.rise = 0;
-        game.board = generateOpeningBoard();
-        game.disableRaise = false;
-      } else if (event.keyCode == 70 || event.keyCode == 81) {
+      if (event.keyCode == 70 || event.keyCode == 81) {
         // f, q
         debug.freeze = (debug.freeze + 1) % 2;
       } else if (
@@ -753,16 +731,20 @@ function KEYBOARD_CONTROL(event) {
         game.level < preset.speedValues.length
       ) {
         //m
-        game.level++;
-        game.boardRiseSpeed = preset.speedValues[game.level];
-        game.blockClearTime = preset.clearValues[game.level];
-        game.blockStallTime = preset.stallValues[game.level];
+        if (game.level + 1 < preset.speedValues.length) {
+          game.level++;
+          game.boardRiseSpeed = preset.speedValues[game.level];
+          game.blockClearTime = preset.clearValues[game.level];
+          game.blockStallTime = preset.stallValues[game.level];
+        }
       } else if (event.keyCode == 78 && game.level > 0) {
         //n
-        game.level--;
-        game.boardRiseSpeed = preset.speedValues[game.level];
-        game.blockClearTime = preset.clearValues[game.level];
-        game.blockStallTime = preset.stallValues[game.level];
+        if (game.level - 1 > -1) {
+          game.level--;
+          game.boardRiseSpeed = preset.speedValues[game.level];
+          game.blockClearTime = preset.clearValues[game.level];
+          game.blockStallTime = preset.stallValues[game.level];
+        }
 
         // Debug codes
       } else if (event.keyCode == 67 && debug.freeze == 1) {
@@ -801,11 +783,6 @@ function KEYBOARD_CONTROL(event) {
   } else if (win.running && game.over) {
     if (event.keyCode >= 0 && game.frames >= 200) {
       // press any key after game over
-      playAnnouncer(
-        announcer.endgameDialogue,
-        announcer.endgameIndexLastPicked,
-        "endgame"
-      );
       win.running = false;
     }
   }
@@ -885,26 +862,17 @@ export function gameLoop() {
       if (game.frames % game.boardRiseSpeed == 0) {
         if (!game.disableRaise && game.grounded && debug.freeze == 0) {
           if (game.raiseDelay > 0) {
-            // ! New code:
             game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
-            if (game.raiseDelay < 0) game.raiseDelay = 0;
-            // ! Old code:
-            // if (!checkClearing().includes(true)) {
-            //   game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
-            // }
+            if (game.raiseDelay < 0) {
+              game.raiseDelay = 0;
+            }
           } else if (game.frames > 0 && game.grounded) {
             game.rise = (game.rise + 2) % 32;
             if (performance.gameSpeed == 2 && game.rise != 0) {
-              if (
-                game.quickRaise ||
-                game.level == preset.speedValues.length - 1
-              )
+              if (game.quickRaise || game.boardRiseSpeed === 1) {
                 game.rise = (game.rise + 2) % 32;
+              }
             }
-            // } else if (game.boardRiseSpeed == 3) {
-            //   if (game.frames%4 == 0)
-            // }
-            // For gameSpeed2, if gameRise = 0, do not surpass stack.
           }
         }
         if (game.rise >= 28) game.readyForNewRow = true;

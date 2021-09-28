@@ -101,6 +101,10 @@ section {
     padding-top: 20px;
 }
 
+form label {
+    font-size: large;
+}
+
 header {
     background-color: grey;
     text-align: center;

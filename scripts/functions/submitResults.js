@@ -2,38 +2,20 @@ import { startGame } from "./beginGame";
 import { game, api, performance, leaderboard } from "../global";
 import { render, sendData } from "../../index";
 import * as state from "../../store";
-import { performanceNotifier } from "./performanceNotifier";
+import { checkCanUserPost } from "./checkCanUserPost";
+import { updateBestScores } from "./updateBestScores";
 
-export function submitResults() {
-  let finalScore = game.score;
+export function afterGame() {
   let duration = "";
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
   else duration = `${game.minutes}:${game.seconds}`;
-
   let homePage = document.getElementById("home-page");
   let container = document.getElementById("container");
   container.innerHTML = "";
   homePage.appendChild(container);
 
-  let messageAboutPosting = document.createElement("div");
-  container.appendChild(messageAboutPosting);
-  messageAboutPosting.style.display = leaderboard.canPost ? "none" : "static";
-  messageAboutPosting.innerHTML = `<p>Unfortunately this score cannot be posted to the ranked leaderboards. This is because either debug mode was activated <strong>or</strong> the in-game clock was over five seconds behind a real clock. The real time of the game was <strong>${
-    performance.realTime
-  } seconds</strong> while the in-game timer was <strong>${
-    game.finalTime
-  } seconds</strong>, which is a difference of <span style="color:red; font-weight:bold">${Math.abs(
-    performance.realTime - game.finalTime
-  ).toFixed(1)} seconds</span>.</p><hr>`;
-
-  let form = document.createElement("form");
-  form.setAttribute("id", "form");
-  form.setAttribute("method", "POST");
-  form.setAttribute("action", "");
-  container.appendChild(form);
-
   let div1 = document.createElement("div");
-  form.appendChild(div1);
+  container.appendChild(div1);
 
   let gameOver = document.createElement("h2");
   gameOver.setAttribute("id", "game-over");
@@ -67,16 +49,41 @@ export function submitResults() {
   timeMessage.innerHTML = `Game Begin At: ${api.data.hour}:${api.data.minute} ${api.data.meridian}`;
   div1.appendChild(timeMessage);
 
-  console.log(api.data);
+  checkCanUserPost();
+  updateBestScores();
 
   let div2 = document.createElement("div");
-  form.appendChild(div2);
+  container.appendChild(div2);
+  let restartGame = document.createElement("button");
+  restartGame.setAttribute("id", "restart-arcade");
+  restartGame.className = "default-button";
+  restartGame.innerHTML = leaderboard.canPost
+    ? "Restart Game Without Posting Scores"
+    : "Play Again";
+  div2.appendChild(restartGame);
+
+  restartGame.addEventListener("click", event => {
+    startGame(performance.gameSpeed);
+  });
+}
+
+export function submitResults() {
+  let finalScore = game.score;
+  let duration = "";
+  if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
+  else duration = `${game.minutes}:${game.seconds}`;
+  let container = document.getElementById("container");
+  let form = document.createElement("form");
+  form.setAttribute("id", "form");
+  form.setAttribute("method", "POST");
+  form.setAttribute("action", "");
+  container.appendChild(form);
 
   let nameLabel = document.createElement("label");
   nameLabel.setAttribute("for", "player-name");
   nameLabel.setAttribute("id", "enter-name");
   nameLabel.innerHTML = "Enter a name to be associated with the score: ";
-  div2.append(nameLabel);
+  form.append(nameLabel);
 
   let nameInput = document.createElement("input");
   nameInput.setAttribute("type", "text");
@@ -84,7 +91,7 @@ export function submitResults() {
   nameInput.setAttribute("id", "player-name");
   nameInput.setAttribute("maxlength", "15");
   nameInput.setAttribute("placeholder", "Anonymous");
-  div2.appendChild(nameInput);
+  form.appendChild(nameInput);
 
   let submitForm = document.createElement("input");
   submitForm.setAttribute("id", "submit-name");
@@ -96,15 +103,7 @@ export function submitResults() {
   );
   submitForm.style.color = leaderboard.canPost ? "black" : "red";
   submitForm.className = "default-button";
-  div2.appendChild(submitForm);
-
-  let div3 = document.createElement("div");
-  container.appendChild(div3);
-  let restartGame = document.createElement("button");
-  restartGame.setAttribute("id", "restart-game");
-  restartGame.className = "default-button";
-  restartGame.innerHTML = "Restart Game Without Posting Scores";
-  div3.appendChild(restartGame);
+  form.appendChild(submitForm);
 
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();

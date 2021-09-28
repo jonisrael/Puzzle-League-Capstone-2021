@@ -49,7 +49,6 @@ function addEventListeners(st) {
         if (document.getElementById("canvas"))
           render(state[event.target.title]);
         else {
-          api.data = getWorldTimeAPI();
           game.mode = "arcade";
           startGame(2);
         }
@@ -72,10 +71,14 @@ function addEventListeners(st) {
     document.getElementById("arcade-button").addEventListener("click", () => {
       api.data = getWorldTimeAPI();
       game.mode = "arcade";
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-button").remove();
       startGame(2);
     });
     document.getElementById("training-button").addEventListener("click", () => {
       game.mode = "training";
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-button").remove();
       startGame(2);
     });
     document.addEventListener("click", () => {
@@ -154,6 +157,7 @@ export function sendData(requestData) {
     .catch(error => {
       console.log("Failed to Post", error);
     });
+  render(state.Leaderboard);
 }
 
 router.hooks({
@@ -192,7 +196,6 @@ router.hooks({
           });
         break;
       case "Leaderboard":
-        console.log("fetching leaderboard data");
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
           .then(response => {
@@ -215,9 +218,13 @@ router.hooks({
               if (totalClears.length === 1) totalClears = `00${totalClears}`;
               if (totalClears.length === 2) totalClears = `0${totalClears}`;
               if (totalClears.length > 3) totalClears = "999";
+              let nameMatches =
+                entry.name === "JonathanIsrael" && entry.score === "10794";
 
               state[page].markup += `
-                <tr>
+                ${
+                  nameMatches ? "<tr style='background-color: yellow'>" : "<tr>"
+                }
                   <td>
                     ${rank + 1}
                   </td>

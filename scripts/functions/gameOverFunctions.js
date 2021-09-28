@@ -10,8 +10,7 @@ import {
 } from "../global";
 
 import { audio } from "../fileImports";
-import { checkCanUserPost } from "./checkCanUserPost";
-import { submitResults } from "./submitResults";
+import { submitResults, afterGame } from "./submitResults";
 
 import { playAudio, playMusic } from "./audioFunctions";
 
@@ -22,7 +21,7 @@ export function closeGame(gameFinished) {
   console.log("closeGame called");
   win.running = false;
   if (gameFinished) {
-    if (leaderboard.data.length > 0) checkCanUserPost();
+    if (leaderboard.data.length > 0) afterGame();
     else location.reload();
   }
   win.cvs = null;
@@ -34,7 +33,7 @@ export function isGameOver(scoreOfThisGame) {
   for (let c = 0; c < grid.COLS; c++) {
     if (game.board[c][0].color != blockColor.VACANT) {
       // if debug, do not game over.
-      if (debug.enabled) {
+      if (debug.enabled || game.mode === "training") {
         game.cursor.y += 8;
         if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
         for (let x = 0; x < grid.COLS; x++) {
@@ -43,6 +42,7 @@ export function isGameOver(scoreOfThisGame) {
             game.board[x][y].type = blockType.NORMAL;
           }
         }
+        playAudio(audio.topout);
         return false;
       }
       game.Music.volume = 0;

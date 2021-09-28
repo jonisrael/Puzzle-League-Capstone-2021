@@ -6,4 +6,4 @@ export default {
 };
 
 // underneath view
-// highScores: []
+// bestScores: []

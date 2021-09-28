@@ -22,8 +22,7 @@ import { gameLoop, newBlock } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
 
 export function startGame(selectedGameSpeed) {
-  document.getElementById("arcade-button").remove();
-  document.getElementById("training-button").remove();
+  getWorldTimeAPI();
   win.running = true;
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";
@@ -193,7 +192,6 @@ export function resetGameVariables() {
   game.over = false; //gameOver
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain
-  // game.highScore = HIGH_SCORE;
   game.readyForNewRow = false;
   game.disableRaise = false;
   game.disableSwap = false;
