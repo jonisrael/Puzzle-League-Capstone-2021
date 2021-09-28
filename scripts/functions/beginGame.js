@@ -5,6 +5,7 @@ import {
   game,
   performance,
   win,
+  debug,
   preset,
   grid,
   blockColor,
@@ -33,6 +34,8 @@ export function startGame(selectedGameSpeed) {
   if (loadedAudios.length == 0) loadAllAudios();
   // Set up game loop
   leaderboard.canPost = true;
+  debug.enabled = false;
+  debug.show = false;
   performance.gameSpeed = selectedGameSpeed;
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();
@@ -142,7 +145,6 @@ function createHeadsUpDisplay() {
   }
   bestScoresString += `</table>`;
   bestScoresDisplay.innerHTML = bestScoresString;
-  console.log(bestScoresDisplay);
   rightHudElements.appendChild(bestScoresDisplay);
 
   // Make Canvas, then append it to home page

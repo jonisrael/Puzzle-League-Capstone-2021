@@ -268,6 +268,20 @@ export function loadAllAudios() {
   }
 }
 
+for (let i = 1; i <= 5; i++) {
+  if (localStorage.getItem(`bestScore${i}`) == null) {
+    console.log(`creating item for bestScore ${i}`);
+  }
+}
+
+export const bestScores = [
+  parseInt(localStorage.getItem("bestScore1") || 500),
+  parseInt(localStorage.getItem("bestScore2") || 400),
+  parseInt(localStorage.getItem("bestScore3") || 300),
+  parseInt(localStorage.getItem("bestScore4") || 200),
+  parseInt(localStorage.getItem("bestScore5") || 100)
+];
+
 export function randInt(max) {
   return Math.floor(Math.random() * max);
 }

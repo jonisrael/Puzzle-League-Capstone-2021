@@ -15,7 +15,7 @@ export function checkCanUserPost() {
   }
   let container = document.getElementById("container");
   if (!leaderboard.canPost) {
-    container.innerHTML = `<h2 style="color:red">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
+    container.innerHTML += `<h2 style="color:red">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
     if (leaderboard.reason == "slow") {
       container.innerHTML += `<p>This is because the in-game clock time was at least five seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:red; font-weight:bold">but the actual real time of the game was ${performance.realTime} seconds.</span></p><br />`;
       container.innerHTML += `
@@ -44,34 +44,25 @@ export function checkCanUserPost() {
         If this message continues to pop up, unfortunately your hardware may not be fast enough to run the game at its full speed. This performance checker is meant to stop leaderboard scores that may have been easier to obtain due to a slower-running game. I will periodically still be updating this game through 2022, and it is likely that game efficiency and performance will improve. And of course, you can still play locally and try to beat your own best scores!
       </p>
       `;
-      playMusic(audio.resultsMusic, 0.2, 3);
-      return;
+      return false;
     }
 
     if (leaderboard.reason == "debug") {
       container.innerHTML +=
         "<p>This is because debug mode was activated. Debug mode is activated by pressing the `/~ key.</p>";
-      playMusic(audio.resultsMusic, 0.2, 3);
-      return;
+      return false;
     }
 
     if (leaderboard.reason === "zero") {
       container.innerHTML += `<p>This is because you did not score any points!</p>`;
-      playMusic(audio.resultsMusic, 0.2, 3);
-      return;
+      return false;
     }
 
     if (leaderboard.reason === "get-good") {
       container.innerHTML += `<p>This is because your score is below the 50th leaderboard spot. Your score is ${game.score}, while "${leaderboard.minRankedName}'s" score on the leaderboard spot's is ${leaderboard.minRankedScore}. Keep practicing and try again!</p>`;
-      playMusic(audio.resultsMusic, 0.2, 3);
-      return;
+      return false;
     }
   }
-  playAnnouncer(
-    announcer.endgameDialogue,
-    announcer.endgameIndexLastPicked,
-    "endgame"
-  );
-  playMusic(audio.resultsMusic, 0.2);
   submitResults();
+  return true;
 }

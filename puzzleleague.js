@@ -55,7 +55,6 @@ import {
   loadedAudios
 } from "./scripts/global.js";
 
-// console.log(highScoreDisplay);
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
 }
@@ -408,9 +407,6 @@ function doPanic() {
 
 function raiseStack() {
   if (!areAllBlocksGrounded) {
-    console.log(
-      "Will not raise stack due to blocks clearing or airborne block"
-    );
     return false;
   }
   if (game.disableRaise || debug.freeze == 1) {
@@ -684,12 +680,7 @@ function KEYBOARD_CONTROL(event) {
 
         console.log("-");
         console.log("Chainable Block Info Guide:");
-        console.log("White -- First half of Block Delay Timer");
-        console.log("Orange: Eligible for Main Chain");
-        console.log("Pink -- Eligible for Secondary Chain");
-        console.log(
-          "Brown -- Block Delay Timer greater than 0 but block is not chainable"
-        );
+        console.log("Brown/White/Pink -- Chain = 0/1/2+");
       } else {
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
@@ -819,7 +810,8 @@ export function gameLoop() {
       game.frames >= 0
         ? (performance.realTime = Math.round(performance.realTime / 100) / 10)
         : (performance.realTime = 0);
-      if (game.frames % 60 == 0 && !game.paused)
+      if (game.frames % 60 == 0 && !game.paused) {
+        console.log(game);
         console.log(
           `gameTime = ${game.frames / 60}, realTime = ${
             performance.realTime
@@ -827,6 +819,7 @@ export function gameLoop() {
             performance.diffFromRealTime
           }`
         );
+      }
     }
 
     if (!game.paused && win.audioLoaded) {
@@ -990,9 +983,13 @@ export function gameLoop() {
         if (performance.diffFromRealTime >= 5) {
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
-          performance.unrankedReason = `game running too slowly, behind real clock by
+          performance.unrankedReason = `leaderboard posting disabled, behind real clock by
           ${performance.diffFromRealTime.toFixed(1)} seconds`;
           win.fpsDisplay.style.color = "red";
+        } else if (performance.diffFromRealTime >= 3) {
+          performance.unrankedReason = `warning, game is running slowly, behind real clock by
+          ${performance.diffFromRealTime.toFixed(1)} seconds`;
+          win.fpsDisplay.style.color = "blue";
         }
       }
       if (game.frames % 5 == 0) {
@@ -1039,7 +1036,7 @@ export function gameLoop() {
         multiplierString = `${game.scoreMultiplier}x`;
       }
       if (debug.enabled == 1) {
-        win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> $R{game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+        win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
       } else {
         win.statDisplay.innerHTML = ``;
         win.timeDisplay.innerHTML = timeString;

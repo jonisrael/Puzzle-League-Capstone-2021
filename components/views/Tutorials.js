@@ -10,7 +10,7 @@ export default st => html`
       <iframe
         width="960"
         height="540"
-        src="https://www.youtube.com/embed/VMN_9xiTZtg"
+        src="https://www.youtube.com/embed/5o8C81D-Uo0"
         title="YouTube video player"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -37,7 +37,7 @@ export default st => html`
     <iframe
       width="960"
       height="540"
-      src="https://www.youtube.com/embed/XqHQl1OB-cw"
+      src="https://www.youtube.com/embed/w0Fk-lySHTw"
       title="YouTube video player"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

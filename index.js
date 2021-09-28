@@ -157,7 +157,6 @@ export function sendData(requestData) {
     .catch(error => {
       console.log("Failed to Post", error);
     });
-  render(state.Leaderboard);
 }
 
 router.hooks({
@@ -184,11 +183,6 @@ router.hooks({
               leaderboard.data[leaderboard.data.length - 1].score;
             leaderboard.minRankedId =
               leaderboard.data[leaderboard.data.length - 1]._id;
-            console.log(
-              leaderboard.minRankedScore,
-              leaderboard.minRankedName,
-              leaderboard.minRankedId
-            );
             done();
           })
           .catch(error => {
@@ -219,7 +213,8 @@ router.hooks({
               if (totalClears.length === 2) totalClears = `0${totalClears}`;
               if (totalClears.length > 3) totalClears = "999";
               let nameMatches =
-                entry.name === "JonathanIsrael" && entry.score === "10794";
+                entry.name == leaderboard.userPostedName &&
+                entry.score == leaderboard.userPostedScore;
 
               state[page].markup += `
                 ${

@@ -1,9 +1,14 @@
 import { startGame } from "./beginGame";
-import { game, api, performance, leaderboard } from "../global";
+import { announcer, game, api, performance, leaderboard } from "../global";
 import { render, sendData } from "../../index";
+import { audio } from "../fileImports";
+import { playAnnouncer, playMusic } from "./audioFunctions";
 import * as state from "../../store";
 import { checkCanUserPost } from "./checkCanUserPost";
-import { updateBestScores } from "./updateBestScores";
+import {
+  updateBestScores,
+  getBestScores,
+} from "./updateBestScores";
 
 export function afterGame() {
   let duration = "";
@@ -17,11 +22,13 @@ export function afterGame() {
   let div1 = document.createElement("div");
   container.appendChild(div1);
 
+  let rank = updateBestScores(game.score);
   let gameOver = document.createElement("h2");
   gameOver.setAttribute("id", "game-over");
   gameOver.className = "postgame-info";
-  gameOver.innerHTML = "Game Over!";
-  div1.appendChild(gameOver);
+  rank > 5
+    ? (gameOver.innerHTML = "Game Over!")
+    : `You've got a New High Score!<br>Rank ${rank}`;
 
   let scoreMessage = document.createElement("h2");
   scoreMessage.setAttribute = ("id", "score-message");
@@ -48,9 +55,19 @@ export function afterGame() {
   timeMessage.className = "postgame-info";
   timeMessage.innerHTML = `Game Begin At: ${api.data.hour}:${api.data.minute} ${api.data.meridian}`;
   div1.appendChild(timeMessage);
+  container.innerHTML += `<hr />`;
 
-  checkCanUserPost();
-  updateBestScores(game.score);
+  let success = checkCanUserPost();
+  if (success || rank < 6) {
+    playAnnouncer(
+      announcer.endgameDialogue,
+      announcer.endgameIndexLastPicked,
+      "endgame"
+    );
+    playMusic(audio.resultsMusic, 0.2);
+  } else {
+    playMusic(audio.resultsMusic, 0.2, 3);
+  }
 
   let div2 = document.createElement("div");
   container.appendChild(div2);
@@ -62,8 +79,18 @@ export function afterGame() {
     : "Play Again";
   div2.appendChild(restartGame);
 
+  let deleteScores = document.createElement("button");
+  div2.appendChild(deleteScores);
+  deleteScores.innerHTML = "Delete Personal Best Scores";
+
   restartGame.addEventListener("click", event => {
     startGame(performance.gameSpeed);
+  });
+
+  deleteScores.addEventListener("click", event => {
+    if (confirm("Are you sure you want to erase your best scores?")) {
+      getBestScores(true);
+    }
   });
 }
 
@@ -133,7 +160,7 @@ export function submitResults() {
     console.log(requestData);
     sendData(requestData);
     game.Music.volume = 0;
-    render(state.Leaderboard);
+    render(state.Home);
     return;
   });
 }
