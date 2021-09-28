@@ -3,6 +3,18 @@ body {
     /* text-align: center; */
 }
 
+#placeholder {
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    top: 50%;
+    left: 25%;
+    font-size: 72px;
+    color: red;
+    background-color: silver;
+    padding: 10px;
+}
+
 #main-info {
     color: blue;
     font-size: xx-large;
@@ -50,8 +62,9 @@ section {
 
 #page-body {
     background-color: grey;
-    padding-right: 40px;
-    padding-left: 20px;
+    width: 95%;
+    /* padding-right: 30px;
+    padding-left: 30px; */
 }
 
 #leaderboard-page {
@@ -77,16 +90,23 @@ section {
 .pause-buttons {
     flex: 33%;
     padding: 10px;
+    max-height: 70px;
+
     justify-content: center;
 }
 
 #column1, #column2, #column3 {
     flex: 33%;
+    justify-content: center;
+
 }
 
 #column1, #yes-option {
-    padding-left: 100px;
-    padding-top: 40px;
+    display: flex;
+    padding-left: 3rem;
+    margin: auto 0;
+    justify-content: center;
+
 }
 
 #column2 {
@@ -97,8 +117,10 @@ section {
 }
 
 #column3, #no-option {
-    padding-right: 100px;
-    padding-top: 20px;
+    display: flex;
+    padding-right: 2rem;
+    margin: auto 0;
+    top: 50%;
 }
 
 form label {
@@ -131,6 +153,12 @@ header {
 #score {
     font-size: x-large;
     color: blueviolet;
+}
+
+#best-scores-table {
+    max-width: 75%;
+    margin: 0 auto;
+    padding-left: 2em;
 }
 
 table {
@@ -170,7 +198,8 @@ canvas {
     align-items: center;
     margin: 0 auto;
     border: 10px solid burlywood;
-    width: 75%
+    min-width: 70%;
+    max-width: 85%;
 }
 
 #high-score-display {
@@ -210,6 +239,7 @@ h3 {
 #controls {
     list-style-type: none;
     font-size: large;
+    text-align: center;
 }
 
 #home-page h3 {
@@ -227,12 +257,28 @@ h3 {
     background-color: whitesmoke;
     border: solid black 2px;
     border-radius: 10px;
-    padding-right: 5px;
+    width: 80%;
+}
+
+#right-hud-elements {
+    border: 1px solid black;
+    padding-bottom: 1rem;
 }
 
 #right-hud-elements h2 {
-    text-align: left;
+    text-align: center;
     font-size: large;
+    color: blue;
+}
+
+#right-hud-elements ol {
+    color: blue;
+}
+
+#right-hud-elements li {
+    text-align: center;
+    color: black;
+    padding-right: 1rem;
 }
 
 #nav-message {

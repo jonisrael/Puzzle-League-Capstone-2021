@@ -5,7 +5,7 @@ export default st => html`
     <div id="container">
       <h2 style="color:white;">Welcome to Puzzle League: Arcade Edition!</h2>
 
-      <h1>Controls:</h1>
+      <h1>Controls</h1>
       <ul id="controls">
         <li>
           Press Arrow keys to <strong>move</strong> the Rectangular Cursor
@@ -14,6 +14,16 @@ export default st => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
       <hr />
+      <h1>Compatibility</h1>
+      <p>
+        This game is keyboard only, though I may try and add experimental
+        mouse/touch support in the future for moving tiles. This game
+        <strong>does NOT run on Firefox correctly</strong>, but runs fine on
+        Chrome, Safari, and Edge, with Edge somehow having the best performance
+        results (If you have a Windows computer, Microsoft Edge is
+        preinstalled).
+      </p>
+      <hr />
       <h1>How to play</h1>
       <p>
         <strong
@@ -21,8 +31,8 @@ export default st => html`
           horizontally.</strong
         >
         This is a <strong>combo</strong>, and is the basic way to score points.
-        If you create a combo of 4 or more, you will a small bonus depending on
-        its size.
+        If you create a combo of 4 or more, you will get a small bonus depending
+        on its size.
       </p>
       <p>
         The more advanced way score points is to create a

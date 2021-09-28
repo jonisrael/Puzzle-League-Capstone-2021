@@ -9,16 +9,28 @@ import {
   leaderboard
 } from "../global";
 
+function getBestScores(clearScores) {
+  if (clearScores) localStorage.clear();
+  for (let i = 1; i <= 5; i++) {
+    if (localStorage.getItem(`bestScore${i}`) == null) {
+      console.log(`creating item for bestScore${i}`);
+      localStorage.setItem(`bestScore${i}`, `${1200 - i * 200}`);
+    }
+  }
+}
+getBestScores(false);
+
 export const bestScores = [
-  parseInt(localStorage.getItem("bestScore1") || 500),
-  parseInt(localStorage.getItem("bestScore2") || 400),
-  parseInt(localStorage.getItem("bestScore3") || 300),
-  parseInt(localStorage.getItem("bestScore4") || 200),
-  parseInt(localStorage.getItem("bestScore5") || 100)
+  parseInt(localStorage.getItem("bestScore1")),
+  parseInt(localStorage.getItem("bestScore2")),
+  parseInt(localStorage.getItem("bestScore3")),
+  parseInt(localStorage.getItem("bestScore4")),
+  parseInt(localStorage.getItem("bestScore5"))
 ];
+console.log(bestScores);
 
 export function updateBestScores(score) {
-  console.log(bestScores);
+  console.log(score);
   let rank = 6;
   let confirmUpdate = true;
   if (score > bestScores[0]) rank = 1;
@@ -32,19 +44,22 @@ export function updateBestScores(score) {
   if (rank < 6) {
     if (leaderboard.reason === "slow") {
       confirmUpdate = confirm(
-        `Your score is #${rank} on your personal best score list, but your game is unranked due to slowdown.\nThis score may be inflated, do you still want to add this score?`
+        `Your score is #${rank} on your personal best score list, but your game is invalid for the leaderboards due to slowdown.\nDo you still want to add this score locally?`
       );
+      if (confirmUpdate) confirmUpdate = confirm("Are you sure?");
     }
     if (confirmUpdate) {
-      if (leaderboard.canPost && rank < 5) {
+      if (leaderboard.canPost && rank < 6) {
+        console.log("updating high scores...");
         bestScores.splice(rank, 0, score);
         bestScores.pop();
+        console.log(bestScores);
+        localStorage.setItem("bestScore1", bestScores[0]);
+        localStorage.setItem("bestScore2", bestScores[1]);
+        localStorage.setItem("bestScore3", bestScores[2]);
+        localStorage.setItem("bestScore4", bestScores[3]);
+        localStorage.setItem("bestScore5", bestScores[4]);
       }
     }
   }
-  localStorage.setItem("bestScore1", bestScores[0]);
-  localStorage.setItem("bestScore2", bestScores[1]);
-  localStorage.setItem("bestScore3", bestScores[2]);
-  localStorage.setItem("bestScore4", bestScores[3]);
-  localStorage.setItem("bestScore5", bestScores[4]);
 }

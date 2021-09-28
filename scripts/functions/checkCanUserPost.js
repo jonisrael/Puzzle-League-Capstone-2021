@@ -19,12 +19,15 @@ export function checkCanUserPost() {
     if (leaderboard.reason == "slow") {
       container.innerHTML += `<p>This is because the in-game clock time was at least five seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:red; font-weight:bold">but the actual real time of the game was ${performance.realTime} seconds.</span></p><br />`;
       container.innerHTML += `
-      <label" for="troubleshooting">
+      <label" for="troubleshooting" style="font-size:large">
         Troubleshooting Performance Issues:
       </label>
       <ul id="troubleshooting">
         <li>
-          Use Google Chrome (Best performance)
+          Use Microsoft Edge (Sadly, I'm serious)
+        </li>
+        <li>
+          Do NOT use Firefox (It murders this game)
         </li>
         <li>
           Close all other applications and tabs
@@ -38,7 +41,7 @@ export function checkCanUserPost() {
       </ul>
       <br />
       <p>
-        If this message continues to pop up, unfortunately your hardware may not be fast enough to run the game at its full speed. This performance checker is meant to stop leaderboard scores that may have been easier to obtain due to a slower-running game. I will periodically still be updating this game through 2022, and there is a chance that game efficiency and performance could improve. And of course, you can still play locally and try to beat your own scores!
+        If this message continues to pop up, unfortunately your hardware may not be fast enough to run the game at its full speed. This performance checker is meant to stop leaderboard scores that may have been easier to obtain due to a slower-running game. I will periodically still be updating this game through 2022, and it is likely that game efficiency and performance will improve. And of course, you can still play locally and try to beat your own best scores!
       </p>
       `;
       playMusic(audio.resultsMusic, 0.2, 3);

@@ -183,7 +183,8 @@ const game = {
   grounded: true,
   addToPrimaryChain: false, // used to start/continue a chain
   message: "",
-  defaultMessage: "",
+  defaultMessage: "Welcome to Puzzle League!",
+  messagePriority: "",
   messageChangeDelay: 90,
   highScore: HIGH_SCORE,
   disableRaise: false,

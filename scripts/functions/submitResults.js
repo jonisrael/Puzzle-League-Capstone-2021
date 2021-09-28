@@ -50,7 +50,7 @@ export function afterGame() {
   div1.appendChild(timeMessage);
 
   checkCanUserPost();
-  updateBestScores();
+  updateBestScores(game.score);
 
   let div2 = document.createElement("div");
   container.appendChild(div2);

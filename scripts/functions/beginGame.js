@@ -20,6 +20,7 @@ import { audio, audioList } from "../fileImports";
 import { getWorldTimeAPI, render } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
+import { bestScores } from "./updateBestScores";
 
 export function startGame(selectedGameSpeed) {
   getWorldTimeAPI();
@@ -108,14 +109,41 @@ function createHeadsUpDisplay() {
   leftHudElements.appendChild(win.levelHeader);
   leftHudElements.appendChild(win.levelDisplay);
 
-  let controls = document.createElement("h1");
+  let controls = document.createElement("div");
   controls.setAttribute("id", "controls");
   controls.innerHTML = `<ul style="font-size:large;">
   <li>Press Arrow keys to <strong>MOVE</strong> the Rectangle Cursor</li>
   <li>Press S or X to <strong>SWAP</strong> blocks at the Cursor</li>
   <li>Press R or Z to <strong>RAISE</strong> the stack one row.</li>
-</ul>`;
+  <li>Press ESC or P to <strong>PAUSE</strong> the game.</li>
+  </ul>
+  <br />`;
   rightHudElements.appendChild(controls);
+
+  let bestScoresDisplay = document.createElement("table");
+  bestScoresDisplay.setAttribute("id", "best-scores-table");
+  let bestScoresString = `
+  <tr>
+    <th>Rank</th>
+    <th>Best Scores</th>
+  </tr>`;
+
+  for (let i = 0; i < bestScores.length; i++) {
+    bestScoresString += `
+    <tr>
+      <td>
+      #${i + 1}
+      </td>
+      <td>
+        ${bestScores[i]}
+      </td>
+    </tr>
+    `;
+  }
+  bestScoresString += `</table>`;
+  bestScoresDisplay.innerHTML = bestScoresString;
+  console.log(bestScoresDisplay);
+  rightHudElements.appendChild(bestScoresDisplay);
 
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);

@@ -9,6 +9,7 @@ export default st => html`
         <h3>
           <pre>
           Score += (Survival Multiplier) * (Block Match Size + CHAIN BONUS)
+          Overtime Survival Bonus (per second) = x seconds survived in overtime (+1, +2, +3, +4 etc.)
         </pre>
         </h3>
         <h2>BLOCK MATCH SIZE</h2>

@@ -350,13 +350,15 @@ export function endChain(potentialSecondarySuccessor) {
       "smallChain"
     );
   }
+  if (game.currentChain > 1) {
+    game.message = `${game.currentChain}x chain added ${game.chainScoreAdded} to your score.`;
+    game.messageChangeDelay = 90;
+  } else if (game.currentChain == 1) {
+    game.message = `Combo added ${game.chainScoreAdded} to your score.`;
+  }
   if (game.currentChain > game.largestChain)
     game.largestChain = game.currentChain;
   if (game.chainScoreAdded !== 0) {
-    game.message = `Combo/Chain added ${game.chainScoreAdded} to your score`;
-    game.messageChangeDelay = 90;
-    if (game.chainScoreAdded != 0)
-      game.defaultMessage = `Previous chain score added: ${game.chainScoreAdded}`;
     win.mainInfoDisplay.style.color = "blue";
   }
   // if another chain is currently clearing, chain is 1. Otherwise, chain is 0.
@@ -373,17 +375,6 @@ export function endChain(potentialSecondarySuccessor) {
       }
     }
   }
-}
-
-function isClearing() {
-  for (let c = 0; c < grid.COLS; c++) {
-    for (let r = 0; r < grid.ROWS; r++) {
-      if (!INTERACTIVE_PIECES.includes(game.board[c][r].type)) {
-        return true;
-      }
-    }
-  }
-  return false;
 }
 
 function doPanic() {
@@ -476,78 +467,79 @@ function checkTime() {
   switch (game.frames) {
     case -180:
       debug.show = false;
-      game.message = "3...";
-      game.messageChangeDelay = 90;
+      game.messagePriority = "3...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
     case -176:
       win.cvs.scrollIntoView({ block: "nearest" });
       break;
     case -120:
-      game.message = "2...";
-      game.messageChangeDelay = 90;
+      game.messagePriority = "2...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
       break;
     case -60:
-      game.message = "1...";
-      game.messageChangeDelay = 90;
+      game.messagePriority = "1...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
     case 0:
-      game.message = "Go!";
-      game.messageChangeDelay = 90;
+      game.messagePriority = "Go!";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.1, true);
       break;
     case 60:
       if (game.message === "Go!") {
+        game.messagePriority = "";
         game.defaultMessage = "X to swap Z to lift the stack!";
         game.message = game.defaultMessage;
       }
 
       break;
     case 6600:
-      game.message = "10 seconds before overtime!";
-      game.messageChangeDelay = 400;
+      game.messagePriority = "10 seconds before overtime!";
       playAnnouncer(
         announcer.hurryUpDialogue,
         announcer.hurryUpIndexLastPicked,
         "hurryUp"
       );
       break;
+    case 6660:
+      game.messagePriority = "";
+      break;
     case 6900:
-      game.message = "5 seconds before overtime...";
-      game.defaultMessage = game.message;
-      game.messageChangeDelay = 90;
+      game.messagePriority = "5 seconds before overtime...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer5, 0.2, true);
       break;
     case 6960:
-      game.message = "4 seconds before overtime...";
-      game.messageChangeDelay = 90;
+      game.messagePriority = "4 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer4, 0.2, true);
       break;
     case 7020:
-      game.message = "3 seconds before overtime...";
+      game.messagePriority = "3 seconds before overtime...";
       game.defaultMessage = game.message;
-      game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
     case 7080:
-      game.message = "2 seconds before overtime...";
+      game.messagePriority = "2 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
-      game.messageChangeDelay = 90;
       break;
     case 7140:
-      game.message = "1 second before overtime...";
+      game.messagePriority = "1 second before overtime...";
       game.defaultMessage = game.message;
-      game.messageChangeDelay = 90;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
     case 7200:
-      game.message = "I hope you're ready...";
+      game.messagePriority = "Overtime, I hope you're ready...";
       game.defaultMessage = game.message;
-      game.messageChangeDelay = 90;
+      playAnnouncer(
+        announcer.overtimeDialogue,
+        announcer.overtimeIndexLastPicked,
+        "overtime"
+      );
+      playMusic(audio.overtimeMusic, 0.2);
+      break;
+    case 7320:
+      game.messagePriority = "";
   }
 }
 
@@ -788,6 +780,11 @@ function KEYBOARD_CONTROL(event) {
   }
 }
 
+function pad10(integer) {
+  if (integer < 10) return `0${integer}`;
+  else return `${integer}`;
+}
+
 export function displayError(error) {
   let displayedError = document.createElement("p");
   displayedError.style.color = "red";
@@ -849,6 +846,16 @@ export function gameLoop() {
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
+        game.defaultMessage = `Level ${game.level} | 0:${pad10(
+          20 - (game.seconds % 20)
+        )} remaining`;
+        // overtime bonuses
+        if (game.minutes == 2) {
+          game.score += game.seconds;
+        } else if (game.minutes == 3) {
+          game.score += 60 + game.seconds;
+        }
+
         if (debug.enabled === 1) {
           game.seconds--;
           game.frames -= 60;
@@ -896,18 +903,9 @@ export function gameLoop() {
       ) {
         // Speed the stack up every 20 seconds
 
-        if (game.frames == 7200) {
-          game.message = "Overtime, I hope you're ready!";
+        if (game.frames >= 1200) {
+          game.message = `Level ${game.level + 1}, game speed has increased...`;
           game.defaultMessage = game.message;
-          game.messageChangeDelay = 300;
-          playAnnouncer(
-            announcer.overtimeDialogue,
-            announcer.overtimeIndexLastPicked,
-            "overtime"
-          );
-          playMusic(audio.overtimeMusic, 0.2);
-        } else if (game.frames >= 1200) {
-          game.message = `Level ${game.level + 1}, Game Speed has Increased...`;
           game.messageChangeDelay = 120;
           playAnnouncer(
             announcer.timeTransitionDialogue,
@@ -1041,7 +1039,7 @@ export function gameLoop() {
         multiplierString = `${game.scoreMultiplier}x`;
       }
       if (debug.enabled == 1) {
-        win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+        win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> $R{game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
       } else {
         win.statDisplay.innerHTML = ``;
         win.timeDisplay.innerHTML = timeString;
@@ -1093,17 +1091,10 @@ export function gameLoop() {
       if (game.messageChangeDelay > 0) {
         game.messageChangeDelay -= 1 * performance.gameSpeed;
       }
-      if (game.messageChangeDelay <= 0 && frames < 6600) {
+      if (game.messageChangeDelay == 0) {
         game.message = game.defaultMessage;
       }
-
-      if (game.currentChain > 0) {
-        win.chainDisplay.innerHTML = `${game.currentChain}x chain!`;
-        win.chainDisplay.style.color = "red";
-      } else {
-        win.chainDisplay.innerHTML = `Largest Chain: ${game.largestChain} | Total Blocks Cleared: ${game.totalClears}`;
-        win.chainDisplay.style.color = "blue";
-      }
+      if (game.messagePriority) game.message = game.messagePriority;
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled) {

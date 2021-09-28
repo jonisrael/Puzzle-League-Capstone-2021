@@ -29,7 +29,7 @@ export function closeGame(gameFinished) {
   win.makeCanvas.remove();
 }
 
-export function isGameOver(scoreOfThisGame) {
+export function isGameOver() {
   for (let c = 0; c < grid.COLS; c++) {
     if (game.board[c][0].color != blockColor.VACANT) {
       // if debug, do not game over.
@@ -61,7 +61,7 @@ export function gameOverBoard() {
   if (game.frames == 2) {
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.Music.src = audio.resultsMusic;
-    game.defaultMessage = "Game Over!";
+    game.messagePriority = "Game Over!";
     game.message = "Game Over!";
   }
   if (game.frames == 4) {

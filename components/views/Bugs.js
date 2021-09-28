@@ -51,14 +51,20 @@ export default st => html`
           before it is eligible to have a new row added below it.</strong
         >
       </li>
-
+      <li>Block chainability is not always assigned to blocks that are currently falling -- only to blocks that are stalling when the blocks below disappear</li>
       <li>
+        (9/25) If the user tries to swap a block that is sitting on a clearing
+        block, but the clearing block has a vacant square below it, the user
+        cannot swap that block, even though in the original game it should be
+        allowed. This is due to the rule of not being able to swap airborne
+        blocks, but this is an edge case problem and is one of the first bugs
+        after game release that I am looking to patch.
+      </li>
+
         The logic for detecting chains is not completely perfect in regards to
         the original games. Sometimes chains end later than they should, do not
         start properly, or in the rarest case, do not reset at all. In general,
-        it is more generous than harmful to your score. If this bug happens and
-        you gain a lot of unintentional points...please be nice to your fellow
-        junior programmer and consider not posting the score on the leaderboard.
+        the game is more generous than harmful to your score (as in, it is more likely to award chains that shouldn't be awarded in the original games).
         <strong
           >(Update 9/21) Chain logic has been improved, as a match disappearing
           will no longer add a chainable property to or above non-interactive
@@ -75,26 +81,18 @@ export default st => html`
     <h2>Minor Bugs</h2>
     <ul>
       <li>
-        When first running the game, sound does not always preload upon loading
-        the website, even when importing sound files. This means that when a
-        sound effect or voice is played for the first time, it may be
-        delayed.<strong>
-          (Update 9/24) I probably came up with a terrible way to solve this,
-          but it seems to work. Basically, all 70+ sounds imported into the game
-          play immediately upon the user interacting with any part of my website
-          for the first time -- but it is at 0 volume, so the user won't hear
-          anything. This seems to solve the problem once they are all loaded.
-          However, the problem is that some computers can take as long as 10-15
-          seconds to load all of the audio, which means that if you launch the
-          game quickly after loading the website, the audio may not be ready. If
-          anyone knows of another way to do this,
-          <u>please let me know!!!</u></strong
-        >
+        When first running the game, sound does not always preload correctly
+        upon loading the website when entering the game quickly, even when
+        importing sound files. This is due to the app preloading audio files
+        upon launching the game so that they can be accessed without delay. This
+        means that a few sound effects / countdown voice lines may play all at
+        once within the first few seconds of the game (not loudly).
       </li>
       <li>
         Sometimes the stack will rise 1/16th of a line when clearing a block,
         even though it should stop immediately. This can lead to an unintended
-        KO even if you clear a block just before the stack tops out.
+        KO even if you clear a block just before the stack tops out. This is
+        pretty rare.
       </li>
       <li>
         Mute buttons only work while game is running.
