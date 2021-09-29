@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import { render } from "./index";
+import { router } from "./index";
 import * as state from "./store";
 import { sprite, audio, audioList } from "./scripts/fileImports";
 import {
@@ -52,7 +52,8 @@ import {
   randInt,
   action,
   leaderboard,
-  loadedAudios
+  loadedAudios,
+  padInteger
 } from "./scripts/global.js";
 
 if (localStorage.getItem("highScore") === null) {
@@ -614,7 +615,9 @@ function KEYBOARD_CONTROL(event) {
     if (event.keyCode == 77) {
       playAudio(audio.select);
       win.running = false;
-      render(state.Home);
+      console.log(state.Home.view);
+      console.log(router);
+      router.navigate("/Home");
     }
   }
   // Game Controls
@@ -772,11 +775,6 @@ function KEYBOARD_CONTROL(event) {
   }
 }
 
-function pad10(integer) {
-  if (integer < 10) return `0${integer}`;
-  else return `${integer}`;
-}
-
 export function displayError(error) {
   let displayedError = document.createElement("p");
   displayedError.style.color = "red";
@@ -830,8 +828,9 @@ export function gameLoop() {
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
-        game.defaultMessage = `Level ${game.level} | 0:${pad10(
-          20 - (game.seconds % 20)
+        game.defaultMessage = `Level ${game.level} | 0:${padInteger(
+          20 - (game.seconds % 20),
+          2
         )} remaining`;
         // overtime bonuses
         if (game.minutes == 2) {
@@ -1013,7 +1012,7 @@ export function gameLoop() {
       } else {
         secondsString = `${game.seconds}`;
       }
-      let timeString = `${minutesString}:${secondsString}`;
+      game.timeString = `${minutesString}:${secondsString}`;
 
       if (game.score < 10) {
         scoreString = `0000${game.score}`;
@@ -1038,7 +1037,7 @@ export function gameLoop() {
         win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
       } else {
         win.statDisplay.innerHTML = ``;
-        win.timeDisplay.innerHTML = timeString;
+        win.timeDisplay.innerHTML = game.timeString;
       }
       if (debug.show) {
         win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
@@ -1046,7 +1045,7 @@ export function gameLoop() {
           performance.realTime
         } seconds`;
       } else {
-        win.timeDisplay.innerHTML = timeString;
+        win.timeDisplay.innerHTML = game.timeString;
       }
 
       win.levelDisplay.innerHTML = `${game.level}`;

@@ -229,6 +229,7 @@ export function resetGameVariables() {
   game.raisePressed = false;
   // game.Music = gameMusic;
   game.data = {};
+  game.log = [];
 }
 
 export function fixNextDarkStack() {

@@ -162,10 +162,6 @@ export function checkMatch() {
         }
       }
 
-      updateScore(clearLocationsLength, game.currentChain);
-      win.mainInfoDisplay.style.color = "red";
-      game.message = `${game.currentChain} chain!`;
-      game.messageChangeDelay = 90;
       if (add1ToChain) {
         chainLogic.addToPrimaryChain = true;
         game.currentChain++;
@@ -175,6 +171,10 @@ export function checkMatch() {
           announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
         );
       }
+      updateScore(clearLocationsLength, game.currentChain);
+      win.mainInfoDisplay.style.color = "red";
+      game.message = `${game.currentChain} chain!`;
+      game.messageChangeDelay = 90;
 
       for (let i = 0; i < clearLocationsLength; i++) {
         let c = clearLocations[i][0];
@@ -244,14 +244,13 @@ export function updateScore(clearLocationsLength, currentChain) {
   } else {
     game.scoreMultiplier = 2 + 0.25 * (game.level - 7);
   }
-  game.chainScoreAdded += Math.round(game.scoreMultiplier * addToScore);
-  game.score += Math.round(game.scoreMultiplier * addToScore);
-  console.log(`+${game.scoreMultiplier * addToScore} | Score: ${game.score}`);
-  console.log(
-    `Current Time: ${game.minutes}:${game.seconds} | Current fps: ${performance.fps}`
-  );
-  if (game.score > game.highScore) {
-    game.highScore = game.score;
-    win.highScoreDisplay.style.color = "gold";
-  }
+  game.scoreUpdate = Math.round(game.scoreMultiplier * addToScore);
+  game.chainScoreAdded += game.scoreUpdate;
+  game.score += game.scoreUpdate;
+  let loggedScore = `Time: ${game.timeString}, Score Earned = ${game.scoreUpdate}, Total Score: ${game.score} || Equation: Multiplier * (${blockBonus} Block Bonus + ${comboBonus} Combo Bonus)`;
+  if (game.currentChain > 1)
+    loggedScore += ` +${chainBonus} Chain ${currentChain} Bonus)`;
+  loggedScore += `) = ${game.scoreUpdate}`;
+  game.log.push(loggedScore);
+  console.log(loggedScore);
 }

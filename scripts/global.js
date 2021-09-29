@@ -169,7 +169,9 @@ const game = {
   finalTime: 0,
   seconds: 0,
   minutes: 0,
+  timeString: "",
   score: 0,
+  scoreUpdate: 0,
   scoreMultiplier: 1,
   chainScoreAdded: 0,
   currentChain: 0,
@@ -193,7 +195,8 @@ const game = {
   raisePressed: false,
   readyForNewRow: false,
   Music: gameMusic,
-  data: {}
+  data: {},
+  log: []
 };
 
 const action = {
@@ -286,9 +289,35 @@ export function randInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-// a
-// a
-// a
+export function padInteger(integer, digits) {
+  switch (digits) {
+    case 2:
+      return integer < 10 ? `0${integer}` : `${integer}`;
+    case 3:
+      if (integer < 10) return `00${integer}`;
+      else if (integer < 100) return `0${integer}`;
+      else return `${integer}`;
+    case 4:
+      if (integer < 10) return `000${integer}`;
+      else if (integer < 100) return `00${integer}`;
+      else if (integer < 1000) return `0${integer}`;
+      else return `${integer}`;
+    case 5:
+      if (integer < 10) return `0000${integer}`;
+      else if (integer < 100) return `000${integer}`;
+      else if (integer < 1000) return `00${integer}`;
+      else if (integer < 10000) return `0${integer}`;
+      else return `${integer}`;
+    case 6:
+      if (integer < 10) return `00000${integer}`;
+      else if (integer < 100) return `0000${integer}`;
+      else if (integer < 1000) return `000${integer}`;
+      else if (integer < 10000) return `00${integer}`;
+      else if (integer < 10000) return `0${integer}`;
+      else return `${integer}`;
+  }
+  return "Error: Can only pad digits 2-6";
+}
 
 export {
   announcer,

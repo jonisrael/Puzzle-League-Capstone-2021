@@ -43,6 +43,7 @@ export function isGameOver() {
           }
         }
         playAudio(audio.topout);
+        console.lop(game.log);
         return false;
       }
       game.Music.volume = 0;
@@ -55,9 +56,7 @@ export function isGameOver() {
 
 export function gameOverBoard() {
   // don't continue function if all pieces are already switched to blockType.DEAD type
-  if (game.board[5][11].type == blockType.DEAD) {
-    return;
-  }
+  if (game.board[5][11].type == blockType.DEAD) return;
   if (game.frames == 2) {
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.Music.src = audio.resultsMusic;

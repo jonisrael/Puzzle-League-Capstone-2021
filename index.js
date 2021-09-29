@@ -19,7 +19,7 @@ import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import { audio } from "./scripts/fileImports";
 dotenv.config();
 
-const router = new Navigo(window.location.origin);
+export const router = new Navigo(window.location.origin);
 
 export function render(st) {
   console.log(`loaded audios: ${loadedAudios.length}`);
@@ -44,7 +44,7 @@ function addEventListeners(st) {
       // Failsafe: If already on home page, do not reload it upon clicking it.
       win.running = false;
       game.Music.volume = 0;
-      // If on homepage and game playing, revert to homepage. If game not playing, start game.t
+      // If on homepage and game playing, revert to homepage. If game not playing, start game.
       if (st.view == "Home" && state[event.target.title].view == "Home") {
         if (document.getElementById("canvas"))
           render(state[event.target.title]);
@@ -184,6 +184,12 @@ router.hooks({
             leaderboard.minRankedId =
               leaderboard.data[leaderboard.data.length - 1]._id;
             done();
+            console.log(
+              "Last on leaderboard):",
+              leaderboard.minRankedName,
+              leaderboard.minRankedScore,
+              leaderboard.minRankedId
+            );
           })
           .catch(error => {
             console.log("Failed to fetch Leaderboard Data:", error);

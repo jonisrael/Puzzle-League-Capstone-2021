@@ -1,6 +1,6 @@
 import { startGame } from "./beginGame";
 import { announcer, game, api, performance, leaderboard } from "../global";
-import { render, sendData } from "../../index";
+import { render, router, sendData } from "../../index";
 import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
 import * as state from "../../store";
@@ -150,12 +150,14 @@ export function submitResults() {
       year: api.data.year,
       hour: api.data.hour,
       minute: api.data.minute,
-      meridian: api.data.meridian
+      meridian: api.data.meridian,
+      gameLog: game.log
     };
 
     console.log(requestData);
     sendData(requestData);
     game.Music.volume = 0;
+    // router.navigate("/Leaderboard");
     render(state.Home);
     return;
   });
