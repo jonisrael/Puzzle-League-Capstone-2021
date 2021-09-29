@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import { router } from "./index";
+import { render, router } from "./index";
 import * as state from "./store";
 import { sprite, audio, audioList } from "./scripts/fileImports";
 import {
@@ -616,8 +616,9 @@ function KEYBOARD_CONTROL(event) {
       playAudio(audio.select);
       win.running = false;
       console.log(state.Home.view);
-      console.log(router);
-      router.navigate("/Home");
+      // console.log(router);
+      render(state.Home);
+      // router.navigate("/Home");
     }
   }
   // Game Controls
