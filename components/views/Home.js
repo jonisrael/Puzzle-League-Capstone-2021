@@ -14,16 +14,6 @@ export default st => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
       <hr />
-      <h1>Compatibility</h1>
-      <p>
-        This game is keyboard only, though I may try and add experimental
-        mouse/touch support in the future for moving tiles. This game
-        <strong>does NOT run on Firefox correctly</strong>, but runs fine on
-        Chrome, Safari, and Edge, with Edge somehow having the best performance
-        results (If you have a Windows computer, Microsoft Edge is
-        preinstalled).
-      </p>
-      <hr />
       <h1>How to play</h1>
       <p>
         <strong
@@ -57,6 +47,19 @@ export default st => html`
         shot!
       </p>
       <hr />
+      <h1>Compatibility</h1>
+      <p>
+        This game is keyboard only, though I may try and add experimental
+        mouse/touch support in the future for moving tiles. This game
+        <strong>does NOT run on Firefox correctly</strong>, but runs fine on
+        Chrome, Safari, and Edge, with Edge somehow having the best performance
+        results (If you have a Windows computer, Microsoft Edge is
+        preinstalled).
+      </p>
+      <hr />
+      <h1>Game Controller Support</h1>
+      <p>...there isn't any currently. HOWEVER, you can use applications like <a href = https://joytokey.net/en/>JoyToKey</a> or <a href="https://keysticks.net/">Keysticks</a> to map buttons to keyboard inputs. I may add this support later depending on website popularity.</p>
+      <hr />
       <h1 style="color:red">Notice about Posting Scores</h1>
       <p style="color:black">
         This game was written in javascript as a capstone for the
@@ -67,7 +70,7 @@ export default st => html`
           >Unfortunately it is not a consistent programming language with
           running games optimally</strong
         >, and there are issues with the game running too slowly on certain
-        computers and can lead to an <strong>unintended advantage</strong>. If
+        computers and can lead to an unintended advantage If
         the app detects that the in-game timer is five or more seconds behind a
         real timer,
         <strong>your score cannot be ranked.</strong>
