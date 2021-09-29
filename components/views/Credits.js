@@ -10,6 +10,7 @@ export default st => html`
         <li>"Sudden Death" from Mario Strikers Charged OST (2007)"</li>
         <li>"Results Screen" from Super Street Fighter IV OST (2010)</li>
       </ul>
+      <hr />
       <h2>Audio Samples</h2>
       <ul>
         <li>
@@ -25,6 +26,7 @@ export default st => html`
           "Fanfare 1-5", "Topout" sound effects from Planet Puzzle League (2007)
         </li>
       </ul>
+      <hr />
       <h2>Images</h2>
       <ul>
         <li>
@@ -32,6 +34,20 @@ export default st => html`
           Pon.
         </li>
       </ul>
+      <hr />
+      <h2>Code</h2>
+      <p>
+        The game itself was coded by me from the ground up, and attempts to
+        replicate the original Panel De Pon mechanics as best as possible.
+        However, I received a lot of help from the
+        <a href="https://savvycoders.com/meettheteam/">Savvy Coders Team</a> in
+        regards to other website features. These features include converting the
+        game into a Single-Page-Application, deploying the site to
+        <a href="https://www.netlify.com/">Netlify</a>, get datetime information
+        from <a href="https://worldtimeapi.org/">WorldTimeAPI</a>, and use a
+        <a href="https://cloud.mongodb.com/">Mongo-DB</a> database to host the
+        leaderboard information on <a href="heroku.com">Heroku</a>.
+      </p>
     </body>
   </section>
 `;
