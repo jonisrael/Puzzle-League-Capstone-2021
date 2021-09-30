@@ -590,6 +590,13 @@ function KEYBOARD_CONTROL(event) {
       document.getElementById("training-button").remove();
       startGame(2);
     }
+    if (event.keyCode === 87) {
+      // w for "wasd" controls
+      win.controls = "wasd";
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-button").remove();
+      startGame(2);
+    }
   }
   if (document.getElementById("training-button")) {
     if (event.keyCode == 83 || event.keyCode == 84) {
@@ -623,7 +630,10 @@ function KEYBOARD_CONTROL(event) {
   }
   // Game Controls
   if (win.running & !game.over && !game.paused) {
-    if (event.keyCode == 37) {
+    if (
+      (event.keyCode === 37 && win.controls === "arrow") ||
+      (event.keyCode === 65 && win.controls === "wasd")
+    ) {
       // left
       if (game.cursor.x - 1 >= 0) {
         game.cursor.x -= 1;
@@ -631,7 +641,10 @@ function KEYBOARD_CONTROL(event) {
       }
       win.cvs.scrollIntoView({ block: "nearest" });
     }
-    if (event.keyCode == 38) {
+    if (
+      (event.keyCode === 38 && win.controls === "arrow") ||
+      (event.keyCode === 87 && win.controls === "wasd")
+    ) {
       // up
       if (game.cursor.y - 1 >= 1) {
         game.cursor.y -= 1;
@@ -639,7 +652,10 @@ function KEYBOARD_CONTROL(event) {
       }
       win.cvs.scrollIntoView({ block: "nearest" });
     }
-    if (event.keyCode == 39) {
+    if (
+      (event.keyCode === 39 && win.controls === "arrow") ||
+      (event.keyCode === 68 && win.controls === "wasd")
+    ) {
       // right
       if (game.cursor.x + 1 <= grid.COLS - 2) {
         game.cursor.x += 1;
@@ -647,7 +663,10 @@ function KEYBOARD_CONTROL(event) {
       }
       win.cvs.scrollIntoView({ block: "nearest" });
     }
-    if (event.keyCode == 40) {
+    if (
+      (event.keyCode == 40 && win.controls === "arrow") ||
+      (event.keyCode === 83 && win.controls === "wasd")
+    ) {
       // down
       if (game.cursor.y + 1 <= grid.ROWS - 1) {
         game.cursor.y += 1;
@@ -655,8 +674,15 @@ function KEYBOARD_CONTROL(event) {
       }
       win.cvs.scrollIntoView({ block: "nearest" });
     }
-    if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
-    if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
+    if (win.controls === "arrow") {
+      if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
+      if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
+    }
+    if (win.controls === "wasd") {
+      if (event.keyCode == 74 || event.keyCode == 75) action.swap = true; // s or x
+      if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
+    }
+
     if (event.keyCode == 192) {
       // tilda `~
       debug.enabled = (debug.enabled + 1) % 2;

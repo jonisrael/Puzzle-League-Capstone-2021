@@ -126,7 +126,7 @@ export function getWorldTimeAPI() {
   axios
     .get("https://worldtimeapi.org/api/ip")
     .then(response => {
-      dateTimeString = response.data.datetime;
+      dateTimeString = response.data.utc_datetime;
       console.log("Fetch Successful!");
       api.data = extractTimeFromAPI(dateTimeString);
     })

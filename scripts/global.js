@@ -149,7 +149,8 @@ const win = {
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx"),
-  audioLoaded: false
+  audioLoaded: false,
+  controls: "arrow"
 };
 
 const game = {
