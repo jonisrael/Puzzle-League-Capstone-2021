@@ -250,9 +250,6 @@ const debug = {
 
 const leaderboard = {
   data: [],
-  minRankedName: "N/A",
-  minRankedScore: 0,
-  minRankedId: "",
   canPost: true,
   userPostedName: "",
   userPostedScore: "",

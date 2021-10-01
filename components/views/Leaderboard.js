@@ -18,7 +18,6 @@ export default st => html`
         <th>BEST CHAIN</th>
         <th>BLOCKS CLEARED</th>
         <th>DATE</th>
-        <th>TIME</th>
       </tr>
       <span id="ranked-scores-display">${st.markup}</span>
     </table>

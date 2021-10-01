@@ -1,11 +1,12 @@
 import { startGame } from "./beginGame";
 import { announcer, game, api, performance, leaderboard } from "../global";
-import { render, router, sendData } from "../../index";
+import { deleteEntry, render, router, sendData } from "../../index";
 import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
 import * as state from "../../store";
 import { checkCanUserPost } from "./checkCanUserPost";
 import { updateBestScores, getBestScores } from "./updateBestScores";
+import { validateForm } from "./validateForm";
 
 export function afterGame() {
   let duration = "";
@@ -113,14 +114,17 @@ export function submitResults() {
   nameInput.setAttribute("type", "text");
   nameInput.setAttribute("name", "player-name");
   nameInput.setAttribute("id", "player-name");
+  nameInput.setAttribute("minlength", "3");
   nameInput.setAttribute("maxlength", "15");
-  nameInput.setAttribute("placeholder", "Anonymous");
+  // nameInput.setAttribute("pattern", RegExp("w"));
+  nameInput.setAttribute("placeholder", "Enter Name Here");
   form.appendChild(nameInput);
 
   let submitForm = document.createElement("input");
   submitForm.setAttribute("id", "submit-name");
   submitForm.setAttribute("type", "submit");
   submitForm.setAttribute("name", "submit-name");
+  submitForm.required = true;
   submitForm.setAttribute(
     "value",
     `Submit Name${leaderboard.canPost ? " " : " (Unranked)"}`
@@ -131,35 +135,30 @@ export function submitResults() {
 
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
-    if (nameInput.value === "") nameInput.value = "Anonymous";
-    if (!leaderboard.canPost) {
-      if (nameInput.value.length == 15) {
-        nameInput.value = nameInput.value.slice(0, 14);
-      }
-      nameInput.value = `*${nameInput.value}`;
+    if (validateForm(nameInput.value, leaderboard.data) || 0 === 0) {
+      let requestData = {
+        name: nameInput.value,
+        score: finalScore,
+        duration: duration,
+        largestChain: game.largestChain,
+        totalClears: game.totalClears,
+        month: api.data.month,
+        day: api.data.day,
+        year: api.data.year,
+        hour: api.data.hour,
+        minute: api.data.minute,
+        meridian: api.data.meridian,
+        gameLog: game.log
+      };
+
+      console.log(requestData);
+      deleteEntry(leaderboard.data[leaderboard.data.length - 1]);
+      sendData(requestData);
+      game.Music.volume = 0;
+      // router.navigate("/Leaderboard");
+      render(state.Home);
+      return;
     }
-
-    let requestData = {
-      name: nameInput.value,
-      score: finalScore,
-      duration: duration,
-      largestChain: game.largestChain,
-      totalClears: game.totalClears,
-      month: api.data.month,
-      day: api.data.day,
-      year: api.data.year,
-      hour: api.data.hour,
-      minute: api.data.minute,
-      meridian: api.data.meridian,
-      gameLog: game.log
-    };
-
-    console.log(requestData);
-    sendData(requestData);
-    game.Music.volume = 0;
-    // router.navigate("/Leaderboard");
-    render(state.Home);
-    return;
   });
 }
 

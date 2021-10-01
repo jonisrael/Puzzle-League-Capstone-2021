@@ -247,10 +247,7 @@ export function updateScore(clearLocationsLength, currentChain) {
   game.scoreUpdate = Math.round(game.scoreMultiplier * addToScore);
   game.chainScoreAdded += game.scoreUpdate;
   game.score += game.scoreUpdate;
-  let loggedScore = `Time: ${game.timeString}, Score Earned = ${game.scoreUpdate}, Total Score: ${game.score} || Equation: Multiplier * (${blockBonus} Block Bonus + ${comboBonus} Combo Bonus)`;
-  if (game.currentChain > 1)
-    loggedScore += ` +${chainBonus} Chain ${currentChain} Bonus)`;
-  loggedScore += `) = ${game.scoreUpdate}`;
+  let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${clearLocationsLength} combo`;
   game.log.push(loggedScore);
   console.log(loggedScore);
 }

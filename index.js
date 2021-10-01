@@ -126,7 +126,7 @@ export function getWorldTimeAPI() {
   axios
     .get("https://worldtimeapi.org/api/ip")
     .then(response => {
-      dateTimeString = response.data.utc_datetime;
+      dateTimeString = response.data.datetime;
       console.log("Fetch Successful!");
       api.data = extractTimeFromAPI(dateTimeString);
     })
@@ -136,18 +136,21 @@ export function getWorldTimeAPI() {
     });
 }
 
-export function sendData(requestData) {
-  console.log("Deleting data...");
+export function deleteEntry(entry) {
+  console.log(`Deleting entry ${entry.name}, ${entry.score}, ${entry.id}`);
   axios
-    .delete(`${process.env.API}/games/${leaderboard.minRankedId}`) // process.env.API accesses API
+    .delete(`${process.env.API}/games/${entry._id}`) // process.env.API accesses API
     .then(response => {
-      console.log(
-        `Deleted: ${leaderboard.minRankedId}, ${leaderboard.minRankedName}, ${leaderboard.minRankedScore}`
-      );
+      console.log(`Deletion Successful.`);
     })
     .catch(error => {
-      console.log("Failed to Delete", error);
+      console.log("Deletion Failed.", error);
     });
+}
+
+export function getLeaderboardData() {}
+
+export function sendData(requestData) {
   console.log("Posting data...");
   axios
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
@@ -171,25 +174,11 @@ router.hooks({
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
           .then(response => {
-            let sortedData = response.data.sort((a, b) =>
+            leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
-            sortedData.filter(entry => {
-              leaderboard.data.push(entry);
-            });
-            leaderboard.minRankedName =
-              leaderboard.data[leaderboard.data.length - 1].name;
-            leaderboard.minRankedScore =
-              leaderboard.data[leaderboard.data.length - 1].score;
-            leaderboard.minRankedId =
-              leaderboard.data[leaderboard.data.length - 1]._id;
+            console.log(leaderboard.data);
             done();
-            console.log(
-              "Last on leaderboard):",
-              leaderboard.minRankedName,
-              leaderboard.minRankedScore,
-              leaderboard.minRankedId
-            );
           })
           .catch(error => {
             console.log("Failed to fetch Leaderboard Data:", error);
@@ -199,16 +188,12 @@ router.hooks({
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
           .then(response => {
-            let sortedData = response.data.sort((a, b) =>
+            leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
-            let rankedData = [];
-            sortedData.filter(entry => {
-              rankedData.push(entry);
-            });
             state[page].markup = "";
-            for (let rank = 0; rank < rankedData.length; rank++) {
-              let entry = rankedData[rank];
+            for (let rank = 0; rank < leaderboard.data.length; rank++) {
+              let entry = leaderboard.data[rank];
               if (entry.score >= 999999) entry.score = "999999";
 
               let largestChain = `${entry.largestChain}`;
@@ -247,12 +232,13 @@ router.hooks({
                   <td>
                   ${entry.month}/${entry.day}/${entry.year.slice(2.4)}
                   </td>
-                  <td>
-                  ${entry.hour}:${entry.minute} ${entry.meridian}
-                  </td>
                 </tr>
                 `;
             }
+
+            // <td>
+            // ${entry.hour}:${entry.minute} ${entry.meridian}
+            // </td>
 
             done();
           })

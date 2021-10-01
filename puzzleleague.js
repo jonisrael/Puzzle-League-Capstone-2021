@@ -862,8 +862,17 @@ export function gameLoop() {
         // overtime bonuses
         if (game.minutes == 2) {
           game.score += game.seconds;
+          game.log.push(
+            `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
+          );
+          console.log(game.log[game.log.length - 1]);
         } else if (game.minutes == 3) {
           game.score += 60 + game.seconds;
+          game.log.push(
+            `Time: ${game.timeString}, Overtime Bonus +${60 +
+              game.seconds}, Total: ${game.score}`
+          );
+          console.log(game.log[game.log.length - 1]);
         }
 
         if (debug.enabled === 1) {
