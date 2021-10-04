@@ -6,13 +6,16 @@ import {
   game,
   win,
   debug,
-  leaderboard
+  leaderboard,
+  api
 } from "../global";
 
 import { audio } from "../fileImports";
 import { submitResults, afterGame } from "./submitResults";
 
+import * as state from "../../store";
 import { playAudio, playMusic } from "./audioFunctions";
+import { displayError, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;
@@ -21,8 +24,7 @@ export function closeGame(gameFinished) {
   console.log("closeGame called");
   win.running = false;
   if (gameFinished) {
-    if (leaderboard.data.length > 0) afterGame();
-    else location.reload();
+    afterGame();
   }
   win.cvs = null;
   win.ctx = null;
@@ -58,6 +60,7 @@ export function gameOverBoard() {
   // don't continue function if all pieces are already switched to blockType.DEAD type
   if (game.board[5][11].type == blockType.DEAD) return;
   if (game.frames == 2) {
+    getLeaderboardData();
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.Music.src = audio.resultsMusic;
     game.messagePriority = "Game Over!";

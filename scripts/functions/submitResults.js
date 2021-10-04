@@ -1,4 +1,4 @@
-import { startGame } from "./beginGame";
+import { startGame } from "./startGame";
 import { announcer, game, api, performance, leaderboard } from "../global";
 import { deleteEntry, render, router, sendData } from "../../index";
 import { audio } from "../fileImports";
@@ -20,6 +20,8 @@ export function afterGame() {
   let div1 = document.createElement("div");
   container.appendChild(div1);
 
+  console.log(game.log);
+  console.log(leaderboard.data[leaderboard.data.length - 1]);
   let rank = updateBestScores(game.score);
   let gameOver = document.createElement("h2");
   gameOver.setAttribute("id", "game-over");
@@ -62,9 +64,9 @@ export function afterGame() {
       announcer.endgameIndexLastPicked,
       "endgame"
     );
-    playMusic(audio.resultsMusic, 0.2);
+    playMusic(audio.resultsMusic, 0.1);
   } else {
-    playMusic(audio.resultsMusic, 0.2, 3);
+    playMusic(audio.resultsMusic, 0.1, 3);
   }
 
   let div2 = document.createElement("div");
@@ -135,7 +137,7 @@ export function submitResults() {
 
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
-    if (validateForm(nameInput.value, leaderboard.data) || 0 === 0) {
+    if (0 === 0 || validateForm(nameInput.value, finalScore)) {
       let requestData = {
         name: nameInput.value,
         score: finalScore,
@@ -151,12 +153,11 @@ export function submitResults() {
         gameLog: game.log
       };
 
-      console.log(requestData);
       deleteEntry(leaderboard.data[leaderboard.data.length - 1]);
       sendData(requestData);
-      game.Music.volume = 0;
-      // router.navigate("/Leaderboard");
-      render(state.Home);
+      router.navigate("/Leaderboard");
+      render(state.Leaderboard);
+      game.Music.volume = 0.1;
       return;
     }
   });

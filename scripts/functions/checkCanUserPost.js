@@ -1,15 +1,23 @@
-import { startGame } from "./beginGame";
+import { startGame } from "./startGame";
 import { audio } from "../fileImports";
-import { announcer, game, performance, leaderboard } from "../global";
+import { announcer, game, performance, leaderboard, api } from "../global";
 import { submitResults, afterGame } from "./submitResults";
 import { playMusic, playAnnouncer } from "./audioFunctions";
 
 export function checkCanUserPost() {
   game.Music.loop = false;
-  if (game.score == 0) {
+  if (api.data === undefined) {
+    leaderboard.canPost = false;
+    leaderboard.reason = "no-worldtime";
+  } else if (leaderboard.data.length == 0) {
+    leaderboard.canPost = false;
+    leaderboard.reason = "no-leaderboard";
+  } else if (game.score == 0) {
     leaderboard.canPost = false;
     leaderboard.reason = "zero";
-  } else if (game.score < leaderboard.minRankedScore) {
+  } else if (
+    game.score <= leaderboard.data[leaderboard.data.length - 1].score
+  ) {
     leaderboard.canPost = false;
     leaderboard.reason = "get-good";
   }
@@ -58,8 +66,26 @@ export function checkCanUserPost() {
       return false;
     }
 
+    if (leaderboard.reason === "no-worldtime") {
+      container.innerHTML = `<p>This is because WorldTimeAPI cannot be accessed.</p>`;
+      return false;
+    }
+
+    if (leaderboard.reason === "no-leaderboard") {
+      container.innerHTML = `<p>This is because the heroku server cannot be accessed.</p>`;
+      return false;
+    }
+
     if (leaderboard.reason === "get-good") {
-      container.innerHTML += `<p>This is because your score is below the 50th leaderboard spot. Your score is ${game.score}, while "${leaderboard.minRankedName}'s" score on the leaderboard spot's is ${leaderboard.minRankedScore}. Keep practicing and try again!</p>`;
+      container.innerHTML += `<p>This is because your score is less than or equal to the last leaderboard spot. Depending on popularity, leaderboard size may increase. Your score is ${
+        game.score
+      }, while the <strong>#${
+        leaderboard.data.length
+      } spot on the leaderboard is "${
+        leaderboard.data[leaderboard.data.length - 1].name
+      }" with a score of ${
+        leaderboard.data[leaderboard.data.length - 1].score
+      }.</strong> Keep practicing and try again!</p>`;
       return false;
     }
   }

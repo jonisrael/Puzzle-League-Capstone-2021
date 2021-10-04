@@ -7,10 +7,8 @@ body {
     display: flex;
     position: fixed;
     justify-content: center;
-    top: 50%;
-    left: 25%;
     font-size: 72px;
-    color: red;
+    color: blue;
     background-color: silver;
     padding: 10px;
 }

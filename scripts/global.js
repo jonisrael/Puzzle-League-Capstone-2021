@@ -125,6 +125,7 @@ let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
 const win = {
+  shownPatchNotes: false,
   view: "Home",
   viewChanged: false,
   running: false,

@@ -24,6 +24,7 @@ import { unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 
 export function startGame(selectedGameSpeed) {
+  leaderboard.reason = "";
   getWorldTimeAPI();
   win.running = true;
   resetGameVariables();

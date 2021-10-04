@@ -1,29 +1,41 @@
-export function validateForm(value, rankedData) {
-  console.log("firing");
+import axios from "axios";
+import * as state from "../../store";
+import { deleteEntry } from "../../index";
+import { leaderboard } from "../global";
+import { displayError } from "../../puzzleleague";
+
+export function validateForm(value, score) {
+  console.log("firing value", value);
   let identicalEntries = [];
   let overwrite = false;
-  rankedData.forEach(name => {
-    if (value === name) {
+  leaderboard.data.forEach(entry => {
+    if (value === entry.name) {
       identicalEntries.push({
-        score: rankedData.score,
-        id: rankedData.id
+        score: entry.score,
+        _id: entry._id
       });
     }
   });
+  console.log("identical entries", identicalEntries);
+  let informIfLessThanLeaderboard = "";
   if (identicalEntries.length > 3) {
+    if (score < identicalEntries[2].score)
+      informIfLessThanLeaderboard =
+        "This score is also lower than all of your other scores. ";
     overwrite = confirm(
-      `"${value}" is already on the leaderboard 3 times.\nYou will need to overwrite their lowest score of ${identicalEntries[2].score}in order to post this new one.\nContinue?`
+      `This name is already on the leaderboard 3 times. You will need to overwrite the lowest score. ${informIfLessThanLeaderboard}Continue?`
     );
     if (overwrite) {
+      console.log(identicalEntries[2]);
+      console.log(identicalEntries[2]._id);
+      if (
+        identicalEntries[2]._id !==
+        leaderboard.data[leaderboard.data.length - 1]._id
+      )
+        deleteEntry(identicalEntries[2]._id);
+      return true;
     }
+    return false;
   }
-
-  for (let i in rankedData.names) {
-    if (value === names[i]) {
-      count++;
-      if (count == 3) {
-        return "there are too many of the same name on the leaderboard. You will need to overwrite the lowest score of this name, which is. Continue?";
-      }
-    }
-  }
+  return true;
 }

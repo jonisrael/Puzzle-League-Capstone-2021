@@ -18,7 +18,7 @@ import {
   fixNextDarkStack,
   resetGameVariables,
   startGame
-} from "./scripts/functions/beginGame";
+} from "./scripts/functions/startGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
@@ -794,19 +794,7 @@ function KEYBOARD_CONTROL(event) {
         }
       }
     }
-  } else if (win.running && game.over) {
-    if (event.keyCode >= 0 && game.frames >= 200) {
-      // press any key after game over
-      win.running = false;
-    }
   }
-}
-
-export function displayError(error) {
-  let displayedError = document.createElement("p");
-  displayedError.style.color = "red";
-  displayedError.innerHTML = error;
-  document.append(displayedError);
 }
 
 export function gameLoop() {
@@ -841,14 +829,13 @@ export function gameLoop() {
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * performance.gameSpeed;
 
-      if (game.over && game.frames > 180 && api.data !== undefined) {
-        // playAnnouncer(
-        //   announcer.endgameDialogue,
-        //   announcer.endgameIndexLastPicked,
-        //   "endgame"
-        // );
-        win.running = false;
-        // return;
+      if (game.over && game.frames > 180) {
+        if (
+          leaderboard.reason[0] === "n" ||
+          (api.data !== undefined && leaderboard.data.length > 0) ||
+          game.frames === 600
+        )
+          win.running = false;
       }
 
       checkTime();

@@ -13,10 +13,11 @@ import {
   loadedAudios,
   leaderboard
 } from "./scripts/global";
-import { startGame } from "./scripts/functions/beginGame";
+import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import { audio } from "./scripts/fileImports";
+import { Leaderboard } from "./components/views";
 dotenv.config();
 
 export const router = new Navigo(window.location.origin);
@@ -117,7 +118,6 @@ function addEventListeners(st) {
       );
     });
   }
-  if (st.view !== "Home") game.Music.volume = 0;
 }
 
 export function getWorldTimeAPI() {
@@ -132,23 +132,41 @@ export function getWorldTimeAPI() {
     })
     .catch(error => {
       console.log("Fetch failed", error);
+      leaderboard.reason = "no-worldtime";
       return error;
     });
 }
 
-export function deleteEntry(entry) {
-  console.log(`Deleting entry ${entry.name}, ${entry.score}, ${entry.id}`);
+export function deleteEntry(_id) {
   axios
-    .delete(`${process.env.API}/games/${entry._id}`) // process.env.API accesses API
+    .delete(`${process.env.API}/games/${_id}`) // process.env.API accesses API
     .then(response => {
       console.log(`Deletion Successful.`);
     })
     .catch(error => {
+      leaderboard.reason = "no-leaderboard";
+      displayError(`Deletion Failed. ${error}`);
       console.log("Deletion Failed.", error);
     });
 }
 
-export function getLeaderboardData() {}
+export function getLeaderboardData() {
+  axios
+    .get("https://puzzle-league-blitz.herokuapp.com/games")
+    .then(response => {
+      leaderboard.data = response.data.sort((a, b) =>
+        parseInt(a.score) < parseInt(b.score) ? 1 : -1
+      );
+      console.log(leaderboard.data);
+    })
+    .catch(error => {
+      leaderboard.reason = "no-leaderboard";
+      console.log("Failed to fetch Leaderboard Data from home page:", error);
+      displayError(
+        `Failed to access leaderboard database from heroku server. ${error}`
+      );
+    });
+}
 
 export function sendData(requestData) {
   console.log("Posting data...");
@@ -158,8 +176,21 @@ export function sendData(requestData) {
       console.log("Posted!");
     })
     .catch(error => {
+      leaderboard.reason = "no-leaderboard";
+      displayError(`Failed to Post Data. ${error}`);
       console.log("Failed to Post", error);
     });
+}
+
+export function displayError(theError) {
+  let errorDisplay = document.createElement("div");
+  errorDisplay.style.backgroundColor = "rgb(255, 240, 240)";
+  document.getElementById("root").prepend(errorDisplay);
+  let errorMessage = document.createElement("h1");
+  errorMessage.style.color = "rgb(255, 85, 85)";
+  errorMessage.innerHTML = `<br /><u>${theError}</u><br><br><hr>`;
+  errorDisplay.append(errorMessage);
+  window.scrollTo(0, 0);
 }
 
 router.hooks({
@@ -170,20 +201,6 @@ router.hooks({
         : "Home";
 
     switch (page) {
-      case "Home":
-        axios
-          .get("https://puzzle-league-blitz.herokuapp.com/games")
-          .then(response => {
-            leaderboard.data = response.data.sort((a, b) =>
-              parseInt(a.score) < parseInt(b.score) ? 1 : -1
-            );
-            console.log(leaderboard.data);
-            done();
-          })
-          .catch(error => {
-            console.log("Failed to fetch Leaderboard Data:", error);
-          });
-        break;
       case "Leaderboard":
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
@@ -243,7 +260,13 @@ router.hooks({
             done();
           })
           .catch(error => {
+            leaderboard.reason = "no-leaderboard";
             console.log("Failed to fetch Leaderboard Data:", error);
+            render(state.Home);
+            router.navigate("/Home");
+            displayError(
+              `Failed to fetch leaderboard data. Returned to Home Page. ${error}`
+            );
           });
         break;
       default:
