@@ -18,6 +18,13 @@ body {
     font-size: xx-large;
 }
 
+.error-display {
+    color: rgb(255, 85, 85);
+    background-color: rgb(255, 240, 240);
+    padding: 1px;
+    border-radius: 3px;
+}
+
 .default-button {
     margin: 20px;
     border-radius: 10px;

@@ -184,10 +184,10 @@ export function sendData(requestData) {
 
 export function displayError(theError) {
   let errorDisplay = document.createElement("div");
-  errorDisplay.style.backgroundColor = "rgb(255, 240, 240)";
+  errorDisplay.className = "error-display";
   document.getElementById("root").prepend(errorDisplay);
   let errorMessage = document.createElement("h1");
-  errorMessage.style.color = "rgb(255, 85, 85)";
+  errorMessage.className = "error-display";
   errorMessage.innerHTML = `<br /><u>${theError}</u><br><br><hr>`;
   errorDisplay.append(errorMessage);
   window.scrollTo(0, 0);
