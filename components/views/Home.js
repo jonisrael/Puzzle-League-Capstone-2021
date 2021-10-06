@@ -3,9 +3,6 @@ import html from "html-literal";
 export default st => html`
   <section id="home-page">
     <div id="container">
-      <h2 class="error-display">
-        Update 10/5: I am aware of problems posting, reading, and deleting scores on the leaderboard, and am on the case! I have all leaderboard data backed up until 10/5, and if you are really upset that the leaderboard didn't accept your score, you can screenshot your score and send it to me at discord GiefKid#0722 and I will manually add it to the leaderboard as soon as things are back in order.
-      </h2>
       <h2 style="color:white;">Welcome to Puzzle League: Arcade Edition!</h2>
       <h1>Controls</h1>
       <ul id="controls">

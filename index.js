@@ -70,9 +70,11 @@ function addEventListeners(st) {
   win.muteMusic = document.getElementById("mute-music");
   win.muteSFX = document.getElementById("mute-sfx");
   if (st.view === "Leaderboard") {
-    document.getElementById("refresh").addEventListener("click", () => {
-      state["Leaderboard"].markup = "Fetching Leaderboard...";
-      getLeaderboardData(true);
+    document.querySelectorAll(".refresh").forEach(item => {
+      item.addEventListener("click", () => {
+        item.innerHTML = "Fetching...";
+        getLeaderboardData(true);
+      });
     });
   }
   if (st.view === "Home") {
@@ -203,6 +205,7 @@ export function getLeaderboardData(populate = false) {
       if (populate) {
         state["Leaderboard"].markup = populateLeaderboard();
         render(state.Leaderboard);
+        console.log("refreshed leaderboard");
       }
     })
     .catch(error => {

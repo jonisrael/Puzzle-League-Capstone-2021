@@ -8,7 +8,7 @@ export default st => html`
       could have given the player an advantage, and so these names are placed at
       the bottom of the leaderboard. For more information, see "Known Bugs".
     </p>
-    <button id="refresh" class="default-button">
+    <button class="refresh default-button">
       Refresh Leaderboard
     </button>
     <h2 style="color:blue">Ranked</h2>
@@ -25,5 +25,9 @@ export default st => html`
       </tr>
       <span id="ranked-scores-display">${st.markup}</span>
     </table>
+
+    <button class="refresh default-button">
+      Refresh Leaderboard
+    </button>
   </section>
 `;

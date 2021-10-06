@@ -34,7 +34,7 @@ body {
     align-items: center;
 }
 
-#refresh {
+.refresh {
     margin-left: 75%;
     padding: .5rem;
     justify-content: flex-end;
