@@ -17,8 +17,7 @@ export function showPatchNotes() {
     <ul>
       <li>
         WASD controls are now allowed for people who prefer their left hand for
-        movement. You can activate it by pressing "W" at the home screen, or you
-        can change your controls during the game.
+        movement. You can activate it by pressing "W" at the home screen.
       </li>
     </ul>
     <label>Website Changes</label>
