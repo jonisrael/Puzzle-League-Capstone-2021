@@ -4,19 +4,26 @@ import * as state from "../../store";
 export function populateLeaderboard() {
   let markup = "";
   let nameMatchIndexes = [];
+  let fullMatchIndex = -1;
   console.log(`userPostedName: ${leaderboard.userPostedName}`);
   for (let rank = 0; rank < leaderboard.data.length; rank++) {
     if (leaderboard.data[rank].score >= 999999)
       leaderboard.data[rank].score = "999999";
     let entry = leaderboard.data[rank];
-    if (leaderboard.data[rank].name == leaderboard.userPostedName)
+    if (leaderboard.data[rank].name == leaderboard.userPostedName) {
       nameMatchIndexes.push(rank);
+      if (leaderboard.data[rank].score == leaderboard.userPostedScore)
+        fullMatchIndex = rank;
+    }
     markup += `
+      <tr style='
       ${
         nameMatchIndexes.includes(rank)
-          ? "<tr style='background-color: yellow; color:red';>"
-          : "<tr>"
+          ? " font-weight: bold; background-color: orange;"
+          : ""
       }
+      ${fullMatchIndex == rank ? " background-color: yellow; color:blue" : ""}
+      '${fullMatchIndex == rank ? "id='user-post'" : ""}>
         <td>
           ${rank + 1}
         </td>

@@ -125,7 +125,7 @@ let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
 const win = {
-  shownPatchNotes: false,
+  patchNotesShown: false,
   view: "Home",
   viewChanged: false,
   running: false,
@@ -280,6 +280,10 @@ for (let i = 1; i <= 5; i++) {
   if (localStorage.getItem(`bestScore${i}`) == null) {
     console.log(`creating item for bestScore ${i}`);
   }
+}
+
+if (localStorage.getItem(`username`) == null) {
+  localStorage.setItem("username", "Enter Name Here");
 }
 
 export const bestScores = [

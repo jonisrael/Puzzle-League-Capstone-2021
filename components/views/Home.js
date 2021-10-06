@@ -69,15 +69,18 @@ export default st => html`
           >Unfortunately it is not a consistent programming language with
           running games optimally</strong
         >, and there are issues with the game running too slowly on certain
-        computers and can lead to an unintended advantage If
-        the app detects that the in-game timer is five or more seconds behind a
+        computers and can lead to an unintended advantage. If
+        the app detects that the in-game timer is six or more seconds behind a
         real timer,
         <strong>your score cannot be ranked.</strong>
       </p>
       <div id="game-container">
         <div id="left-column">
           <button id="arcade-button" class="default-button start-buttons">
-            Play Arcade!<br />(Enter/Space)
+            Play Arcade!<br />Default Controls<br />(Enter)
+          </button>
+          <button id="wasd-arcade-button" class="default-button start-buttons" style="display:none">
+            Play Arcade!<br />WASD Controls<br />(W)
           </button>
         </div>
         <div id="right-column" style="display:none">

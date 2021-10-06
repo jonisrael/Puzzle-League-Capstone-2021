@@ -6,7 +6,8 @@ import {
   render,
   router,
   sendData,
-  updateEntry
+  updateEntry,
+  getWorldTimeAPI
 } from "../../index";
 import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
@@ -126,7 +127,9 @@ export function submitResults() {
   nameInput.setAttribute("minlength", "3");
   nameInput.setAttribute("maxlength", "15");
   // nameInput.setAttribute("pattern", RegExp("w"));
-  nameInput.setAttribute("placeholder", "Enter Name Here");
+  nameInput.setAttribute("placeholder", `"Enter Name Here"`);
+  nameInput.autofocus = true;
+  nameInput.value = localStorage.getItem("username");
   form.appendChild(nameInput);
 
   let submitForm = document.createElement("input");
@@ -164,10 +167,11 @@ export function submitResults() {
       };
       updateEntry(newData, indexToReplace);
       leaderboard.userPostedName = nameInput.value;
+      leaderboard.userPostedScore = finalScore;
       router.navigate("/Leaderboard");
       getLeaderboardData(true);
-
       game.Music.volume = 0.1;
+      game.Music.loop = false;
       return;
     }
   });

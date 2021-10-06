@@ -3,6 +3,46 @@ body {
     /* text-align: center; */
 }
 
+#patch-notes-overlay {
+    display: grid;
+    cursor: pointer;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    background-color: rgb(0,0,0,0.7);
+    z-index: 109;
+}
+
+#patch-notes-block {
+    margin: auto;
+    background-color: lightgrey;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 10px;
+    max-height:90%;
+    max-width: 75%;
+    overflow: auto;
+}
+
+#patch-notes-block label {
+    font-weight: bold;
+    text-align: left;
+    color: red;
+}
+#patch-notes-block li {
+    text-align: left;
+    padding: 0.25rem
+}
+
+#wasd-arcade-button {
+    padding: 30px;
+    background-color: lightseagreen;
+}
+
 #placeholder {
     display: flex;
     position: fixed;

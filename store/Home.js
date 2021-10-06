@@ -1,5 +1,6 @@
 export default {
   header: "Home",
   view: "Home",
-  games: []
+  games: [],
+  patchNotes: ""
 };

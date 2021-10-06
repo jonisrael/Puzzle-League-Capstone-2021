@@ -16,9 +16,7 @@ import {
 import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
-import { pause, unpause } from "./scripts/functions/pauseFunctions";
-import { audio } from "./scripts/fileImports";
-import { Leaderboard } from "./components/views";
+import { showPatchNotes } from "./scripts/functions/showPatchNotes";
 dotenv.config();
 
 export const router = new Navigo(window.location.origin);
@@ -35,6 +33,9 @@ export function render(st) {
   `;
   router.updatePageLinks();
 
+  if (st.view === "Home" && !win.patchNotesShown) {
+    showPatchNotes();
+  }
   addEventListeners(st);
 }
 
@@ -47,7 +48,7 @@ function addEventListeners(st) {
       win.running = false;
       game.Music.volume = 0;
       // If on homepage and game playing, revert to homepage. If game not playing, start game.
-      if (st.view == "Home" && state[event.target.title].view == "Home") {
+      if (st.view === "Home" && state[event.target.title].view == "Home") {
         if (document.getElementById("canvas"))
           render(state[event.target.title]);
         else {
@@ -78,16 +79,40 @@ function addEventListeners(st) {
     });
   }
   if (st.view === "Home") {
+    console.log(document.getElementById("patch-notes-overlay"));
+    if (document.getElementById("patch-notes-overlay")) {
+      console.log("fire");
+      document
+        .getElementById("patch-notes-overlay")
+        .addEventListener("click", () => {
+          document.getElementById("patch-notes-overlay").remove();
+          win.patchNotesShown = true;
+        });
+    }
     document.getElementById("arcade-button").addEventListener("click", () => {
       api.data = getWorldTimeAPI();
       game.mode = "arcade";
+      win.controls = "arrow";
       document.getElementById("arcade-button").remove();
+      document.getElementById("wasd-arcade-button").remove();
       document.getElementById("training-button").remove();
       startGame(2);
     });
+    document
+      .getElementById("wasd-arcade-button")
+      .addEventListener("click", () => {
+        api.data = getWorldTimeAPI();
+        game.mode = "arcade";
+        win.controls = "wasd";
+        document.getElementById("arcade-button").remove();
+        document.getElementById("wasd-arcade-button").remove();
+        document.getElementById("training-button").remove();
+        startGame(2);
+      });
     document.getElementById("training-button").addEventListener("click", () => {
       game.mode = "training";
       document.getElementById("arcade-button").remove();
+      document.getElementById("wasd-arcade-button").remove();
       document.getElementById("training-button").remove();
       startGame(2);
     });
@@ -168,7 +193,8 @@ export function updateEntry(newData, indexToReplace) {
       newData
     ) // process.env.API accesses API
     .then(response => {
-      console.log(`Update Successful.`);
+      console.log(`Update Successful. Setting username to ${newData.name}`);
+      localStorage.setItem("username", newData.name);
     })
     .catch(error => {
       leaderboard.reason = "no-leaderboard";
@@ -206,6 +232,12 @@ export function getLeaderboardData(populate = false) {
         state["Leaderboard"].markup = populateLeaderboard();
         render(state.Leaderboard);
         console.log("refreshed leaderboard");
+        if (document.getElementById("user-post")) {
+          console.log("user-post found, scrolling into view");
+          document
+            .getElementById("user-post")
+            .scrollIntoView({ block: "center" });
+        }
       }
     })
     .catch(error => {
@@ -234,7 +266,6 @@ router.hooks({
       params && params.hasOwnProperty("page")
         ? capitalize(params.page)
         : "Home";
-
     switch (page) {
       case "Leaderboard":
         axios

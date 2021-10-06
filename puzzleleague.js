@@ -583,23 +583,27 @@ window.addEventListener(
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
   // When on home page, before game start
-  if (document.getElementById("arcade-button")) {
-    if (event.keyCode == 32 || event.keyCode == 13) {
+  if (document.getElementById("patch-notes-overlay")) {
+    if (event.keyCode < 200) {
+      document.getElementById("patch-notes-overlay").remove();
+      win.patchNotesShown = true;
+    }
+  } else if (document.getElementById("arcade-button")) {
+    if ((event.keyCode == 32 || event.keyCode == 13) && win.patchNotesShown) {
       // space or enter
       document.getElementById("arcade-button").remove();
       document.getElementById("training-button").remove();
       startGame(2);
-    }
-    if (event.keyCode === 87) {
+    } else if (event.keyCode === 87 && win.patchNotesShown) {
       // w for "wasd" controls
       win.controls = "wasd";
       document.getElementById("arcade-button").remove();
+      document.getElementById("wasd-arcade-button").remove();
       document.getElementById("training-button").remove();
       startGame(2);
     }
-  }
-  if (document.getElementById("training-button")) {
-    if (event.keyCode == 83 || event.keyCode == 84) {
+  } else if (document.getElementById("training-button")) {
+    if ((event.keyCode == 83 || event.keyCode == 84) && win.patchNotesShown) {
       // s or t
       // document.getElementById("arcade-button").remove();
       // document.getElementById("training-button").remove();
@@ -1000,7 +1004,7 @@ export function gameLoop() {
         performance.diffFromRealTime = Math.abs(
           performance.realTime - performance.sumOfPauseTimes - game.frames / 60
         );
-        if (performance.diffFromRealTime >= 5) {
+        if (performance.diffFromRealTime >= 6) {
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
           performance.unrankedReason = `leaderboard posting disabled, behind real clock by
