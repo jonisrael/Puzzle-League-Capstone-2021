@@ -57,6 +57,15 @@ export function showPatchNotes() {
         adding or removing the number of elements on the leaderboard (currently
         at 50)
       </li>
+      <li>
+        When posting scores, the name field will be automatically pre-filled
+        with the last name submitted to the leaderboard.
+      </li>
+      <li>
+        When posting scores, the window will automatically go to the leaderboard
+        and scroll to your score's spot on the leaderboard. That score is
+        highlighted yellow, while your other scores are highlighted orange.
+      </li>
     </ul>
     <h2 style="color:blue">Click Anywhere or Press Any Key to Continue</h2>
   `;
