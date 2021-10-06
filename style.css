@@ -33,9 +33,17 @@ body {
     font-size: x-large;
     align-items: center;
 }
+
+#refresh {
+    margin-left: 75%;
+    padding: .5rem;
+    justify-content: flex-end;
+    background-color: turquoise;
+}
+
 .default-button:hover {
     border-radius: 10px;
-    background-color: green;
+    background-color: blue;
     font-size: x-large;
 }
 

@@ -1,6 +1,13 @@
 import { startGame } from "./startGame";
 import { announcer, game, api, performance, leaderboard } from "../global";
-import { deleteEntry, render, router, sendData } from "../../index";
+import {
+  deleteEntry,
+  getLeaderboardData,
+  render,
+  router,
+  sendData,
+  updateEntry
+} from "../../index";
 import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
 import * as state from "../../store";
@@ -137,8 +144,11 @@ export function submitResults() {
 
   document.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();
-    if (0 === 0 || validateForm(nameInput.value, finalScore)) {
-      let requestData = {
+    let indexToReplace = validateForm(nameInput.value, finalScore);
+    console.log("index", indexToReplace);
+    // if action is not empty
+    if (indexToReplace !== -1) {
+      let newData = {
         name: nameInput.value,
         score: finalScore,
         duration: duration,
@@ -152,11 +162,11 @@ export function submitResults() {
         meridian: api.data.meridian,
         gameLog: game.log
       };
-
-      deleteEntry(leaderboard.data[leaderboard.data.length - 1]);
-      sendData(requestData);
+      updateEntry(newData, indexToReplace);
+      leaderboard.userPostedName = nameInput.value;
       router.navigate("/Leaderboard");
-      render(state.Leaderboard);
+      getLeaderboardData(true);
+
       game.Music.volume = 0.1;
       return;
     }

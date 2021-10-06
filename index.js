@@ -15,6 +15,7 @@ import {
 } from "./scripts/global";
 import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
+import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import { audio } from "./scripts/fileImports";
 import { Leaderboard } from "./components/views";
@@ -68,6 +69,12 @@ function addEventListeners(st) {
   win.muteAnnouncer = document.getElementById("mute-announcer");
   win.muteMusic = document.getElementById("mute-music");
   win.muteSFX = document.getElementById("mute-sfx");
+  if (st.view === "Leaderboard") {
+    document.getElementById("refresh").addEventListener("click", () => {
+      state["Leaderboard"].markup = "Fetching Leaderboard...";
+      state["Leaderboard"].markup = populateLeaderboard();
+    });
+  }
   if (st.view === "Home") {
     document.getElementById("arcade-button").addEventListener("click", () => {
       api.data = getWorldTimeAPI();
@@ -131,7 +138,7 @@ export function getWorldTimeAPI() {
       api.data = extractTimeFromAPI(dateTimeString);
     })
     .catch(error => {
-      console.log("Fetch failed", error);
+      console.log("Fetching Worldtime failed", error);
       leaderboard.reason = "no-worldtime";
       return error;
     });
@@ -150,21 +157,23 @@ export function deleteEntry(_id) {
     });
 }
 
-export function getLeaderboardData() {
+export function updateEntry(newData, indexToReplace) {
+  console.log("entry:", leaderboard.data[indexToReplace]);
+  console.log("index:", indexToReplace);
   axios
-    .get("https://puzzle-league-blitz.herokuapp.com/games")
+    .put(
+      `${process.env.API}/games/${leaderboard.data[indexToReplace]._id}`,
+      newData
+    ) // process.env.API accesses API
     .then(response => {
-      leaderboard.data = response.data.sort((a, b) =>
-        parseInt(a.score) < parseInt(b.score) ? 1 : -1
-      );
-      console.log(leaderboard.data);
+      console.log(`Update Successful.`);
     })
     .catch(error => {
       leaderboard.reason = "no-leaderboard";
-      console.log("Failed to fetch Leaderboard Data from home page:", error);
       displayError(
-        `Failed to access leaderboard database from heroku server. ${error}`
+        `Failed to Update Leaderboard at Rank ${indexToReplace + 1}. ${error}`
       );
+      console.log("Update Failed, index ${indexToReplace)", error);
     });
 }
 
@@ -179,6 +188,29 @@ export function sendData(requestData) {
       leaderboard.reason = "no-leaderboard";
       displayError(`Failed to Post Data. ${error}`);
       console.log("Failed to Post", error);
+    });
+}
+
+export function getLeaderboardData(populate = false) {
+  axios
+    .get("https://puzzle-league-blitz.herokuapp.com/games")
+    .then(response => {
+      leaderboard.data = response.data.sort((a, b) =>
+        parseInt(a.score) < parseInt(b.score) ? 1 : -1
+      );
+      console.log("Got Leaderboard!");
+      console.log(leaderboard.data);
+      if (populate) {
+        state["Leaderboard"].markup = populateLeaderboard();
+        render(state.Leaderboard);
+      }
+    })
+    .catch(error => {
+      leaderboard.reason = "no-leaderboard";
+      console.log("Failed to fetch Leaderboard Data from home page:", error);
+      displayError(
+        `Failed to access leaderboard database from heroku server. ${error}`
+      );
     });
 }
 
@@ -208,55 +240,7 @@ router.hooks({
             leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
-            state[page].markup = "";
-            for (let rank = 0; rank < leaderboard.data.length; rank++) {
-              let entry = leaderboard.data[rank];
-              if (entry.score >= 999999) entry.score = "999999";
-
-              let largestChain = `${entry.largestChain}`;
-              if (largestChain.length === 1) largestChain = `0${largestChain}`;
-
-              let totalClears = `${entry.totalClears}`;
-              if (totalClears.length === 1) totalClears = `00${totalClears}`;
-              if (totalClears.length === 2) totalClears = `0${totalClears}`;
-              if (totalClears.length > 3) totalClears = "999";
-              let nameMatches =
-                entry.name == leaderboard.userPostedName &&
-                entry.score == leaderboard.userPostedScore;
-
-              state[page].markup += `
-                ${
-                  nameMatches ? "<tr style='background-color: yellow'>" : "<tr>"
-                }
-                  <td>
-                    ${rank + 1}
-                  </td>
-                  <td>
-                    ${entry.score}
-                  </td>
-                  <td>
-                    ${entry.name}
-                  </td>
-                  <td>
-                    ${entry.duration}
-                  </td>
-                  <td>
-                    ${largestChain}
-                  </td>
-                  <td>
-                    ${totalClears}
-                  </td>
-                  <td>
-                  ${entry.month}/${entry.day}/${entry.year.slice(2.4)}
-                  </td>
-                </tr>
-                `;
-            }
-
-            // <td>
-            // ${entry.hour}:${entry.minute} ${entry.meridian}
-            // </td>
-
+            state[page].markup = populateLeaderboard();
             done();
           })
           .catch(error => {

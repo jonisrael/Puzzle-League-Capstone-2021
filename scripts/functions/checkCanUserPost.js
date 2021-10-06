@@ -1,15 +1,46 @@
 import { startGame } from "./startGame";
 import { audio } from "../fileImports";
-import { announcer, game, performance, leaderboard, api } from "../global";
+import {
+  announcer,
+  game,
+  performance,
+  leaderboard,
+  api,
+  padInteger
+} from "../global";
 import { submitResults, afterGame } from "./submitResults";
 import { playMusic, playAnnouncer } from "./audioFunctions";
+import { displayError } from "../..";
 
 export function checkCanUserPost() {
   game.Music.loop = false;
-  if (api.data === undefined) {
-    leaderboard.canPost = false;
-    leaderboard.reason = "no-worldtime";
-  } else if (leaderboard.data.length == 0) {
+  if (!api.data.month) {
+    displayError(
+      "Unable to get data from WorldTimeAPI. Using Local Time instead"
+    );
+    let date = new Date();
+    api.data.month = padInteger(Date.getMonth(), 2);
+    api.data.day = padInteger(Date.getDay(), 2);
+    api.data.year = Date.getYear();
+    api.data.hour = Date.getHour();
+    api.data.minute = padInteger(Date.getHour(), 2);
+    api.data.meridian = "A.M.";
+    if (api.data.hour == 12) {
+      api.data.meridian = "P.M.";
+    }
+    if (api.data.hour === 0) {
+      api.data.hour = "12";
+    }
+    if (api.data.hour > 12) {
+      api.data.hour =
+        api.data.hour - 12 < 10
+          ? `0${api.data.hour - 12}`
+          : `${api.data.hour - 12}`;
+      `${api.data.hour - 12}`;
+      api.data.meridian = "P.M.";
+    }
+  }
+  if (leaderboard.data.length == 0) {
     leaderboard.canPost = false;
     leaderboard.reason = "no-leaderboard";
   } else if (game.score == 0) {

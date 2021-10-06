@@ -212,8 +212,14 @@ const action = {
 };
 
 const api = {
-  data: "",
-  serverLeaderboardData: []
+  data: {
+    month: "",
+    day: "",
+    year: "",
+    hour: "",
+    minute: "",
+    meridian: ""
+  }
 };
 
 const chainLogic = {
