@@ -34,7 +34,8 @@ export function render(st) {
   router.updatePageLinks();
 
   if (st.view === "Home" && !win.patchNotesShown) {
-    showPatchNotes();
+    win.patchNotesShown = true;
+    // showPatchNotes();
   }
   addEventListeners(st);
 }
