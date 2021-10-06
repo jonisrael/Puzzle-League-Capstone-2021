@@ -72,7 +72,7 @@ function addEventListeners(st) {
   if (st.view === "Leaderboard") {
     document.getElementById("refresh").addEventListener("click", () => {
       state["Leaderboard"].markup = "Fetching Leaderboard...";
-      state["Leaderboard"].markup = populateLeaderboard();
+      getLeaderboardData(true);
     });
   }
   if (st.view === "Home") {
