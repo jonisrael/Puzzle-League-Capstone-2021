@@ -272,7 +272,7 @@ router.hooks({
       case "Leaderboard":
         render(state.Leaderboard);
         document.getElementById("leaderboard-page").innerHTML =
-          "Fetching Leaderboard...";
+          "Fetching Leaderboard...if 15 seconds have passed, try refreshing the page.";
         document.getElementById("leaderboard-page").style =
           "color:red; font-size:large; text-align: center; padding: 10px;";
         axios

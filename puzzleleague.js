@@ -833,13 +833,24 @@ export function gameLoop() {
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * performance.gameSpeed;
 
-      if (game.over && game.frames > 180) {
-        if (
-          leaderboard.reason[0] === "n" ||
-          (api.data !== undefined && leaderboard.data.length > 0) ||
-          game.frames === 600
-        )
-          win.running = false;
+      if (game.over) {
+        let number;
+        if (game.frames > 300) {
+          if (game.frames < 360) number = 5;
+          else if (game.frames < 420) number = 4;
+          else if (game.frames < 480) number = 3;
+          else if (game.frames < 540) number = 2;
+          else if (game.frames < 600) number = 1;
+          game.messagePriority = `Fetching leaderboard info...timeout in ${number}`;
+        }
+        if (game.frames > 180) {
+          if (
+            leaderboard.reason[0] === "n" ||
+            (api.data !== undefined && leaderboard.data.length > 0) ||
+            game.frames === 600
+          )
+            win.running = false;
+        }
       }
 
       checkTime();
