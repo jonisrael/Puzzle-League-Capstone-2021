@@ -49,7 +49,7 @@ function addEventListeners(st) {
       win.running = false;
       game.Music.volume = 0;
       // If on homepage and game playing, revert to homepage. If game not playing, start game.
-      if (st.view === "Home" && state[event.target.title].view == "Home") {
+      if (st.view === "Home" && state[event.target.title].view === "Home") {
         if (document.getElementById("canvas"))
           render(state[event.target.title]);
         else {
@@ -232,6 +232,7 @@ export function getLeaderboardData(populate = false) {
       if (populate) {
         state["Leaderboard"].markup = populateLeaderboard();
         render(state.Leaderboard);
+        router.navigate("/Leaderboard");
         console.log("refreshed leaderboard");
         if (document.getElementById("user-post")) {
           console.log("user-post found, scrolling into view");
@@ -269,6 +270,11 @@ router.hooks({
         : "Home";
     switch (page) {
       case "Leaderboard":
+        render(state.Leaderboard);
+        document.getElementById("leaderboard-page").innerHTML =
+          "Fetching Leaderboard...";
+        document.getElementById("leaderboard-page").style =
+          "color:red; font-size:large; text-align: center; padding: 10px;";
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
           .then(response => {
