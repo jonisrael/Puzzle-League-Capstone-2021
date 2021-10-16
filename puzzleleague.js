@@ -22,6 +22,7 @@ import {
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
+import { cpuAction } from "./scripts/functions/cpu";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
@@ -46,7 +47,7 @@ import {
   game,
   preset,
   api,
-  chainLogic,
+  cpu,
   performance,
   debug,
   randInt,
@@ -541,14 +542,29 @@ function checkTime() {
 }
 
 function playerAction(input) {
-  if (!input.pause && (input.up || input.down || input.left || input.right))
-    playAudio(audio.moveCursor);
-
+  if (cpu.enabled) {
+    if (Object.values(input).includes(true)) {
+      cpu.enabled = 0;
+      console.log("player input detected, cpu off.");
+    }
+    input = cpuAction(input);
+  }
   // first input checker, "else if" is required for priority, so case does not work.
-  if (input.swap) {
+  if (input.up) {
+    action.up = false;
+    if (game.cursor.y > 1) game.cursor.y -= 1;
+  } else if (input.down) {
+    action.down = false;
+    if (game.cursor.y < grid.ROWS - 1) game.cursor.y += 1;
+  } else if (input.left) {
+    action.left = false;
+    if (game.cursor.x > 0) game.cursor.x -= 1;
+  } else if (input.right) {
+    action.right = false;
+    if (game.cursor.x < grid.COLS - 2) game.cursor.x += 1;
+  } else if (input.swap) {
     action.swap = false;
     trySwappingBlocks(game.cursor.x, game.cursor.y);
-    win.cvs.scrollIntoView({ block: "nearest" });
   }
 
   // second input checker
@@ -558,11 +574,14 @@ function playerAction(input) {
     win.cvs.scrollIntoView({ block: "nearest" });
   }
 
-  // ! REMOVED
+  if (!input.pause && (input.up || input.down || input.left || input.right))
+    playAudio(audio.moveCursor);
+
+  // NOT REMOVED
   // reset all keys
-  // Object.keys(action).forEach(key => {
-  //   action[key] = false;
-  // });
+  Object.keys(action).forEach(key => {
+    action[key] = false;
+  });
 }
 
 // prevent browser scroll from arrow keys
@@ -634,55 +653,19 @@ function KEYBOARD_CONTROL(event) {
   }
   // Game Controls
   if (win.running & !game.over && !game.paused) {
-    if (
-      (event.keyCode === 37 && win.controls === "arrow") ||
-      (event.keyCode === 65 && win.controls === "wasd")
-    ) {
-      // left
-      if (game.cursor.x - 1 >= 0) {
-        game.cursor.x -= 1;
-        playAudio(audio.moveCursor, 0.2);
-      }
-      win.cvs.scrollIntoView({ block: "nearest" });
-    }
-    if (
-      (event.keyCode === 38 && win.controls === "arrow") ||
-      (event.keyCode === 87 && win.controls === "wasd")
-    ) {
-      // up
-      if (game.cursor.y - 1 >= 1) {
-        game.cursor.y -= 1;
-        playAudio(audio.moveCursor, 0.2);
-      }
-      win.cvs.scrollIntoView({ block: "nearest" });
-    }
-    if (
-      (event.keyCode === 39 && win.controls === "arrow") ||
-      (event.keyCode === 68 && win.controls === "wasd")
-    ) {
-      // right
-      if (game.cursor.x + 1 <= grid.COLS - 2) {
-        game.cursor.x += 1;
-        playAudio(audio.moveCursor, 0.2);
-      }
-      win.cvs.scrollIntoView({ block: "nearest" });
-    }
-    if (
-      (event.keyCode == 40 && win.controls === "arrow") ||
-      (event.keyCode === 83 && win.controls === "wasd")
-    ) {
-      // down
-      if (game.cursor.y + 1 <= grid.ROWS - 1) {
-        game.cursor.y += 1;
-        playAudio(audio.moveCursor, 0.2);
-      }
-      win.cvs.scrollIntoView({ block: "nearest" });
-    }
     if (win.controls === "arrow") {
+      if (event.keyCode == 38) action.up = true; // up arrow
+      if (event.keyCode == 40) action.down = true; // down arrow
+      if (event.keyCode == 37) action.left = true; // left arrow
+      if (event.keyCode == 39) action.right = true; // right arrow
       if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
       if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
     }
     if (win.controls === "wasd") {
+      if (event.keyCode == 87) action.up = true; // w
+      if (event.keyCode == 83) action.down = true; // s
+      if (event.keyCode == 65) action.left = true; // a
+      if (event.keyCode == 68) action.right = true; // d
       if (event.keyCode == 74 || event.keyCode == 75) action.swap = true; // s or x
       if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
     }
@@ -723,10 +706,16 @@ function KEYBOARD_CONTROL(event) {
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.freeze = 0;
+        cpu.enabled = 0;
         // debug.show = 0;
       }
     }
     if (debug.enabled == 1) {
+      if (event.keyCode === 66) {
+        // b
+        cpu.enabled = (cpu.enabled + 1) % 2;
+        console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
+      }
       if (event.keyCode == 75) {
         // k
         game.finalTime = (game.frames / 60).toFixed(1);

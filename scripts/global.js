@@ -1,6 +1,6 @@
 import { audio, audioList } from "./fileImports";
 
-const announcer = {
+export const announcer = {
   openingDialogue: [
     audio.announcerAreYouReady,
     audio.announcerLetsGetStarted,
@@ -68,7 +68,7 @@ const announcer = {
   endgameIndexLastPicked: -1
 };
 
-const blockColor = {
+export const blockColor = {
   BLUE: "blue",
   CYAN: "cyan",
   GREEN: "green",
@@ -78,7 +78,7 @@ const blockColor = {
   VACANT: "vacant"
 };
 
-const blockType = {
+export const blockType = {
   NORMAL: "normal",
   FACE: "face",
   DARK: "dark",
@@ -88,7 +88,7 @@ const blockType = {
   PANICKING: "panicking"
 };
 
-const PIECES = [
+export const PIECES = [
   blockColor.CYAN,
   blockColor.GREEN,
   blockColor.PURPLE,
@@ -97,13 +97,13 @@ const PIECES = [
   blockColor.BLUE
 ];
 
-const INTERACTIVE_PIECES = [
+export const INTERACTIVE_PIECES = [
   blockType.NORMAL,
   blockType.LANDING,
   blockType.PANICKING
 ];
 
-const grid = {
+export const grid = {
   COLS: 6,
   ROWS: 12,
   SQ: 32
@@ -114,7 +114,7 @@ const grid = {
 // clearValues: [60, 50, 45, 40, 35, 30, 25, 20, 16, 12, 8], // iterate twice
 // stallValues: [16, 12, 11, 10,  9,  8,  7,  6,  5,  4, 6]
 
-const preset = {
+export const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
   speedValues: [60, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
   clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16, 12],
@@ -124,7 +124,7 @@ const preset = {
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
-const win = {
+export const win = {
   patchNotesShown: false,
   view: "Home",
   viewChanged: false,
@@ -154,8 +154,8 @@ const win = {
   controls: "arrow"
 };
 
-const game = {
-  // use let instead of const to revert to resetGameVar
+export const game = {
+  // use let instead of export const to revert to resetGameVar
   mode: "arcade",
   cursor: null,
   rise: 0,
@@ -201,7 +201,7 @@ const game = {
   log: []
 };
 
-const action = {
+export const action = {
   up: false,
   down: false,
   left: false,
@@ -211,7 +211,7 @@ const action = {
   pause: false
 };
 
-const api = {
+export const api = {
   data: {
     month: "",
     day: "",
@@ -222,11 +222,11 @@ const api = {
   }
 };
 
-const chainLogic = {
+export const chainLogic = {
   addToPrimaryChain: false // used to start/continue a chain
 };
 
-const performance = {
+export const performance = {
   canPostToLeaderboard: false,
   unrankedReason: "",
   gameSpeed: 1,
@@ -247,7 +247,7 @@ const performance = {
   diffFromRealTime: 0
 };
 
-const debug = {
+export const debug = {
   enabled: 0,
   slowdown: 0,
   freeze: 0,
@@ -255,7 +255,18 @@ const debug = {
   frameAdvance: false
 };
 
-const leaderboard = {
+export const cpu = {
+  enabled: 0,
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+  swap: false,
+  quickRaise: false,
+  pause: false
+};
+
+export const leaderboard = {
   data: [],
   canPost: true,
   userPostedName: "",
@@ -263,7 +274,7 @@ const leaderboard = {
   reason: ""
 };
 
-const loadedAudios = [];
+export const loadedAudios = [];
 
 // Preload all audios, then play them at zero volume.
 export function loadAllAudios() {
@@ -327,22 +338,3 @@ export function padInteger(integer, digits) {
   }
   return "Error: Can only pad digits 2-6";
 }
-
-export {
-  announcer,
-  blockColor,
-  blockType,
-  PIECES,
-  INTERACTIVE_PIECES,
-  win,
-  grid,
-  game,
-  action,
-  preset,
-  api,
-  chainLogic,
-  performance,
-  loadedAudios,
-  debug,
-  leaderboard
-};

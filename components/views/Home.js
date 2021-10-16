@@ -7,7 +7,7 @@ export default st => html`
       <h1>Controls</h1>
       <ul id="controls">
         <li>
-          Press Arrow keys to <strong>move</strong> the Rectangular Cursor
+          Press Arrow keys to <strong>move</strong> the Cursor
         </li>
         <li>Press S or X to <strong>swap</strong> blocks at the Cursor</li>
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
