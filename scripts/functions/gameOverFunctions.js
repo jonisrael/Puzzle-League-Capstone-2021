@@ -45,7 +45,7 @@ export function isGameOver() {
           }
         }
         playAudio(audio.topout);
-        console.lop(game.log);
+        console.log(game.log);
         return false;
       }
       game.Music.volume = 0;

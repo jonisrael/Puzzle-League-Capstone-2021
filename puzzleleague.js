@@ -543,7 +543,7 @@ function checkTime() {
 
 function playerAction(input) {
   if (cpu.enabled) {
-    if (Object.values(input).includes(true)) {
+    if (Object.values(input).includes(true) && !input.quickRaise) {
       cpu.enabled = 0;
       console.log("player input detected, cpu off.");
     }
