@@ -11,15 +11,6 @@ import {
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
 
 // block check order, closest to hole
-const holeLocation = [
-  { order: [1, 2, 3, 4, 5], direction: [1, 1, 1, 1, 1] },
-  { order: [0, 2, 3, 4, 5], direction: [1, 1, 1, 1, 1] },
-  { order: [1, 3, 0, 4, 5], direction: [1, 1, 1, 1, 1] },
-  { order: [4, 2, 5, 1, 0], direction: [1, 1, 1, 1, 1] },
-  { order: [5, 3, 2, 1, 0], direction: [1, 1, 1, 1, 1] },
-  { order: [4, 3, 2, 1, 0], direction: [1, 1, 1, 1, 1] },
-  {}
-];
 
 // const direction = [
 //   [1, 2, 3, 4, 5],
@@ -27,6 +18,8 @@ const holeLocation = [
 //   [-1, 1, -2, 2]
 
 // ]
+
+// order closest to index, prioritizing center
 const order = [
   [0, 1, 2, 3, 4],
   [1, 0, 2, 3, 4],
@@ -34,6 +27,12 @@ const order = [
   [3, 2, 4, 1, 0],
   [4, 3, 2, 1, 0],
   [4, 3, 2, 1, 0]
+];
+
+// order closest to index, prioritizing edge
+const reverseOrder = [
+  [0, 1, 2, 3, 4],
+  [1, 0, 4, 3, 2]
 ];
 
 const direction = [
@@ -46,21 +45,20 @@ const direction = [
 ];
 
 export function cpuAction(input) {
-  if (game.frames % 10 < 5) return input;
+  // if (game.frames % 10 < 5) return input;
   let targetX;
   let targetY;
   let swap = false;
   let coordinates = false;
-  for (let i = 0; i < PIECES.length; i++) {
-    coordinates = findHorizontalThrees(i);
+  for (let row = 0; row < grid.ROWS; row++) {
+    coordinates = findHorizontalThrees(row);
     if (coordinates) break;
-    coordinates = findVerticalThrees(i);
-    if (coordinates) break;
+    // coordinates = findVerticalThrees(row);
+    // if (coordinates) break;
   }
 
-  if (!coordinates) {
-    coordinates = flattenStack();
-  }
+  // If no matches detected, look for ways to flatten the stack.
+  if (!coordinates) coordinates = flattenStack();
 
   if (coordinates) {
     targetX = coordinates[0];
@@ -102,7 +100,7 @@ function flattenStack() {
   if (!holeIndex) return false;
   for (let i = 0; i < order[holeIndex].length; i++) {
     let leftBlockIndex =
-      holeIndex < grid.COLS - 1 ? order[holeIndex][i] : order[holeIndex - 1][i];
+      holeIndex < 5 ? order[holeIndex][i] : order[holeIndex - 1][i];
     let rightBlockIndex = leftBlockIndex + 1;
     let leftBlock = game.board[leftBlockIndex][game.highestRow];
     let rightBlock = game.board[rightBlockIndex][game.highestRow];
@@ -119,6 +117,17 @@ function flattenStack() {
       return [leftBlockIndex, game.highestRow, true];
     }
   }
+
+  // function moveBlockToDestination(blockIndex, destinationIndex, mustBeVacant = false) {
+  //   let blockX = blockIndex[0]
+  //   let blockY = blockIndex[1]
+  //   let destinationX = destinationIndex[0]
+  //   let destinationY = destinationIndex[1]
+  //   if (blockX < destinationX &&
+  //     INTERACTIVE_TYPES.includes(game[blockX])) {
+  //     if gam]
+  //   }
+  // }
 
   // for (let i = 0; i < holes.length; i++) {
   //   // check order: 2, 3, 1, 4, 0
@@ -144,103 +153,88 @@ function flattenStack() {
   return false;
 }
 
-// function flattenStack() {
-//   for (let r = 0; r < grid.ROWS - 1; r++) {
-//     let currentRow = r;
-//     let lowerRow = r + 1;
-//     for (let c = 0; c < grid.COLS - 1; c++) {
-//       // check right vacancy first
-//       if (
-//         (INTERACTIVE_TYPES.includes(game.board[c][currentRow].type) &&
-//           game.board[c][currentRow].color !== blockColor.VACANT &&
-//           game.board[c + 1][currentRow].color === blockColor.VACANT &&
-//           game.board[c + 1][lowerRow].color === blockColor.VACANT) ||
-//         (INTERACTIVE_TYPES.includes(game.board[c + 1][currentRow].type) &&
-//           game.board[c][currentRow].color === blockColor.VACANT &&
-//           game.board[c][lowerRow].color === blockColor.VACANT &&
-//           game.board[c + 1][currentRow].color !== blockColor.VACANT)
-//       ) {
-//         return [c, currentRow, true];
-//       }
-//     }
-//   }
-//   return false;
-// }
+function findVerticalThrees(r) {
+  if (r < 2 || r === grid.ROWS - 1) return false;
+  let possibleMatchLocations = [];
+  let topRowIndex = r - 1;
+  let middleRowIndex = r;
+  let bottomRowIndex = r + 1;
 
-// function flattenStackOLD() {
-//   if (game.highestRow === grid.ROWS - 1) return false;
-//   // create order based off what column is found to have a valley
-//   let upperRow = game.highestRow;
-//   let lowerRow = game.highestRow + 1;
-//   for (let i = 0; i < default_hole_check_order.length; i++) {
-//     let c = default_hole_check_order[i];
-//     cpu.holeDetectedAt = c;
-//     if (game.board[c][lowerRow].color === blockColor.VACANT) {
-//       for (let j = 0; j < order.length; j++) {
-//         if (
-//           game.board[j][upperRow].color !== blockColor.VACANT &&
-//           INTERACTIVE_TYPES.includes(game.board[j][upperRow].type)
-//         ) {
-//           if (j < 5)
-//             if (j === 5) return [4, game.highestRow, true];
-//             else return [j, game.highestRow, true];
-//         }
-//       }
-//     }
-//   }
-//   return false;
-// }
-//   if (game.board[2][game.highestRow + 1].color === blockColor.VACANT) {
-
-//   }
-// }
-//   for (let c = grid.COLS-1; c >= 0; c--) {
-//     if (game.board[c][game.highestRow + 1].color === blockColor.VACANT) {
-//       // check left and right from the hole
-//       if (c == 5) {
-//         if (game.board[c][game.highestRow + 1].color === blockColor.VACANT) {
-//         }
-//       }
-//     }
-//   }
-// }
-
-//
-
-function findVerticalThrees(index) {
-  let desiredColor = PIECES[index];
-  let matchLocations = [];
-  let existsOnAboveRow = false;
-  for (let r = grid.ROWS - 1; r > 2; r--) {
-    if (!existsOnAboveRow) {
-      matchLocations = [];
-      existsOnAboveRow = true;
-    }
-    for (let c = grid.COLS - 1; c >= 0; c--) {
+  for (let i = 0; i < PIECES.length; i++) {
+    let desiredColor = PIECES[i];
+    let desiredIndex;
+    for (let c = 0; c < grid.COLS; c++) {
       if (
-        game.board[c][r].color === PIECES[index] &&
-        INTERACTIVE_TYPES.includes(game.board[c][r].type)
+        game.board[c][middleRowIndex].color === desiredColor &&
+        INTERACTIVE_TYPES.includes(game.board[c][middleRowIndex].type)
       ) {
-        // checkAboveRow(matchLocations);
-        matchLocations.push([c, r]);
+        desiredIndex = [c, r];
+      }
+    }
+    for (let y = r - 1; y <= r + 1; y++) {
+      let matchPossible = false;
+      for (let x = 0; x < grid.COLS; x++) {
         if (
-          game.board[c][r].color === PIECES[index] &&
-          INTERACTIVE_TYPES.includes(game.board[c][r].type)
+          game.board[x][y].color === desiredColor &&
+          INTERACTIVE_TYPES.includes(game.board[x][y].type)
         ) {
-          matchLocations.push([c, r - 1]);
+          matchPossible = true;
         }
       }
     }
   }
+
+  let rowList = [];
+  rowList.push(createRowArray(r - 1));
+  rowList.push(createRowArray(r));
+  rowList.push(createRowArray(r + 1));
+
+  if (rowList) {
+  }
 }
 
-function findHorizontalThrees(index) {
+function createRowObject(r) {
+  let rowArray = [];
+  for (let c = 0; c < grid.COLS; c++) {
+    rowArray[`${c}`];
+  }
+  return rowArray;
+}
+
+// function findVerticalThrees(index) {
+//   let desiredColor = PIECES[index];
+//   let matchLocations = [];
+//   let existsOnAboveRow = false;
+//   for (let r = grid.ROWS - 1; r > 2; r--) {
+//     if (!existsOnAboveRow) {
+//       matchLocations = [];
+//       existsOnAboveRow = true;
+//     }
+//     for (let c = grid.COLS - 1; c >= 0; c--) {
+//       if (
+//         game.board[c][r].color === PIECES[index] &&
+//         INTERACTIVE_TYPES.includes(game.board[c][r].type)
+//       ) {
+//         // checkAboveRow(matchLocations);
+//         matchLocations.push([c, r]);
+//         if (
+//           game.board[c][r].color === PIECES[index] &&
+//           INTERACTIVE_TYPES.includes(game.board[c][r].type)
+//         ) {
+//           matchLocations.push([c, r - 1]);
+//         }
+//       }
+//     }
+//   }
+// }
+
+function findHorizontalThrees(r) {
   let matchLocations = [];
-  for (let r = 0; r < grid.ROWS; r++) {
+  for (let i = 0; i < PIECES.length; i++) {
     matchLocations = [];
     for (let c = grid.COLS - 1; c >= 0; c--) {
       if (
-        game.board[c][r].color === PIECES[index] &&
+        game.board[c][r].color === PIECES[i] &&
         INTERACTIVE_TYPES.includes(game.board[c][r].type)
       ) {
         matchLocations.push([c, r]);

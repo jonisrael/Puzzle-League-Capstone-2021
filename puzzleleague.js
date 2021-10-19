@@ -22,7 +22,7 @@ import {
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
-import { cpuAction } from "./scripts/computerPlayer/main";
+import { cpuAction } from "./scripts/computerPlayer/cpu";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,

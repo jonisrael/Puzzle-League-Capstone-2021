@@ -4,7 +4,8 @@ import {
   grid,
   blockColor,
   blockType,
-  win
+  win,
+  cpu
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -153,7 +154,7 @@ export function trySwappingBlocks(x, y) {
     }
   } else {
     win.mainInfoDisplay.style.color = "purple";
-    playAudio(audio.selectionFailed);
+    if (!cpu.enabled) playAudio(audio.selectionFailed);
   }
 }
 
