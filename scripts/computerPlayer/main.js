@@ -8,7 +8,7 @@ import {
 } from "../global";
 
 // hole check order, prioritizing center
-const default_hole_check_order = [2, 3, 1, 4, 0, 5];
+const default_hole_check_order = [2, 1, 3, 0, 4, 5];
 
 // block check order, closest to hole
 const holeLocation = [
@@ -28,11 +28,11 @@ const holeLocation = [
 
 // ]
 const order = [
-  [1, 2, 3, 4, 5],
-  [0, 2, 3, 4, 5],
-  [1, 3, 0, 4, 5],
-  [4, 2, 5, 1, 0],
-  [5, 3, 2, 1, 0],
+  [0, 1, 2, 3, 4],
+  [1, 0, 2, 3, 4],
+  [2, 1, 3, 0, 4],
+  [3, 2, 4, 1, 0],
+  [4, 3, 2, 1, 0],
   [4, 3, 2, 1, 0]
 ];
 
@@ -46,7 +46,7 @@ const direction = [
 ];
 
 export function cpuAction(input) {
-  // if (game.frames % 10 < 5) return input;
+  if (game.frames % 10 < 5) return input;
   let targetX;
   let targetY;
   let swap = false;
@@ -86,33 +86,86 @@ export function cpuAction(input) {
 }
 
 function flattenStack() {
-  for (let r = 0; r < grid.ROWS - 1; r++) {
-    let currentRow = r;
-    let lowerRow = r + 1;
-    for (let c = 0; c < grid.COLS - 1; c++) {
-      // check right vacancy first
-      if (
-        INTERACTIVE_TYPES.includes(game.board[c][currentRow].type) &&
-        game.board[c][currentRow].color !== blockColor.VACANT &&
-        game.board[c + 1][currentRow].color === blockColor.VACANT &&
-        game.board[c + 1][lowerRow].color === blockColor.VACANT
-      ) {
-        cpu.transferToRight = true;
-        return [c, currentRow, true];
-      }
-      if (
-        INTERACTIVE_TYPES.includes(game.board[c + 1][currentRow].type) &&
-        game.board[c][currentRow].color === blockColor.VACANT &&
-        game.board[c][lowerRow].color === blockColor.VACANT &&
-        game.board[c + 1][currentRow].color !== blockColor.VACANT
-      ) {
-        cpu.transferToRight = false;
-        return [c, currentRow, true];
-      }
+  if (game.highestRow === 11) return false;
+
+  // check to see if stack has no holes.
+  let holeIndex;
+  for (let i = 0; i < default_hole_check_order.length; i++) {
+    let potentialHoleIndex = default_hole_check_order[i];
+    if (
+      game.board[potentialHoleIndex][game.highestRow + 1].color ===
+      blockColor.VACANT
+    )
+      holeIndex = potentialHoleIndex;
+    cpu.holeDetectedAt = [holeIndex, game.highestRow + 1];
+  }
+  if (!holeIndex) return false;
+  for (let i = 0; i < order[holeIndex].length; i++) {
+    let leftBlockIndex =
+      holeIndex < grid.COLS - 1 ? order[holeIndex][i] : order[holeIndex - 1][i];
+    let rightBlockIndex = leftBlockIndex + 1;
+    let leftBlock = game.board[leftBlockIndex][game.highestRow];
+    let rightBlock = game.board[rightBlockIndex][game.highestRow];
+    if (
+      (leftBlockIndex < holeIndex &&
+        INTERACTIVE_TYPES.includes(leftBlock.type) &&
+        leftBlock.color !== blockColor.VACANT &&
+        rightBlock.color === blockColor.VACANT) ||
+      (leftBlockIndex >= holeIndex &&
+        INTERACTIVE_TYPES.includes(rightBlock.type) &&
+        leftBlock.color === blockColor.VACANT &&
+        rightBlock.color !== blockColor.VACANT)
+    ) {
+      return [leftBlockIndex, game.highestRow, true];
     }
   }
+
+  // for (let i = 0; i < holes.length; i++) {
+  //   // check order: 2, 3, 1, 4, 0
+  //   for (let j = 0; j < order[hole].length; j++) {
+  //     let checkBlockIndex = order[hole][j];
+  //     let leftblock = game.board[checkBlockIndex][]
+  //     console.log(checkBlockIndex, holeIndex);
+  //     let c = checkBlockIndex; // for clarity
+  //     if (
+  //       (checkBlockIndex < holeIndex &&
+  //         INTERACTIVE_TYPES.includes(game.board[c][game.highestRow].type) &&
+  //         game.board[c][game.highestRow].color !== blockColor.VACANT &&
+  //         game.board[c + 1][game.highestRow].color === blockColor.VACANT) ||
+  //       (checkBlockIndex > holeIndex &&
+  //         INTERACTIVE_TYPES.includes(game.board[c + 1][game.highestRow].type) &&
+  //         game.board[c][game.highestRow].color === blockColor.VACANT &&
+  //         game.board[c + 1][game.highestRow].color !== blockColor.VACANT)
+  //     ) {
+  //       return [c, game.highestRow, true];
+  //     }
+  //   }
+  // }
   return false;
 }
+
+// function flattenStack() {
+//   for (let r = 0; r < grid.ROWS - 1; r++) {
+//     let currentRow = r;
+//     let lowerRow = r + 1;
+//     for (let c = 0; c < grid.COLS - 1; c++) {
+//       // check right vacancy first
+//       if (
+//         (INTERACTIVE_TYPES.includes(game.board[c][currentRow].type) &&
+//           game.board[c][currentRow].color !== blockColor.VACANT &&
+//           game.board[c + 1][currentRow].color === blockColor.VACANT &&
+//           game.board[c + 1][lowerRow].color === blockColor.VACANT) ||
+//         (INTERACTIVE_TYPES.includes(game.board[c + 1][currentRow].type) &&
+//           game.board[c][currentRow].color === blockColor.VACANT &&
+//           game.board[c][lowerRow].color === blockColor.VACANT &&
+//           game.board[c + 1][currentRow].color !== blockColor.VACANT)
+//       ) {
+//         return [c, currentRow, true];
+//       }
+//     }
+//   }
+//   return false;
+// }
 
 // function flattenStackOLD() {
 //   if (game.highestRow === grid.ROWS - 1) return false;

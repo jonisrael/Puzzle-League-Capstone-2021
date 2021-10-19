@@ -167,7 +167,6 @@ class Block {
     if (debug.show == 1) {
       if (
         cpu.enabled &&
-        cpu.transferToRight &&
         ((this.x === cpu.targetX && this.y === cpu.targetY) ||
           (this.x === cpu.targetX + 1 && this.y === cpu.targetY))
       ) {
@@ -181,9 +180,8 @@ class Block {
         };
       } else if (
         cpu.enabled &&
-        !cpu.transferToRight &&
-        ((this.x === cpu.targetX && this.y === cpu.targetY) ||
-          (this.x === cpu.targetX + 1 && this.y === cpu.targetY))
+        this.x === cpu.holeDetectedAt[0] &&
+        this.y === cpu.holeDetectedAt[1]
       ) {
         DEBUGM_IMAGE.src = sprite.debugMagenta;
         DEBUGM_IMAGE.onload = () => {

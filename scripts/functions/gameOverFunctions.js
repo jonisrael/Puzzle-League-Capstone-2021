@@ -36,6 +36,7 @@ export function isGameOver() {
     if (game.board[c][0].color != blockColor.VACANT) {
       // if debug, do not game over.
       if (debug.enabled || game.mode === "training") {
+        game.score = 0;
         game.cursor.y += 8;
         if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
         for (let x = 0; x < grid.COLS; x++) {

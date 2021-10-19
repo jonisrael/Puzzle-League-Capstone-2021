@@ -268,7 +268,7 @@ export const cpu = {
   pause: false,
   targetX: 0,
   targetY: 0,
-  holeDetectedAt: 0,
+  holeDetectedAt: [0, 0],
   transferToRight: 0
 };
 
