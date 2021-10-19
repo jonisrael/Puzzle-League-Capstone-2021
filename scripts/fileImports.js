@@ -98,10 +98,13 @@ import PANICKING_0_V from ".././assets/Sprites/vacantSquare/panicking/0.png";
 import PANICKING_1_V from ".././assets/Sprites/vacantSquare/panicking/1.png";
 import PANICKING_2_V from ".././assets/Sprites/vacantSquare/panicking/2.png";
 import PANICKING_3_V from ".././assets/Sprites/vacantSquare/panicking/3.png";
+import DEBUG_CURSOR from ".././assets/Extras/DebugSprites/cursorDebug.png";
 import DEBUGW from ".././assets/Extras/DebugSprites/debugW.png";
 import DEBUGP from ".././assets/Extras/DebugSprites/debugP.png";
 import DEBUGO from ".././assets/Extras/DebugSprites/debugO.png";
 import DEBUGB from ".././assets/Extras/DebugSprites/debugB.png";
+import DEBUGR from ".././assets/Extras/DebugSprites/debugR.png";
+import DEBUGM from ".././assets/Extras/DebugSprites/debugM.png";
 
 // Import Music
 import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
@@ -287,10 +290,13 @@ const sprite = {
   vacant_panicking_3: PANICKING_3_V,
 
   // debug items
+  debugCursor: DEBUG_CURSOR,
   debugWhite: DEBUGW,
   debugOrange: DEBUGO,
   debugBrown: DEBUGB,
-  debugPink: DEBUGP
+  debugPink: DEBUGP,
+  debugRed: DEBUGR,
+  debugMagenta: DEBUGM
 };
 
 const audio = {

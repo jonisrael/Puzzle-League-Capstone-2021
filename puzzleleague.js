@@ -22,7 +22,7 @@ import {
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
-import { cpuAction } from "./scripts/functions/cpu";
+import { cpuAction } from "./scripts/computerPlayer/main";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
@@ -41,7 +41,7 @@ import {
   blockColor,
   blockType,
   PIECES,
-  INTERACTIVE_PIECES,
+  INTERACTIVE_TYPES,
   win,
   grid,
   game,
@@ -119,6 +119,8 @@ class Block {
     const DEBUGP_IMAGE = new Image();
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
+    const DEBUGR_IMAGE = new Image();
+    const DEBUGM_IMAGE = new Image();
     if (this.type == blockType.CLEARING) {
       if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
         animationIndex = 0;
@@ -163,7 +165,35 @@ class Block {
 
     //Debug Visuals
     if (debug.show == 1) {
-      if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
+      if (
+        cpu.enabled &&
+        cpu.transferToRight &&
+        ((this.x === cpu.targetX && this.y === cpu.targetY) ||
+          (this.x === cpu.targetX + 1 && this.y === cpu.targetY))
+      ) {
+        DEBUGR_IMAGE.src = sprite.debugRed;
+        DEBUGR_IMAGE.onload = () => {
+          win.ctx.drawImage(
+            DEBUGR_IMAGE,
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        };
+      } else if (
+        cpu.enabled &&
+        !cpu.transferToRight &&
+        ((this.x === cpu.targetX && this.y === cpu.targetY) ||
+          (this.x === cpu.targetX + 1 && this.y === cpu.targetY))
+      ) {
+        DEBUGM_IMAGE.src = sprite.debugMagenta;
+        DEBUGM_IMAGE.onload = () => {
+          win.ctx.drawImage(
+            DEBUGM_IMAGE,
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        };
+      } else if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
         DEBUGW_IMAGE.src = sprite.debugWhite;
         DEBUGW_IMAGE.onload = () => {
           win.ctx.drawImage(
@@ -216,8 +246,13 @@ export function newBlock(c, r) {
 }
 
 export function updateGrid(frameAdvance = false) {
-  for (let x = 0; x < grid.COLS; x++) {
-    for (let y = 0; y < grid.ROWS + 2; y++) {
+  let highestRowFound = false;
+  for (let y = 0; y < grid.ROWS + 2; y++) {
+    for (let x = 0; x < grid.COLS; x++) {
+      if (!highestRowFound && game.board[x][y].color !== blockColor.VACANT) {
+        game.highestRow = y;
+        highestRowFound = true;
+      }
       // Check to see if a block is still legally in a landing animation
       if (game.board[x][y].type == blockType.LANDING) {
         for (let i = grid.ROWS - 1; i > y; i--) {
@@ -260,7 +295,7 @@ export function updateGrid(frameAdvance = false) {
             if (
               y > 0 &&
               game.board[x][y - 1].color != blockColor.VACANT &&
-              INTERACTIVE_PIECES.includes(game.board[x][y - 1].type)
+              INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
             ) {
               // Give interactive pieces a slight delay timer
               game.board[x][y - 1].timer = game.blockStallTime;
@@ -269,7 +304,7 @@ export function updateGrid(frameAdvance = false) {
             for (let i = y - 1; i > 0; i--) {
               // create chain available blocks above current
               // If clearing piece detected, break loop since no more chainable blocks.
-              if (!INTERACTIVE_PIECES.includes(game.board[x][i].type)) break;
+              if (!INTERACTIVE_TYPES.includes(game.board[x][i].type)) break;
               if (game.board[x][y].availableForPrimaryChain) {
                 game.board[x][i].availableForPrimaryChain = true;
               } else if (game.board[x][y].availableForSecondaryChain)
@@ -544,8 +579,8 @@ function checkTime() {
 function playerAction(input) {
   if (cpu.enabled) {
     if (Object.values(input).includes(true) && !input.quickRaise) {
-      cpu.enabled = 0;
-      console.log("player input detected, cpu off.");
+      cpu.control = 0;
+      console.log("player input detected, cpu control off.");
     }
     input = cpuAction(input);
   }
@@ -706,7 +741,6 @@ function KEYBOARD_CONTROL(event) {
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.freeze = 0;
-        cpu.enabled = 0;
         // debug.show = 0;
       }
     }
@@ -714,7 +748,9 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode === 66) {
         // b
         cpu.enabled = (cpu.enabled + 1) % 2;
+        cpu.control = (cpu.control + 1) % 2;
         console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
+        if (cpu.enabled === 0) cpu.control = 0;
       }
       if (event.keyCode == 75) {
         // k
@@ -1071,11 +1107,13 @@ export function gameLoop() {
           game.seconds} seconds<br />Real Time: ${
           performance.realTime
         } seconds`;
+        win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
+        Stack size: ${12 - game.highestRow}<br>
+        Highest Row: ${game.highestRow}`;
       } else {
         win.timeDisplay.innerHTML = game.timeString;
+        win.levelDisplay.innerHTML = `${game.level}`;
       }
-
-      win.levelDisplay.innerHTML = `${game.level}`;
 
       if (game.frames > 60) {
         if (game.frames % 1200 >= 1020) {

@@ -3,7 +3,7 @@ import {
   blockType,
   grid,
   game,
-  INTERACTIVE_PIECES,
+  INTERACTIVE_TYPES,
   debug
 } from "../global";
 
@@ -45,7 +45,7 @@ export function doGravity(gameSpeed) {
       if (
         game.board[c][r].color != blockColor.VACANT &&
         game.board[c][r + 1].color == blockColor.VACANT &&
-        INTERACTIVE_PIECES.includes(game.board[c][r].type)
+        INTERACTIVE_TYPES.includes(game.board[c][r].type)
       ) {
         // if normal block, fall one unit
         game.disableRaise = false;
@@ -118,13 +118,13 @@ export function areAllBlocksGrounded() {
       )
         return false;
       // If a block is clearing, not every piece is grounded.
-      if (!INTERACTIVE_PIECES.includes(game.board[c][r].type)) return false;
+      if (!INTERACTIVE_TYPES.includes(game.board[c][r].type)) return false;
     }
     // dont forget to check bottom row
     if (
       (game.board[c][grid.ROWS - 1].type == blockType.LANDING &&
         game.board[c][grid.ROWS - 1].timer < 9) ||
-      !INTERACTIVE_PIECES.includes(game.board[c][grid.ROWS - 1].type)
+      !INTERACTIVE_TYPES.includes(game.board[c][grid.ROWS - 1].type)
     )
       return false;
   }

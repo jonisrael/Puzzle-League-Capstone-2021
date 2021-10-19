@@ -97,7 +97,7 @@ export const PIECES = [
   blockColor.BLUE
 ];
 
-export const INTERACTIVE_PIECES = [
+export const INTERACTIVE_TYPES = [
   blockType.NORMAL,
   blockType.LANDING,
   blockType.PANICKING
@@ -196,6 +196,7 @@ export const game = {
   quickRaise: false,
   raisePressed: false,
   readyForNewRow: false,
+  highestRow: 0,
   Music: gameMusic,
   data: {},
   log: []
@@ -257,13 +258,18 @@ export const debug = {
 
 export const cpu = {
   enabled: 0,
+  control: 0,
   up: false,
   down: false,
   left: false,
   right: false,
   swap: false,
   quickRaise: false,
-  pause: false
+  pause: false,
+  targetX: 0,
+  targetY: 0,
+  holeDetectedAt: 0,
+  transferToRight: 0
 };
 
 export const leaderboard = {

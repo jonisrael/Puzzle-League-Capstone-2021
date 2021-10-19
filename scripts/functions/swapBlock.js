@@ -1,5 +1,5 @@
 import {
-  INTERACTIVE_PIECES,
+  INTERACTIVE_TYPES,
   game,
   grid,
   blockColor,
@@ -28,8 +28,8 @@ export function trySwappingBlocks(x, y) {
 
   // Check if blocks are clearing
   if (
-    !INTERACTIVE_PIECES.includes(game.board[x][y].type) ||
-    !INTERACTIVE_PIECES.includes(game.board[x + 1][y].type)
+    !INTERACTIVE_TYPES.includes(game.board[x][y].type) ||
+    !INTERACTIVE_TYPES.includes(game.board[x + 1][y].type)
   ) {
     legalSwap = false;
     game.message = "Swap Failed: Clearing Block";
@@ -38,49 +38,33 @@ export function trySwappingBlocks(x, y) {
 
   // Do not swap if not on a clearing block and a vacant block is detected.
   if (y < 11) {
-    if (
-      game.board[x][y].color != blockColor.VACANT &&
-      INTERACTIVE_PIECES.includes(game.board[x][y].type) &&
-      INTERACTIVE_PIECES.includes(game.board[x][y + 1].type)
-    ) {
-      for (let j = y; j < grid.ROWS; j++) {
-        if (game.board[x][j].color == blockColor.VACANT) {
-          legalSwap = false;
-          game.message = "Swap Failed: Airborne Block";
-          game.messageChangeDelay = 90;
-          break;
-        }
-      }
-    }
-    if (
-      game.board[x + 1][y].color != blockColor.VACANT &&
-      INTERACTIVE_PIECES.includes(game.board[x + 1][y].type) &&
-      INTERACTIVE_PIECES.includes(game.board[x + 1][y + 1].type)
-    ) {
-      for (let j = y; j < grid.ROWS; j++) {
-        if (game.board[x + 1][j].color == blockColor.VACANT) {
-          legalSwap = false;
-          game.message = "Swap Failed: Airborne Block";
-          game.messageChangeDelay = 90;
-          break;
-        }
+    for (let j = y; j < grid.ROWS; j++) {
+      if (
+        (game.board[x][y].color != blockColor.VACANT &&
+          INTERACTIVE_TYPES.includes(game.board[x][y].type) &&
+          INTERACTIVE_TYPES.includes(game.board[x][y + 1].type) &&
+          game.board[x][j].color === blockColor.VACANT) ||
+        (game.board[x + 1][y].color !== blockColor.VACANT &&
+          INTERACTIVE_TYPES.includes(game.board[x + 1][y].type) &&
+          INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
+          game.board[x + 1][j].color === blockColor.VACANT)
+      ) {
+        legalSwap = false;
+        game.message = "Swap Failed: Airborne Block";
+        game.messageChangeDelay = 90;
+        break;
       }
     }
   }
   // Do not swap if a falling block is one unit ABOVE the cursor
   if (y > 0) {
     if (
-      INTERACTIVE_PIECES.includes(game.board[x][y - 1].type) &&
-      game.board[x][y - 1].color != blockColor.VACANT &&
-      game.board[x][y].color == blockColor.VACANT
-    ) {
-      legalSwap = false;
-      game.message = "Swap Failed: Below an Airborne Block";
-      game.messageChangeDelay = 90;
-    } else if (
-      INTERACTIVE_PIECES.includes(game.board[x + 1][y - 1].type) &&
-      game.board[x + 1][y - 1].color != blockColor.VACANT &&
-      game.board[x + 1][y].color == blockColor.VACANT
+      (INTERACTIVE_TYPES.includes(game.board[x][y - 1].type) &&
+        game.board[x][y - 1].color != blockColor.VACANT &&
+        game.board[x][y].color == blockColor.VACANT) ||
+      (INTERACTIVE_TYPES.includes(game.board[x + 1][y - 1].type) &&
+        game.board[x + 1][y - 1].color != blockColor.VACANT &&
+        game.board[x + 1][y].color == blockColor.VACANT)
     ) {
       legalSwap = false;
       game.message = "Swap Failed: Below an Airborne Block";
@@ -91,11 +75,11 @@ export function trySwappingBlocks(x, y) {
   // FOR FUTURE UPDATE
   // Do not swap if a falling block is one unit BELOW the cursor (rare)
   // if (y > 0) {
-  //     if (INTERACTIVE_PIECES.includes(game.board[x][y].type) &&
+  //     if (INTERACTIVE_TYPES.includes(game.board[x][y].type) &&
   //         game.board[x+1][y].color == blockColor.VACANT &&
   //         game.board[x+1][y+1].color != blockColor.VACANT &&
   //         game.board[x+1][y+1].timer>0) {legalSwap = false; console.log("right here!") }
-  //     else if (INTERACTIVE_PIECES.includes(game.board[x+1][y].type) &&
+  //     else if (INTERACTIVE_TYPES.includes(game.board[x+1][y].type) &&
   //         game.board[x][y].color == blockColor.VACANT &&
   //         game.board[x][y+1].color != blockColor.VACANT &&
   //         game.board[x][y+1].timer>0) {legalSwap = false; console.log("right here!") }
@@ -142,7 +126,7 @@ export function trySwappingBlocks(x, y) {
       if (
         game.board[x][y].color == blockColor.VACANT &&
         game.board[x][y - 1].color != blockColor.VACANT &&
-        INTERACTIVE_PIECES.includes(game.board[x][y - 1].type)
+        INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
       ) {
         game.board[x][y - 1].type = blockType.NORMAL;
         game.board[x][y - 1].timer = game.blockStallTime;
@@ -156,7 +140,7 @@ export function trySwappingBlocks(x, y) {
       if (
         game.board[x + 1][y].color == blockColor.VACANT &&
         game.board[x + 1][y - 1].color != blockColor.VACANT &&
-        INTERACTIVE_PIECES.includes(game.board[x + 1][y - 1].type)
+        INTERACTIVE_TYPES.includes(game.board[x + 1][y - 1].type)
       ) {
         game.board[x + 1][y - 1].type = blockType.NORMAL;
         game.board[x + 1][y - 1].timer = game.blockStallTime; // Default 12 frames

@@ -4,7 +4,7 @@ import {
   announcer,
   blockColor,
   blockType,
-  INTERACTIVE_PIECES,
+  INTERACTIVE_TYPES,
   grid,
   game,
   win,
@@ -53,9 +53,9 @@ export function checkMatch() {
           game.board[c][r].color != blockColor.VACANT &&
           game.board[c][r].color == game.board[c][r - 1].color &&
           game.board[c][r].color == game.board[c][r + 1].color &&
-          INTERACTIVE_PIECES.includes(game.board[c][r].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c][r - 1].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c][r + 1].type)
+          INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
+          INTERACTIVE_TYPES.includes(game.board[c][r - 1].type) &&
+          INTERACTIVE_TYPES.includes(game.board[c][r + 1].type)
         ) {
           checkAgain = true;
           clearLocations.push([c, r - 1]);
@@ -65,19 +65,19 @@ export function checkMatch() {
           if (
             r < 10 &&
             game.board[c][r].color == game.board[c][r + 2].color &&
-            INTERACTIVE_PIECES.includes(game.board[c][r + 2].type)
+            INTERACTIVE_TYPES.includes(game.board[c][r + 2].type)
           ) {
             clearLocations.push([c, r + 2]);
             if (
               r < 9 &&
               game.board[c][r].color == game.board[c][r + 3].color &&
-              INTERACTIVE_PIECES.includes(game.board[c][r + 3].type)
+              INTERACTIVE_TYPES.includes(game.board[c][r + 3].type)
             ) {
               clearLocations.push([c, r + 3]);
               if (
                 r < 8 &&
                 game.board[c][r].color == game.board[c][r + 4].color &&
-                INTERACTIVE_PIECES.includes(game.board[c][r + 4].type)
+                INTERACTIVE_TYPES.includes(game.board[c][r + 4].type)
               ) {
                 clearLocations.push([c, r + 4]);
               }
@@ -95,9 +95,9 @@ export function checkMatch() {
           game.board[c][r].color != blockColor.VACANT &&
           game.board[c][r].color == game.board[c - 1][r].color &&
           game.board[c][r].color == game.board[c + 1][r].color &&
-          INTERACTIVE_PIECES.includes(game.board[c][r].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c - 1][r].type) &&
-          INTERACTIVE_PIECES.includes(game.board[c + 1][r].type)
+          INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
+          INTERACTIVE_TYPES.includes(game.board[c - 1][r].type) &&
+          INTERACTIVE_TYPES.includes(game.board[c + 1][r].type)
         ) {
           checkAgain = true;
           clearLocations.push([c - 1, r]);
@@ -106,19 +106,19 @@ export function checkMatch() {
           if (
             c < 4 &&
             game.board[c][r].color == game.board[c + 2][r].color &&
-            INTERACTIVE_PIECES.includes(game.board[c + 2][r].type)
+            INTERACTIVE_TYPES.includes(game.board[c + 2][r].type)
           ) {
             clearLocations.push([c + 2, r]);
             if (
               c < 3 &&
               game.board[c][r].color == game.board[c + 3][r].color &&
-              INTERACTIVE_PIECES.includes(game.board[c + 3][r].type)
+              INTERACTIVE_TYPES.includes(game.board[c + 3][r].type)
             ) {
               clearLocations.push([c + 3, r]);
               if (
                 c < 2 &&
                 game.board[c][r].color == game.board[c + 4][r].color &&
-                INTERACTIVE_PIECES.includes(game.board[c + 4][r].type)
+                INTERACTIVE_TYPES.includes(game.board[c + 4][r].type)
               ) {
                 clearLocations.push([c + 4, r]);
               }
