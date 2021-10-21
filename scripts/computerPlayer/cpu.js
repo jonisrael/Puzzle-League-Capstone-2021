@@ -4,8 +4,12 @@ import {
   blockColor,
   PIECES,
   INTERACTIVE_TYPES,
-  cpu
+  cpu,
+  win
 } from "../global";
+import { findHorizontalMatches } from "./findHorizontalMatches";
+import { findVerticalMatches } from "./findVerticalMatches";
+import { flattenStack } from "./flattenStack";
 
 // hole check order, prioritizing center
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
@@ -45,16 +49,24 @@ const direction = [
 ];
 
 export function cpuAction(input) {
-  // if (game.frames % 10 < 5) return input;
+  win.mainInfoDisplay.style.color = "green";
+  // if (game.frames % 6 < 3) return input;
   let targetX;
   let targetY;
   let swap = false;
   let coordinates = false;
-  for (let row = 0; row < grid.ROWS; row++) {
-    coordinates = findHorizontalThrees(row);
-    if (coordinates) break;
-    // coordinates = findVerticalThrees(row);
-    // if (coordinates) break;
+  let dir =
+    game.highestColIndex < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
+
+  if (game.highestRow < 11) coordinates = flattenStack();
+
+  if (!coordinates && (game.highestRow < 8 || game.currentChain > 0)) {
+    for (let row = 0; row < grid.ROWS; row++) {
+      coordinates = findHorizontalMatches(row);
+      if (coordinates) break;
+      coordinates = findVerticalMatches(11 - row, dir);
+      if (coordinates) break;
+    }
   }
 
   // If no matches detected, look for ways to flatten the stack.
@@ -66,8 +78,10 @@ export function cpuAction(input) {
     swap = coordinates[2];
   } else {
     // idle, return to center of board
+    game.messagePriority = "Idle, raising stack...";
     targetX = 2;
     targetY = 6 + Math.floor(game.highestRow / 2);
+    if (cpu.control && game.highestRow > 6) input.quickRaise = true;
   }
 
   if (cpu.control) {
@@ -80,128 +94,97 @@ export function cpuAction(input) {
 
   cpu.targetX = targetX;
   cpu.targetY = targetY;
+  cpu.swap = swap;
   return input;
 }
 
-function flattenStack() {
-  if (game.highestRow === 11) return false;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// function moveBlockToDestination(blockIndex, destinationIndex, mustBeVacant = false) {
+//   let blockX = blockIndex[0]
+//   let blockY = blockIndex[1]
+//   let destinationX = destinationIndex[0]
+//   let destinationY = destinationIndex[1]
+//   if (blockX < destinationX &&
+//     INTERACTIVE_TYPES.includes(game[blockX])) {
+//     if gam]
+//   }
+// }
 
-  // check to see if stack has no holes.
-  let holeIndex;
-  for (let i = 0; i < default_hole_check_order.length; i++) {
-    let potentialHoleIndex = default_hole_check_order[i];
-    if (
-      game.board[potentialHoleIndex][game.highestRow + 1].color ===
-      blockColor.VACANT
-    )
-      holeIndex = potentialHoleIndex;
-    cpu.holeDetectedAt = [holeIndex, game.highestRow + 1];
-  }
-  if (!holeIndex) return false;
-  for (let i = 0; i < order[holeIndex].length; i++) {
-    let leftBlockIndex =
-      holeIndex < 5 ? order[holeIndex][i] : order[holeIndex - 1][i];
-    let rightBlockIndex = leftBlockIndex + 1;
-    let leftBlock = game.board[leftBlockIndex][game.highestRow];
-    let rightBlock = game.board[rightBlockIndex][game.highestRow];
-    if (
-      (leftBlockIndex < holeIndex &&
-        INTERACTIVE_TYPES.includes(leftBlock.type) &&
-        leftBlock.color !== blockColor.VACANT &&
-        rightBlock.color === blockColor.VACANT) ||
-      (leftBlockIndex >= holeIndex &&
-        INTERACTIVE_TYPES.includes(rightBlock.type) &&
-        leftBlock.color === blockColor.VACANT &&
-        rightBlock.color !== blockColor.VACANT)
-    ) {
-      return [leftBlockIndex, game.highestRow, true];
-    }
-  }
+// for (let i = 0; i < holes.length; i++) {
+//   // check order: 2, 3, 1, 4, 0
+//   for (let j = 0; j < order[hole].length; j++) {
+//     let checkBlockIndex = order[hole][j];
+//     let leftblock = game.board[checkBlockIndex][]
+//     console.log(checkBlockIndex, holeIndex);
+//     let c = checkBlockIndex; // for clarity
+//     if (
+//       (checkBlockIndex < holeIndex &&
+//         INTERACTIVE_TYPES.includes(game.board[c][game.highestRow].type) &&
+//         game.board[c][game.highestRow].color !== blockColor.VACANT &&
+//         game.board[c + 1][game.highestRow].color === blockColor.VACANT) ||
+//       (checkBlockIndex > holeIndex &&
+//         INTERACTIVE_TYPES.includes(game.board[c + 1][game.highestRow].type) &&
+//         game.board[c][game.highestRow].color === blockColor.VACANT &&
+//         game.board[c + 1][game.highestRow].color !== blockColor.VACANT)
+//     ) {
+//       return [c, game.highestRow, true];
+//     }
+//   }
+// }
+//   return false;
+// }
 
-  // function moveBlockToDestination(blockIndex, destinationIndex, mustBeVacant = false) {
-  //   let blockX = blockIndex[0]
-  //   let blockY = blockIndex[1]
-  //   let destinationX = destinationIndex[0]
-  //   let destinationY = destinationIndex[1]
-  //   if (blockX < destinationX &&
-  //     INTERACTIVE_TYPES.includes(game[blockX])) {
-  //     if gam]
-  //   }
-  // }
+// function findVerticalMatches(r) {
+//   if (r < 2 || r === grid.ROWS - 1) return false;
+//   let possibleMatchLocations = [];
+//   let topRowIndex = r - 1;
+//   let middleRowIndex = r;
+//   let bottomRowIndex = r + 1;
 
-  // for (let i = 0; i < holes.length; i++) {
-  //   // check order: 2, 3, 1, 4, 0
-  //   for (let j = 0; j < order[hole].length; j++) {
-  //     let checkBlockIndex = order[hole][j];
-  //     let leftblock = game.board[checkBlockIndex][]
-  //     console.log(checkBlockIndex, holeIndex);
-  //     let c = checkBlockIndex; // for clarity
-  //     if (
-  //       (checkBlockIndex < holeIndex &&
-  //         INTERACTIVE_TYPES.includes(game.board[c][game.highestRow].type) &&
-  //         game.board[c][game.highestRow].color !== blockColor.VACANT &&
-  //         game.board[c + 1][game.highestRow].color === blockColor.VACANT) ||
-  //       (checkBlockIndex > holeIndex &&
-  //         INTERACTIVE_TYPES.includes(game.board[c + 1][game.highestRow].type) &&
-  //         game.board[c][game.highestRow].color === blockColor.VACANT &&
-  //         game.board[c + 1][game.highestRow].color !== blockColor.VACANT)
-  //     ) {
-  //       return [c, game.highestRow, true];
-  //     }
-  //   }
-  // }
-  return false;
-}
+//   for (let i = 0; i < PIECES.length; i++) {
+//     let desiredColor = PIECES[i];
+//     let desiredIndex;
+//     for (let c = 0; c < grid.COLS; c++) {
+//       if (
+//         game.board[c][middleRowIndex].color === desiredColor &&
+//         INTERACTIVE_TYPES.includes(game.board[c][middleRowIndex].type)
+//       ) {
+//         desiredIndex = [c, r];
+//       }
+//     }
+//     for (let y = r - 1; y <= r + 1; y++) {
+//       let matchPossible = false;
+//       for (let x = 0; x < grid.COLS; x++) {
+//         if (
+//           game.board[x][y].color === desiredColor &&
+//           INTERACTIVE_TYPES.includes(game.board[x][y].type)
+//         ) {
+//           game.board[x][y].color ===
+//           matchPossible = true;
+//         }
+//       }
+//       if (!matchPossible) break; // no match for this row
+//     }
+//   }
 
-function findVerticalThrees(r) {
-  if (r < 2 || r === grid.ROWS - 1) return false;
-  let possibleMatchLocations = [];
-  let topRowIndex = r - 1;
-  let middleRowIndex = r;
-  let bottomRowIndex = r + 1;
+//   let rowList = [];
+//   rowList.push(createRowObject(r - 1, r, r + 1));
 
-  for (let i = 0; i < PIECES.length; i++) {
-    let desiredColor = PIECES[i];
-    let desiredIndex;
-    for (let c = 0; c < grid.COLS; c++) {
-      if (
-        game.board[c][middleRowIndex].color === desiredColor &&
-        INTERACTIVE_TYPES.includes(game.board[c][middleRowIndex].type)
-      ) {
-        desiredIndex = [c, r];
-      }
-    }
-    for (let y = r - 1; y <= r + 1; y++) {
-      let matchPossible = false;
-      for (let x = 0; x < grid.COLS; x++) {
-        if (
-          game.board[x][y].color === desiredColor &&
-          INTERACTIVE_TYPES.includes(game.board[x][y].type)
-        ) {
-          matchPossible = true;
-        }
-      }
-    }
-  }
+//   if (rowList) {
 
-  let rowList = [];
-  rowList.push(createRowArray(r - 1));
-  rowList.push(createRowArray(r));
-  rowList.push(createRowArray(r + 1));
+//   }
+// }
 
-  if (rowList) {
-  }
-}
-
-function createRowObject(r) {
-  let rowArray = [];
-  for (let c = 0; c < grid.COLS; c++) {
-    rowArray[`${c}`];
-  }
-  return rowArray;
-}
-
-// function findVerticalThrees(index) {
+// function findVerticalMatches(index) {
 //   let desiredColor = PIECES[index];
 //   let matchLocations = [];
 //   let existsOnAboveRow = false;
@@ -227,38 +210,6 @@ function createRowObject(r) {
 //     }
 //   }
 // }
-
-function findHorizontalThrees(r) {
-  let matchLocations = [];
-  for (let i = 0; i < PIECES.length; i++) {
-    matchLocations = [];
-    for (let c = grid.COLS - 1; c >= 0; c--) {
-      if (
-        game.board[c][r].color === PIECES[i] &&
-        INTERACTIVE_TYPES.includes(game.board[c][r].type)
-      ) {
-        matchLocations.push([c, r]);
-      }
-    }
-    if (matchLocations.length > 2) {
-      // begin swap sequence
-      return startHorizontalSwapping(matchLocations);
-    }
-  }
-  return false;
-}
-
-function startHorizontalSwapping(matchLocations) {
-  let rightX = matchLocations[0][0];
-  let rightY = matchLocations[0][1];
-  let centerX = matchLocations[1][0];
-  let centerY = matchLocations[1][1];
-  let leftX = matchLocations[2][0];
-  let leftY = matchLocations[2][1];
-
-  if (centerX + 1 !== rightX) return [centerX, centerY, true];
-  if (leftX + 1 !== centerX) return [leftX, leftY, true];
-}
 
 // function placeRedsToRight() {
 //   let redX = false;

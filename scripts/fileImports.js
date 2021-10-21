@@ -105,6 +105,10 @@ import DEBUGO from ".././assets/Extras/DebugSprites/debugO.png";
 import DEBUGB from ".././assets/Extras/DebugSprites/debugB.png";
 import DEBUGR from ".././assets/Extras/DebugSprites/debugR.png";
 import DEBUGM from ".././assets/Extras/DebugSprites/debugM.png";
+import DEBUGC from ".././assets/Extras/DebugSprites/debugC.png";
+import DEBUGG from ".././assets/Extras/DebugSprites/debugG.png";
+import DEBUGT from ".././assets/Extras/DebugSprites/debugT.png";
+import DEBUGY from ".././assets/Extras/DebugSprites/debugY.png";
 
 // Import Music
 import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
@@ -296,7 +300,11 @@ const sprite = {
   debugBrown: DEBUGB,
   debugPink: DEBUGP,
   debugRed: DEBUGR,
-  debugMagenta: DEBUGM
+  debugMagenta: DEBUGM,
+  debugBlue: DEBUGC,
+  debugGreen: DEBUGG,
+  debugTan: DEBUGT,
+  debugYellow: DEBUGY
 };
 
 const audio = {

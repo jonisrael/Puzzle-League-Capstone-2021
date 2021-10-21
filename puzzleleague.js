@@ -121,6 +121,8 @@ class Block {
     const DEBUGB_IMAGE = new Image();
     const DEBUGR_IMAGE = new Image();
     const DEBUGM_IMAGE = new Image();
+    const DEBUGT_IMAGE = new Image();
+    const DEBUGC_IMAGE = new Image();
     if (this.type == blockType.CLEARING) {
       if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
         animationIndex = 0;
@@ -166,11 +168,27 @@ class Block {
     //Debug Visuals
     if (debug.show == 1) {
       if (
+        this.x === cpu.holeDetectedAt[0] &&
+        this.y === cpu.holeDetectedAt[1]
+      ) {
+        DEBUGT_IMAGE.src = sprite.debugTan;
+        DEBUGT_IMAGE.onload = () => {
+          win.ctx.drawImage(
+            DEBUGT_IMAGE,
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        };
+      } else if (
         cpu.enabled &&
         ((this.x === cpu.targetX && this.y === cpu.targetY) ||
           (this.x === cpu.targetX + 1 && this.y === cpu.targetY))
       ) {
-        DEBUGR_IMAGE.src = sprite.debugRed;
+        DEBUGR_IMAGE.src = cpu.swap
+          ? game.highestRow < 8
+            ? sprite.debugRed
+            : sprite.debugGreen
+          : sprite.debugBlue;
         DEBUGR_IMAGE.onload = () => {
           win.ctx.drawImage(
             DEBUGR_IMAGE,
@@ -180,8 +198,7 @@ class Block {
         };
       } else if (
         cpu.enabled &&
-        this.x === cpu.holeDetectedAt[0] &&
-        this.y === cpu.holeDetectedAt[1]
+        cpu.matchList.includes([this.x, this.y].join())
       ) {
         DEBUGM_IMAGE.src = sprite.debugMagenta;
         DEBUGM_IMAGE.onload = () => {
@@ -249,6 +266,7 @@ export function updateGrid(frameAdvance = false) {
     for (let x = 0; x < grid.COLS; x++) {
       if (!highestRowFound && game.board[x][y].color !== blockColor.VACANT) {
         game.highestRow = y;
+        game.highestColIndex = x;
         highestRowFound = true;
       }
       // Check to see if a block is still legally in a landing animation
@@ -580,7 +598,19 @@ function playerAction(input) {
       cpu.control = 0;
       console.log("player input detected, cpu control off.");
     }
-    input = cpuAction(input);
+    try {
+      input = cpuAction(input);
+    } catch (error) {
+      console.log(`${error}`);
+      console.log(`Line number: ${error.stack}`);
+      console.log(cpu);
+      console.log(game);
+      console.log(`Disabling AI...`);
+      cpu.enabled = 0;
+      cpu.control = 0;
+      game.messagePriority = "";
+      pause(false, true);
+    }
   }
   // first input checker, "else if" is required for priority, so case does not work.
   if (input.up) {
@@ -965,7 +995,8 @@ export function gameLoop() {
           );
         }
 
-        if (game.frames > 0) game.level++;
+        if (game.level + 1 < preset.speedValues.length && game.frames > 0)
+          game.level++;
         game.boardRiseSpeed = preset.speedValues[game.level];
         game.blockClearTime = preset.clearValues[game.level];
         game.blockStallTime = preset.stallValues[game.level];
@@ -1156,7 +1187,6 @@ export function gameLoop() {
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled) {
-        game.paused = true;
         pause(true);
       }
     }

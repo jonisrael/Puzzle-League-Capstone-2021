@@ -33,7 +33,7 @@ export function closeGame(gameFinished) {
 
 export function isGameOver() {
   for (let c = 0; c < grid.COLS; c++) {
-    if (game.board[c][0].color != blockColor.VACANT) {
+    if (game.highestRow === 0) {
       // if debug, do not game over.
       if (debug.enabled || game.mode === "training") {
         game.score = 0;

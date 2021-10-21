@@ -2,15 +2,15 @@ import { game, win, performance } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 
-export function pause(lostFocus = false) {
+export function pause(lostFocus = false, aiCrash = false) {
   document.getElementById("fps-display").style.display = "none";
   game.paused = true;
   console.log(game);
   performance.pauseStartTime = Date.now();
   playAudio(audio.pause, 0.1);
-  lostFocus
-    ? (win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus")
-    : (win.mainInfoDisplay.innerHTML = "Pause");
+  if (lostFocus) win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus";
+  else if (aiCrash) win.mainInfoDisplay.innerHTML = "Pause -- AI Error";
+  else win.mainInfoDisplay.innerHTML = "Pause";
   win.mainInfoDisplay.style.color = "blue";
   win.cvs.style.display = "none";
   game.Music.pause();

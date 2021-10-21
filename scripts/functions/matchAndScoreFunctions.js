@@ -249,5 +249,4 @@ export function updateScore(clearLocationsLength, currentChain) {
   game.score += game.scoreUpdate;
   let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${clearLocationsLength} combo`;
   game.log.push(loggedScore);
-  console.log(loggedScore);
 }

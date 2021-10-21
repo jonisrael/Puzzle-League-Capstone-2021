@@ -197,6 +197,7 @@ export const game = {
   raisePressed: false,
   readyForNewRow: false,
   highestRow: 0,
+  highestColIndex: 0,
   Music: gameMusic,
   data: {},
   log: []
@@ -269,6 +270,7 @@ export const cpu = {
   targetX: 0,
   targetY: 0,
   holeDetectedAt: [0, 0],
+  matchList: [],
   transferToRight: 0
 };
 
