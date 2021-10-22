@@ -1,7 +1,8 @@
 import { game, grid, PIECES, INTERACTIVE_TYPES, cpu } from "../global";
+import { checkForObstacle } from "./findHorizontalMatches";
 
-export function findVerticalMatches(bottomRowIndex, dir) {
-  if (bottomRowIndex - 2 < 3) return false;
+export function findVerticalMatches(middleRowIndex, dir) {
+  if (middleRowIndex < 2) return false;
   let start = dir[0];
   let end = dir[1];
   let direction = dir[2];
@@ -12,7 +13,7 @@ export function findVerticalMatches(bottomRowIndex, dir) {
     // console.log(desiredColor);
     matchLocations = [];
     cpu.matchList = [];
-    for (let r = bottomRowIndex; r >= bottomRowIndex - 2; r--) {
+    for (let r = middleRowIndex + 1; r >= middleRowIndex - 1; r--) {
       let c = start;
       while (c !== end) {
         if (
@@ -44,12 +45,12 @@ function startVerticalSwapping(matchLocations) {
   let bottomX = matchLocations[0][0];
   let bottomY = matchLocations[0][1];
 
-  if (centerX < bottomX) inputArr = [centerX, centerY, true];
-  else if (centerX > bottomX) inputArr = [centerX - 1, centerY, true];
+  if (topX < centerX) inputArr = [topX, topY, true];
+  else if (topX > centerX) inputArr = [topX - 1, topY, true];
   else {
-    // since centerX == bottomX, now check topX
-    if (topX < centerX && topX < centerX) inputArr = [topX, topY, true];
-    else if (topX > centerX) inputArr = [topX - 1, topY, true];
+    // since bottomX == centerX, now check topX
+    if (bottomX < centerX) inputArr = [bottomX, bottomY, true];
+    else if (bottomX > centerX) inputArr = [bottomX - 1, bottomY, true];
   }
 
   // otherwise, desired match has been made.
@@ -64,20 +65,6 @@ function startVerticalSwapping(matchLocations) {
     inputArr = [x + 1, y, true];
   }
 
-  // if (inputArr) {
-  //   let x = inputArr[0];
-  //   let y = inputArr[1];
-  //   if (x > 6) console.log(`x is somehow ${x}`);
-  //   if (y > 11) console.log(`y is somehow ${y}`);
-  //   if (
-  //     game.board[x][y].color === game.board[x + 1][y].color ||
-  //     !INTERACTIVE_TYPES.includes(game.board[x][y].type) ||
-  //     !INTERACTIVE_TYPES.includes(game.board[x + 1][y].type)
-  //   ) {
-  //     // console.log(`failsafe2 at [${x},${y}]`);
-  //     return false;
-  //   }
-  // }
-
+  if (checkForObstacle(inputArr[0], inputArr[0] + 1, inputArr[1])) return false;
   return inputArr;
 }

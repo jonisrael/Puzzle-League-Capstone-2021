@@ -271,7 +271,9 @@ export const cpu = {
   targetY: 0,
   holeDetectedAt: [0, 0],
   matchList: [],
-  transferToRight: 0
+  transferToRight: 0,
+  randomInputCounter: 0,
+  lastActionWasSwap: true
 };
 
 export const leaderboard = {

@@ -1,17 +1,17 @@
 import { audio } from "../fileImports";
-import { game, win, announcer, randInt } from "../global";
+import { game, win, announcer, randInt, cpu } from "../global";
 
 export function playAnnouncer(arr, lastPicked, arrType, mute = 0) {
-  if (win.muteAnnouncer.checked) return;
+  if (win.muteAnnouncer.checked || cpu.enabled) return;
 
   let selection = randInt(arr.length);
-  console.log("selection", selection, "lastPicked", lastPicked);
+  // console.log("selection", selection, "lastPicked", lastPicked);
   while (selection == lastPicked) {
-    console.log("need to reselect");
+    // console.log("need to reselect");
     selection = randInt(arr.length);
   }
-  console.log(arr.length);
-  console.log(selection, lastPicked);
+  // console.log(arr.length);
+  // console.log(selection, lastPicked);
   playAudio(arr[selection], 0.1, true);
   switch (arrType) {
     case "opening":

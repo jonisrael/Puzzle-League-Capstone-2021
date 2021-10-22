@@ -50,6 +50,9 @@ export function flattenStack() {
         leftBlock.color === blockColor.VACANT &&
         rightBlock.color !== blockColor.VACANT)
     ) {
+      // for (let r = game.highestRow; r > 0; r--) {
+      //   if (game.board[holeIndex][r].color != blockColor.VACANT) return false;
+      // }
       return [leftBlockIndex, game.highestRow, true];
     }
   }

@@ -496,7 +496,7 @@ function raiseStack() {
           break;
         }
       } else {
-        if (game.board[c][2].color != blockColor.VACANT) {
+        if (game.board[c][2].color != blockColor.VACANT && !cpu.enabled) {
           playAnnouncer(
             announcer.panicDialogue,
             announcer.panicIndexLastPicked,
@@ -921,11 +921,10 @@ export function gameLoop() {
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
           );
           console.log(game.log[game.log.length - 1]);
-        } else if (game.minutes == 3) {
-          game.score += 60 + game.seconds;
+        } else if (game.minutes > 3) {
+          game.score += 60;
           game.log.push(
-            `Time: ${game.timeString}, Overtime Bonus +${60 +
-              game.seconds}, Total: ${game.score}`
+            `Time: ${game.timeString}, Overtime Bonus +60, Total: ${game.score}`
           );
           console.log(game.log[game.log.length - 1]);
         }

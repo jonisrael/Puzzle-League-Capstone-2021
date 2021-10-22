@@ -5,7 +5,8 @@ import {
   PIECES,
   INTERACTIVE_TYPES,
   cpu,
-  win
+  win,
+  randInt
 } from "../global";
 import { findHorizontalMatches } from "./findHorizontalMatches";
 import { findVerticalMatches } from "./findVerticalMatches";
@@ -58,14 +59,24 @@ export function cpuAction(input) {
   let dir =
     game.highestColIndex < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
 
-  if (game.highestRow < 11) coordinates = flattenStack();
+  if (cpu.randomInputCounter > 0 && game.frames > 0) {
+    return randomAction(input);
+  }
 
-  if (!coordinates && (game.highestRow < 8 || game.currentChain > 0)) {
-    for (let row = 0; row < grid.ROWS; row++) {
-      coordinates = findHorizontalMatches(row);
-      if (coordinates) break;
-      coordinates = findVerticalMatches(11 - row, dir);
-      if (coordinates) break;
+  // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
+  //   coordinates = flattenStack();
+
+  if (!coordinates) {
+    if (
+      (game.boardRiseSpeed < 6 && game.highestRow < 8) ||
+      (game.boardRiseSpeed >= 6 && game.highestRow < 3)
+    ) {
+      for (let row = 0; row < grid.ROWS; row++) {
+        coordinates = findHorizontalMatches(row);
+        if (coordinates) break;
+        coordinates = findVerticalMatches(10 - row, dir);
+        if (coordinates) break;
+      }
     }
   }
 
@@ -76,12 +87,39 @@ export function cpuAction(input) {
     targetX = coordinates[0];
     targetY = coordinates[1];
     swap = coordinates[2];
-  } else {
+    try {
+      if (
+        targetX < grid.COLS - 1 &&
+        (game.board[targetX][targetY].color ===
+          game.board[targetX + 1][targetY].color ||
+          !INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) ||
+          !INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) ||
+          (targetY !== grid.COLS - 1 &&
+            (game.board[targetX][targetY + 1].color === blockColor.VACANT ||
+              game.board[targetX + 1][targetY + 1].color ===
+                blockColor.VACANT)))
+      ) {
+        // console.log("abnormality detected, flattening stack");
+        coordinates = flattenStack();
+      }
+    } catch (error) {
+      console.log(`Error: ${error} at lines ${error.stack}`);
+      coordinates = flattenStack();
+    }
+  }
+
+  if (!coordinates) {
     // idle, return to center of board
     game.messagePriority = "Idle, raising stack...";
     targetX = 2;
     targetY = 6 + Math.floor(game.highestRow / 2);
-    if (cpu.control && game.highestRow > 6) input.quickRaise = true;
+    if (
+      cpu.control &&
+      game.highestRow > 2 &&
+      !game.currentChain &&
+      game.boardRiseSpeed > 5
+    )
+      input.quickRaise = true;
   }
 
   if (cpu.control) {
@@ -95,6 +133,33 @@ export function cpuAction(input) {
   cpu.targetX = targetX;
   cpu.targetY = targetY;
   cpu.swap = swap;
+
+  if (targetX > grid.COLS - 2) targetX = grid.COLS - 2;
+
+  if (
+    INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) &&
+    INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
+    game.board[targetX][targetY].color !== blockColor.VACANT &&
+    game.board[targetX + 1][targetY].color !== blockColor.VACANT &&
+    INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
+    input.swap &&
+    cpu.lastActionWasSwap &&
+    cpu.randomInputCounter === 0
+  )
+    cpu.randomInputCounter = 10;
+  cpu.lastActionWasSwap = input.swap ? true : false;
+  return input;
+}
+
+function randomAction(input) {
+  game.messagePriority = `AI stuck, do random ${cpu.randomInputCounter} inputs`;
+  let arr = ["down", "up", "left", "right", "swap", "swap"];
+  let selection = randInt(arr.length);
+  cpu.randomInputCounter--;
+  // console.log(
+  //   `random number selected is ${selection}, counter at ${cpu.randomInputCounter}`
+  // );
+  input[arr[selection]] = true;
   return input;
 }
 
