@@ -59,7 +59,11 @@ export function cpuAction(input) {
   let dir =
     game.highestColIndex < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
 
-  if (cpu.randomInputCounter > 0 && game.frames > 0) {
+  if (
+    cpu.randomInputCounter > 0 &&
+    game.frames > 0 &&
+    game.boardRiseSpeed !== 1
+  ) {
     return randomAction(input);
   }
 
@@ -69,8 +73,8 @@ export function cpuAction(input) {
   if (!coordinates) {
     if (
       (game.boardRiseSpeed === 1 && game.highestRow < 8) ||
-      (game.boardRiseSpeed === 2 && game.highestRow < 5) ||
-      (game.boardRiseSpeed > 2 && game.highestRow < 3)
+      (game.boardRiseSpeed <= 6 && game.highestRow < 5) ||
+      (game.boardRiseSpeed > 6 && game.highestRow < 3)
     ) {
       for (let row = 0; row < grid.ROWS; row++) {
         coordinates = findHorizontalMatches(row);

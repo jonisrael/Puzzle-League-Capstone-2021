@@ -7,7 +7,8 @@ import {
   win,
   debug,
   leaderboard,
-  api
+  api,
+  cpu
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -85,7 +86,7 @@ function endGame() {
   console.log(`High Score: ${game.highScore}`);
   // enter new high scores
   let pastHighScore = localStorage.getItem("highScore");
-  if (game.score > parseInt(pastHighScore)) {
+  if (game.score > parseInt(pastHighScore) && !cpu.enabled) {
     console.log("new high score!");
     localStorage.setItem("highScore", `${game.score}`);
   }
