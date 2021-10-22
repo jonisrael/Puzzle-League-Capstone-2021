@@ -2,7 +2,7 @@ import { audio } from "../fileImports";
 import { game, win, announcer, randInt, cpu } from "../global";
 
 export function playAnnouncer(arr, lastPicked, arrType, mute = 0) {
-  if (win.muteAnnouncer.checked || cpu.enabled) return;
+  if (win.muteAnnouncer.checked) return;
 
   let selection = randInt(arr.length);
   // console.log("selection", selection, "lastPicked", lastPicked);

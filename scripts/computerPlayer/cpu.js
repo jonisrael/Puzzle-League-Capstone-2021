@@ -68,8 +68,9 @@ export function cpuAction(input) {
 
   if (!coordinates) {
     if (
-      (game.boardRiseSpeed < 6 && game.highestRow < 8) ||
-      (game.boardRiseSpeed >= 6 && game.highestRow < 3)
+      (game.boardRiseSpeed === 1 && game.highestRow < 8) ||
+      (game.boardRiseSpeed === 2 && game.highestRow < 5) ||
+      (game.boardRiseSpeed > 2 && game.highestRow < 3)
     ) {
       for (let row = 0; row < grid.ROWS; row++) {
         coordinates = findHorizontalMatches(row);
@@ -117,7 +118,7 @@ export function cpuAction(input) {
       cpu.control &&
       game.highestRow > 2 &&
       !game.currentChain &&
-      game.boardRiseSpeed > 5
+      game.boardRiseSpeed > 1
     )
       input.quickRaise = true;
   }
