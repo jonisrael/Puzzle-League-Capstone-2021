@@ -24,12 +24,16 @@ export function closeGame(gameFinished) {
   if (!gameFinished) game.Music.volume = 0;
   console.log("closeGame called");
   win.running = false;
-  if (gameFinished) {
-    afterGame();
-  }
   win.cvs = null;
   win.ctx = null;
   win.makeCanvas.remove();
+  if (gameFinished) {
+    // if (cpu.enabled) {
+    //   win.restartGame = true;
+    //   return;
+    // }
+    afterGame();
+  }
 }
 
 export function isGameOver() {

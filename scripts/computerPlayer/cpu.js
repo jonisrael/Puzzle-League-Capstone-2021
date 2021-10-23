@@ -73,8 +73,9 @@ export function cpuAction(input) {
   if (!coordinates) {
     if (
       (game.boardRiseSpeed === 1 && game.highestRow < 8) ||
-      (game.boardRiseSpeed <= 6 && game.highestRow < 5) ||
-      (game.boardRiseSpeed > 6 && game.highestRow < 3)
+      (game.boardRiseSpeed < 4 && game.highestRow < 8 && game.frames > 9600) ||
+      (game.boardRiseSpeed < 4 && game.highestRow < 5) ||
+      (game.boardRiseSpeed >= 4 && game.highestRow < 2)
     ) {
       for (let row = 0; row < grid.ROWS; row++) {
         coordinates = findHorizontalMatches(row);
@@ -120,7 +121,7 @@ export function cpuAction(input) {
     targetY = 6 + Math.floor(game.highestRow / 2);
     if (
       cpu.control &&
-      game.highestRow > 2 &&
+      game.highestRow > 1 &&
       !game.currentChain &&
       game.boardRiseSpeed > 1
     )
