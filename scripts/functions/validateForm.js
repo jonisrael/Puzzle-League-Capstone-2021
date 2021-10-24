@@ -1,4 +1,5 @@
-import { leaderboard } from "../global";
+import { game, leaderboard } from "../global";
+import { displayError } from "../..";
 
 export function validateForm(value, score) {
   let identicalEntries = [];
@@ -14,6 +15,11 @@ export function validateForm(value, score) {
   });
   console.log("identical entries", identicalEntries);
   let informIfLessThanLeaderboard = "";
+  console.log(value);
+  if (value === "GiefKid-AI-v1.0" && game.mode !== "cpu-play") {
+    displayError(`The name "GiefKid-AI-v1.0" is reserved`);
+    return -1;
+  }
   if (identicalEntries.length > 2) {
     if (score < identicalEntries[2].score)
       informIfLessThanLeaderboard = `This score of ${score} is also lower than all of your other scores. `;

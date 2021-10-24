@@ -6,7 +6,8 @@ import {
   performance,
   leaderboard,
   api,
-  padInteger
+  padInteger,
+  cpu
 } from "../global";
 import { submitResults, afterGame } from "./submitResults";
 import { playMusic, playAnnouncer } from "./audioFunctions";
@@ -14,6 +15,7 @@ import { displayError, getLeaderboardData, getWorldTimeAPI } from "../..";
 
 export function checkCanUserPost() {
   game.Music.loop = false;
+
   if (leaderboard.data.length == 0) {
     leaderboard.canPost = false;
     leaderboard.reason = "no-leaderboard";

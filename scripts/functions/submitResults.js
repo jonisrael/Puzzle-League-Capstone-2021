@@ -128,6 +128,10 @@ export function submitResults() {
   nameInput.setAttribute("maxlength", "15");
   // nameInput.setAttribute("pattern", RegExp("w"));
   nameInput.setAttribute("placeholder", `"Enter Name Here"`);
+  if (game.mode === "cpu-play") {
+    nameInput.value = "GiefKid-AI-v1.0";
+    nameInput.readOnly = true;
+  }
   nameInput.autofocus = true;
   nameInput.value = localStorage.getItem("username");
   form.appendChild(nameInput);

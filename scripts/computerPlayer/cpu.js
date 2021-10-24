@@ -124,7 +124,7 @@ export function cpuAction(input) {
       cpu.control &&
       stackSize < 11 &&
       !game.currentChain &&
-      game.boardRiseSpeed > 2
+      game.boardRiseSpeed > 1
     )
       input.quickRaise = true;
   }
