@@ -603,7 +603,7 @@ function playerAction(input) {
     } catch (error) {
       if (!debug.enabled)
         displayError(
-          "AI Bot has encountered an error and needs to be disabled. Press F12 to access the developer console for more information."
+          "AI Bot has encountered an error and needs to be disabled. Press F12 to access the developer console for more information. You can pause and restart the game to relaunch the AI."
         );
       console.log(`${error}`);
       console.log(`Line number: ${error.stack}`);
@@ -679,6 +679,7 @@ function KEYBOARD_CONTROL(event) {
       // space or enter
       document.getElementById("arcade-button").remove();
       document.getElementById("watch-ai-play-button").remove();
+      game.mode = "arcade";
       startGame(2);
     } else if (event.keyCode === 87 && win.patchNotesShown) {
       // w for "wasd" controls
@@ -686,6 +687,12 @@ function KEYBOARD_CONTROL(event) {
       document.getElementById("arcade-button").remove();
       document.getElementById("wasd-arcade-button").remove();
       document.getElementById("watch-ai-play-button").remove();
+      game.mode = "arcade";
+      startGame(2);
+    } else if (event.keyCode === 66 && win.patchNotesShown) {
+      document.getElementById("arcade-button").remove();
+      document.getElementById("watch-ai-play-button").remove();
+      game.mode = "cpu-play";
       startGame(2);
     }
   } else if (document.getElementById("watch-ai-play-button")) {
@@ -720,7 +727,10 @@ function KEYBOARD_CONTROL(event) {
   }
   // Game Controls
   if (win.running & !game.over && !game.paused) {
-    if (win.controls === "arrow") {
+    if (
+      win.controls === "arrow" &&
+      (game.mode !== "cpu-play" || debug.enabled)
+    ) {
       if (event.keyCode == 38) action.up = true; // up arrow
       if (event.keyCode == 40) action.down = true; // down arrow
       if (event.keyCode == 37) action.left = true; // left arrow
@@ -728,13 +738,31 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
       if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
     }
-    if (win.controls === "wasd") {
+    if (
+      win.controls === "wasd" &&
+      (game.mode !== "cpu-play" || debug.enabled)
+    ) {
       if (event.keyCode == 87) action.up = true; // w
       if (event.keyCode == 83) action.down = true; // s
       if (event.keyCode == 65) action.left = true; // a
       if (event.keyCode == 68) action.right = true; // d
       if (event.keyCode == 74 || event.keyCode == 75) action.swap = true; // s or x
       if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
+    }
+
+    if (event.keyCode == 75 && (game.mode === "cpu-play" || debug.enabled)) {
+      // k
+      game.finalTime = (game.frames / 60).toFixed(1);
+      game.frames = 0;
+      game.over = true;
+      for (let c = 0; c < grid.COLS; c++) {
+        for (let r = 0; r < grid.ROWS; r++) {
+          game.board[c][r].type = blockType.LANDING;
+          game.board[c][r].timer = -2;
+        }
+      }
+      gameOverBoard();
+      drawGrid();
     }
 
     if (event.keyCode == 192) {
@@ -773,9 +801,11 @@ function KEYBOARD_CONTROL(event) {
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.freeze = 0;
+        if (game.mode === "cpu-play") cpu.enabled = cpu.control = true;
         // debug.show = 0;
       }
     }
+
     if (debug.enabled == 1) {
       if (event.keyCode === 66) {
         // b
@@ -1068,7 +1098,7 @@ export function gameLoop() {
         performance.diffFromRealTime = Math.abs(
           performance.realTime - performance.sumOfPauseTimes - game.frames / 60
         );
-        if (performance.diffFromRealTime >= 6) {
+        if (performance.diffFromRealTime >= 6 && game.mode !== "cpu-play") {
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
           performance.unrankedReason = `leaderboard posting disabled, behind real clock by

@@ -55,6 +55,7 @@ export function cpuAction(input) {
   let targetX;
   let targetY;
   let swap = false;
+  let stackSize = 12 - game.highestRow;
   let coordinates = false;
   let dir =
     game.highestColIndex < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
@@ -72,10 +73,10 @@ export function cpuAction(input) {
 
   if (!coordinates) {
     if (
-      (game.boardRiseSpeed === 1 && game.highestRow < 8) ||
-      (game.boardRiseSpeed < 4 && game.highestRow < 8 && game.frames > 9600) ||
-      (game.boardRiseSpeed < 4 && game.highestRow < 5) ||
-      (game.boardRiseSpeed >= 4 && game.highestRow < 2)
+      (game.boardRiseSpeed === 1 && stackSize >= 4) ||
+      (game.boardRiseSpeed < 4 && stackSize >= 5 && game.frames > 9600) ||
+      (game.boardRiseSpeed < 4 && stackSize >= 8) ||
+      (game.boardRiseSpeed >= 4 && stackSize >= 11)
     ) {
       for (let row = 0; row < grid.ROWS; row++) {
         coordinates = findHorizontalMatches(row);
@@ -121,9 +122,9 @@ export function cpuAction(input) {
     targetY = 6 + Math.floor(game.highestRow / 2);
     if (
       cpu.control &&
-      game.highestRow > 1 &&
+      stackSize < 11 &&
       !game.currentChain &&
-      game.boardRiseSpeed > 1
+      game.boardRiseSpeed > 2
     )
       input.quickRaise = true;
   }
@@ -152,7 +153,7 @@ export function cpuAction(input) {
     cpu.lastActionWasSwap &&
     cpu.randomInputCounter === 0
   )
-    cpu.randomInputCounter = 10;
+    cpu.randomInputCounter = 6;
   cpu.lastActionWasSwap = input.swap ? true : false;
   return input;
 }

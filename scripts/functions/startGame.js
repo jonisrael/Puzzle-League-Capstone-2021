@@ -13,7 +13,8 @@ import {
   api,
   leaderboard,
   loadedAudios,
-  loadAllAudios
+  loadAllAudios,
+  cpu
 } from "../global";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
@@ -37,6 +38,7 @@ export function startGame(selectedGameSpeed) {
   leaderboard.canPost = true;
   debug.enabled = false;
   debug.show = false;
+  cpu.enabled = cpu.control = game.mode === "cpu-play";
   performance.gameSpeed = selectedGameSpeed;
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();

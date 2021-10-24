@@ -113,7 +113,7 @@ function addEventListeners(st) {
     document
       .getElementById("watch-ai-play-button")
       .addEventListener("click", () => {
-        game.mode = "ai playtime";
+        game.mode = "cpu-play";
         document.getElementById("arcade-button").remove();
         document.getElementById("wasd-arcade-button").remove();
         document.getElementById("watch-ai-play-button").remove();

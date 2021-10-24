@@ -83,9 +83,9 @@ export default st => html`
             Play Arcade!<br />WASD Controls<br />(W)
           </button>
         </div>
-        <div id="right-column" style="display:none">
+        <div id="right-column">
           <button id="watch-ai-play-button" class="default-button start-buttons">
-            Training Mode<br />[Beta]<br />(T or S)
+            Watch Jonathan Israel's AI Play! (B)
           </button>
         </div>
       </div>
