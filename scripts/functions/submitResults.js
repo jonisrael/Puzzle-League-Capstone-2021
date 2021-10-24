@@ -72,9 +72,9 @@ export function afterGame() {
       announcer.endgameIndexLastPicked,
       "endgame"
     );
-    playMusic(audio.resultsMusic, 0.1);
+    playMusic(game.Music.src, 0.1);
   } else {
-    playMusic(audio.resultsMusic, 0.1, 3);
+    playMusic(game.Music.src, 0.1, 3);
   }
 
   let div2 = document.createElement("div");

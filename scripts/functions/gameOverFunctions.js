@@ -23,7 +23,6 @@ export function closeGame(gameFinished) {
   console.log("game finished:", gameFinished);
   if (!gameFinished) game.Music.volume = 0;
   console.log("closeGame called");
-  win.running = false;
   win.cvs = null;
   win.ctx = null;
   win.makeCanvas.remove();

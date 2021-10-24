@@ -6,7 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
-import { render, router } from "./index";
+import { displayError, render, router } from "./index";
 import * as state from "./store";
 import { sprite, audio, audioList } from "./scripts/fileImports";
 import {
@@ -601,6 +601,10 @@ function playerAction(input) {
     try {
       input = cpuAction(input);
     } catch (error) {
+      if (!debug.enabled)
+        displayError(
+          "AI Bot has encountered an error and needs to be disabled. Press F12 to access the developer console for more information."
+        );
       console.log(`${error}`);
       console.log(`Line number: ${error.stack}`);
       console.log(cpu);
@@ -674,21 +678,21 @@ function KEYBOARD_CONTROL(event) {
     if ((event.keyCode == 32 || event.keyCode == 13) && win.patchNotesShown) {
       // space or enter
       document.getElementById("arcade-button").remove();
-      document.getElementById("training-button").remove();
+      document.getElementById("watch-ai-play-button").remove();
       startGame(2);
     } else if (event.keyCode === 87 && win.patchNotesShown) {
       // w for "wasd" controls
       win.controls = "wasd";
       document.getElementById("arcade-button").remove();
       document.getElementById("wasd-arcade-button").remove();
-      document.getElementById("training-button").remove();
+      document.getElementById("watch-ai-play-button").remove();
       startGame(2);
     }
-  } else if (document.getElementById("training-button")) {
+  } else if (document.getElementById("watch-ai-play-button")) {
     if ((event.keyCode == 83 || event.keyCode == 84) && win.patchNotesShown) {
       // s or t
       // document.getElementById("arcade-button").remove();
-      // document.getElementById("training-button").remove();
+      // document.getElementById("watch-ai-play-button").remove();
       // startGame(2);
     }
   }
@@ -889,11 +893,7 @@ export function gameLoop() {
       if (game.over) {
         let number;
         if (game.frames > 300) {
-          if (game.frames < 360) number = 5;
-          else if (game.frames < 420) number = 4;
-          else if (game.frames < 480) number = 3;
-          else if (game.frames < 540) number = 2;
-          else if (game.frames < 600) number = 1;
+          number = Math.floor((600 - game.frames) / 60);
           game.messagePriority = `Fetching leaderboard info...timeout in ${number}`;
         }
         if (game.frames > 180) {

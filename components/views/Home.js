@@ -84,7 +84,7 @@ export default st => html`
           </button>
         </div>
         <div id="right-column" style="display:none">
-          <button id="training-button" class="default-button start-buttons">
+          <button id="watch-ai-play-button" class="default-button start-buttons">
             Training Mode<br />[Beta]<br />(T or S)
           </button>
         </div>

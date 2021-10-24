@@ -96,7 +96,7 @@ function addEventListeners(st) {
       win.controls = "arrow";
       document.getElementById("arcade-button").remove();
       document.getElementById("wasd-arcade-button").remove();
-      document.getElementById("training-button").remove();
+      document.getElementById("watch-ai-play-button").remove();
       startGame(2);
     });
     document
@@ -107,16 +107,18 @@ function addEventListeners(st) {
         win.controls = "wasd";
         document.getElementById("arcade-button").remove();
         document.getElementById("wasd-arcade-button").remove();
-        document.getElementById("training-button").remove();
+        document.getElementById("watch-ai-play-button").remove();
         startGame(2);
       });
-    document.getElementById("training-button").addEventListener("click", () => {
-      game.mode = "training";
-      document.getElementById("arcade-button").remove();
-      document.getElementById("wasd-arcade-button").remove();
-      document.getElementById("training-button").remove();
-      startGame(2);
-    });
+    document
+      .getElementById("watch-ai-play-button")
+      .addEventListener("click", () => {
+        game.mode = "ai playtime";
+        document.getElementById("arcade-button").remove();
+        document.getElementById("wasd-arcade-button").remove();
+        document.getElementById("watch-ai-play-button").remove();
+        startGame(2);
+      });
     document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {
         console.log("user has clicked the document, loading audios.");

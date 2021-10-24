@@ -30,6 +30,7 @@
     "attribute",
     "class",
     "datetime",
+    "hasOwnProperty",
     "info",
     "leaderboard",
     "leaderboards",

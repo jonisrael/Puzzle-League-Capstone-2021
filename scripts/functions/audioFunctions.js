@@ -75,11 +75,11 @@ export function playChainSFX() {
   Sound.play();
 }
 
-export function playMusic(file, volume = 0.1, currentTime = 0) {
+export function playMusic(file, volume = 0.1, currentTime = 0, loop = true) {
   if (win.muteMusic.checked) return;
   game.Music.src = file;
   game.Music.volume = volume;
   game.Music.currentTime = currentTime;
   game.Music.play();
-  game.Music.loop = true;
+  game.Music.loop = loop;
 }
