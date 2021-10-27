@@ -455,8 +455,13 @@ export function endChain(potentialSecondarySuccessor) {
 
 function doPanic() {
   let panic = false;
+  let rowChecked =
+    game.boardRiseSpeed > 2 ? 1 : game.boardRiseSpeed === 2 ? 2 : 3;
   for (let c = 0; c < grid.COLS; c++) {
-    if (game.board[c][1].color != blockColor.VACANT && game.raiseDelay == 0) {
+    if (
+      game.board[c][rowChecked].color != blockColor.VACANT &&
+      game.raiseDelay == 0
+    ) {
       for (let r = 0; r < grid.ROWS; r++) {
         if (game.board[c][r].type == blockType.NORMAL) {
           game.board[c][r].type = blockType.PANICKING;
@@ -617,6 +622,8 @@ function checkTime() {
 }
 
 function playerAction(input) {
+  // let inputsActive = Object.keys(action).filter(key => action[key] === true);
+  // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
     if (Object.values(input).includes(true) && !input.quickRaise) {
       cpu.control = 0;
@@ -670,9 +677,9 @@ function playerAction(input) {
 
   // NOT REMOVED
   // reset all keys
-  Object.keys(action).forEach(key => {
-    action[key] = false;
-  });
+  // Object.keys(action).forEach(key => {
+  //   action[key] = false;
+  // });
 }
 
 // prevent browser scroll from arrow keys
