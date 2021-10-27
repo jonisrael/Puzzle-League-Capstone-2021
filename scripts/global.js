@@ -1,4 +1,4 @@
-import { audio, audioList } from "./fileImports";
+import { audio, audioList, sprite } from "./fileImports";
 
 export const announcer = {
   openingDialogue: [
@@ -118,7 +118,8 @@ export const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
   speedValues: [60, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
   clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16, 12],
-  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 10]
+  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 10],
+  controlsDefaultMessage: ""
 };
 
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
@@ -144,14 +145,14 @@ export const win = {
   levelHeader: null,
   levelDisplay: null,
   highScoreDisplay: null,
+  controlsDisplay: "",
   gameOverMessage: null,
   form: null,
   leaderboardInfo: "Fetching Leaderboards...",
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx"),
-  audioLoaded: false,
-  controls: "arrow"
+  audioLoaded: false
 };
 
 export const game = {
@@ -166,6 +167,7 @@ export const game = {
   boardRiseSpeed: preset.speedValues[1],
   blockClearTime: preset.clearValues[1],
   blockStallTime: preset.stallValues[1],
+  controls: "arrow",
   raiseDelay: 0,
   frames: -180,
   finalTime: 0,
@@ -260,15 +262,21 @@ export const debug = {
 export const cpu = {
   enabled: 0,
   control: 0,
+  showInfo: 0,
   up: false,
   down: false,
   left: false,
   right: false,
   swap: false,
+  swapSuccess: false,
   quickRaise: false,
   pause: false,
+  prevTargetX: 5,
+  prevTargetY: 5,
   targetX: 0,
   targetY: 0,
+  targetColor: sprite.debugRed,
+  userChangedSpeed: 0,
   holeDetectedAt: [0, 0],
   matchList: [],
   transferToRight: 0,

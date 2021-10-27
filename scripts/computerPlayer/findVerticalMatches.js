@@ -1,4 +1,5 @@
 import { game, grid, PIECES, INTERACTIVE_TYPES, cpu } from "../global";
+import { sprite } from "../fileImports";
 import { checkForObstacle } from "./findHorizontalMatches";
 
 export function findVerticalMatches(middleRowIndex, dir) {
@@ -29,6 +30,7 @@ export function findVerticalMatches(middleRowIndex, dir) {
     }
     if (matchLocations.length > 2) {
       // console.log(desiredColor, cpu.matchList);
+      cpu.targetColor = sprite.debugRed;
       return startVerticalSwapping(matchLocations);
     }
   }

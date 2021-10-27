@@ -39,6 +39,7 @@ export function startGame(selectedGameSpeed) {
   debug.enabled = false;
   debug.show = false;
   cpu.enabled = cpu.control = game.mode === "cpu-play";
+  cpu.showInfo = false;
   performance.gameSpeed = selectedGameSpeed;
   performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
   performance.then = Date.now();
@@ -117,13 +118,30 @@ function createHeadsUpDisplay() {
 
   let controls = document.createElement("div");
   controls.setAttribute("id", "controls");
-  controls.innerHTML = `<ul style="font-size:large;">
-  <li>Press Arrow keys to <strong>MOVE</strong> the Rectangle Cursor</li>
-  <li>Press S or X to <strong>SWAP</strong> blocks at the Cursor</li>
-  <li>Press R or Z to <strong>RAISE</strong> the stack one row.</li>
-  <li>Press ESC or P to <strong>PAUSE</strong> the game.</li>
-  </ul>
-  <br />`;
+  if (game.mode !== "cpu-play") {
+    preset.controlsDefaultMessage = `
+      <ul style="font-size:large;">
+      <li>Press Arrow keys to <strong>MOVE</strong> the Rectangle Cursor</li>
+      <li>Press S or X to <strong>SWAP</strong> blocks at the Cursor</li>
+      <li>Press R or Z to <strong>RAISE</strong> the stack one row.</li>
+      <li>Press ESC or P to <strong>PAUSE</strong> the game.</li>
+      <li>Press ~ to access <strong>Debug Mode</strong> (disables score posting)</li>
+      </ul>
+      <br />`;
+  } else {
+    preset.controlsDefaultMessage = `
+      <ul style="font-size:large;">
+      <li>Press S to <strong>Show/Hide</strong> Visual AI Information</li>
+      <li>Press K to <strong>KO the AI</strong></li>
+      <li>Press M to set the <strong>game level to the highest setting</strong></li>
+      <li>Press N to <strong>lower the game level by 1</strong>
+      <li>Press ESC or P to <strong>PAUSE</strong> the game.</li>
+      </ul>
+      <br />`;
+  }
+  controls.innerHTML = preset.controlsDefaultMessage;
+  win.controlsDisplay = controls;
+
   rightHudElements.appendChild(controls);
 
   let bestScoresDisplay = document.createElement("table");
@@ -148,7 +166,7 @@ function createHeadsUpDisplay() {
   }
   bestScoresString += `</table>`;
   bestScoresDisplay.innerHTML = bestScoresString;
-  rightHudElements.appendChild(bestScoresDisplay);
+  if (game.mode !== "cpu-play") rightHudElements.appendChild(bestScoresDisplay);
 
   // Make Canvas, then append it to home page
   win.makeCanvas = document.createElement(`canvas`);

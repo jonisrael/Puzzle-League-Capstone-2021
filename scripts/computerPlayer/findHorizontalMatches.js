@@ -7,6 +7,8 @@ import {
   blockColor
 } from "../global";
 
+import { sprite } from "../fileImports";
+
 export function findHorizontalMatches(r) {
   game.messagePriority = "Found a horizontal match...";
   let matchLocations = [];
@@ -15,7 +17,8 @@ export function findHorizontalMatches(r) {
     for (let c = grid.COLS - 1; c >= 0; c--) {
       if (
         game.board[c][r].color === PIECES[i] &&
-        INTERACTIVE_TYPES.includes(game.board[c][r].type)
+        INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
+        game.board[c][r].timer === 0
       ) {
         matchLocations.push([c, r]);
       }
@@ -33,18 +36,22 @@ function startHorizontalSwapping(matchLocations) {
   let centerX = matchLocations[1][0];
   let leftX = matchLocations[2][0];
   let y = matchLocations[0][1];
-  let obstacleInWay = false;
-
 
   // check which clear is closer
   if (centerX - leftX < rightX - centerX || 0 === 0) {
     if (centerX + 1 !== rightX) {
       if (checkForObstacle(centerX, rightX, y)) return false;
-      else return [centerX, y, true];
+      else {
+        cpu.targetColor = sprite.debugGreen;
+        return [centerX, y, true];
+      }
     }
     if (leftX + 1 !== centerX) {
       if (checkForObstacle(leftX, centerX, y)) return false;
-      else return [leftX, y, true];
+      else {
+        cpu.targetColor = sprite.debugGreen;
+        return [leftX, y, true];
+      }
     }
   }
 
@@ -57,7 +64,8 @@ export function checkForObstacle(x1, x2, y) {
     console.log(`Somehow, x1 = ${x1} and x2 = ${x2}`);
     return true;
   }
-  for (let c = x1 + 1; c < x2; c++) {
+
+  for (let c = x1; c < x2; c++) {
     if (!INTERACTIVE_TYPES.includes(game.board[c][y].type)) {
       // console.log(`non-interactable block at [${c},${y}]`);
       return true;

@@ -108,6 +108,7 @@ import DEBUGM from ".././assets/Extras/DebugSprites/debugM.png";
 import DEBUGC from ".././assets/Extras/DebugSprites/debugC.png";
 import DEBUGG from ".././assets/Extras/DebugSprites/debugG.png";
 import DEBUGT from ".././assets/Extras/DebugSprites/debugT.png";
+import DEBUGV from ".././assets/Extras/DebugSprites/debugV.png";
 import DEBUGY from ".././assets/Extras/DebugSprites/debugY.png";
 
 // Import Music
@@ -304,6 +305,7 @@ const sprite = {
   debugBlue: DEBUGC,
   debugGreen: DEBUGG,
   debugTan: DEBUGT,
+  debugViolet: DEBUGV,
   debugYellow: DEBUGY
 };
 

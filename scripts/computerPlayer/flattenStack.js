@@ -43,10 +43,12 @@ export function flattenStack() {
     if (
       (leftBlockIndex < holeIndex &&
         INTERACTIVE_TYPES.includes(leftBlock.type) &&
+        leftBlock.timer === 0 &&
         leftBlock.color !== blockColor.VACANT &&
         rightBlock.color === blockColor.VACANT) ||
       (leftBlockIndex >= holeIndex &&
         INTERACTIVE_TYPES.includes(rightBlock.type) &&
+        rightBlock.timer === 0 &&
         leftBlock.color === blockColor.VACANT &&
         rightBlock.color !== blockColor.VACANT)
     ) {

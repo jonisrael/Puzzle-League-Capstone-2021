@@ -8,6 +8,7 @@ import {
   win,
   randInt
 } from "../global";
+import { sprite } from "../fileImports";
 import { findHorizontalMatches } from "./findHorizontalMatches";
 import { findVerticalMatches } from "./findVerticalMatches";
 import { flattenStack } from "./flattenStack";
@@ -60,6 +61,9 @@ export function cpuAction(input) {
   let dir =
     game.highestColIndex < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
 
+  // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
+  //   coordinates = flattenStack();
+
   if (
     cpu.randomInputCounter > 0 &&
     game.frames > 0 &&
@@ -67,9 +71,6 @@ export function cpuAction(input) {
   ) {
     return randomAction(input);
   }
-
-  // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
-  //   coordinates = flattenStack();
 
   if (!coordinates) {
     if (
@@ -80,15 +81,24 @@ export function cpuAction(input) {
     ) {
       for (let row = 0; row < grid.ROWS; row++) {
         coordinates = findHorizontalMatches(row);
-        if (coordinates) break;
+        if (coordinates) {
+          cpu.targetColor = sprite.debugGreen;
+          break;
+        }
         coordinates = findVerticalMatches(10 - row, dir);
-        if (coordinates) break;
+        if (coordinates) {
+          cpu.targetColor = sprite.debugRed;
+          break;
+        }
       }
     }
   }
 
   // If no matches detected, look for ways to flatten the stack.
-  if (!coordinates) coordinates = flattenStack();
+  if (!coordinates) {
+    coordinates = flattenStack();
+    if (coordinates) cpu.targetColor = sprite.debugBlue;
+  }
 
   if (coordinates) {
     targetX = coordinates[0];
@@ -100,24 +110,25 @@ export function cpuAction(input) {
         (game.board[targetX][targetY].color ===
           game.board[targetX + 1][targetY].color ||
           !INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) ||
-          !INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) ||
+          !INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) ||
           (targetY !== grid.COLS - 1 &&
             (game.board[targetX][targetY + 1].color === blockColor.VACANT ||
               game.board[targetX + 1][targetY + 1].color ===
                 blockColor.VACANT)))
       ) {
-        // console.log("abnormality detected, flattening stack");
+        // console.log("abnormality detected, flatten stack");
         coordinates = flattenStack();
+        if (coordinates) cpu.targetColor = sprite.debugYellow;
       }
     } catch (error) {
       console.log(`Error: ${error} at lines ${error.stack}`);
       coordinates = flattenStack();
+      if (coordinates) cpu.targetColor = sprite.debugYellow;
     }
-  }
-
-  if (!coordinates) {
+  } else {
     // idle, return to center of board
     game.messagePriority = "Idle, raising stack...";
+    cpu.targetColor = sprite.debugViolet;
     targetX = 2;
     targetY = 6 + Math.floor(game.highestRow / 2);
     if (
@@ -141,20 +152,44 @@ export function cpuAction(input) {
   cpu.targetY = targetY;
   cpu.swap = swap;
 
+  // prevents out of index exception, does NOT solve algorithm problem
   if (targetX > grid.COLS - 2) targetX = grid.COLS - 2;
 
+  // if (cpu.targetX === cpu.prevTargetX && cpu.targetY === cpu.prevTargetY) {
+  //   console.log
+  // }
   if (
-    INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) &&
-    INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
-    game.board[targetX][targetY].color !== blockColor.VACANT &&
-    game.board[targetX + 1][targetY].color !== blockColor.VACANT &&
-    INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
-    input.swap &&
+    cpu.swap &&
     cpu.lastActionWasSwap &&
-    cpu.randomInputCounter === 0
-  )
-    cpu.randomInputCounter = 6;
-  cpu.lastActionWasSwap = input.swap ? true : false;
+    cpu.prevTargetX === cpu.targetX &&
+    cpu.prevTargetY === cpu.targetY &&
+    !cpu.randomInputCounter
+  ) {
+    console.log("random input at", cpu.targetX, cpu.targetY, game.frames);
+    cpu.randomInputCounter = 10;
+    // cpu.lastActionWasSwap = false;
+  }
+  // if (
+  //   INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) &&
+  //   INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
+  //   game.board[targetX][targetY].color !== blockColor.VACANT &&
+  //   game.board[targetX + 1][targetY].color !== blockColor.VACANT &&
+  //   INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
+  //   input.swap &&
+  //   cpu.lastActionWasSwap &&
+  //   cpu.randomInputCounter === 0
+  // )
+  //   cpu.randomInputCounter = 10;
+  // if (input.swap) {
+  //   if (targetX === prevTargetX && targetY === prevTargetY)
+  //     cpu.prevTargetX = targetX;
+  //   cpu.prevTargetY = targetY;
+  // }
+  // cpu.lastActionWasSwap = input.swap ? true : false;
+  // if (input.quickRaise && stackSize > 9) input.quickRaise = false;
+  cpu.prevTargetX = cpu.targetX;
+  cpu.prevTargetY = cpu.targetY;
+  cpu.lastActionWasSwap = input.swap;
   return input;
 }
 
@@ -167,6 +202,9 @@ function randomAction(input) {
   //   `random number selected is ${selection}, counter at ${cpu.randomInputCounter}`
   // );
   input[arr[selection]] = true;
+  // cpu.targetX = game.cursor.x;
+  // cpu.targetY = game.cursor.y;
+  cpu.targetColor = sprite.debugWhite;
   return input;
 }
 

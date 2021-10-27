@@ -87,6 +87,7 @@ export function trySwappingBlocks(x, y) {
   // }
 
   if (legalSwap) {
+    cpu.swapSuccess = true;
     playAudio(audio.select);
     swapProperties(game.board[x][y], game.board[x + 1][y]);
     // if landing, shorten timer to end the landing animation next frame.
@@ -154,7 +155,12 @@ export function trySwappingBlocks(x, y) {
     }
   } else {
     win.mainInfoDisplay.style.color = "purple";
+    cpu.swapSuccess = false;
+    console.log("swap failed at", x, y, game.frames);
     if (!cpu.enabled) playAudio(audio.selectionFailed);
+    else {
+      playAudio(audio.selectionFailed);
+    }
   }
 }
 

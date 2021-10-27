@@ -6,6 +6,7 @@
     Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
 */
 
+import html from "html-literal";
 import { displayError, render, router } from "./index";
 import * as state from "./store";
 import { sprite, audio, audioList } from "./scripts/fileImports";
@@ -115,14 +116,19 @@ class Block {
 
   draw() {
     let animationIndex = -1;
+    const DEBUG_TARGET_IMAGE = new Image();
+    const DEBUG_HOLE_IMAGE = new Image();
+    const DEBUG_MATCH_IMAGE = new Image();
     const DEBUGW_IMAGE = new Image();
     const DEBUGP_IMAGE = new Image();
     const DEBUGO_IMAGE = new Image();
     const DEBUGB_IMAGE = new Image();
     const DEBUGR_IMAGE = new Image();
     const DEBUGM_IMAGE = new Image();
-    const DEBUGT_IMAGE = new Image();
-    const DEBUGC_IMAGE = new Image();
+    // const DEBUGT_IMAGE = new Image();
+    // const DEBUGC_IMAGE = new Image();
+    // const DEBUGV_IMAGE = new Image();
+    // const DEBUGY_IMAGE = new Image();
     if (this.type == blockType.CLEARING) {
       if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
         animationIndex = 0;
@@ -165,39 +171,57 @@ class Block {
       );
     };
 
+    // AI Visuals
+    if (cpu.showInfo) {
+      DEBUG_TARGET_IMAGE.src = cpu.targetColor;
+      DEBUG_HOLE_IMAGE.src = sprite.debugTan;
+      DEBUG_MATCH_IMAGE.src = sprite.debugMagenta;
+
+      if (
+        (this.x === cpu.targetX && this.y === cpu.targetY) ||
+        (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
+      ) {
+        DEBUG_TARGET_IMAGE.onload = () => {
+          win.ctx.drawImage(
+            DEBUG_TARGET_IMAGE,
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        };
+      }
+      if (
+        this.x === cpu.holeDetectedAt[0] &&
+        this.y === cpu.holeDetectedAt[1] &&
+        cpu.targetColor === sprite.debugYellow
+      ) {
+        DEBUG_HOLE_IMAGE.onload = () => {
+          win.ctx.drawImage(
+            DEBUG_HOLE_IMAGE,
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        };
+      }
+      if (
+        cpu.matchList.includes([this.x, this.y].join()) &&
+        (cpu.targetColor === sprite.debugRed ||
+          cpu.targetColor === sprite.debugGreen)
+      ) {
+        DEBUG_MATCH_IMAGE.onload = () => {
+          win.ctx.drawImage(
+            DEBUG_MATCH_IMAGE,
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        };
+      }
+    }
+
     //Debug Visuals
     if (debug.show == 1) {
       if (
-        this.x === cpu.holeDetectedAt[0] &&
-        this.y === cpu.holeDetectedAt[1]
-      ) {
-        DEBUGT_IMAGE.src = sprite.debugTan;
-        DEBUGT_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGT_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
-      } else if (
         cpu.enabled &&
-        ((this.x === cpu.targetX && this.y === cpu.targetY) ||
-          (this.x === cpu.targetX + 1 && this.y === cpu.targetY))
-      ) {
-        DEBUGR_IMAGE.src = cpu.swap
-          ? game.highestRow < 8
-            ? sprite.debugRed
-            : sprite.debugGreen
-          : sprite.debugBlue;
-        DEBUGR_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGR_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
-      } else if (
-        cpu.enabled &&
+        cpu.matchList.length > 2 &&
         cpu.matchList.includes([this.x, this.y].join())
       ) {
         DEBUGM_IMAGE.src = sprite.debugMagenta;
@@ -683,7 +707,7 @@ function KEYBOARD_CONTROL(event) {
       startGame(2);
     } else if (event.keyCode === 87 && win.patchNotesShown) {
       // w for "wasd" controls
-      win.controls = "wasd";
+      game.controls = "wasd";
       document.getElementById("arcade-button").remove();
       document.getElementById("wasd-arcade-button").remove();
       document.getElementById("watch-ai-play-button").remove();
@@ -717,6 +741,7 @@ function KEYBOARD_CONTROL(event) {
       win.restartGame = true;
     }
     if (event.keyCode == 77) {
+      // m
       playAudio(audio.select);
       win.running = false;
       console.log(state.Home.view);
@@ -728,7 +753,7 @@ function KEYBOARD_CONTROL(event) {
   // Game Controls
   if (win.running & !game.over && !game.paused) {
     if (
-      win.controls === "arrow" &&
+      game.controls === "arrow" &&
       (game.mode !== "cpu-play" || debug.enabled)
     ) {
       if (event.keyCode == 38) action.up = true; // up arrow
@@ -739,7 +764,7 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
     }
     if (
-      win.controls === "wasd" &&
+      game.controls === "wasd" &&
       (game.mode !== "cpu-play" || debug.enabled)
     ) {
       if (event.keyCode == 87) action.up = true; // w
@@ -750,19 +775,42 @@ function KEYBOARD_CONTROL(event) {
       if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
     }
 
-    if (event.keyCode == 75 && (game.mode === "cpu-play" || debug.enabled)) {
-      // k
-      game.finalTime = (game.frames / 60).toFixed(1);
-      game.frames = 0;
-      game.over = true;
-      for (let c = 0; c < grid.COLS; c++) {
-        for (let r = 0; r < grid.ROWS; r++) {
-          game.board[c][r].type = blockType.LANDING;
-          game.board[c][r].timer = -2;
-        }
+    if (game.mode === "cpu-play" && !debug.enabled) {
+      if (event.keyCode === 83) {
+        cpu.showInfo = (cpu.showInfo + 1) % 2;
       }
-      gameOverBoard();
-      drawGrid();
+      if (event.keyCode === 75) {
+        // k
+        game.finalTime = (game.frames / 60).toFixed(1);
+        game.frames = 0;
+        game.over = true;
+        for (let c = 0; c < grid.COLS; c++) {
+          for (let r = 0; r < grid.ROWS; r++) {
+            game.board[c][r].type = blockType.LANDING;
+            game.board[c][r].timer = -2;
+          }
+        }
+        leaderboard.reason = "unofficial-cpu-game";
+        gameOverBoard();
+        drawGrid();
+      }
+      if (event.keyCode === 77) {
+        // m
+        game.level = preset.speedValues.length - 1;
+        console.log("pressed");
+        cpu.userChangedSpeed = true;
+        game.boardRiseSpeed = preset.speedValues[game.level];
+        game.blockClearTime = preset.clearValues[game.level];
+        game.blockStallTime = preset.stallValues[game.level];
+      }
+      if (event.keyCode === 78) {
+        // n
+        if (game.level > 0) game.level -= 1;
+        cpu.userChangedSpeed = true;
+        game.boardRiseSpeed = preset.speedValues[game.level];
+        game.blockClearTime = preset.clearValues[game.level];
+        game.blockStallTime = preset.stallValues[game.level];
+      }
     }
 
     if (event.keyCode == 192) {
@@ -927,6 +975,9 @@ export function gameLoop() {
           game.messagePriority = `Fetching leaderboard info...timeout in ${number}`;
         }
         if (game.frames > 180) {
+          if (leaderboard.reason === "unofficial-cpu-game") {
+            render(state.Home);
+          }
           if (
             leaderboard.reason[0] === "n" ||
             (api.data !== undefined && leaderboard.data.length > 0) ||
@@ -984,6 +1035,10 @@ export function gameLoop() {
               }
             }
           }
+        }
+        if (game.highestRow === 0 && game.currentChain > 0 && game.grounded) {
+          console.log("not dead yet! Go back!");
+          game.rise = 30;
         }
         if (game.rise >= 28) game.readyForNewRow = true;
         if (
@@ -1062,9 +1117,11 @@ export function gameLoop() {
         game.raisePressed = false;
         win.cvs.scrollIntoView({ block: "nearest" });
         if (!game.disableRaise) {
-          if (game.rise == 0) game.rise = 2;
-          game.quickRaise = true;
-          game.raiseDelay = 0;
+          if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
+            if (game.rise == 0) game.rise = 2;
+            game.quickRaise = true;
+            game.raiseDelay = 0;
+          }
         }
       }
 
@@ -1217,6 +1274,74 @@ export function gameLoop() {
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled) {
         pause(true);
+      }
+
+      if (debug.enabled) {
+        win.controlsDisplay.innerHTML = html`
+          <label
+            >"Timers" are used for game events such as animations and how long a
+            block stalls before falling.</label
+          >
+          <ul style="font-size: large;">
+            <li>Brown: Block has a timer greater than 0</li>
+            <li>
+              Orange: Block has the ability to be added to the primary chain if
+              it lands onto a match. Disappears after a block land and fails to
+              chain. The current chain count ends when all orange circles have
+              disappeared.
+            </li>
+            <li>
+              Pink: Secondary Chainable Blocks. They are triggered if orange
+              circles already exist. Similar to orange, as they will increase
+              the current chain count if you match with them, but the chain
+              count does not wait for pink circles to still exist. If all orange
+              circles disappear, the chain count ends and all pink circles will
+              turn orange and act as a new chain.
+            </li>
+            <li>Top Left Brown: Chain count is 0</li>
+            <li>Top Left White: Chain count is 1</li>
+            <li>Top Left Pink: Chain count is >1</li>
+          </ul>
+        `;
+      } else if (game.mode === "cpu-play") {
+        if (cpu.showInfo) {
+          win.controlsDisplay.innerHTML = html`
+            <ul>
+              <li>
+                <strong>Red</strong>: AI Target, function is
+                findVerticalMatches.
+              </li>
+              <li>
+                <strong>Green</strong>: AI Target, function is
+                findHorizontalMatches
+              </li>
+              <li>
+                <strong>Magenta</strong>: During match functions, blocks that
+                the AI wants to match together.
+              </li>
+              <li>
+                <strong>Yellow</strong>: AI Target, function is flattenStack
+              </li>
+              <li>
+                <strong>Tan</strong>: While flattening stack, this is the hole
+                the AI is trying to fill.
+              </li>
+              <li>
+                <strong>Violet</strong>: When showing, the AI is doing random
+                inputs. Triggered when the AI attempts to do the same swap twice
+                at the same coordinates, the AI will do 10 random inputs to try
+                and alter the board to fix itself from getting stuck.
+              </li>
+
+              <li>
+                <strong>Blue</strong>: If nothing to do, will return to center
+                of stack and raise stack to a limit defined based on game level.
+              </li>
+            </ul>
+          `;
+        } else {
+          win.controlsDisplay.innerHTML = preset.controlsDefaultMessage;
+        }
       }
     }
     // outside pause loop

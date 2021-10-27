@@ -93,7 +93,7 @@ function addEventListeners(st) {
     document.getElementById("arcade-button").addEventListener("click", () => {
       api.data = getWorldTimeAPI();
       game.mode = "arcade";
-      win.controls = "arrow";
+      game.controls = "arrow";
       document.getElementById("arcade-button").remove();
       document.getElementById("wasd-arcade-button").remove();
       document.getElementById("watch-ai-play-button").remove();
@@ -104,7 +104,7 @@ function addEventListeners(st) {
       .addEventListener("click", () => {
         api.data = getWorldTimeAPI();
         game.mode = "arcade";
-        win.controls = "wasd";
+        game.controls = "wasd";
         document.getElementById("arcade-button").remove();
         document.getElementById("wasd-arcade-button").remove();
         document.getElementById("watch-ai-play-button").remove();
