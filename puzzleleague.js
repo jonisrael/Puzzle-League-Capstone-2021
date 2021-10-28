@@ -455,8 +455,7 @@ export function endChain(potentialSecondarySuccessor) {
 
 function doPanic() {
   let panic = false;
-  let rowChecked =
-    game.boardRiseSpeed > 2 ? 1 : game.boardRiseSpeed === 2 ? 2 : 3;
+  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 2 : 4;
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][rowChecked].color != blockColor.VACANT &&
