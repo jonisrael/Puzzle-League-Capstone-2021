@@ -1,5 +1,6 @@
 export default [
   { title: "Home", text: "Play Game" },
+  { title: "SetControls", text: "Set Controls" },
   { title: "Tutorials", text: "Tutorials" },
   { title: "Leaderboard", text: "Leaderboard" },
   { title: "Scoring", text: "Scoring" },

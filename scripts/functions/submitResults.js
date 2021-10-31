@@ -131,9 +131,10 @@ export function submitResults() {
   if (game.mode === "cpu-play") {
     nameInput.value = "GiefKid-AI-v1.0";
     nameInput.readOnly = true;
+  } else {
+    nameInput.value = localStorage.getItem("username");
   }
   nameInput.autofocus = true;
-  nameInput.value = localStorage.getItem("username");
   form.appendChild(nameInput);
 
   let submitForm = document.createElement("input");

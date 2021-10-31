@@ -1,7 +1,7 @@
 import html from "html-literal";
 
 export default st => html`
-  <header>
+  <header id="header">
     <h1>Puzzle League Arcade</h1>
     <h1 style="color:white">${st.header}</h1>
 

@@ -1,5 +1,5 @@
 body {
-    background-image: url("./assets/Images/backgroundPallete.png")
+    background-image: url("./assets/Images/backgroundPallete.png");
     /* text-align: center; */
 }
 
@@ -26,6 +26,13 @@ body {
     max-height:90%;
     max-width: 75%;
     overflow: auto;
+}
+
+#root {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
 }
 
 #patch-notes-block label {
@@ -341,7 +348,8 @@ h3 {
 footer {
     color: purple;
     text-align: center;
-    padding: 10px
+    padding: 10px;
+    display: block;
 }
 
 .stats {

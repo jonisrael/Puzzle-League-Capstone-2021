@@ -166,7 +166,7 @@ export function cpuAction(input) {
     !cpu.randomInputCounter
   ) {
     console.log("random input at", cpu.targetX, cpu.targetY, game.frames);
-    cpu.randomInputCounter = 10;
+    cpu.randomInputCounter = 6;
     // cpu.lastActionWasSwap = false;
   }
   // if (

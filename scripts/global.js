@@ -1,5 +1,9 @@
 import { audio, audioList, sprite } from "./fileImports";
 
+import { setNewControls } from "./functions/setNewControls";
+
+export const controls = setNewControls(localStorage.getItem("controls"));
+
 export const announcer = {
   openingDialogue: [
     audio.announcerAreYouReady,

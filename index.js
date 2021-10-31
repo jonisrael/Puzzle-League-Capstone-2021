@@ -23,6 +23,7 @@ export const router = new Navigo(window.location.origin);
 
 export function render(st) {
   console.log(`loaded audios: ${loadedAudios.length}`);
+  console.log("state:", st);
   win.view = st.view;
   win.viewChanged = true;
   document.querySelector("#root").innerHTML = `

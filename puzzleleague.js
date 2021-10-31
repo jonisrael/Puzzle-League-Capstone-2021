@@ -455,7 +455,7 @@ export function endChain(potentialSecondarySuccessor) {
 
 function doPanic() {
   let panic = false;
-  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 2 : 4;
+  let rowChecked = game.level < 4 ? 1 : game.level < 10 ? 2 : 4;
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][rowChecked].color != blockColor.VACANT &&
@@ -943,6 +943,15 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function gameLoop() {
+  if (win.running) {
+    document.getElementById("header").style.display = "none";
+    document.getElementById("nav-bar").style.display = "none";
+    document.getElementById("footer").style.display = "none";
+  } else {
+    document.getElementById("header").style.display = "block";
+    document.getElementById("nav-bar").style.display = "flex";
+    document.getElementById("footer").style.display = "block";
+  }
   if (!win.audioLoaded) {
     if (audioList.length == loadedAudios.length) win.audioLoaded = true;
   }
@@ -1278,7 +1287,7 @@ export function gameLoop() {
       if (game.messagePriority) game.message = game.messagePriority;
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
-      if (!document.hasFocus() && !debug.enabled) {
+      if (!document.hasFocus() && !debug.enabled && !cpu.enabled) {
         pause(true);
       }
 
