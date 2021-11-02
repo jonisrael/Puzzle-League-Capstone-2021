@@ -52,10 +52,11 @@ const direction = [
 
 export function cpuAction(input) {
   win.mainInfoDisplay.style.color = "green";
-  // if (game.frames % 6 < 3) return input;
+  // if (game.frames % 4 < 2) return input;
+  let stackMinimum = 4;
   let targetX;
   let targetY;
-  let swap = false;
+  let willSwapWhenTargetReached = false;
   let stackSize = 12 - game.highestRow;
   let coordinates = false;
   let dir =
@@ -64,21 +65,17 @@ export function cpuAction(input) {
   // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
   //   coordinates = flattenStack();
 
-  if (
-    cpu.randomInputCounter > 0 &&
-    game.frames > 0 &&
-    game.boardRiseSpeed !== 1
-  ) {
+  if (cpu.randomInputCounter > 0 && game.frames > 0) {
     return randomAction(input);
   }
 
+  if (game.boardRiseSpeed === 1) stackMinimum = 4;
+  else if (game.boardRiseSpeed < 4 && game.frames > 9600) stackMinimum = 5;
+  else if (game.boardRiseSpeed < 4) stackMinimum = 8;
+  else stackMinimum = 11;
+
   if (!coordinates) {
-    if (
-      (game.boardRiseSpeed === 1 && stackSize >= 4) ||
-      (game.boardRiseSpeed < 4 && stackSize >= 5 && game.frames > 9600) ||
-      (game.boardRiseSpeed < 4 && stackSize >= 8) ||
-      (game.boardRiseSpeed >= 4 && stackSize >= 11)
-    ) {
+    if (stackSize >= stackMinimum || game.currentChain > 0) {
       for (let row = 0; row < grid.ROWS; row++) {
         coordinates = findHorizontalMatches(row);
         if (coordinates) {
@@ -103,7 +100,7 @@ export function cpuAction(input) {
   if (coordinates) {
     targetX = coordinates[0];
     targetY = coordinates[1];
-    swap = coordinates[2];
+    willSwapWhenTargetReached = coordinates[2];
     try {
       if (
         targetX < grid.COLS - 1 &&
@@ -127,10 +124,11 @@ export function cpuAction(input) {
     }
   } else {
     // idle, return to center of board
-    game.messagePriority = "Idle, raising stack...";
+    game.messagePriority = `Idle, raising stack size to ${stackMinimum}`;
     cpu.targetColor = sprite.debugViolet;
     targetX = 2;
     targetY = 6 + Math.floor(game.highestRow / 2);
+    willSwapWhenTargetReached = false;
     if (
       cpu.control &&
       stackSize < 11 &&
@@ -145,12 +143,11 @@ export function cpuAction(input) {
     else if (game.cursor.y > targetY) input.up = true;
     else if (game.cursor.x > targetX) input.left = true;
     else if (game.cursor.x < targetX) input.right = true;
-    else if (swap) input.swap = true; // reached target
+    else if (willSwapWhenTargetReached) input.swap = true; // reached target
   }
 
   cpu.targetX = targetX;
   cpu.targetY = targetY;
-  cpu.swap = swap;
 
   // prevents out of index exception, does NOT solve algorithm problem
   if (targetX > grid.COLS - 2) targetX = grid.COLS - 2;
@@ -158,17 +155,28 @@ export function cpuAction(input) {
   // if (cpu.targetX === cpu.prevTargetX && cpu.targetY === cpu.prevTargetY) {
   //   console.log
   // }
-  if (
-    cpu.swap &&
-    cpu.lastActionWasSwap &&
-    cpu.prevTargetX === cpu.targetX &&
-    cpu.prevTargetY === cpu.targetY &&
-    !cpu.randomInputCounter
-  ) {
-    console.log("random input at", cpu.targetX, cpu.targetY, game.frames);
+
+  if (input.swap && cpu.alreadySwapped) {
+    // console.log("start random inputs", input, game.frames);
     cpu.randomInputCounter = 6;
-    // cpu.lastActionWasSwap = false;
+    cpu.alreadySwapped = false;
   }
+
+  if (input.swap && cpu.randomInputCounter === 0) cpu.alreadySwapped = true;
+  else if (input.up || input.down || input.left || input.right)
+    cpu.alreadySwapped = false;
+
+  // if (
+  //   willSwapWhenTargetReached &&
+  //   cpu.lastActionWasSwap &&
+  //   cpu.prevTargetX === cpu.targetX &&
+  //   cpu.prevTargetY === cpu.targetY &&
+  //   !cpu.randomInputCounter
+  // ) {
+  //   console.log("random input at", cpu.targetX, cpu.targetY, game.frames);
+  //   cpu.randomInputCounter = 6;
+  // cpu.lastActionWasSwap = false;
+  // }
   // if (
   //   INTERACTIVE_TYPES.includes(game.board[targetX][targetY].type) &&
   //   INTERACTIVE_TYPES.includes(game.board[targetX + 1][targetY].type) &&
@@ -189,12 +197,12 @@ export function cpuAction(input) {
   // if (input.quickRaise && stackSize > 9) input.quickRaise = false;
   cpu.prevTargetX = cpu.targetX;
   cpu.prevTargetY = cpu.targetY;
-  cpu.lastActionWasSwap = input.swap;
   return input;
 }
 
 function randomAction(input) {
-  game.messagePriority = `AI stuck, do random ${cpu.randomInputCounter} inputs`;
+  win.mainInfoDisplay.style.color = "red";
+  game.messagePriority = `AI swapped again at same location, do random ${cpu.randomInputCounter} inputs`;
   let arr = ["down", "up", "left", "right", "swap", "swap"];
   let selection = randInt(arr.length);
   cpu.randomInputCounter--;

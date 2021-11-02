@@ -1,8 +1,35 @@
 import { audio, audioList, sprite } from "./fileImports";
 
-import { setNewControls } from "./functions/setNewControls";
+import {
+  checkIfControlsExist,
+  setNewControls
+} from "./functions/setNewControls";
 
-export const controls = setNewControls(localStorage.getItem("controls"));
+// console.loglocalStorage.removeItem("controls"));
+
+export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
+  keyboard: {
+    up: [38], // ArrowUp
+    left: [37], //ArrowLeft
+    down: [40], //ArrowDown
+    right: [39], //ArrowRight
+    swap: [90, 83], // z, s
+    raise: [82, 90] // r, z
+  },
+  gamepad: {
+    up: [12], // (D-Pad Up
+    left: [14], // D-Pad Left
+    down: [13], // D-Pad Down
+    right: [15], // D-Pad Right
+    swap: [0, 1], // B, A
+    raise: [4, 5] // L, R
+  }
+};
+
+// checkIfControlsExist(savedControls);
+
+// export let savedControls = {};
+// export let savedControls = JSON.parse(JSON.stringify(defaultControls));
 
 export const announcer = {
   openingDialogue: [
@@ -39,20 +66,22 @@ export const announcer = {
   ],
   hurryUpDialogue: [
     audio.announcerTenSeconds,
-    audio.announcerAllBoilsDown,
-    audio.announcerNotMuchTimeLeft
+    audio.announcerAllBoilsDown
+    // audio.announcerNotMuchTimeLeft
   ],
   panicDialogue: [
     audio.announcerHowMuchLonger,
     audio.announcerIsItTheEnd,
     audio.announcerCallThisOne,
-    audio.announcerFatLadySing,
-    audio.announcerItAintOver
+    audio.announcerFatLadySing
+    // audio.announcerItAintOver
   ],
   overtimeDialogue: [
     audio.announcerBringUsHome,
     audio.announcerIHopeReady,
-    audio.announcerBattleOfEndurance
+    audio.announcerFireworks,
+    audio.announcerLetsGetStarted
+    // audio.announcerBattleOfEndurance
   ],
   endgameDialogue: [
     audio.announcerDeservePraise,
@@ -162,6 +191,7 @@ export const win = {
 export const game = {
   // use let instead of export const to revert to resetGameVar
   mode: "arcade",
+  controller: null,
   cursor: null,
   rise: 0,
   board: [],
@@ -285,7 +315,9 @@ export const cpu = {
   matchList: [],
   transferToRight: 0,
   randomInputCounter: 0,
-  lastActionWasSwap: true
+  prevSwapX: 0,
+  prevSwapY: 0,
+  alreadySwapped: false
 };
 
 export const leaderboard = {

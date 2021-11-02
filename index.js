@@ -9,6 +9,7 @@ import {
   win,
   api,
   game,
+  savedControls,
   loadAllAudios,
   loadedAudios,
   leaderboard
@@ -17,6 +18,11 @@ import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
 import { showPatchNotes } from "./scripts/functions/showPatchNotes";
+import {
+  getNewKeyboardControls,
+  getNewGamePadControls,
+  setNewControls
+} from "./scripts/functions/setNewControls";
 dotenv.config();
 
 export const router = new Navigo(window.location.origin);
@@ -35,9 +41,12 @@ export function render(st) {
   `;
   router.updatePageLinks();
 
-  if (st.view === "Home" && !win.patchNotesShown) {
-    win.patchNotesShown = true;
-    // showPatchNotes();
+  // localStorage.removeItem("patchNotesShown");
+  console.log("patch notes shown:", localStorage.getItem("patchNotesShown"));
+  if (st.view === "Home" && !localStorage.getItem("patchNotesShown")) {
+    // win.patchNotesShown = true;
+    showPatchNotes();
+    localStorage.setItem("patchNotesShown", "true");
   }
   addEventListeners(st);
 }
@@ -80,6 +89,26 @@ function addEventListeners(st) {
         getLeaderboardData(true);
       });
     });
+  }
+  if (st.view === "Controls") {
+    // if saved[]
+
+    document
+      .getElementById("accept-game-controls")
+      .addEventListener("click", function(event) {
+        event.preventDefault();
+        savedControls.keyboard = getNewKeyboardControls(
+          document.getElementById("keyboard-controls")
+        );
+        savedControls.gamepad = getNewGamePadControls(
+          document.getElementById("gamepad-swap"),
+          document.getElementById("gamepad-raise")
+        );
+        localStorage.setItem("controls", JSON.stringify(savedControls));
+        console.log(savedControls.gamepad);
+        render(state.Home);
+        router.navigate("/Home");
+      });
   }
   if (st.view === "Home") {
     console.log(document.getElementById("patch-notes-overlay"));

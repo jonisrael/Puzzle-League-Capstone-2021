@@ -57,7 +57,7 @@ export default st => html`
       </p>
       <hr />
       <h1>Game Controller Support</h1>
-      <p>...there isn't any currently. HOWEVER, you can use applications like <a href = https://joytokey.net/en/>JoyToKey</a> or <a href="https://keysticks.net/">Keysticks</a> to map buttons to keyboard inputs. I may add this support later depending on website popularity.</p>
+      <p>It is currently being developed! For now, you can use local applications like <a href = https://joytokey.net/en/>JoyToKey</a> or <a href="https://keysticks.net/">Keysticks</a> to map buttons to keyboard inputs.</p>
       <hr />
       <h1 style="color:red">Notice about Posting Scores</h1>
       <p style="color:black">
@@ -70,14 +70,14 @@ export default st => html`
           running games optimally</strong
         >, and there are issues with the game running too slowly on certain
         computers and can lead to an unintended advantage. If
-        the app detects that the in-game timer is six or more seconds behind a
-        real timer,
+        the app detects that the in-game timer is six or more seconds behind
+        real time,
         <strong>your score cannot be ranked.</strong>
       </p>
       <div id="game-container">
         <div id="left-column">
           <button id="arcade-button" class="default-button start-buttons">
-            Play Arcade!<br />Default Controls<br />(Enter)
+            Play Arcade! (Enter)
           </button>
           <button id="wasd-arcade-button" class="default-button start-buttons" style="display:none">
             Play Arcade!<br />WASD Controls<br />(W)

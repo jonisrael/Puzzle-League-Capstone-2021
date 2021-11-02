@@ -156,11 +156,11 @@ export function trySwappingBlocks(x, y) {
   } else {
     win.mainInfoDisplay.style.color = "purple";
     cpu.swapSuccess = false;
-    console.log("swap failed at", x, y, game.frames);
+    // console.log("swap failed at", x, y, game.frames);
     if (!cpu.enabled) playAudio(audio.selectionFailed);
-    else {
-      playAudio(audio.selectionFailed);
-    }
+    // else {
+    //   playAudio(audio.selectionFailed);
+    // }
   }
 }
 

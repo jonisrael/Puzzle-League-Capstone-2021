@@ -10,63 +10,73 @@ export function showPatchNotes() {
   patchNotesBlock.setAttribute("id", "patch-notes-block");
   patchNotesOverlay.appendChild(patchNotesBlock);
   patchNotesBlock.innerHTML = html`
-    <h2 style="color:blue;">
-      v1.01 (10/06/21) Patch Notes
+    <h2>
+      Watch the AI play!
+      <a
+        href="https://youtu.be/QOKbWRvVWUM"
+        target="_blank"
+        rel="noopener noreferrer"
+        >https://youtu.be/QOKbWRvVWUM</a
+      >
     </h2>
-    <label>Game Changes</label>
-    <ul>
-      <li>
-        WASD controls are now allowed for people who prefer their left hand for
-        movement. You can activate it by pressing "W" at the home screen.
-      </li>
-    </ul>
-    <label>Website Changes</label>
-    <ul>
-      <li>
-        Added new patch notes page! This shows up when first loading the
-        website. This also gives time for the game to preload audio game files
-        before launching the game.
-      </li>
-      <li>
-        Added a function to display network errors on the webpage if the
-        application fails to reach the WorldTimeAPI or leaderboard database.
-      </li>
-      <li>
-        Added a feature to start the game if "Play Game" is selected in the Nav
-        Bar when already on home page.
-      </li>
-    </ul>
-    <label>Leaderboard Changes</label>
-    <ul>
-      <li>
-        Bug involving leaderboard not updating after scores are posted has been
-        fixed, as well as "Refresh" buttons were added to update the
-        leaderboard.
-      </li>
-      <li>
-        Leaderboard now limits users to 3 postings of the same name. If posting
-        a fourth name, it will overwrite the lowest score, and will also give
-        another notification if the score is lower than all of the scores on the
-        leaderboard. Hopefully this will incentivize people to keep updating
-        their scores without worrying about taking up too much of the
-        leaderboard.
-      </li>
-      <li>
-        Leaderboard posting has changed -- It will no longer delete entries, but
-        instead overwrite old ones. This should fix problems with accidentally
-        adding or removing the number of elements on the leaderboard (currently
-        at 50)
-      </li>
-      <li>
-        When posting scores, the name field will be automatically pre-filled
-        with the last name submitted to the leaderboard.
-      </li>
-      <li>
-        When posting scores, the window will automatically go to the leaderboard
-        and scroll to your score's spot on the leaderboard. That score is
-        highlighted yellow, while your other scores are highlighted orange.
-      </li>
-    </ul>
     <h2 style="color:blue">Click Anywhere or Press Any Key to Continue</h2>
   `;
 }
+
+// <h2 style="color:blue;">
+//   v1.01 (10/06/21) Patch Notes
+// </h2>
+// <label>Game Changes</label>
+// <ul>
+//   <li>
+//     WASD controls are now allowed for people who prefer their left hand for
+//     movement. You can activate it by pressing "W" at the home screen.
+//   </li>
+// </ul>
+// <label>Website Changes</label>
+// <ul>
+//   <li>
+//     Added new patch notes page! This shows up when first loading the
+//     website. This also gives time for the game to preload audio game files
+//     before launching the game.
+//   </li>
+//   <li>
+//     Added a function to display network errors on the webpage if the
+//     application fails to reach the WorldTimeAPI or leaderboard database.
+//   </li>
+//   <li>
+//     Added a feature to start the game if "Play Game" is selected in the Nav
+//     Bar when already on home page.
+//   </li>
+// </ul>
+// <label>Leaderboard Changes</label>
+// <ul>
+//   <li>
+//     Bug involving leaderboard not updating after scores are posted has been
+//     fixed, as well as "Refresh" buttons were added to update the
+//     leaderboard.
+//   </li>
+//   <li>
+//     Leaderboard now limits users to 3 postings of the same name. If posting
+//     a fourth name, it will overwrite the lowest score, and will also give
+//     another notification if the score is lower than all of the scores on the
+//     leaderboard. Hopefully this will incentivize people to keep updating
+//     their scores without worrying about taking up too much of the
+//     leaderboard.
+//   </li>
+//   <li>
+//     Leaderboard posting has changed -- It will no longer delete entries, but
+//     instead overwrite old ones. This should fix problems with accidentally
+//     adding or removing the number of elements on the leaderboard (currently
+//     at 50)
+//   </li>
+//   <li>
+//     When posting scores, the name field will be automatically pre-filled
+//     with the last name submitted to the leaderboard.
+//   </li>
+//   <li>
+//     When posting scores, the window will automatically go to the leaderboard
+//     and scroll to your score's spot on the leaderboard. That score is
+//     highlighted yellow, while your other scores are highlighted orange.
+//   </li>
+// </ul>

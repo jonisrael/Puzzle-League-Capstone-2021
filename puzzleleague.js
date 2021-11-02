@@ -43,6 +43,7 @@ import {
   blockType,
   PIECES,
   INTERACTIVE_TYPES,
+  savedControls,
   win,
   grid,
   game,
@@ -758,27 +759,18 @@ function KEYBOARD_CONTROL(event) {
   }
   // Game Controls
   if (win.running & !game.over && !game.paused) {
-    if (
-      game.controls === "arrow" &&
-      (game.mode !== "cpu-play" || debug.enabled)
-    ) {
-      if (event.keyCode == 38) action.up = true; // up arrow
-      if (event.keyCode == 40) action.down = true; // down arrow
-      if (event.keyCode == 37) action.left = true; // left arrow
-      if (event.keyCode == 39) action.right = true; // right arrow
-      if (event.keyCode == 88 || event.keyCode == 83) action.swap = true; // s or x
-      if (event.keyCode == 82 || event.keyCode == 90) action.quickRaise = true; // r or z
-    }
-    if (
-      game.controls === "wasd" &&
-      (game.mode !== "cpu-play" || debug.enabled)
-    ) {
-      if (event.keyCode == 87) action.up = true; // w
-      if (event.keyCode == 83) action.down = true; // s
-      if (event.keyCode == 65) action.left = true; // a
-      if (event.keyCode == 68) action.right = true; // d
-      if (event.keyCode == 74 || event.keyCode == 75) action.swap = true; // s or x
-      if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
+    if (game.mode !== "cpu-play" || debug.enabled) {
+      if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
+      if (savedControls.keyboard.down.includes(event.keyCode))
+        action.down = true;
+      if (savedControls.keyboard.left.includes(event.keyCode))
+        action.left = true; // left arrow
+      if (savedControls.keyboard.right.includes(event.keyCode))
+        action.right = true; // right arrow
+      if (savedControls.keyboard.swap.includes(event.keyCode))
+        action.swap = true; // s or x
+      if (savedControls.keyboard.raise.includes(event.keyCode))
+        action.quickRaise = true; // r or z
     }
 
     if (game.mode === "cpu-play" && !debug.enabled) {
@@ -942,16 +934,26 @@ function KEYBOARD_CONTROL(event) {
   }
 }
 
+function checkIfButtonIsHeld() {}
+if (game.controller) {
+  if (game.controller.buttons[12].pressed) action.up = true; // w
+  if (game.controller.buttons[14].pressed) action.left = true; // a
+  if (game.controller.buttons[13].pressed) action.down = true; // s
+  if (game.controller.buttons[15].pressed) action.right = true; // d
+  // if (event.keyCode == 74 || event.keyCode == 75) action.swap = true; // s or x
+  // if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
+}
+
 export function gameLoop() {
-  if (win.running) {
-    document.getElementById("header").style.display = "none";
-    document.getElementById("nav-bar").style.display = "none";
-    document.getElementById("footer").style.display = "none";
-  } else {
-    document.getElementById("header").style.display = "block";
-    document.getElementById("nav-bar").style.display = "flex";
-    document.getElementById("footer").style.display = "block";
-  }
+  // if (win.running) {
+  //   document.getElementById("header").style.display = "none";
+  //   document.getElementById("nav-bar").style.display = "none";
+  //   document.getElementById("footer").style.display = "none";
+  // } else {
+  //   document.getElementById("header").style.display = "block";
+  //   document.getElementById("nav-bar").style.display = "flex";
+  //   document.getElementById("footer").style.display = "block";
+  // }
   if (!win.audioLoaded) {
     if (audioList.length == loadedAudios.length) win.audioLoaded = true;
   }
@@ -982,6 +984,8 @@ export function gameLoop() {
 
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * performance.gameSpeed;
+      game.controller = navigator.getGamepads()[0];
+      // if (game.controller) console.log(game.controller.buttons);
 
       if (game.over) {
         let number;

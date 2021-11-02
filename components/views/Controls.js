@@ -8,38 +8,38 @@ export default st => html`
       <p>For keyboard, all controls have Pause/P to Pause/Unpause the game. Pressing ESC once will pause the game, and pressing it again will close the game and return to main menu.</p>
       <label for="keyboard-controls">Select Controls Scheme for Keyboard</label>
       <select name="keyboard-controls" id="keyboard-controls" required>
-        <option value = "arrow-x-swap">Arrow Key Movement, X/S Swap, Z/R Raise (Default)</option>
-        <option value = "arrow-z-swap">Arrow Key Movement, Z/R Swap, XS Raise</option>
-        <option value = "wasd-k-swap">WASD Movement, K/NumPad1 Swap, L/NumPad2 Raise</option>
-        <option value = "wasd-l-swap">WASD Movement, L/Num2 Swap, K/Num1 Raise</option>
+        <option value="arrow-xs-zr">Arrow Key Movement, X/S Swap, Z/R Raise (Default)</option>
+        <option value="arrow-zr-xs">Arrow Key Movement, Z/S Swap, X/R Raise</option>
+        <option value="wasd-k4-l5">WASD Movement, K/NumPad4 Swap, L/NumPad5 Raise</option>
+        <option value = "wasd-l4-k5">WASD Movement, L/NumPad5 Swap, K/NumPad4 Raise</option>
       </select>
       <br>
       <br>
-      <h1>Gamepad Controls Setup</h1>
+      <h1>Gamepad Controls Setup (Not working, coming soon!)</h1>
       <p>For gamepad, all movement is controlled by left stick /d-pad and pause is controlled by Start/Options/Menu/Pause Button. In the Pause menu, Pressing Start will Pause/Unpause the game and pressing Raise will do quick-restart.</p>
-      <label for="gamepad-swap">Select Gamepad Swap Button (Nintendo Switch Layout)</label>
-      <select name="gamepad-swap" id="gamepad-swap" required>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="X">X</option>
-        <option value="Y">Y</option>
-        <option value="L">L</option>
-        <option value="R">R</option>
-        <option value="ZL">ZL</option>
-        <option value="ZR">ZR</option>
+      <label for="gamepad-swap">Select Swap Gamepad Button(s) (Hold CTRL for Multiple Inputs)</label>
+      <select name="gamepad-swap" id="gamepad-swap" required multiple>
+        <option selected>B Button (0)</option>
+        <option selected>A Button (1)</option>
+        <option>Y Button (2)</option>
+        <option>X Button (3)</option>
+        <option>L Button (4)</option>
+        <option>R Button (5)</option>
+        <option>ZL Button (6)</option>
+        <option>ZR Button (7)</option>
       </select>
-      <label for="gamepad-raise">Select Gamepad Raise Button (Nintendo Switch Layout)</label>
-      <select name="gamepad-raise" id="gamepad-raise" required>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="X">X</option>
-        <option value="Y">Y</option>
-        <option value="L">L</option>
-        <option value="R">R</option>
-        <option value="ZL">ZL</option>
-        <option value="ZR">ZR</option>
+      <label for="gamepad-raise">Select Raise Gamepad Button(s) (Nintendo Switch Layout)</label>
+      <select name="gamepad-raise" id="gamepad-raise" required multiple>
+      <option>B Button (0)</option>
+        <option>A Button (1)</option>
+        <option>Y Button (2)</option>
+        <option>X Button (3)</option>
+        <option selected>L Button (4)</option>
+        <option selected>R Button (5)</option>
+        <option>ZL Button (6)</option>
+        <option>ZR Button (7)</option>
       </select>
-      <input type="submit" value="controls" id="game-controls">Accept Changes</input>
+      <input type="submit" id="accept-game-controls">Accept Changes</input>
     </form>
   </section>
 `;
