@@ -58,6 +58,7 @@ import {
   loadedAudios,
   padInteger
 } from "./scripts/global.js";
+import { indexOf } from "lodash";
 
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
@@ -286,6 +287,16 @@ export function newBlock(c, r) {
 }
 
 export function updateGrid(frameAdvance = false) {
+  let currentGameFrame = game.frames;
+  let nextFrameIndexToRemove = game.blockPopQueue[0]
+    ? game.blockPopQueue[0].split(",")[2]
+    : undefined;
+  let nextBlocksToPop = [];
+  if (nextFrameIndexToRemove) {
+    nextBlocksToPop = game.blockPopQueue.filter(
+      blockArray => blockArray.split(",")[2] === nextFrameIndexToRemove
+    );
+  }
   let highestRowFound = false;
   for (let y = 0; y < grid.ROWS + 2; y++) {
     for (let x = 0; x < grid.COLS; x++) {
@@ -322,6 +333,61 @@ export function updateGrid(frameAdvance = false) {
         }
       }
 
+      if (
+        game.board[x][y].color === blockColor.SEMI_VACANT &&
+        !arrayStillHasFaces(nextBlocksToPop)
+      ) {
+        // timer before semi-vacants turn vacant (should be 0)
+        game.board[x][y].timer = 0;
+        console.log(
+          "frame",
+          game.frames,
+          "Time to remove",
+          `${[x, y, nextFrameIndexToRemove]}`,
+          "at index",
+          game.blockPopQueue.indexOf(`${[x, y, nextFrameIndexToRemove]}`),
+          "the sub array is ",
+          nextBlocksToPop,
+          "the main array is",
+          game.blockPopQueue
+        );
+        game.blockPopQueue.forEach(blockArray => {
+          console.log(
+            "block array:",
+            blockArray,
+            "is in small array",
+            nextBlocksToPop.includes(blockArray)
+          );
+          if (nextBlocksToPop.includes(blockArray)) {
+            game.blockPopQueue.splice(
+              game.blockPopQueue.indexOf(blockArray),
+              1
+            );
+          }
+        });
+        console.log("after:", game.blockPopQueue);
+        if (
+          y > 0 &&
+          PIECES.includes(game.board[x][y - 1].color) &&
+          INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
+        ) {
+          // Give interactive pieces a slight extra delay timer
+          console.log("extra time given");
+          game.board[x][y - 1].timer = game.blockStallTime;
+        }
+        game.disableRaise = false;
+        for (let i = y - 1; i > 0; i--) {
+          // create chain available blocks above current
+          // If clearing piece detected, break loop since no more chainable blocks.
+          if (!INTERACTIVE_TYPES.includes(game.board[x][i].type)) break;
+          if (game.board[x][y].availableForPrimaryChain) {
+            game.board[x][i].availableForPrimaryChain = true;
+          } else if (game.board[x][y].availableForSecondaryChain)
+            game.board[x][i].availableForSecondaryChain = true;
+        }
+        // game.blockPopQueue = [];
+      }
+
       if (!frameAdvance) {
         if (game.board[x][y].timer > 0 && debug.freeze == 0) {
           game.board[x][y].timer -= 1;
@@ -329,28 +395,27 @@ export function updateGrid(frameAdvance = false) {
         } else if (game.board[x][y].timer == 0) {
           if (game.board[x][y].type == blockType.CLEARING) {
             game.board[x][y].type = blockType.FACE;
-            game.board[x][y].timer = preset.clearValues[game.level];
-          } else if (game.board[x][y].type == blockType.FACE) {
-            game.board[x][y].color = blockColor.VACANT;
+            game.blockPopQueue.push(`${[x, y, game.frames]}`);
+            nextBlocksToPop = game.blockPopQueue.filter(
+              blockArray => blockArray.split(",")[2] === nextFrameIndexToRemove
+            );
+            game.board[x][y].timer =
+              Math.floor(game.blockClearTime / 6) +
+              10 * (game.blockPopQueue.length - nextBlocksToPop.length);
+            // game.board[x][y].timer = preset.clearValues[game.level];
+          } else if (game.board[x][y].type === blockType.FACE) {
+            game.board[x][y].color = blockColor.SEMI_VACANT;
             game.board[x][y].type = blockType.NORMAL;
-            if (
-              y > 0 &&
-              game.board[x][y - 1].color != blockColor.VACANT &&
-              INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
-            ) {
-              // Give interactive pieces a slight delay timer
-              game.board[x][y - 1].timer = game.blockStallTime;
-            }
-            game.disableRaise = false;
-            for (let i = y - 1; i > 0; i--) {
-              // create chain available blocks above current
-              // If clearing piece detected, break loop since no more chainable blocks.
-              if (!INTERACTIVE_TYPES.includes(game.board[x][i].type)) break;
-              if (game.board[x][y].availableForPrimaryChain) {
-                game.board[x][i].availableForPrimaryChain = true;
-              } else if (game.board[x][y].availableForSecondaryChain)
-                game.board[x][i].availableForSecondaryChain = true;
-            }
+            // game.board[x][y].timer = 30 - 10 * nextBlocksToPop.length;
+            game.board[x][y].timer = -2;
+            // game.blockPopQueue[currentBlockQueuesLength] = `${[
+            //   x,
+            //   y,
+            //   currentGameFrame
+            // ]}`;
+            // game.board[x][y].timer = 30 - 10 * game.blockPopQueue.length;
+          } else if (game.board[x][y].color === blockColor.SEMI_VACANT) {
+            game.board[x][y].color = blockColor.VACANT;
           }
         }
 
@@ -364,6 +429,42 @@ export function updateGrid(frameAdvance = false) {
       }
     }
   }
+  // set timer for blocks to pop
+  // let blockMatches = game.blockPopQueue.slice();
+  // for (let i = 0; i < game.blockPopQueue.length; i++) {
+  //   let x = game.blockPopQueue[i].split(",")[0];
+  //   let y = game.blockPopQueue[i].split(",")[1];
+  //   let frameTimeOfFaceTurn = game.blockPopQueue[i].split(",")[2];
+  //   // game.board[x][y].timer = 30;
+  //   if (game.blockPopQueue.length)
+  //     console.log(
+  //       i,
+  //       x,
+  //       y,
+  //       frameTimeOfFaceTurn,
+  //       game.board[x][y].timer,
+  //       game.board[x][y].color,
+  //       game.board[x][y].type,
+  //       game.frames
+  //     );
+  //   // if (i === game.blockPopQueue.length - 1) console.log("-");
+  // }
+  // if (game.blockPopQueue.length) console.log("-");
+  // game.blockPopQueue = [];
+}
+
+function arrayStillHasFaces(arr) {
+  if (!arr) {
+    console.log("arr is empty", game.frames);
+    return true;
+  }
+  for (let i = 0; i < arr.length; i++) {
+    let x = arr[i].split(",")[0];
+    let y = arr[i].split(",")[1];
+    if (game.board[x][y].type === blockType.FACE) return true;
+  }
+  console.log("all faces have disappeared");
+  return false;
 }
 
 function drawGrid() {

@@ -156,11 +156,11 @@ export function cpuAction(input) {
   //   console.log
   // }
 
-  if (input.swap && cpu.alreadySwapped) {
-    // console.log("start random inputs", input, game.frames);
-    cpu.randomInputCounter = 6;
-    cpu.alreadySwapped = false;
-  }
+  // if (input.swap && cpu.alreadySwapped) {
+  //   // console.log("start random inputs", input, game.frames);
+  //   cpu.randomInputCounter = 6;
+  //   cpu.alreadySwapped = false;
+  // }
 
   if (input.swap && cpu.randomInputCounter === 0) cpu.alreadySwapped = true;
   else if (input.up || input.down || input.left || input.right)
@@ -201,11 +201,11 @@ export function cpuAction(input) {
 }
 
 function randomAction(input) {
+  cpu.randomInputCounter--;
   win.mainInfoDisplay.style.color = "red";
   game.messagePriority = `AI swapped again at same location, do random ${cpu.randomInputCounter} inputs`;
   let arr = ["down", "up", "left", "right", "swap", "swap"];
   let selection = randInt(arr.length);
-  cpu.randomInputCounter--;
   // console.log(
   //   `random number selected is ${selection}, counter at ${cpu.randomInputCounter}`
   // );

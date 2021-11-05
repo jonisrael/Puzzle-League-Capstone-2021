@@ -84,7 +84,6 @@ import PANICKING_1_Y from ".././assets/Sprites/yellowLightning/panicking/1.png";
 import PANICKING_2_Y from ".././assets/Sprites/yellowLightning/panicking/2.png";
 import PANICKING_3_Y from ".././assets/Sprites/yellowLightning/panicking/3.png";
 
-// Image Sprites
 import CLEARING_0_V from ".././assets/Sprites/vacantSquare/clearing/0.png";
 import CLEARING_1_V from ".././assets/Sprites/vacantSquare/clearing/1.png";
 import DARK_V from ".././assets/Sprites/vacantSquare/dark.png";
@@ -98,6 +97,21 @@ import PANICKING_0_V from ".././assets/Sprites/vacantSquare/panicking/0.png";
 import PANICKING_1_V from ".././assets/Sprites/vacantSquare/panicking/1.png";
 import PANICKING_2_V from ".././assets/Sprites/vacantSquare/panicking/2.png";
 import PANICKING_3_V from ".././assets/Sprites/vacantSquare/panicking/3.png";
+
+import CLEARING_0_SV from ".././assets/Sprites/semiVacantSquare/clearing/0.png";
+import CLEARING_1_SV from ".././assets/Sprites/semiVacantSquare/clearing/1.png";
+import DARK_SV from ".././assets/Sprites/semiVacantSquare/dark.png";
+import DEAD_SV from ".././assets/Sprites/semiVacantSquare/death.png";
+import FACE_SV from ".././assets/Sprites/semiVacantSquare/face.png";
+import LANDING_0_SV from ".././assets/Sprites/semiVacantSquare/landing/0.png";
+import LANDING_1_SV from ".././assets/Sprites/semiVacantSquare/landing/1.png";
+import LANDING_2_SV from ".././assets/Sprites/semiVacantSquare/landing/2.png";
+import NORMAL_SV from ".././assets/Sprites/semiVacantSquare/normal.png";
+import PANICKING_0_SV from ".././assets/Sprites/semiVacantSquare/panicking/0.png";
+import PANICKING_1_SV from ".././assets/Sprites/semiVacantSquare/panicking/1.png";
+import PANICKING_2_SV from ".././assets/Sprites/semiVacantSquare/panicking/2.png";
+import PANICKING_3_SV from ".././assets/Sprites/semiVacantSquare/panicking/3.png";
+
 import DEBUG_CURSOR from ".././assets/Extras/DebugSprites/cursorDebug.png";
 import DEBUGW from ".././assets/Extras/DebugSprites/debugW.png";
 import DEBUGP from ".././assets/Extras/DebugSprites/debugP.png";
@@ -293,6 +307,20 @@ const sprite = {
   vacant_panicking_1: PANICKING_1_V,
   vacant_panicking_2: PANICKING_2_V,
   vacant_panicking_3: PANICKING_3_V,
+
+  semi_vacant_normal: NORMAL_SV,
+  semi_vacant_face: FACE_SV,
+  semi_vacant_dark: DARK_SV,
+  semi_vacant_dead: DEAD_SV,
+  semi_vacant_clearing_0: CLEARING_0_SV,
+  semi_vacant_clearing_1: CLEARING_1_SV,
+  semi_vacant_landing_0: LANDING_0_SV,
+  semi_vacant_landing_1: LANDING_1_SV,
+  semi_vacant_landing_2: LANDING_2_SV,
+  semi_vacant_panicking_0: PANICKING_0_SV,
+  semi_vacant_panicking_1: PANICKING_1_SV,
+  semi_vacant_panicking_2: PANICKING_2_SV,
+  semi_vacant_panicking_3: PANICKING_3_SV,
 
   // debug items
   debugCursor: DEBUG_CURSOR,

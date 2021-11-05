@@ -2,6 +2,7 @@ import {
   INTERACTIVE_TYPES,
   game,
   grid,
+  PIECES,
   blockColor,
   blockType,
   win,
@@ -30,7 +31,9 @@ export function trySwappingBlocks(x, y) {
   // Check if blocks are clearing
   if (
     !INTERACTIVE_TYPES.includes(game.board[x][y].type) ||
-    !INTERACTIVE_TYPES.includes(game.board[x + 1][y].type)
+    !INTERACTIVE_TYPES.includes(game.board[x + 1][y].type) ||
+    game.board[x][y].color === blockColor.SEMI_VACANT ||
+    game.board[x + 1][y].color === blockColor.SEMI_VACANT
   ) {
     legalSwap = false;
     game.message = "Swap Failed: Clearing Block";
@@ -41,11 +44,11 @@ export function trySwappingBlocks(x, y) {
   if (y < 11) {
     for (let j = y; j < grid.ROWS; j++) {
       if (
-        (game.board[x][y].color != blockColor.VACANT &&
+        (PIECES.includes(game.board[x][y].color) &&
           INTERACTIVE_TYPES.includes(game.board[x][y].type) &&
           INTERACTIVE_TYPES.includes(game.board[x][y + 1].type) &&
           game.board[x][j].color === blockColor.VACANT) ||
-        (game.board[x + 1][y].color !== blockColor.VACANT &&
+        (PIECES.includes(game.board[x + 1][y].color) &&
           INTERACTIVE_TYPES.includes(game.board[x + 1][y].type) &&
           INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
           game.board[x + 1][j].color === blockColor.VACANT)
@@ -61,10 +64,10 @@ export function trySwappingBlocks(x, y) {
   if (y > 0) {
     if (
       (INTERACTIVE_TYPES.includes(game.board[x][y - 1].type) &&
-        game.board[x][y - 1].color != blockColor.VACANT &&
+        PIECES.includes(game.board[x][y - 1].color) &&
         game.board[x][y].color == blockColor.VACANT) ||
       (INTERACTIVE_TYPES.includes(game.board[x + 1][y - 1].type) &&
-        game.board[x + 1][y - 1].color != blockColor.VACANT &&
+        PIECES.includes(game.board[x + 1][y - 1].color) &&
         game.board[x + 1][y].color == blockColor.VACANT)
     ) {
       legalSwap = false;
@@ -102,7 +105,7 @@ export function trySwappingBlocks(x, y) {
       //Check to see if block is about to fall
       // Check left block after swap
       if (
-        game.board[x][y].color != blockColor.VACANT &&
+        PIECES.includes(game.board[x][y].color) &&
         game.board[x][y + 1].color == blockColor.VACANT
       ) {
         game.board[x][y].timer = game.blockStallTime; // Default 12 frames
@@ -112,7 +115,7 @@ export function trySwappingBlocks(x, y) {
       }
       // Check right block after swap
       if (
-        game.board[x + 1][y].color != blockColor.VACANT &&
+        PIECES.includes(game.board[x + 1][y].color) &&
         game.board[x + 1][y + 1].color == blockColor.VACANT
       ) {
         game.board[x + 1][y].timer = game.blockStallTime; // Default 12 frames
@@ -127,7 +130,7 @@ export function trySwappingBlocks(x, y) {
       // Check left column
       if (
         game.board[x][y].color == blockColor.VACANT &&
-        game.board[x][y - 1].color != blockColor.VACANT &&
+        PIECES.includes(game.board[x][y - 1].color) &&
         INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
       ) {
         game.board[x][y - 1].type = blockType.NORMAL;
@@ -141,7 +144,7 @@ export function trySwappingBlocks(x, y) {
       // Check right column
       if (
         game.board[x + 1][y].color == blockColor.VACANT &&
-        game.board[x + 1][y - 1].color != blockColor.VACANT &&
+        PIECES.includes(game.board[x + 1][y - 1].color) &&
         INTERACTIVE_TYPES.includes(game.board[x + 1][y - 1].type)
       ) {
         game.board[x + 1][y - 1].type = blockType.NORMAL;

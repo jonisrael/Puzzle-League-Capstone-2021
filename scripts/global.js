@@ -108,7 +108,8 @@ export const blockColor = {
   PURPLE: "purple",
   RED: "red",
   YELLOW: "yellow",
-  VACANT: "vacant"
+  VACANT: "vacant",
+  SEMI_VACANT: "semi_vacant"
 };
 
 export const blockType = {
@@ -201,6 +202,9 @@ export const game = {
   boardRiseSpeed: preset.speedValues[1],
   blockClearTime: preset.clearValues[1],
   blockStallTime: preset.stallValues[1],
+  blockPopQueue: [],
+  thisFramesMatches: [],
+  timeToRemove: false,
   controls: "arrow",
   raiseDelay: 0,
   frames: -180,

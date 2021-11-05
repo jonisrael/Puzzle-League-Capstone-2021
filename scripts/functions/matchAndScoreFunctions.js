@@ -4,6 +4,7 @@ import {
   announcer,
   blockColor,
   blockType,
+  PIECES,
   INTERACTIVE_TYPES,
   grid,
   game,
@@ -50,7 +51,7 @@ export function checkMatch() {
       // Check Vertical and afterwards, horizontal
       for (let r = 1; r < grid.ROWS - 1; r++) {
         if (
-          game.board[c][r].color != blockColor.VACANT &&
+          PIECES.includes(game.board[c][r].color) &&
           game.board[c][r].color == game.board[c][r - 1].color &&
           game.board[c][r].color == game.board[c][r + 1].color &&
           INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
@@ -92,7 +93,7 @@ export function checkMatch() {
       // Check Horizontal
       for (let r = 0; r < grid.ROWS; r++) {
         if (
-          game.board[c][r].color != blockColor.VACANT &&
+          PIECES.includes(game.board[c][r].color) &&
           game.board[c][r].color == game.board[c - 1][r].color &&
           game.board[c][r].color == game.board[c + 1][r].color &&
           INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
@@ -171,6 +172,7 @@ export function checkMatch() {
           announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
         );
       }
+      game.thisFramesMatches = clearLocations;
       updateScore(clearLocationsLength, game.currentChain);
       win.mainInfoDisplay.style.color = "red";
       game.message = `${game.currentChain} chain!`;

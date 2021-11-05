@@ -4,7 +4,8 @@ import {
   grid,
   game,
   INTERACTIVE_TYPES,
-  debug
+  debug,
+  PIECES
 } from "../global";
 
 import { checkMatch } from "./matchAndScoreFunctions";
@@ -43,7 +44,7 @@ export function doGravity(gameSpeed) {
       }
 
       if (
-        game.board[c][r].color != blockColor.VACANT &&
+        PIECES.includes(game.board[c][r].color) &&
         game.board[c][r + 1].color == blockColor.VACANT &&
         INTERACTIVE_TYPES.includes(game.board[c][r].type)
       ) {
@@ -77,8 +78,8 @@ export function doGravity(gameSpeed) {
       let x = possibleLandedLocations[i][0];
       let y = possibleLandedLocations[i][1];
       if (
-        game.board[x][y].color != blockColor.VACANT &&
-        game.board[x][y + 1].color != blockColor.VACANT
+        PIECES.includes(game.board[x][y].color) &&
+        PIECES.includes(game.board[x][y + 1].color)
       ) {
         game.board[x][y].type = blockType.LANDING;
         game.board[x][y].timer = 10; // 10 frames is length of landing animation
@@ -104,7 +105,7 @@ export function areAllBlocksGrounded() {
     for (let r = 0; r < grid.ROWS - 1; r++) {
       // If there is a vacant block below, a block is NOT grounded.
       if (
-        game.board[c][r].color != blockColor.VACANT &&
+        PIECES.includes(game.board[c][r].color) &&
         game.board[c][r + 1].color == blockColor.VACANT
       ) {
         return false;
@@ -112,8 +113,8 @@ export function areAllBlocksGrounded() {
       // for the first two frames of landing, blocks are NOT grounded.
       if (
         game.board[c][r].type == blockType.LANDING &&
-        game.board[c][r].color != blockColor.VACANT &&
-        game.board[c][r + 1].color != blockColor.VACANT &&
+        PIECES.includes(game.board[c][r].color) &&
+        PIECES.includes(game.board[c][r + 1].color) &&
         game.board[c][r].timer > 9
       )
         return false;

@@ -226,6 +226,7 @@ export function resetGameVariables() {
   game.blockStallTime = preset.stallValues[game.level];
   game.raiseDelay = 0;
   game.frames = loadedAudios.length == audioList.length ? -186 : -210;
+  game.blockPopQueue = [];
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;
