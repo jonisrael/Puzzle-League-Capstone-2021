@@ -28,6 +28,7 @@
   "workbench.view.alwaysShowHeaderActions": true,
   "cSpell.ignoreWords": [
     "attribute",
+    "break",
     "class",
     "datetime",
     "hasOwnProperty",

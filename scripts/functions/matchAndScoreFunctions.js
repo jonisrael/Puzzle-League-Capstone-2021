@@ -2,6 +2,7 @@
 
 import {
   announcer,
+  hold_it,
   blockColor,
   blockType,
   INTERACTIVE_TYPES,
@@ -167,40 +168,82 @@ export function checkMatch() {
         game.currentChain++;
         playChainSFX(game.currentChain);
       } else if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
-        playAudio(
-          announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
-        );
+        // make sure that "hold it! is not playing instead"
+        if (
+          game.highestRow !== 1 ||
+          game.raiseDelay > 0 ||
+          (game.highestRow !== 2 && game.level > 6)
+        )
+          playAudio(
+            announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
+          );
       }
       updateScore(clearLocationsLength, game.currentChain);
       win.mainInfoDisplay.style.color = "red";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
 
-      for (let i = 0; i < clearLocationsLength; i++) {
-        let c = clearLocations[i][0];
-        let r = clearLocations[i][1];
-        game.board[c][r].type = blockType.CLEARING;
-        game.board[c][r].timer = preset.clearValues[game.level];
-        if (chainLogic.addToPrimaryChain) {
-          game.board[c][r].availableForPrimaryChain = true;
-          game.board[c][r].availableForSecondaryChain = false;
-        } else {
-          game.board[c][r].availableForPrimaryChain = false;
-          game.board[c][r].availableForSecondaryChain = true;
-        }
-      }
+      // now to assign timers and initiate clear animation
+      assignClearTimers(
+        clearLocations,
+        game.blockBlinkTime,
+        game.blockInitialFaceTime
+      );
 
       if (clearLocationsLength != 0) {
         game.combo = clearLocationsLength;
         game.totalClears += game.combo;
         if (game.combo > game.largestCombo) game.largestCombo = game.combo;
         if (game.combo > 3 || game.currentChain > 1) {
+          if (
+            game.raiseDelay === 0 &&
+            (game.highestRow === 1 || (game.highestRow === 2 && game.level > 6))
+          ) {
+            playAudio(hold_it[randInt(hold_it.length)], 0.3);
+          }
           game.raiseDelay = 6 * game.boardRiseSpeed;
         }
         if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
       }
     } else {
       done = true; // Needs to end if confirm clear fails
+    }
+  }
+}
+
+function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
+  // console.log("old", `${matchLocations}`);
+  matchLocations.sort(function(a, b) {
+    return a[0] - b[0];
+  });
+  // console.log("new", `${matchLocations}`);
+  const totalPopTime = game.blockPopMultiplier * (matchLocations.length - 1);
+  for (let i = 0; i < matchLocations.length; i++) {
+    let extraFaceTime = game.blockPopMultiplier * i;
+    let c = matchLocations[i][0];
+    let r = matchLocations[i][1];
+
+    game.board[c][r].type = blockType.BLINKING;
+    game.board[c][r].timer = blinkTime + initialFaceTime + totalPopTime;
+    game.board[c][r].switchToFaceFrame = initialFaceTime + totalPopTime;
+    game.board[c][r].switchToPoppedFrame = totalPopTime - extraFaceTime;
+    // console.log(c, r, "assigned to:", game.board[c][r]);
+    // console.log(
+    //   "blink time",
+    //   blinkTime,
+    //   "initial face time",
+    //   initialFaceTime,
+    //   "total pop time",
+    //   totalPopTime,
+    //   "extra face time",
+    //   extraFaceTime
+    // );
+    if (chainLogic.addToPrimaryChain) {
+      game.board[c][r].availableForPrimaryChain = true;
+      game.board[c][r].availableForSecondaryChain = false;
+    } else {
+      game.board[c][r].availableForPrimaryChain = false;
+      game.board[c][r].availableForSecondaryChain = true;
     }
   }
 }

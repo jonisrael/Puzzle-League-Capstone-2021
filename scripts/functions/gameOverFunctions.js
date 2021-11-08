@@ -36,27 +36,25 @@ export function closeGame(gameFinished) {
 }
 
 export function isGameOver() {
-  for (let c = 0; c < grid.COLS; c++) {
-    if (game.highestRow === 0 && game.currentChain === 0) {
-      // if debug, do not game over.
-      if (debug.enabled || game.mode === "training") {
-        game.score = 0;
-        game.cursor.y += 8;
-        if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
-        for (let x = 0; x < grid.COLS; x++) {
-          for (let y = grid.ROWS - 1; y > 3; y--) {
-            game.board[x][y].color = blockColor.VACANT;
-            game.board[x][y].type = blockType.NORMAL;
-          }
+  if (game.highestRow === 0 && game.currentChain === 0) {
+    // if debug, do not game over.
+    if (debug.enabled || game.mode === "training") {
+      game.score = 0;
+      game.cursor.y += 8;
+      if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
+      for (let x = 0; x < grid.COLS; x++) {
+        for (let y = grid.ROWS - 1; y > 3; y--) {
+          game.board[x][y].color = blockColor.VACANT;
+          game.board[x][y].type = blockType.NORMAL;
         }
-        playAudio(audio.topout);
-        console.log(game.log);
-        return false;
       }
-      game.Music.volume = 0;
-      endGame();
-      return true;
+      playAudio(audio.topout);
+      console.log(game.log);
+      return false;
     }
+    game.Music.volume = 0;
+    endGame();
+    return true;
   }
   return false;
 }

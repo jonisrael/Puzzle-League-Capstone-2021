@@ -17,6 +17,7 @@ import { updateBestScores, getBestScores } from "./updateBestScores";
 import { validateForm } from "./validateForm";
 
 export function afterGame() {
+  console.log("run aftergame");
   let duration = "";
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
   else duration = `${game.minutes}:${game.seconds}`;

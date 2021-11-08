@@ -101,6 +101,8 @@ class Block {
     color,
     type,
     timer = 0,
+    switchToFaceFrame = 0,
+    switchToPoppedFrame = 0,
     touched = false,
     availableForPrimaryChain = false,
     availableForSecondaryChain = false
@@ -110,6 +112,8 @@ class Block {
     this.color = color;
     this.type = type;
     this.timer = timer;
+    this.switchToFaceFrame = switchToFaceFrame;
+    this.switchToPoppedFrame = switchToPoppedFrame;
     this.touched = touched;
     this.availableForPrimaryChain = availableForPrimaryChain; // When disappear, chain ends
     this.availableForSecondaryChain = availableForSecondaryChain;
@@ -130,7 +134,7 @@ class Block {
     // const DEBUGC_IMAGE = new Image();
     // const DEBUGV_IMAGE = new Image();
     // const DEBUGY_IMAGE = new Image();
-    if (this.type == blockType.CLEARING) {
+    if (this.type == blockType.BLINKING) {
       if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
         animationIndex = 0;
       } else {
@@ -295,9 +299,9 @@ export function updateGrid(frameAdvance = false) {
         highestRowFound = true;
       }
       // Check to see if a block is still legally in a landing animation
-      if (game.board[x][y].type == blockType.LANDING) {
+      if (game.board[x][y].type === blockType.LANDING) {
         for (let i = grid.ROWS - 1; i > y; i--) {
-          if (game.board[x][i].color == blockColor.VACANT) {
+          if (game.board[x][i].color === blockColor.VACANT) {
             game.board[x][y].type = blockType.NORMAL;
             game.board[x][y].timer = 0;
             break;
@@ -322,48 +326,111 @@ export function updateGrid(frameAdvance = false) {
         }
       }
 
-      if (!frameAdvance) {
-        if (game.board[x][y].timer > 0 && debug.freeze == 0) {
+      if (0 === 0 || !frameAdvance) {
+        if (game.board[x][y].timer === -1) {
+          game.board[x][y].timer = 0;
+        } else if (game.board[x][y].timer > 0) {
           game.board[x][y].timer -= 1;
           game.disableRaise = true;
-        } else if (game.board[x][y].timer == 0) {
-          if (game.board[x][y].type == blockType.CLEARING) {
-            game.board[x][y].type = blockType.FACE;
-            game.board[x][y].timer = preset.clearValues[game.level];
-          } else if (game.board[x][y].type == blockType.FACE) {
-            game.board[x][y].color = blockColor.VACANT;
-            game.board[x][y].type = blockType.NORMAL;
-            if (
-              y > 0 &&
-              game.board[x][y - 1].color != blockColor.VACANT &&
-              INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
-            ) {
-              // Give interactive pieces a slight delay timer
-              game.board[x][y - 1].timer = game.blockStallTime;
-            }
-            game.disableRaise = false;
-            for (let i = y - 1; i > 0; i--) {
-              // create chain available blocks above current
-              // If clearing piece detected, break loop since no more chainable blocks.
-              if (!INTERACTIVE_TYPES.includes(game.board[x][i].type)) break;
-              if (game.board[x][y].availableForPrimaryChain) {
-                game.board[x][i].availableForPrimaryChain = true;
-              } else if (game.board[x][y].availableForSecondaryChain)
-                game.board[x][i].availableForSecondaryChain = true;
-            }
+        }
+        if (
+          !debug.freeze &&
+          (game.board[x][y].type === blockType.BLINKING ||
+            game.board[x][y].type === blockType.FACE ||
+            game.board[x][y].type === blockType.POPPED)
+        ) {
+          // console.log(x, y, game.board[x][y]);
+          switch (game.board[x][y].timer) {
+            case game.board[x][y].switchToPoppedFrame + 2:
+              playAudio(audio.blockClear);
+              break;
+            case 0:
+              game.board[x][y].color = blockColor.VACANT;
+              game.board[x][y].type = blockType.NORMAL;
+              // game.board[x][y].switchToFaceFrame = 0;
+              // game.board[x][y].switchToPoppedFrame = 0;
+              // console.log("do delay timer");
+              if (
+                y > 0 &&
+                game.board[x][y - 1].color != blockColor.VACANT &&
+                INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
+              ) {
+                // Give interactive pieces a slight delay timer
+                // console.log("do delay timer");
+                game.board[x][y - 1].timer = game.blockStallTime;
+              }
+              game.disableRaise = false;
+              for (let i = y - 1; i > 0; i--) {
+                // create chain available blocks above current
+                // If clearing piece detected, break loop since no more chainable blocks.
+                if (!INTERACTIVE_TYPES.includes(game.board[x][i].type)) break;
+                if (game.board[x][y].availableForPrimaryChain) {
+                  game.board[x][i].availableForPrimaryChain = true;
+                } else if (game.board[x][y].availableForSecondaryChain)
+                  game.board[x][i].availableForSecondaryChain = true;
+              }
+              break;
+            case game.board[x][y].switchToFaceFrame:
+              game.board[x][y].type = blockType.FACE;
+              break;
+            case game.board[x][y].switchToPoppedFrame:
+              game.board[x][y].type = blockType.POPPED;
+              // console.log("block popped");
+              break;
           }
-        }
-
-        if (game.board[x][y].timer == -1) {
-          game.board[x][y].timer = 0;
-        }
-      } else {
-        if (game.board[x][y].timer > 0) {
-          game.board[x][y].timer -= 1;
         }
       }
     }
   }
+}
+// }
+//   if (game.board[x][y].timer === game.board[x][y].switchToFaceFrame) {
+//     game.board[x][y].type = blockType.FACE;
+//   }
+//   if (game.board[x][y].timer ===)
+//   //
+//   if (game.board[x][y].popTime > 0) {
+//     if (game.board[x][y].timer === game.blockInitialFaceTime) {
+//       game.board[x][y].type = blockType.FACE;
+//     } else if (game.board[x][y].timer === game.leftOverTime) {
+//       game.board[x][y].timer -= 1;
+//       game.disableRaise = true;
+//     } else if (game.board[x][y].timer > 0) {
+//       game.board[x][y].timer -= 1;
+//       game.disableRaise = true;
+//     } else if (game.board[x][y].timer === 0) {
+//       game.board[x][y].type = blockType.POPPED;
+//       game.board[x][y].timer = game.board[x][y].popTimer;
+//       game.board[x][y].popTimer = 0;
+//     }
+//   } else if (
+//     game.board[x][y].timer === game.board[x][y].leftoverTimer
+//   ) {
+//     game.board[x][y].type = blockType.POPPED;
+//     game.board[x][y].leftoverTimer = 0;
+//   } else if (game.board[x][y].timer > 0) {
+//     game.board[x][y].timer -= 1;
+//     game.disableRaise = true;
+//   }
+// }
+//       }
+//     }
+//   }
+// }
+
+function decreaseTimers(x, y) {
+  if (game.board[x][y].timer === -1) game.board[x][y].timer = 0;
+  else if (game.board[x][y].timer > 0) game.board[x][y].timer -= 1;
+
+  if (game.board[x][y].blinkTimer === -1) game.board[x][y].blinkTimer = 0;
+  else if (game.board[x][y].blinkTimer > 0) game.board[x][y].blinkTimer -= 1;
+
+  if (game.board[x][y].faceTimer === -1) game.board[x][y].faceTimer = 0;
+  else if (game.board[x][y].faceTimer > 0) game.board[x][y].faceTimer -= 1;
+
+  if (game.board[x][y].leftoverTimer === -1) game.board[x][y].leftoverTimer = 0;
+  else if (game.board[x][y].leftoverTimer > 0)
+    game.board[x][y].leftoverTimer -= 1;
 }
 
 function drawGrid() {
@@ -397,7 +464,11 @@ export function endChain(potentialSecondarySuccessor) {
   game.lastChain = game.currentChain;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
-    if (!win.muteAnnouncer.checked) playAudio(audio.announcerUnbelievable);
+    playAnnouncer(
+      announcer.bestChainDialogue,
+      announcer.bestChainIndexLastPicked,
+      "largeChain"
+    );
   } else if (game.currentChain > 6) {
     playAudio(audio.fanfare4);
     playAnnouncer(
@@ -456,7 +527,7 @@ export function endChain(potentialSecondarySuccessor) {
 
 function doPanic() {
   let panic = false;
-  let rowChecked = game.level < 4 ? 1 : game.level < 10 ? 2 : 4;
+  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 2 : 4;
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][rowChecked].color != blockColor.VACANT &&
@@ -650,16 +721,28 @@ function playerAction(input) {
   // first input checker, "else if" is required for priority, so case does not work.
   if (input.up) {
     action.up = false;
-    if (game.cursor.y > 1) game.cursor.y -= 1;
+    if (game.cursor.y > 1) {
+      game.cursor.y -= 1;
+      playAudio(audio.moveCursor);
+    }
   } else if (input.down) {
     action.down = false;
-    if (game.cursor.y < grid.ROWS - 1) game.cursor.y += 1;
+    if (game.cursor.y < grid.ROWS - 1) {
+      game.cursor.y += 1;
+      playAudio(audio.moveCursor);
+    }
   } else if (input.left) {
     action.left = false;
-    if (game.cursor.x > 0) game.cursor.x -= 1;
+    if (game.cursor.x > 0) {
+      game.cursor.x -= 1;
+      playAudio(audio.moveCursor);
+    }
   } else if (input.right) {
     action.right = false;
-    if (game.cursor.x < grid.COLS - 2) game.cursor.x += 1;
+    if (game.cursor.x < grid.COLS - 2) {
+      game.cursor.x += 1;
+      playAudio(audio.moveCursor);
+    }
   } else if (input.swap) {
     action.swap = false;
     trySwappingBlocks(game.cursor.x, game.cursor.y);
@@ -671,9 +754,6 @@ function playerAction(input) {
     if (game.frames > 0) game.raisePressed = true;
     win.cvs.scrollIntoView({ block: "nearest" });
   }
-
-  if (!input.pause && (input.up || input.down || input.left || input.right))
-    playAudio(audio.moveCursor);
 
   // NOT REMOVED
   // reset all keys
@@ -797,17 +877,13 @@ function KEYBOARD_CONTROL(event) {
         game.level = preset.speedValues.length - 1;
         console.log("pressed");
         cpu.userChangedSpeed = true;
-        game.boardRiseSpeed = preset.speedValues[game.level];
-        game.blockClearTime = preset.clearValues[game.level];
-        game.blockStallTime = preset.stallValues[game.level];
+        updateLevelEvents(game.level);
       }
       if (event.keyCode === 78) {
         // n
         if (game.level > 0) game.level -= 1;
         cpu.userChangedSpeed = true;
-        game.boardRiseSpeed = preset.speedValues[game.level];
-        game.blockClearTime = preset.clearValues[game.level];
-        game.blockStallTime = preset.stallValues[game.level];
+        updateLevelEvents(game.level);
       }
     }
 
@@ -841,9 +917,7 @@ function KEYBOARD_CONTROL(event) {
         console.log("Chainable Block Info Guide:");
         console.log("Brown/White/Pink -- Chain = 0/1/2+");
       } else {
-        game.boardRiseSpeed = preset.speedValues[game.level];
-        game.blockClearTime = preset.clearValues[game.level];
-        game.blockStallTime = preset.stallValues[game.level];
+        updateLevelEvents(game.level);
         console.log("debug OFF");
         debug.slowdown = 0;
         debug.freeze = 0;
@@ -884,17 +958,13 @@ function KEYBOARD_CONTROL(event) {
         //m
         if (game.level + 1 < preset.speedValues.length) {
           game.level++;
-          game.boardRiseSpeed = preset.speedValues[game.level];
-          game.blockClearTime = preset.clearValues[game.level];
-          game.blockStallTime = preset.stallValues[game.level];
+          updateLevelEvents(game.level);
         }
       } else if (event.keyCode == 78 && game.level > 0) {
         //n
         if (game.level - 1 > -1) {
           game.level--;
-          game.boardRiseSpeed = preset.speedValues[game.level];
-          game.blockClearTime = preset.clearValues[game.level];
-          game.blockStallTime = preset.stallValues[game.level];
+          updateLevelEvents(game.level);
         }
 
         // Debug codes
@@ -914,9 +984,7 @@ function KEYBOARD_CONTROL(event) {
           game.blockClearTime = 120;
         } else {
           console.log("slowdown mode disabled");
-          game.boardRiseSpeed = preset.speedValues[game.level];
-          game.blockClearTime = preset.clearValues[game.level];
-          game.blockStallTime = preset.stallValues[game.level];
+          updateLevelEvents(game.level);
         }
       } else if (event.keyCode == 79) {
         // o
@@ -932,6 +1000,15 @@ function KEYBOARD_CONTROL(event) {
       }
     }
   }
+}
+
+function updateLevelEvents(level) {
+  game.boardRiseSpeed = preset.speedValues[game.level];
+  game.blockClearTime = preset.clearValues[game.level];
+  game.blockBlinkTime = preset.blinkValues[game.level];
+  game.blockInitialFaceTime = preset.faceValues[game.level];
+  game.blockStallTime = preset.stallValues[game.level];
+  game.blockPopMultiplier = preset.popMultiplier[game.level];
 }
 
 function checkIfButtonIsHeld() {}
@@ -957,7 +1034,7 @@ export function gameLoop() {
   if (!win.audioLoaded) {
     if (audioList.length == loadedAudios.length) win.audioLoaded = true;
   }
-  if (!win.running || win.view != "Home") {
+  if (!win.running || win.view !== "Home") {
     closeGame(game.over);
     if (win.restartGame) {
       win.restartGame = false;
@@ -990,8 +1067,10 @@ export function gameLoop() {
       if (game.over) {
         let number;
         if (game.frames > 300) {
-          number = Math.floor((600 - game.frames) / 60);
+          number = Math.floor((300 - game.frames) / 60);
           game.messagePriority = `Fetching leaderboard info...timeout in ${number}`;
+        } else if (game.frames > 120) {
+          game.messagePriority = `Checking ability to post scores..`;
         }
         if (game.frames > 180) {
           if (leaderboard.reason === "unofficial-cpu-game") {
@@ -1098,11 +1177,10 @@ export function gameLoop() {
           );
         }
 
-        if (game.level + 1 < preset.speedValues.length && game.frames > 0)
+        if (game.level + 1 < preset.speedValues.length && game.frames > 0) {
           game.level++;
-        game.boardRiseSpeed = preset.speedValues[game.level];
-        game.blockClearTime = preset.clearValues[game.level];
-        game.blockStallTime = preset.stallValues[game.level];
+          updateLevelEvents(game.level);
+        }
       }
 
       if (game.quickRaise) {

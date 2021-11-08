@@ -59,6 +59,11 @@ export const announcer = {
     audio.announcerComboIntense,
     audio.announcerPerfect
   ],
+  bestChainDialogue: [
+    audio.announcerUnbelievable,
+    audio.announcerMakeNoMistake,
+    audio.announcerDecisiveStrength
+  ],
   timeTransitionDialogue: [
     audio.announcerTimeMarchesOn,
     audio.announcerLetsKeepItUp,
@@ -80,7 +85,8 @@ export const announcer = {
     audio.announcerBringUsHome,
     audio.announcerIHopeReady,
     audio.announcerFireworks,
-    audio.announcerLetsGetStarted
+    audio.announcerLetsGetStarted,
+    audio.announcerBraceYourself
     // audio.announcerBattleOfEndurance
   ],
   endgameDialogue: [
@@ -94,12 +100,20 @@ export const announcer = {
   smallChainIndexLastPicked: -1,
   mediumChainIndexLastPicked: -1,
   largeChainIndexLastPicked: -1,
+  bestChainIndexLastPicked: -1,
   timeTransitionIndexLastPicked: -1,
   hurryUpIndexLastPicked: -1,
   panicIndexLastPicked: -1,
   overtimeIndexLastPicked: -1,
   endgameIndexLastPicked: -1
 };
+
+export const hold_it = [
+  audio.holdIt1,
+  audio.holdIt2,
+  audio.holdIt3,
+  audio.holdIt4
+];
 
 export const blockColor = {
   BLUE: "blue",
@@ -113,10 +127,11 @@ export const blockColor = {
 
 export const blockType = {
   NORMAL: "normal",
+  POPPED: "popped",
   FACE: "face",
   DARK: "dark",
   DEAD: "dead",
-  CLEARING: "clearing",
+  BLINKING: "blinking",
   LANDING: "landing",
   PANICKING: "panicking"
 };
@@ -147,10 +162,15 @@ export const grid = {
 // clearValues: [60, 50, 45, 40, 35, 30, 25, 20, 16, 12, 8], // iterate twice
 // stallValues: [16, 12, 11, 10,  9,  8,  7,  6,  5,  4, 6]
 
+//  clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16, 12],
+
 export const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
   speedValues: [60, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
-  clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16, 12],
+  clearValues: [116, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
+  blinkValues: [60, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
+  faceValues: [56, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
+  popMultiplier: [12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4],
   stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 10],
   controlsDefaultMessage: ""
 };
@@ -200,6 +220,9 @@ export const game = {
   level: 1,
   boardRiseSpeed: preset.speedValues[1],
   blockClearTime: preset.clearValues[1],
+  blockBlinkTime: preset.blinkValues[1],
+  blockPopMultiplier: preset.popMultiplier[1],
+  blockInitialFaceTime: preset.faceValues[1],
   blockStallTime: preset.stallValues[1],
   controls: "arrow",
   raiseDelay: 0,

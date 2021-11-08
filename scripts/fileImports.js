@@ -1,9 +1,10 @@
 // Import Image Sprites
 import CURSOR from ".././assets/Sprites/cursor.png";
-import CLEARING_0_B from ".././assets/Sprites/blueTriangle/clearing/0.png";
-import CLEARING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
+import BLINKING_0_B from ".././assets/Sprites/blueTriangle/clearing/0.png";
+import BLINKING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
 import DARK_B from ".././assets/Sprites/blueTriangle/dark.png";
 import DEAD_B from ".././assets/Sprites/blueTriangle/death.png";
+import POPPED_B from ".././assets/Sprites/blueTriangle/empty.png";
 import FACE_B from ".././assets/Sprites/blueTriangle/face.png";
 import LANDING_0_B from ".././assets/Sprites/blueTriangle/landing/0.png";
 import LANDING_1_B from ".././assets/Sprites/blueTriangle/landing/1.png";
@@ -14,10 +15,11 @@ import PANICKING_1_B from ".././assets/Sprites/blueTriangle/panicking/1.png";
 import PANICKING_2_B from ".././assets/Sprites/blueTriangle/panicking/2.png";
 import PANICKING_3_B from ".././assets/Sprites/blueTriangle/panicking/3.png";
 
-import CLEARING_0_C from ".././assets/Sprites/cyanStar/clearing/0.png";
-import CLEARING_1_C from ".././assets/Sprites/cyanStar/clearing/1.png";
+import BLINKING_0_C from ".././assets/Sprites/cyanStar/clearing/0.png";
+import BLINKING_1_C from ".././assets/Sprites/cyanStar/clearing/1.png";
 import DARK_C from ".././assets/Sprites/cyanStar/dark.png";
 import DEAD_C from ".././assets/Sprites/cyanStar/death.png";
+import POPPED_C from ".././assets/Sprites/cyanStar/empty.png";
 import FACE_C from ".././assets/Sprites/cyanStar/face.png";
 import LANDING_0_C from ".././assets/Sprites/cyanStar/landing/0.png";
 import LANDING_1_C from ".././assets/Sprites/cyanStar/landing/1.png";
@@ -28,10 +30,11 @@ import PANICKING_1_C from ".././assets/Sprites/cyanStar/panicking/1.png";
 import PANICKING_2_C from ".././assets/Sprites/cyanStar/panicking/2.png";
 import PANICKING_3_C from ".././assets/Sprites/cyanStar/panicking/3.png";
 
-import CLEARING_0_G from ".././assets/Sprites/greenCircle/clearing/0.png";
-import CLEARING_1_G from ".././assets/Sprites/greenCircle/clearing/1.png";
+import BLINKING_0_G from ".././assets/Sprites/greenCircle/clearing/0.png";
+import BLINKING_1_G from ".././assets/Sprites/greenCircle/clearing/1.png";
 import DARK_G from ".././assets/Sprites/greenCircle/dark.png";
 import DEAD_G from ".././assets/Sprites/greenCircle/death.png";
+import POPPED_G from ".././assets/Sprites/greenCircle/empty.png";
 import FACE_G from ".././assets/Sprites/greenCircle/face.png";
 import LANDING_0_G from ".././assets/Sprites/greenCircle/landing/0.png";
 import LANDING_1_G from ".././assets/Sprites/greenCircle/landing/1.png";
@@ -42,10 +45,11 @@ import PANICKING_1_G from ".././assets/Sprites/greenCircle/panicking/1.png";
 import PANICKING_2_G from ".././assets/Sprites/greenCircle/panicking/2.png";
 import PANICKING_3_G from ".././assets/Sprites/greenCircle/panicking/3.png";
 
-import CLEARING_0_P from ".././assets/Sprites/purpleDiamond/clearing/0.png";
-import CLEARING_1_P from ".././assets/Sprites/purpleDiamond/clearing/1.png";
+import BLINKING_0_P from ".././assets/Sprites/purpleDiamond/clearing/0.png";
+import BLINKING_1_P from ".././assets/Sprites/purpleDiamond/clearing/1.png";
 import DARK_P from ".././assets/Sprites/purpleDiamond/dark.png";
 import DEAD_P from ".././assets/Sprites/purpleDiamond/death.png";
+import POPPED_P from ".././assets/Sprites/purpleDiamond/empty.png";
 import FACE_P from ".././assets/Sprites/purpleDiamond/face.png";
 import LANDING_0_P from ".././assets/Sprites/purpleDiamond/landing/0.png";
 import LANDING_1_P from ".././assets/Sprites/purpleDiamond/landing/1.png";
@@ -56,10 +60,11 @@ import PANICKING_1_P from ".././assets/Sprites/purpleDiamond/panicking/1.png";
 import PANICKING_2_P from ".././assets/Sprites/purpleDiamond/panicking/2.png";
 import PANICKING_3_P from ".././assets/Sprites/purpleDiamond/panicking/3.png";
 
-import CLEARING_0_R from ".././assets/Sprites/redHeart/clearing/0.png";
-import CLEARING_1_R from ".././assets/Sprites/redHeart/clearing/1.png";
+import BLINKING_0_R from ".././assets/Sprites/redHeart/clearing/0.png";
+import BLINKING_1_R from ".././assets/Sprites/redHeart/clearing/1.png";
 import DARK_R from ".././assets/Sprites/redHeart/dark.png";
 import DEAD_R from ".././assets/Sprites/redHeart/death.png";
+import POPPED_R from ".././assets/Sprites/redHeart/empty.png";
 import FACE_R from ".././assets/Sprites/redHeart/face.png";
 import LANDING_0_R from ".././assets/Sprites/redHeart/landing/0.png";
 import LANDING_1_R from ".././assets/Sprites/redHeart/landing/1.png";
@@ -70,10 +75,11 @@ import PANICKING_1_R from ".././assets/Sprites/redHeart/panicking/1.png";
 import PANICKING_2_R from ".././assets/Sprites/redHeart/panicking/2.png";
 import PANICKING_3_R from ".././assets/Sprites/redHeart/panicking/3.png";
 
-import CLEARING_0_Y from ".././assets/Sprites/yellowLightning/clearing/0.png";
-import CLEARING_1_Y from ".././assets/Sprites/yellowLightning/clearing/1.png";
+import BLINKING_0_Y from ".././assets/Sprites/yellowLightning/clearing/0.png";
+import BLINKING_1_Y from ".././assets/Sprites/yellowLightning/clearing/1.png";
 import DARK_Y from ".././assets/Sprites/yellowLightning/dark.png";
 import DEAD_Y from ".././assets/Sprites/yellowLightning/death.png";
+import POPPED_Y from ".././assets/Sprites/yellowLightning/empty.png";
 import FACE_Y from ".././assets/Sprites/yellowLightning/face.png";
 import LANDING_0_Y from ".././assets/Sprites/yellowLightning/landing/0.png";
 import LANDING_1_Y from ".././assets/Sprites/yellowLightning/landing/1.png";
@@ -85,10 +91,11 @@ import PANICKING_2_Y from ".././assets/Sprites/yellowLightning/panicking/2.png";
 import PANICKING_3_Y from ".././assets/Sprites/yellowLightning/panicking/3.png";
 
 // Image Sprites
-import CLEARING_0_V from ".././assets/Sprites/vacantSquare/clearing/0.png";
-import CLEARING_1_V from ".././assets/Sprites/vacantSquare/clearing/1.png";
+import BLINKING_0_V from ".././assets/Sprites/vacantSquare/clearing/0.png";
+import BLINKING_1_V from ".././assets/Sprites/vacantSquare/clearing/1.png";
 import DARK_V from ".././assets/Sprites/vacantSquare/dark.png";
 import DEAD_V from ".././assets/Sprites/vacantSquare/death.png";
+import POPPED_V from ".././assets/Sprites/vacantSquare/empty.png";
 import FACE_V from ".././assets/Sprites/vacantSquare/face.png";
 import LANDING_0_V from ".././assets/Sprites/vacantSquare/landing/0.png";
 import LANDING_1_V from ".././assets/Sprites/vacantSquare/landing/1.png";
@@ -144,6 +151,7 @@ import ANN_TRAINING from ".././assets/Audio/Announcer/all the training and pract
 import ANN_PAYOFF from ".././assets/Audio/Announcer/and there's the payoff.wav";
 import ANN_BEAUTIFUL from ".././assets/Audio/Announcer/beautiful.wav";
 import ANN_BRING_US_HOME from ".././assets/Audio/Announcer/bring us home.wav";
+import ANN_BRACE_YOURSELF from ".././assets/Audio/Announcer/brace yourself.wav";
 import ANN_CLEAR from ".././assets/Audio/Announcer/clear.wav";
 import ANN_FANTASTIC_COMBO from ".././assets/Audio/Announcer/fantastic combo.wav";
 import ANN_HOW_MUCH_LONGER from ".././assets/Audio/Announcer/how much longer can this go on.wav";
@@ -174,7 +182,16 @@ import ANN_WHAT_RUSH from ".././assets/Audio/Announcer/what a rush.wav";
 import ANN_WHERE_COME_FROM from ".././assets/Audio/Announcer/where did that come from.wav";
 import ANN_DESERVE_PRAISE from ".././assets/Audio/Announcer/you deserve praise my friend.wav";
 import ANN_YOU_DONT_SEE_MOVES from ".././assets/Audio/Announcer/you don't see moves like that everyday folks.wav";
+import ANN_MAKE_NO_MISTAKE from ".././assets/Audio/Announcer/make no mistake there is no doubt.wav";
+import ANN_DECISIVE_STRENGTH from ".././assets/Audio/Announcer/decisive strength.wav";
+
+import HOLD_IT_1 from ".././assets/Audio/holdIt1.wav";
+import HOLD_IT_2 from ".././assets/Audio/holdIt2.wav";
+import HOLD_IT_3 from ".././assets/Audio/holdIt3.wav";
+import HOLD_IT_4 from ".././assets/Audio/holdIt4.wav";
+
 import MOVE_CURSOR from ".././assets/Audio/MoveCursor.wav";
+import BLOCK_CLEAR from ".././assets/Audio/clearBlock.wav";
 import CHAIN2 from ".././assets/Audio/Super Mario 64 Red Coin 1.wav";
 import CHAIN3 from ".././assets/Audio/Super Mario 64 Red Coin 2.wav";
 import CHAIN4 from ".././assets/Audio/Super Mario 64 Red Coin 3.wav";
@@ -200,8 +217,9 @@ const sprite = {
   blue_face: FACE_B,
   blue_dark: DARK_B,
   blue_dead: DEAD_B,
-  blue_clearing_0: CLEARING_0_B,
-  blue_clearing_1: CLEARING_1_B,
+  blue_popped: POPPED_B,
+  blue_blinking_0: BLINKING_0_B,
+  blue_blinking_1: BLINKING_1_B,
   blue_landing_0: LANDING_0_B,
   blue_landing_1: LANDING_1_B,
   blue_landing_2: LANDING_2_B,
@@ -214,8 +232,9 @@ const sprite = {
   cyan_face: FACE_C,
   cyan_dark: DARK_C,
   cyan_dead: DEAD_C,
-  cyan_clearing_0: CLEARING_0_C,
-  cyan_clearing_1: CLEARING_1_C,
+  cyan_popped: POPPED_C,
+  cyan_blinking_0: BLINKING_0_C,
+  cyan_blinking_1: BLINKING_1_C,
   cyan_landing_0: LANDING_0_C,
   cyan_landing_1: LANDING_1_C,
   cyan_landing_2: LANDING_2_C,
@@ -228,8 +247,9 @@ const sprite = {
   green_face: FACE_G,
   green_dark: DARK_G,
   green_dead: DEAD_G,
-  green_clearing_0: CLEARING_0_G,
-  green_clearing_1: CLEARING_1_G,
+  green_popped: POPPED_G,
+  green_blinking_0: BLINKING_0_G,
+  green_blinking_1: BLINKING_1_G,
   green_landing_0: LANDING_0_G,
   green_landing_1: LANDING_1_G,
   green_landing_2: LANDING_2_G,
@@ -242,8 +262,9 @@ const sprite = {
   purple_face: FACE_P,
   purple_dark: DARK_P,
   purple_dead: DEAD_P,
-  purple_clearing_0: CLEARING_0_P,
-  purple_clearing_1: CLEARING_1_P,
+  purple_popped: POPPED_P,
+  purple_blinking_0: BLINKING_0_P,
+  purple_blinking_1: BLINKING_1_P,
   purple_landing_0: LANDING_0_P,
   purple_landing_1: LANDING_1_P,
   purple_landing_2: LANDING_2_P,
@@ -256,8 +277,9 @@ const sprite = {
   red_face: FACE_R,
   red_dark: DARK_R,
   red_dead: DEAD_R,
-  red_clearing_0: CLEARING_0_R,
-  red_clearing_1: CLEARING_1_R,
+  red_popped: POPPED_R,
+  red_blinking_0: BLINKING_0_R,
+  red_blinking_1: BLINKING_1_R,
   red_landing_0: LANDING_0_R,
   red_landing_1: LANDING_1_R,
   red_landing_2: LANDING_2_R,
@@ -270,8 +292,9 @@ const sprite = {
   yellow_face: FACE_Y,
   yellow_dark: DARK_Y,
   yellow_dead: DEAD_Y,
-  yellow_clearing_0: CLEARING_0_Y,
-  yellow_clearing_1: CLEARING_1_Y,
+  yellow_popped: POPPED_Y,
+  yellow_blinking_0: BLINKING_0_Y,
+  yellow_blinking_1: BLINKING_1_Y,
   yellow_landing_0: LANDING_0_Y,
   yellow_landing_1: LANDING_1_Y,
   yellow_landing_2: LANDING_2_Y,
@@ -284,8 +307,9 @@ const sprite = {
   vacant_face: FACE_V,
   vacant_dark: DARK_V,
   vacant_dead: DEAD_V,
-  vacant_clearing_0: CLEARING_0_V,
-  vacant_clearing_1: CLEARING_1_V,
+  vacant_popped: POPPED_V,
+  vacant_blinking_0: BLINKING_0_V,
+  vacant_blinking_1: BLINKING_1_V,
   vacant_landing_0: LANDING_0_V,
   vacant_landing_1: LANDING_1_V,
   vacant_landing_2: LANDING_2_V,
@@ -322,6 +346,7 @@ const audio = {
   select: SWAP_SUCCESS,
   selectionFailed: SWAP_FAILED,
   topout: TOPOUT,
+  blockClear: BLOCK_CLEAR,
   chain2: CHAIN2,
   chain3: CHAIN3,
   chain4: CHAIN4,
@@ -335,7 +360,14 @@ const audio = {
   fanfare3: FANFARE3,
   fanfare4: FANFARE4,
   fanfare5: FANFARE5,
+  holdIt1: HOLD_IT_1,
+  holdIt2: HOLD_IT_2,
+  holdIt3: HOLD_IT_3,
+  holdIt4: HOLD_IT_4,
+  announcerBraceYourself: ANN_BRACE_YOURSELF,
   announcerWatchChampBask: ANN_WATCH_CHAMP_BASK,
+  announcerDecisiveStrength: ANN_DECISIVE_STRENGTH,
+  announcerMakeNoMistake: ANN_MAKE_NO_MISTAKE,
   announcerOnlyWordWorthy: ANN_ONLY_WORD_WORTHY,
   announcerAllTheGlory: ANN_ALL_THE_GLORY,
   announcerFatLadySing: ANN_FAT_LADY_SING,

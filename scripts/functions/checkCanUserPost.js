@@ -91,12 +91,15 @@ export function checkCanUserPost() {
       container.append(retryConnection);
       retryConnection.addEventListener("click", event => {
         if (leaderboard.data.length && api.data !== undefined) {
+          leaderboard.canPost = true;
           leaderboard.reason === "";
-          afterGame();
-          return;
+          console.log("successfully got new leaderboard data");
+          document.getElementById("container").innerHTML = "";
+          afterGame(true);
         } else {
           getLeaderboardData();
           api.data = getWorldTimeAPI();
+          console.log("trying to get new leaderboard data");
           displayError(
             "Unable to retrieve data. Attempting a new GET request to the leaderboard database, please wait a few seconds before trying again."
           );
