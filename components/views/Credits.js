@@ -17,6 +17,10 @@ export default st => html`
           Announcer Voice Samples from Super/Ultra Street Fighter IV (2010,
           2014)
         </li>
+        <li>
+          "Hold It!" Voice Samples from the Phoenix Wright Ace Attorney series
+          (2005)
+        </li>
         <li>Red Coin 1-8 sound effects from Super Mario 64 (1996)</li>
         <li>
           "Menu Move","Menu Select" sound effects from Super Smash Bros. (1998)

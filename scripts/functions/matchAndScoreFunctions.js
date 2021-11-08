@@ -8,6 +8,7 @@ import {
   INTERACTIVE_TYPES,
   grid,
   game,
+  debug,
   win,
   preset,
   chainLogic,
@@ -194,14 +195,32 @@ export function checkMatch() {
         game.combo = clearLocationsLength;
         game.totalClears += game.combo;
         if (game.combo > game.largestCombo) game.largestCombo = game.combo;
-        if (game.combo > 3 || game.currentChain > 1) {
-          if (
+
+        // if stack is very high, determine when to say "hold it!"
+        if (game.highestRow === 1 || (game.highestRow < 4 && game.level > 5)) {
+          if (game.level > 6 && !game.disableRaise && game.currentChain < 2) {
+            // always say hold it in overtime
+            playAudio(hold_it[randInt(hold_it.length)], 0.3);
+          } else if (
             game.raiseDelay === 0 &&
-            (game.highestRow === 1 || (game.highestRow === 2 && game.level > 6))
+            game.level < 7 &&
+            (game.currentChain > 1 || game.combo > 3)
           ) {
             playAudio(hold_it[randInt(hold_it.length)], 0.3);
           }
-          game.raiseDelay = 6 * game.boardRiseSpeed;
+        }
+        if (game.combo > 3 || game.currentChain > 1) {
+          let potentialRaiseDelay =
+            6 * game.boardRiseSpeed +
+            30 * (game.currentChain - 1) +
+            10 * (game.combo - 4);
+          if (potentialRaiseDelay > game.raiseDelay)
+            game.raiseDelay = potentialRaiseDelay;
+          if (debug.enabled) {
+            console.log(
+              `New Raise Delay = ${game.raiseDelay} = 6 * (${game.boardRiseSpeed}) + 6 * (${game.currentChain} - 1)))`
+            );
+          }
         }
         if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
       }

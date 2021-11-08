@@ -527,11 +527,11 @@ export function endChain(potentialSecondarySuccessor) {
 
 function doPanic() {
   let panic = false;
-  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 2 : 4;
+  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 3 : 4;
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][rowChecked].color != blockColor.VACANT &&
-      game.raiseDelay == 0
+      game.raiseDelay < 60
     ) {
       for (let r = 0; r < grid.ROWS; r++) {
         if (game.board[c][r].type == blockType.NORMAL) {
