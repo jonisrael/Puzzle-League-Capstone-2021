@@ -69,8 +69,8 @@ export function checkIfControlsExist(controls) {
       left: [37], //ArrowLeft
       down: [40], //ArrowDown
       right: [39], //ArrowRight
-      swap: [90, 83], // z,s
-      raise: "KeyR"
+      swap: [83, 88], // x,s
+      raise: [82, 90] // z, r
     },
     gamepad: {
       up: [12], // D-Pad Up

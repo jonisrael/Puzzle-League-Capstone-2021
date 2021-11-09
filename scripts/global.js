@@ -60,9 +60,9 @@ export const announcer = {
     audio.announcerPerfect
   ],
   bestChainDialogue: [
-    audio.announcerUnbelievable,
-    audio.announcerMakeNoMistake,
-    audio.announcerDecisiveStrength
+    audio.announcerUnbelievable
+    // audio.announcerMakeNoMistake,
+    // audio.announcerDecisiveStrength
   ],
   timeTransitionDialogue: [
     audio.announcerTimeMarchesOn,
