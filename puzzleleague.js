@@ -559,7 +559,7 @@ function doPanic() {
 }
 
 function raiseStack() {
-  if (!areAllBlocksGrounded) {
+  if (!game.grounded) {
     return false;
   }
   if (game.disableRaise || debug.freeze == 1) {
@@ -576,40 +576,25 @@ function raiseStack() {
       game.board[c][r - 1].color = game.board[c][r].color;
       game.board[c][r].color = blockColor.VACANT;
     }
-  }
-
-  for (let c = 0; c < grid.COLS; c++) {
     game.board[c][11].color = game.board[c][12].color;
     game.board[c][12].color = game.board[c][13].color;
     game.board[c][13].color = PIECES[randInt(PIECES.length)];
   }
   fixNextDarkStack();
 
-  for (let i = 0; i < 2; i++) {
-    for (let c = 0; c < grid.COLS; c++) {
-      if (i == 0) {
-        if (
-          game.board[c][0].color != blockColor.VACANT ||
-          game.board[c][1].color != blockColor.VACANT
-        ) {
-          i = 1;
-          break;
-        }
-      } else {
-        if (game.board[c][2].color != blockColor.VACANT && !cpu.enabled) {
-          playAnnouncer(
-            announcer.panicDialogue,
-            announcer.panicIndexLastPicked,
-            "panic"
-          );
-          break;
-        }
-      }
-    }
+  if (game.highestRow < 3) {
+    playAnnouncer(
+      announcer.panicDialogue,
+      announcer.panicIndexLastPicked,
+      "panic"
+    );
   }
-
   return true;
 }
+
+// function checkBoardStates(c, r) {
+//   if (game.board[c][r])
+// }
 
 function checkTime() {
   win.muteMusic.checked ? (game.Music.volume = 0) : (game.Music.volume = 0.1);
