@@ -86,7 +86,7 @@ export function checkIfControlsExist(controls) {
     JSON.parse(localStorage.getItem("controls")) || defaultControls;
   if (
     !storedControls.timeCreated ||
-    storedControls.timeCreated < 1636439204987
+    storedControls.timeCreated < 1636439204987 // time before latest release
   ) {
     localStorage.removeItem("controls");
     console.log("patch to fix potential broken controls implemented");
