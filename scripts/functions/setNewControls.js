@@ -54,11 +54,9 @@ export function getNewGamePadControls(swapInputs, raiseInputs) {
 }
 
 export function checkIfControlsExist(controls) {
-  if (controls) {
-    console.log("controls are already set.", localStorage.getItem("controls"));
-  }
-  // otherwise, set controls to default and return the object
-  console.log("need new controls");
+  // localStorage.removeItem("controls"); // USE ONLY FOR TESTING
+  let storedControls = localStorage.getItem("controls");
+  let controlsObject = JSON.parse(storedControls);
   const defaultControls = {
     keyboard: {
       up: [38], // ArrowUp
@@ -78,17 +76,32 @@ export function checkIfControlsExist(controls) {
     },
     timeCreated: Date.now()
   };
-
-  // patch to fix broken controls 11/9/2021
-  let storedControls =
-    JSON.parse(localStorage.getItem("controls")) || defaultControls;
-  if (
-    !storedControls.timeCreated ||
-    storedControls.timeCreated < 1636442413745 // time before latest release
-  ) {
-    localStorage.removeItem("controls");
-    console.log("11/9/2021 patch to fix broken controls implemented");
+  if (localStorage.getItem("controls")) {
+    console.log("controls are already set.", controlsObject);
+    console.log(!controlsObject.timeCreated);
+    // patch to fix broken controls 11/9/2021
+    try {
+      if (
+        !controlsObject.timeCreated ||
+        controlsObject.timeCreated < 1636442413745 // time before latest release
+      ) {
+        localStorage.setItem("controls", JSON.stringify(defaultControls));
+        console.log("Controls invalid, do 11/9/2021 patch to fix.");
+        return defaultControls;
+      } else {
+        console.log("controls are valid:");
+        return JSON.parse(storedControls);
+      }
+    } catch (error) {
+      localStorage.setItem("controls", JSON.stringify(defaultControls));
+      console.log("Caught Undefined Error! Replacing broken controls...");
+      console.log("11/9/2021 patch to fix broken controls implemented");
+      return defaultControls;
+    }
   }
+  // otherwise, set controls to default and return the object
+  console.log("need new controls");
+  JSON.parse(localStorage.getItem("controls")) || defaultControls;
   localStorage.setItem("controls", JSON.stringify(defaultControls));
   return defaultControls;
 }
