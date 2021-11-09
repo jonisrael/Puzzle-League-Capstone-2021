@@ -5,8 +5,6 @@ import {
   setNewControls
 } from "./functions/setNewControls";
 
-localStorage.removeItem("controls");
-
 checkIfControlsExist(savedControls);
 
 export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
