@@ -5,7 +5,7 @@ export function setNewControls(keyboardLayout, swapInputs, raiseInputs) {
   };
 }
 
-export function getNewKeyboardControls(input) {
+export function getNewKeyboardControls(formInput) {
   // set defaults
   const keyboard = {
     up: [38], // ArrowUp
@@ -15,20 +15,20 @@ export function getNewKeyboardControls(input) {
     swap: [83, 88], // s, x
     raise: [82, 90] // r, z
   };
-  if (input.selectedIndex === 1) {
+  if (formInput.selectedIndex === 1) {
     keyboard.swap = [83, 90]; // s, z
     keyboard.raise = [82, 88]; // r, x
   }
-  if (input.selectedIndex > 1) {
+  if (formInput.selectedIndex > 1) {
     keyboard.up = [87]; // w
     keyboard.left = [65]; // a
     keyboard.down = [83]; // s
     keyboard.right = [68]; // d
-    if (input.selectedIndex === 2) {
+    if (formInput.selectedIndex === 2) {
       keyboard.swap = [75, 100]; // k, numpad4
       keyboard.raise = [76, 101]; // l, numpad5
     }
-    if (input.selectedIndex === 3) {
+    if (formInput.selectedIndex === 3) {
       keyboard.swap = [76, 101]; // l, numpad5
       keyboard.raise = [75, 100]; // k, numpad4
     }
@@ -54,11 +54,9 @@ export function getNewGamePadControls(swapInputs, raiseInputs) {
 }
 
 export function checkIfControlsExist(controls) {
-  // if controls are given, set them.
-  localStorage.removeItem("controls");
   if (controls) {
     console.log("controls are already set.", localStorage.getItem("controls"));
-    // localStorage.setItem("controls", JSON.stringify(controls));
+    localStorage.setItem("controls", JSON.stringify(controls));
     return controls;
   }
   // otherwise, set controls to default and return the object
@@ -79,8 +77,20 @@ export function checkIfControlsExist(controls) {
       right: [15], // D-Pad Right
       swap: [0, 1], // B, A
       raise: [4, 5] // L, R
-    }
+    },
+    timeCreated: Date.now()
   };
+
+  // patch to fix broken controls 11/9/2021
+  let storedControls =
+    JSON.parse(localStorage.getItem("controls")) || defaultControls;
+  if (
+    !storedControls.timeCreated ||
+    storedControls.timeCreated < 1636439204987
+  ) {
+    localStorage.removeItem("controls");
+    console.log("patch to fix potential broken controls implemented");
+  }
   localStorage.setItem("controls", JSON.stringify(defaultControls));
   return defaultControls;
 }

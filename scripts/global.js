@@ -5,7 +5,9 @@ import {
   setNewControls
 } from "./functions/setNewControls";
 
-// console.loglocalStorage.removeItem("controls"));
+localStorage.removeItem("controls");
+
+checkIfControlsExist(savedControls);
 
 export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
   keyboard: {
@@ -23,7 +25,8 @@ export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
     right: [15], // D-Pad Right
     swap: [0, 1], // B, A
     raise: [4, 5] // L, R
-  }
+  },
+  timeCreated: Date.now()
 };
 
 // checkIfControlsExist(savedControls);
