@@ -56,7 +56,6 @@ export function getNewGamePadControls(swapInputs, raiseInputs) {
 export function checkIfControlsExist(controls) {
   if (controls) {
     console.log("controls are already set.", localStorage.getItem("controls"));
-    return controls;
   }
   // otherwise, set controls to default and return the object
   console.log("need new controls");
