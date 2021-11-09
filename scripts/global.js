@@ -5,8 +5,6 @@ import {
   setNewControls
 } from "./functions/setNewControls";
 
-checkIfControlsExist(savedControls);
-
 export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
   keyboard: {
     up: [38], // ArrowUp
@@ -26,6 +24,8 @@ export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
   },
   timeCreated: Date.now()
 };
+
+checkIfControlsExist(savedControls);
 
 // checkIfControlsExist(savedControls);
 
