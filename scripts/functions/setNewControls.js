@@ -55,7 +55,6 @@ export function getNewGamePadControls(swapInputs, raiseInputs) {
 
 export function checkIfControlsExist(controls) {
   if (controls) {
-    localStorage.setItem("controls", JSON.stringify(controls));
     console.log("controls are already set.", localStorage.getItem("controls"));
     return controls;
   }
@@ -86,7 +85,7 @@ export function checkIfControlsExist(controls) {
     JSON.parse(localStorage.getItem("controls")) || defaultControls;
   if (
     !storedControls.timeCreated ||
-    storedControls.timeCreated < 1636439204987 // time before latest release
+    storedControls.timeCreated < 1636442413745 // time before latest release
   ) {
     localStorage.removeItem("controls");
     console.log("11/9/2021 patch to fix broken controls implemented");
