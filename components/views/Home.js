@@ -13,6 +13,22 @@ export default st => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
       <hr />
+      <div id="game-container">
+        <div id="left-column">
+          <button id="arcade-button" class="default-button start-buttons">
+            Play Arcade! (Enter)
+          </button>
+          <button id="wasd-arcade-button" class="default-button start-buttons" style="display:none">
+            Play Arcade!<br />WASD Controls<br />(W)
+          </button>
+        </div>
+        <div id="right-column">
+          <button id="watch-ai-play-button" class="default-button start-buttons">
+            Watch the AI Play! (B)
+          </button>
+        </div>
+      </div>
+      <hr />
       <h1>How to play</h1>
       <p>
         <strong
@@ -50,7 +66,7 @@ export default st => html`
       <p>
         This game is keyboard only, though I may try and add experimental
         mouse/touch support in the future for moving tiles. This game
-        <strong>does NOT run on Firefox correctly</strong>, but runs fine on
+        <strong>does NOT usually run on Firefox correctly</strong>, but runs fine on
         Chrome, Safari, and Edge, with Edge somehow having the best performance
         results (If you have a Windows computer, Microsoft Edge is
         preinstalled).
@@ -74,21 +90,6 @@ export default st => html`
         real time,
         <strong>your score cannot be ranked.</strong>
       </p>
-      <div id="game-container">
-        <div id="left-column">
-          <button id="arcade-button" class="default-button start-buttons">
-            Play Arcade! (Enter)
-          </button>
-          <button id="wasd-arcade-button" class="default-button start-buttons" style="display:none">
-            Play Arcade!<br />WASD Controls<br />(W)
-          </button>
-        </div>
-        <div id="right-column">
-          <button id="watch-ai-play-button" class="default-button start-buttons">
-            Watch Jonathan Israel's AI Play! (B)
-          </button>
-        </div>
-      </div>
     </div>
   </section>
 `;

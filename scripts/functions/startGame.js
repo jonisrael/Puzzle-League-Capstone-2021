@@ -19,7 +19,7 @@ import {
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio, audioList } from "../fileImports";
-import { getWorldTimeAPI, render } from "../../index";
+import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
 import { gameLoop, newBlock } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
@@ -27,6 +27,7 @@ import { bestScores } from "./updateBestScores";
 export function startGame(selectedGameSpeed) {
   leaderboard.reason = "";
   getWorldTimeAPI();
+  getLeaderboardData();
   win.running = true;
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";

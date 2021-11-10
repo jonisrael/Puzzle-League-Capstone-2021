@@ -6,7 +6,8 @@ import {
   game,
   win,
   debug,
-  leaderboard
+  leaderboard,
+  cpu
 } from "../global";
 
 export let bestScores = [
@@ -39,7 +40,7 @@ export function updateBestScores(score) {
   else if (score > bestScores[3]) rank = 4;
   else if (score > bestScores[4]) rank = 5;
 
-  if (leaderboard.reason === "debug") return 6;
+  if (leaderboard.reason === "debug" || cpu.enabled) return 6;
 
   if (rank < 6) {
     if (leaderboard.reason === "slow") {
