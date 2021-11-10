@@ -285,8 +285,11 @@ export function getLeaderboardData(populate = false) {
 }
 
 export function displayError(theError) {
+  if (document.getElementById("error-message"))
+    document.getElementById("error-message").remove();
   let errorDisplay = document.createElement("div");
   errorDisplay.className = "error-display";
+  errorDisplay.setAttribute("id", "error-message");
   document.getElementById("root").prepend(errorDisplay);
   let errorMessage = document.createElement("h1");
   errorMessage.className = "error-display";

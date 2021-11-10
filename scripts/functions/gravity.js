@@ -8,12 +8,11 @@ import {
 } from "../global";
 
 import { checkMatch } from "./matchAndScoreFunctions";
+// import { updateGrid } from "./updateGrid";
 import { updateGrid, isChainActive } from "../../puzzleleague";
 
 export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
-  let c;
-  let r;
 
   for (let c = 0; c < grid.COLS; c++) {
     if (
@@ -73,19 +72,20 @@ export function doGravity(gameSpeed) {
         }
       }
     }
-    for (let i = 0; i < possibleLandedLocations.length; i++) {
-      let x = possibleLandedLocations[i][0];
-      let y = possibleLandedLocations[i][1];
-      if (
-        game.board[x][y].color != blockColor.VACANT &&
-        game.board[x][y + 1].color != blockColor.VACANT
-      ) {
-        game.board[x][y].type = blockType.LANDING;
-        game.board[x][y].timer = 10; // 10 frames is length of landing animation
-        //DEBUG
-        if (debug.slowdown == 1) {
-          game.board[x][y].timer = 120;
-        }
+  }
+  // now check to see if a block has landed
+  for (let i = 0; i < possibleLandedLocations.length; i++) {
+    let x = possibleLandedLocations[i][0];
+    let y = possibleLandedLocations[i][1];
+    if (
+      game.board[x][y].color != blockColor.VACANT &&
+      game.board[x][y + 1].color != blockColor.VACANT
+    ) {
+      game.board[x][y].type = blockType.LANDING;
+      game.board[x][y].timer = 10; // 10 frames is length of landing animation
+      //DEBUG
+      if (debug.slowdown == 1) {
+        game.board[x][y].timer = 120;
       }
     }
   }

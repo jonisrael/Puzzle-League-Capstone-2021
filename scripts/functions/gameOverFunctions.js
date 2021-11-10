@@ -36,7 +36,12 @@ export function closeGame(gameFinished) {
 }
 
 export function isGameOver() {
-  if (game.highestRow === 0 && game.currentChain === 0) {
+  if (
+    game.highestRow === 0 &&
+    game.currentChain === 0 &&
+    !game.disableRaise &&
+    game.raiseDelay === 0
+  ) {
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training") {
       game.score = 0;

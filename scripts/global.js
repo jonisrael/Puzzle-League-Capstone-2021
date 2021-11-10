@@ -171,8 +171,8 @@ export const preset = {
   clearValues: [116, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
   blinkValues: [60, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
   faceValues: [56, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
-  popMultiplier: [12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4],
-  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 10],
+  popMultiplier: [12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
+  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
   controlsDefaultMessage: ""
 };
 
@@ -260,7 +260,14 @@ export const game = {
   highestColIndex: 0,
   Music: gameMusic,
   data: {},
-  log: []
+  log: [],
+  boardStateExistence: {
+    clearing: false,
+    grounded: false,
+    panicking: false,
+    touched: false,
+    airborne: false
+  }
 };
 
 export const action = {

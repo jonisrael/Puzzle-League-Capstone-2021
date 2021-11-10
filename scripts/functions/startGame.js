@@ -312,7 +312,7 @@ export function generateOpeningBoard() {
     // Generate 30 random blocks on bottom 6 grid.ROWS.
     while (true) {
       let x = randInt(grid.COLS);
-      let y = randInt(6);
+      let y = randInt(5);
       if (game.board[x][y].color == blockColor.VACANT) {
         game.board[x][y].color = PIECES[randInt(PIECES.length)];
         break;

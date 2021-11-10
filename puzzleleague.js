@@ -141,7 +141,9 @@ class Block {
         animationIndex = 1;
       }
     } else if (this.type == blockType.PANICKING) {
-      if (game.frames % 18 >= 0 && game.frames % 18 < 3) {
+      if (game.highestRow === 0) {
+        animationIndex = 0;
+      } else if (game.frames % 18 >= 0 && game.frames % 18 < 3) {
         animationIndex = 0;
       } else if (
         (game.frames % 18 >= 3 && game.frames % 18 < 6) ||
@@ -363,11 +365,12 @@ export function updateGrid(frameAdvance = false) {
               for (let i = y - 1; i > 0; i--) {
                 // create chain available blocks above current
                 // If clearing piece detected, break loop since no more chainable blocks.
-                if (!INTERACTIVE_TYPES.includes(game.board[x][i].type)) break;
-                if (game.board[x][y].availableForPrimaryChain) {
-                  game.board[x][i].availableForPrimaryChain = true;
-                } else if (game.board[x][y].availableForSecondaryChain)
-                  game.board[x][i].availableForSecondaryChain = true;
+                if (INTERACTIVE_TYPES.includes(game.board[x][i].type)) {
+                  if (game.board[x][y].availableForPrimaryChain) {
+                    game.board[x][i].availableForPrimaryChain = true;
+                  } else if (game.board[x][y].availableForSecondaryChain)
+                    game.board[x][i].availableForSecondaryChain = true;
+                }
               }
               break;
             case game.board[x][y].switchToFaceFrame:
@@ -582,7 +585,7 @@ function raiseStack() {
   }
   fixNextDarkStack();
 
-  if (game.highestRow < 3) {
+  if (game.highestRow === 3) {
     playAnnouncer(
       announcer.panicDialogue,
       announcer.panicIndexLastPicked,
@@ -847,12 +850,12 @@ function KEYBOARD_CONTROL(event) {
         game.finalTime = (game.frames / 60).toFixed(1);
         game.frames = 0;
         game.over = true;
-        for (let c = 0; c < grid.COLS; c++) {
-          for (let r = 0; r < grid.ROWS; r++) {
-            game.board[c][r].type = blockType.LANDING;
-            game.board[c][r].timer = -2;
-          }
-        }
+        // for (let c = 0; c < grid.COLS; c++) {
+        //   for (let r = 0; r < grid.ROWS; r++) {
+        //     game.board[c][r].type = blockType.LANDING;
+        //     game.board[c][r].timer = -2;
+        //   }
+        // }
         leaderboard.reason = "unofficial-cpu-game";
         gameOverBoard();
         drawGrid();
@@ -1103,38 +1106,6 @@ export function gameLoop() {
         game.seconds = 0;
       }
 
-      if (game.frames % game.boardRiseSpeed == 0) {
-        if (!game.disableRaise && game.grounded && debug.freeze == 0) {
-          if (game.raiseDelay > 0) {
-            game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
-            if (game.raiseDelay < 0) {
-              game.raiseDelay = 0;
-            }
-          } else if (game.frames > 0 && game.grounded) {
-            game.rise = (game.rise + 2) % 32;
-            if (performance.gameSpeed == 2 && game.rise != 0) {
-              if (game.quickRaise || game.boardRiseSpeed === 1) {
-                game.rise = (game.rise + 2) % 32;
-              }
-            }
-          }
-        }
-        if (game.highestRow === 0 && game.currentChain > 0 && game.grounded) {
-          console.log("not dead yet! Go back!");
-          game.rise = 30;
-        }
-        if (game.rise >= 28) game.readyForNewRow = true;
-        if (
-          game.readyForNewRow &&
-          game.rise == 0 &&
-          !game.over &&
-          game.frames > 0
-        ) {
-          raiseStack();
-          game.readyForNewRow = false;
-        }
-      }
-
       if (
         game.frames % 1200 == 0 &&
         game.level < preset.speedValues.length &&
@@ -1193,6 +1164,37 @@ export function gameLoop() {
       isChainActive();
       if (game.frames % 6 == 0) {
         doPanic();
+      }
+      if (game.frames % game.boardRiseSpeed == 0) {
+        if (!game.disableRaise && game.grounded && debug.freeze == 0) {
+          if (game.raiseDelay > 0) {
+            game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+            if (game.raiseDelay < 0) {
+              game.raiseDelay = 0;
+            }
+          } else if (game.frames > 0 && game.grounded) {
+            game.rise = (game.rise + 2) % 32;
+            if (performance.gameSpeed == 2 && game.rise != 0) {
+              if (game.quickRaise || game.boardRiseSpeed === 1) {
+                game.rise = (game.rise + 2) % 32;
+              }
+            }
+          }
+        }
+        if (game.highestRow === 0 && game.currentChain > 0 && game.grounded) {
+          console.log("not dead yet! Go back!");
+          game.rise = 30;
+        }
+        if (game.rise >= 28) game.readyForNewRow = true;
+        if (
+          game.readyForNewRow &&
+          game.rise == 0 &&
+          !game.over &&
+          game.frames > 0
+        ) {
+          raiseStack();
+          game.readyForNewRow = false;
+        }
       }
 
       if (game.raisePressed) {
