@@ -135,7 +135,7 @@ export function cpuAction(input) {
       !game.currentChain &&
       game.boardRiseSpeed > 1
     )
-      input.quickRaise = true;
+      input.raise = true;
   }
 
   if (cpu.control) {
@@ -194,7 +194,7 @@ export function cpuAction(input) {
   //   cpu.prevTargetY = targetY;
   // }
   // cpu.lastActionWasSwap = input.swap ? true : false;
-  // if (input.quickRaise && stackSize > 9) input.quickRaise = false;
+  // if (input.raise && stackSize > 9) input.raise = false;
   cpu.prevTargetX = cpu.targetX;
   cpu.prevTargetY = cpu.targetY;
   return input;

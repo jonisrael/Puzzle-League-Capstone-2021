@@ -1,5 +1,5 @@
 import { game, leaderboard } from "../global";
-import { displayError } from "../..";
+import { displayMessage } from "../..";
 
 export function validateForm(value, score) {
   let identicalEntries = [];
@@ -17,7 +17,7 @@ export function validateForm(value, score) {
   let informIfLessThanLeaderboard = "";
   console.log(value);
   if (value === "GiefKid-AI-v1.0" && game.mode !== "cpu-play") {
-    displayError(`The name "GiefKid-AI-v1.0" is reserved`);
+    displayMessage(`The name "GiefKid-AI-v1.0" is reserved`);
     return -1;
   }
   if (identicalEntries.length > 2) {

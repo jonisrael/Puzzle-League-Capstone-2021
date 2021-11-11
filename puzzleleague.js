@@ -7,7 +7,7 @@
 */
 
 import html from "html-literal";
-import { displayError, render, router } from "./index";
+import { displayMessage, render, router } from "./index";
 import * as state from "./store";
 import { sprite, audio, audioList } from "./scripts/fileImports";
 import {
@@ -24,6 +24,13 @@ import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
+import {
+  action,
+  actionHeld,
+  actionUp,
+  savedControls,
+  playerAction
+} from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
@@ -43,17 +50,15 @@ import {
   blockType,
   PIECES,
   INTERACTIVE_TYPES,
-  savedControls,
   win,
   grid,
   game,
   preset,
   api,
   cpu,
-  performance,
+  perf,
   debug,
   randInt,
-  action,
   leaderboard,
   loadedAudios,
   padInteger
@@ -608,7 +613,9 @@ function checkTime() {
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
     case -176:
-      win.cvs.scrollIntoView({ block: "nearest" });
+      document
+        .getElementById("home-page")
+        .scrollIntoView({ behavior: "smooth", block: "end" });
       break;
     case -120:
       game.messagePriority = "2...";
@@ -678,76 +685,6 @@ function checkTime() {
     case 7320:
       game.messagePriority = "";
   }
-}
-
-function playerAction(input) {
-  // let inputsActive = Object.keys(action).filter(key => action[key] === true);
-  // if (inputsActive.length) console.log(inputsActive, game.frames);
-  if (cpu.enabled) {
-    if (Object.values(input).includes(true) && !input.quickRaise) {
-      cpu.control = 0;
-      console.log("player input detected, cpu control off.");
-    }
-    try {
-      input = cpuAction(input);
-    } catch (error) {
-      if (!debug.enabled)
-        displayError(
-          "AI Bot has encountered an error and needs to be disabled. Press F12 to access the developer console for more information. You can pause and restart the game to relaunch the AI."
-        );
-      console.log(`${error}`);
-      console.log(`Line number: ${error.stack}`);
-      console.log(cpu);
-      console.log(game);
-      console.log(`Disabling AI...`);
-      cpu.enabled = 0;
-      cpu.control = 0;
-      game.messagePriority = "";
-      pause(false, true);
-    }
-  }
-  // first input checker, "else if" is required for priority, so case does not work.
-  if (input.up) {
-    action.up = false;
-    if (game.cursor.y > 1) {
-      game.cursor.y -= 1;
-      playAudio(audio.moveCursor);
-    }
-  } else if (input.down) {
-    action.down = false;
-    if (game.cursor.y < grid.ROWS - 1) {
-      game.cursor.y += 1;
-      playAudio(audio.moveCursor);
-    }
-  } else if (input.left) {
-    action.left = false;
-    if (game.cursor.x > 0) {
-      game.cursor.x -= 1;
-      playAudio(audio.moveCursor);
-    }
-  } else if (input.right) {
-    action.right = false;
-    if (game.cursor.x < grid.COLS - 2) {
-      game.cursor.x += 1;
-      playAudio(audio.moveCursor);
-    }
-  } else if (input.swap) {
-    action.swap = false;
-    trySwappingBlocks(game.cursor.x, game.cursor.y);
-  }
-
-  // second input checker
-  if (input.quickRaise) {
-    action.quickRaise = false;
-    if (game.frames > 0) game.raisePressed = true;
-    win.cvs.scrollIntoView({ block: "nearest" });
-  }
-
-  // NOT REMOVED
-  // reset all keys
-  // Object.keys(action).forEach(key => {
-  //   action[key] = false;
-  // });
 }
 
 // prevent browser scroll from arrow keys
@@ -838,7 +775,7 @@ function KEYBOARD_CONTROL(event) {
       if (savedControls.keyboard.swap.includes(event.keyCode))
         action.swap = true; // s or x
       if (savedControls.keyboard.raise.includes(event.keyCode))
-        action.quickRaise = true; // r or z
+        action.raise = true; // r or z
     }
 
     if (game.mode === "cpu-play" && !debug.enabled) {
@@ -882,7 +819,7 @@ function KEYBOARD_CONTROL(event) {
         debug.show = 1;
         leaderboard.canPost = false;
         leaderboard.reason = "debug";
-        performance.unrankedReason = "debug mode was activated.";
+        perf.unrankedReason = "debug mode was activated.";
         win.fpsDisplay.style.color = "red";
         // game.boardRiseSpeed = preset.speedValues[0];
         // game.blockClearTime = preset.clearValues[0];
@@ -1006,7 +943,7 @@ if (game.controller) {
   if (game.controller.buttons[13].pressed) action.down = true; // s
   if (game.controller.buttons[15].pressed) action.right = true; // d
   // if (event.keyCode == 74 || event.keyCode == 75) action.swap = true; // s or x
-  // if (event.keyCode == 76 || event.keyCode == 79) action.quickRaise = true; // r or z
+  // if (event.keyCode == 76 || event.keyCode == 79) action.lift = true; // r or z
 }
 
 export function gameLoop() {
@@ -1026,31 +963,32 @@ export function gameLoop() {
     closeGame(game.over);
     if (win.restartGame) {
       win.restartGame = false;
-      startGame(performance.gameSpeed);
+      startGame(perf.gameSpeed);
     }
     return;
   }
   requestAnimationFrame(gameLoop);
-  performance.now = Date.now();
-  performance.delta = performance.now - performance.then;
+  perf.now = Date.now();
+  perf.delta = perf.now - perf.then;
   let runtime;
-  if (performance.delta > performance.fpsInterval) {
+  if (perf.delta > perf.fpsInterval) {
     if (game.frames == 0) {
-      performance.gameStartTime = Date.now();
-      performance.sumOfPauseTimes = 0;
+      perf.gameStartTime = Date.now();
+      perf.sumOfPauseTimes = 0;
     }
     if (!game.over) {
-      runtime = Date.now() - performance.gameStartTime;
-      if (!game.over) performance.realTime = runtime;
+      runtime = Date.now() - perf.gameStartTime;
+      if (!game.over) perf.realTime = runtime;
       game.frames >= 0
-        ? (performance.realTime = Math.round(performance.realTime / 100) / 10)
-        : (performance.realTime = 0);
+        ? (perf.realTime = Math.round(perf.realTime / 100) / 10)
+        : (perf.realTime = 0);
     }
 
+    if (game.paused) playerAction(action);
+
     if (!game.paused && win.audioLoaded) {
-      game.frames += 1 * performance.gameSpeed;
+      game.frames += 1 * perf.gameSpeed;
       game.controller = navigator.getGamepads()[0];
-      // if (game.controller) console.log(game.controller.buttons);
 
       if (game.over) {
         let number;
@@ -1126,9 +1064,9 @@ export function gameLoop() {
           );
           console.log(
             `gameTime = ${game.frames / 60}, realTime = ${
-              performance.realTime
-            }, pauseTime = ${performance.sumOfPauseTimes}, timeDifference = ${
-              performance.diffFromRealTime
+              perf.realTime
+            }, pauseTime = ${perf.sumOfPauseTimes}, timeDifference = ${
+              perf.diffFromRealTime
             }`
           );
         }
@@ -1158,7 +1096,7 @@ export function gameLoop() {
       }
       game.grounded = areAllBlocksGrounded();
       playerAction(action);
-      doGravity(performance.gameSpeed); // may need to run twice
+      doGravity(perf.gameSpeed); // may need to run twice
       checkMatch();
       updateGrid();
       isChainActive();
@@ -1168,13 +1106,13 @@ export function gameLoop() {
       if (game.frames % game.boardRiseSpeed == 0) {
         if (!game.disableRaise && game.grounded && debug.freeze == 0) {
           if (game.raiseDelay > 0) {
-            game.raiseDelay -= game.boardRiseSpeed * performance.gameSpeed;
+            game.raiseDelay -= game.boardRiseSpeed * perf.gameSpeed;
             if (game.raiseDelay < 0) {
               game.raiseDelay = 0;
             }
           } else if (game.frames > 0 && game.grounded) {
             game.rise = (game.rise + 2) % 32;
-            if (performance.gameSpeed == 2 && game.rise != 0) {
+            if (perf.gameSpeed == 2 && game.rise != 0) {
               if (game.quickRaise || game.boardRiseSpeed === 1) {
                 game.rise = (game.rise + 2) % 32;
               }
@@ -1199,7 +1137,6 @@ export function gameLoop() {
 
       if (game.raisePressed) {
         game.raisePressed = false;
-        win.cvs.scrollIntoView({ block: "nearest" });
         if (!game.disableRaise) {
           if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
             if (game.rise == 0) game.rise = 2;
@@ -1231,34 +1168,33 @@ export function gameLoop() {
       // on computer performance by decreasing or increasing
       // the amount of times the game.board is drawn per second
       if (!game.over) {
-        if (game.frames % performance.drawDivisor == 0) {
+        if (game.frames % perf.drawDivisor == 0) {
           drawGrid();
         }
       }
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
-        performance.diffFromRealTime = Math.abs(
-          performance.realTime - performance.sumOfPauseTimes - game.frames / 60
+        perf.diffFromRealTime = Math.abs(
+          perf.realTime - perf.sumOfPauseTimes - game.frames / 60
         );
-        if (performance.diffFromRealTime >= 6 && game.mode !== "cpu-play") {
+        if (perf.diffFromRealTime >= 6 && game.mode !== "cpu-play") {
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
-          performance.unrankedReason = `leaderboard posting disabled, behind real clock by
-          ${performance.diffFromRealTime.toFixed(1)} seconds`;
+          perf.unrankedReason = `leaderboard posting disabled, behind real clock by
+          ${perf.diffFromRealTime.toFixed(1)} seconds`;
           win.fpsDisplay.style.color = "red";
         }
-        //  else if (performance.diffFromRealTime >= 3) {
-        //   performance.unrankedReason = `warning, game is running slowly, behind real clock by
-        //   ${performance.diffFromRealTime.toFixed(1)} seconds`;
+        //  else if (perf.diffFromRealTime >= 3) {
+        //   perf.unrankedReason = `warning, game is running slowly, behind real clock by
+        //   ${perf.diffFromRealTime.toFixed(1)} seconds`;
         //   win.fpsDisplay.style.color = "blue";
         // }
       }
       if (game.frames % 5 == 0) {
         // fps counter
-        performance.secondsPerLoop =
-          Math.round(100 * (runtime / 1000 - performance.prev)) / 100;
-        performance.fps =
-          Math.round(1 * 5 * (1 / performance.secondsPerLoop)) / 1;
-        performance.prev = runtime / 1000;
+        perf.secondsPerLoop =
+          Math.round(100 * (runtime / 1000 - perf.prev)) / 100;
+        perf.fps = Math.round(1 * 5 * (1 / perf.secondsPerLoop)) / 1;
+        perf.prev = runtime / 1000;
       }
       let minutesString = "";
       let secondsString = "";
@@ -1303,9 +1239,7 @@ export function gameLoop() {
       }
       if (debug.show) {
         win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
-          game.seconds} seconds<br />Real Time: ${
-          performance.realTime
-        } seconds`;
+          game.seconds} seconds<br />Real Time: ${perf.realTime} seconds`;
         win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
         Stack size: ${12 - game.highestRow}<br>
         Highest Row: ${game.highestRow}`;
@@ -1339,16 +1273,16 @@ export function gameLoop() {
         }
       }
       win.scoreDisplay.innerHTML = scoreString;
-      win.fpsDisplay.innerHTML = `${performance.fps} fps${
-        leaderboard.canPost ? "" : ` unranked -- ${performance.unrankedReason}`
+      win.fpsDisplay.innerHTML = `${perf.fps} fps${
+        leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
       }`;
       if (game.over) {
-        win.fpsDisplay.innerHTML = `Real Game Clock Time: ${performance.realTime -
-          performance.sumOfPauseTimes} seconds`;
+        win.fpsDisplay.innerHTML = `Real Game Clock Time: ${perf.realTime -
+          perf.sumOfPauseTimes} seconds`;
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.messageChangeDelay > 0) {
-        game.messageChangeDelay -= 1 * performance.gameSpeed;
+        game.messageChangeDelay -= 1 * perf.gameSpeed;
       }
       if (game.messageChangeDelay == 0) {
         game.message = game.defaultMessage;
@@ -1431,6 +1365,5 @@ export function gameLoop() {
     // outside pause loop
   }
   // update realtime variables
-  performance.then =
-    performance.now - (performance.delta % performance.fpsInterval);
+  perf.then = perf.now - (perf.delta % perf.fpsInterval);
 }

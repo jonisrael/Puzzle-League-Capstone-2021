@@ -16,7 +16,7 @@ import { submitResults, afterGame } from "./submitResults";
 
 import * as state from "../../store";
 import { playAudio, playMusic } from "./audioFunctions";
-import { displayError, render, router, getLeaderboardData } from "../..";
+import { displayMessage, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;

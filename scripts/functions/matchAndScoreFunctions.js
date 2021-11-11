@@ -12,7 +12,6 @@ import {
   win,
   preset,
   chainLogic,
-  performance,
   randInt
 } from "../global";
 

@@ -9,11 +9,11 @@ import {
   win,
   api,
   game,
-  savedControls,
   loadAllAudios,
   loadedAudios,
   leaderboard
 } from "./scripts/global";
+import { savedControls } from "./scripts/controls";
 import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
@@ -22,7 +22,7 @@ import {
   getNewKeyboardControls,
   getNewGamePadControls,
   setNewControls
-} from "./scripts/functions/setNewControls";
+} from "./scripts/controls";
 dotenv.config();
 
 export const router = new Navigo(window.location.origin);
@@ -91,8 +91,7 @@ function addEventListeners(st) {
     });
   }
   if (st.view === "Controls") {
-    // if saved[]
-
+    // if saved
     document
       .getElementById("accept-game-controls")
       .addEventListener("click", function(event) {
@@ -105,11 +104,11 @@ function addEventListeners(st) {
           document.getElementById("gamepad-raise")
         );
         localStorage.setItem("controls", JSON.stringify(savedControls));
-        console.log(savedControls.gamepad);
         render(state.Home);
         router.navigate("/Home");
       });
   }
+
   if (st.view === "Home") {
     console.log(document.getElementById("patch-notes-overlay"));
     if (document.getElementById("patch-notes-overlay")) {
@@ -121,6 +120,18 @@ function addEventListeners(st) {
           win.patchNotesShown = true;
         });
     }
+    window.addEventListener("gamepadconnected", function(e) {
+      displayMessage(`Gamepad connected.<br />ID: ${e.gamepad.id}`, false);
+      win.gamepadPort = e.gamepad.index;
+      console.log(win.gamepadPort);
+      console.log(
+        "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index,
+        e.gamepad.id,
+        e.gamepad.buttons.length,
+        e.gamepad.axes.length
+      );
+    });
     document.getElementById("arcade-button").addEventListener("click", () => {
       api.data = getWorldTimeAPI();
       game.mode = "arcade";
@@ -213,7 +224,7 @@ export function deleteEntry(_id) {
     })
     .catch(error => {
       leaderboard.reason = "no-leaderboard";
-      displayError(`Deletion Failed. ${error}`);
+      displayMessage(`Deletion Failed. ${error}`);
       console.log("Deletion Failed.", error);
     });
 }
@@ -232,7 +243,7 @@ export function updateEntry(newData, indexToReplace) {
     })
     .catch(error => {
       leaderboard.reason = "no-leaderboard";
-      displayError(
+      displayMessage(
         `Failed to Update Leaderboard at Rank ${indexToReplace + 1}. ${error}`
       );
       console.log("Update Failed, index ${indexToReplace)", error);
@@ -248,7 +259,7 @@ export function sendData(requestData) {
     })
     .catch(error => {
       leaderboard.reason = "no-leaderboard";
-      displayError(`Failed to Post Data. ${error}`);
+      displayMessage(`Failed to Post Data. ${error}`);
       console.log("Failed to Post", error);
     });
 }
@@ -278,24 +289,25 @@ export function getLeaderboardData(populate = false) {
     .catch(error => {
       leaderboard.reason = "no-leaderboard";
       console.log("Failed to fetch Leaderboard Data from home page:", error);
-      displayError(
+      displayMessage(
         `Failed to access leaderboard database from heroku server. ${error}`
       );
     });
 }
 
-export function displayError(theError) {
-  if (document.getElementById("error-message"))
-    document.getElementById("error-message").remove();
-  let errorDisplay = document.createElement("div");
-  errorDisplay.className = "error-display";
-  errorDisplay.setAttribute("id", "error-message");
-  document.getElementById("root").prepend(errorDisplay);
-  let errorMessage = document.createElement("h1");
-  errorMessage.className = "error-display";
-  errorMessage.innerHTML = `<br /><u>${theError}</u><br><br><hr>`;
-  errorDisplay.append(errorMessage);
-  window.scrollTo(0, 0);
+export function displayMessage(theMessage, error = true) {
+  if (document.getElementById("app-message"))
+    document.getElementById("app-message").remove();
+  let appMessageDisplay = document.createElement("div");
+  appMessageDisplay.className = "app-message-display";
+  appMessageDisplay.setAttribute("id", "app-message");
+  document.getElementById("root").prepend(appMessageDisplay);
+  let appMessage = document.createElement("h1");
+  appMessage.className = "app-message-display";
+  appMessage.innerHTML = `<br /><u>${theMessage}</u><br><br><hr>`;
+  appMessageDisplay.append(appMessage);
+  appMessage.style.color = error ? "#FF5555" : "#55FF55";
+  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 }
 
 router.hooks({
@@ -325,7 +337,7 @@ router.hooks({
             console.log("Failed to fetch Leaderboard Data:", error);
             render(state.Home);
             router.navigate("/Home");
-            displayError(
+            displayMessage(
               `Failed to fetch leaderboard data. Returned to Home Page. ${error}`
             );
           });

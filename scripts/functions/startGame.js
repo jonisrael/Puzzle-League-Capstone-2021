@@ -3,7 +3,7 @@ import {
   PIECES,
   randInt,
   game,
-  performance,
+  perf,
   win,
   debug,
   preset,
@@ -29,6 +29,14 @@ export function startGame(selectedGameSpeed) {
   getWorldTimeAPI();
   getLeaderboardData();
   win.running = true;
+  win.gamepadPort = false;
+  for (let i = 0; i < 4; i++) {
+    if (navigator.getGamepads()[i]) {
+      win.gamepadPort = i;
+      break;
+    }
+  }
+  console.log(`Gamepad Port Connected:`, win.gamepadPort);
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay();
@@ -41,12 +49,12 @@ export function startGame(selectedGameSpeed) {
   debug.show = false;
   cpu.enabled = cpu.control = game.mode === "cpu-play";
   cpu.showInfo = false;
-  performance.gameSpeed = selectedGameSpeed;
-  performance.fpsInterval = (1000 * selectedGameSpeed) / 60;
-  performance.then = Date.now();
-  performance.gameStartTime = performance.then;
-  performance.sumOfPauseTimes = 0;
-  performance.diffFromRealTime = 0;
+  perf.gameSpeed = selectedGameSpeed;
+  perf.fpsInterval = (1000 * selectedGameSpeed) / 60;
+  perf.then = Date.now();
+  perf.gameStartTime = perf.then;
+  perf.sumOfPauseTimes = 0;
+  perf.diffFromRealTime = 0;
   requestAnimationFrame(gameLoop);
 }
 

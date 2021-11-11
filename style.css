@@ -65,8 +65,7 @@ body {
     font-size: xx-large;
 }
 
-.error-display {
-    color: rgb(255, 85, 85);
+.app-message-display {
     background-color: rgb(255, 240, 240);
     padding: 1px;
     border-radius: 3px;

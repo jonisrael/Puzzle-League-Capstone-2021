@@ -1,32 +1,6 @@
 import { audio, audioList, sprite } from "./fileImports";
 
-import {
-  checkIfControlsExist,
-  setNewControls
-} from "./functions/setNewControls";
-
-export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
-  keyboard: {
-    up: [38], // ArrowUp
-    left: [37], //ArrowLeft
-    down: [40], //ArrowDown
-    right: [39], //ArrowRight
-    swap: [90, 83], // z, s
-    raise: [82, 90] // r, z
-  },
-  gamepad: {
-    up: [12], // (D-Pad Up
-    left: [14], // D-Pad Left
-    down: [13], // D-Pad Down
-    right: [15], // D-Pad Right
-    swap: [0, 1], // B, A
-    raise: [4, 5] // L, R
-  },
-  timeCreated: Date.now()
-};
-
-checkIfControlsExist(savedControls);
-
+import { checkIfControlsExist, setNewControls } from "./controls";
 // checkIfControlsExist(savedControls);
 
 // export let savedControls = {};
@@ -181,6 +155,7 @@ let gameMusic = new Audio();
 
 export const win = {
   patchNotesShown: false,
+  gamepadPort: false,
   view: "Home",
   viewChanged: false,
   running: false,
@@ -270,16 +245,6 @@ export const game = {
   }
 };
 
-export const action = {
-  up: false,
-  down: false,
-  left: false,
-  right: false,
-  swap: false,
-  quickRaise: false,
-  pause: false
-};
-
 export const api = {
   data: {
     month: "",
@@ -295,7 +260,7 @@ export const chainLogic = {
   addToPrimaryChain: false // used to start/continue a chain
 };
 
-export const performance = {
+export const perf = {
   canPostToLeaderboard: false,
   unrankedReason: "",
   gameSpeed: 1,

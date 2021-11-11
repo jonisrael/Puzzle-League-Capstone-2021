@@ -1,5 +1,5 @@
 import { startGame } from "./startGame";
-import { announcer, game, api, performance, leaderboard } from "../global";
+import { announcer, game, api, perf, leaderboard } from "../global";
 import {
   deleteEntry,
   getLeaderboardData,
@@ -93,7 +93,7 @@ export function afterGame() {
   deleteScores.innerHTML = "Delete Personal Best Scores";
 
   restartGame.addEventListener("click", event => {
-    startGame(performance.gameSpeed);
+    startGame(perf.gameSpeed);
   });
 
   deleteScores.addEventListener("click", event => {

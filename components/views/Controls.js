@@ -39,7 +39,7 @@ export default st => html`
         <option>ZL Button (6)</option>
         <option>ZR Button (7)</option>
       </select>
-      <input type="submit" id="accept-game-controls">Accept Changes</input>
+      <input type="submit" id="accept-game-controls" class="default-button">Accept Changes</input>
     </form>
   </section>
 `;

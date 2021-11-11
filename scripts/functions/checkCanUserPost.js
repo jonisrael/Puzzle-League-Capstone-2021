@@ -3,7 +3,7 @@ import { audio } from "../fileImports";
 import {
   announcer,
   game,
-  performance,
+  perf,
   leaderboard,
   api,
   padInteger,
@@ -11,7 +11,7 @@ import {
 } from "../global";
 import { submitResults, afterGame } from "./submitResults";
 import { playMusic, playAnnouncer } from "./audioFunctions";
-import { displayError, getLeaderboardData, getWorldTimeAPI } from "../..";
+import { displayMessage, getLeaderboardData, getWorldTimeAPI } from "../..";
 
 export function checkCanUserPost() {
   game.Music.loop = false;
@@ -32,7 +32,7 @@ export function checkCanUserPost() {
   if (!leaderboard.canPost) {
     container.innerHTML += `<h2 style="color:red">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
     if (leaderboard.reason == "slow") {
-      container.innerHTML += `<p>This is because the in-game clock time was at least six seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:red; font-weight:bold">but the actual real time of the game was ${performance.realTime} seconds.</span></p><br />`;
+      container.innerHTML += `<p>This is because the in-game clock time was at least six seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:red; font-weight:bold">but the actual real time of the game was ${perf.realTime} seconds.</span></p><br />`;
       container.innerHTML += `
       <label" for="troubleshooting" style="font-size:large">
         Troubleshooting Performance Issues:
@@ -56,7 +56,7 @@ export function checkCanUserPost() {
       </ul>
       <br />
       <p>
-        If this message continues to pop up, unfortunately your hardware may not be fast enough to run the game at its full speed. This performance checker is meant to stop leaderboard scores that may have been easier to obtain due to a slower-running game. I will periodically still be updating this game through 2022, and it is likely that game efficiency and performance will improve. And of course, you can still play locally and try to beat your own best scores!
+        If this message continues to pop up, unfortunately your hardware may not be fast enough to run the game at its full speed. This perf checker is meant to stop leaderboard scores that may have been easier to obtain due to a slower-running game. I will periodically still be updating this game through 2022, and it is likely that game efficiency and perf will improve. And of course, you can still play locally and try to beat your own best scores!
       </p>
       `;
       return false;
@@ -100,7 +100,7 @@ export function checkCanUserPost() {
           getLeaderboardData();
           api.data = getWorldTimeAPI();
           console.log("trying to get new leaderboard data");
-          displayError(
+          displayMessage(
             "Unable to retrieve data. Attempting a new GET request to the leaderboard database, please wait a few seconds before trying again."
           );
         }
@@ -128,7 +128,7 @@ export function checkCanUserPost() {
 
 // Unused Broken Code to get local time
 //if (!api.data.month) {
-//   displayError(
+//   displayMessage(
 //     "Unable to get data from WorldTimeAPI. Using Local Time instead"
 //   );
 //   let date = new Date();

@@ -1,15 +1,16 @@
-import { game, win, performance, debug } from "../global";
+import { game, win, perf, debug } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 
-export function pause(lostFocus = false, aiCrash = false) {
+export function pause(lostFocus = false, message = "") {
   document.getElementById("fps-display").style.display = "none";
   game.paused = true;
   console.log(game);
-  performance.pauseStartTime = Date.now();
+  perf.pauseStartTime = Date.now();
   playAudio(audio.pause, 0.1);
   if (lostFocus) win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus";
-  else if (aiCrash) win.mainInfoDisplay.innerHTML = "Pause -- AI Error";
+  else if (message === "aiCrash")
+    win.mainInfoDisplay.innerHTML = "Pause -- AI Error";
   else win.mainInfoDisplay.innerHTML = "Pause";
   game.Music.pause();
   if (debug.enabled) return; // keep board showing in debug mode
@@ -23,9 +24,9 @@ export function pause(lostFocus = false, aiCrash = false) {
 
 export function unpause() {
   game.paused = false;
-  let pauseTime = Date.now() - performance.pauseStartTime;
+  let pauseTime = Date.now() - perf.pauseStartTime;
   pauseTime = Math.floor(pauseTime / 100) / 10;
-  performance.sumOfPauseTimes += pauseTime;
+  perf.sumOfPauseTimes += pauseTime;
   win.mainInfoDisplay.innerHTML = game.message;
   win.cvs.style.display = "flex";
   game.Music.play();
