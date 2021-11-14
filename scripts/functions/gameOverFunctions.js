@@ -40,7 +40,8 @@ export function isGameOver() {
     game.highestRow === 0 &&
     game.currentChain === 0 &&
     !game.disableRaise &&
-    game.raiseDelay === 0
+    game.raiseDelay === 0 &&
+    game.grounded
   ) {
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training") {

@@ -11,7 +11,6 @@ import {
   debug,
   win,
   preset,
-  chainLogic,
   randInt
 } from "../global";
 
@@ -139,14 +138,14 @@ export function checkMatch() {
 
     // now determine chain
     if (legalMatch(clearLocations)) {
-      chainLogic.addToPrimaryChain = false;
+      game.addToPrimaryChain = false;
       for (let i = 0; i < clearLocationsLength - 1; i++) {
         clearLocationsString += `[${clearLocations[i]}], `;
       }
       clearLocationsString += `[${clearLocations[clearLocationsLength - 1]}].`;
       if (game.currentChain == 0) {
         game.chainScoreAdded = 0;
-        chainLogic.addToPrimaryChain = true;
+        game.addToPrimaryChain = true;
         game.currentChain++;
       } else {
         add1ToChain = false;
@@ -164,7 +163,7 @@ export function checkMatch() {
       }
 
       if (add1ToChain) {
-        chainLogic.addToPrimaryChain = true;
+        game.addToPrimaryChain = true;
         game.currentChain++;
         playChainSFX(game.currentChain);
       } else if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
@@ -256,7 +255,7 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     //   "extra face time",
     //   extraFaceTime
     // );
-    if (chainLogic.addToPrimaryChain) {
+    if (game.addToPrimaryChain) {
       game.board[c][r].availableForPrimaryChain = true;
       game.board[c][r].availableForSecondaryChain = false;
     } else {

@@ -11,6 +11,7 @@ import {
   blockColor,
   blockType,
   api,
+  newGame,
   leaderboard,
   loadedAudios,
   loadAllAudios,
@@ -25,6 +26,7 @@ import { unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 
 export function startGame(selectedGameSpeed) {
+  // Object.keys(game).forEach(key => (game[key] = newGame[key]));
   leaderboard.reason = "";
   getWorldTimeAPI();
   getLeaderboardData();

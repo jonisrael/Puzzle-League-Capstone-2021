@@ -256,10 +256,6 @@ export const api = {
   }
 };
 
-export const chainLogic = {
-  addToPrimaryChain: false // used to start/continue a chain
-};
-
 export const perf = {
   canPostToLeaderboard: false,
   unrankedReason: "",

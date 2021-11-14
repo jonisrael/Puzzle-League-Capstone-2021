@@ -169,8 +169,6 @@ export function checkIfControlsExist(controls) {
   return defaultControls;
 }
 
-export function pauseActions(input) {}
-
 export function playerAction(input) {
   // let inputsActive = Object.keys(action).filter(key => action[key] === true);
   // if (inputsActive.length) console.log(inputsActive, game.frames);
@@ -180,7 +178,7 @@ export function playerAction(input) {
       console.log("player input detected, cpu control off.");
     }
     try {
-      input = cpuAction(input);
+      if (!game.paused) input = cpuAction(input);
     } catch (error) {
       if (!debug.enabled)
         displayMessage(
@@ -194,6 +192,7 @@ export function playerAction(input) {
       cpu.enabled = 0;
       cpu.control = 0;
       game.messagePriority = "";
+      debug.enabled = 1;
       pause(false, "aiCrash");
     }
   } else if (!cpu.enabled) {

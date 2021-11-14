@@ -56,7 +56,7 @@ export function cpuAction(input) {
   let stackMinimum = 4;
   let targetX;
   let targetY;
-  let willSwapWhenTargetReached = false;
+  let swapAtTarget = false;
   let stackSize = 12 - game.highestRow;
   let coordinates = false;
   let dir =
@@ -93,14 +93,15 @@ export function cpuAction(input) {
 
   // If no matches detected, look for ways to flatten the stack.
   if (!coordinates) {
+    // console.log("attempting to flatten stack");
     coordinates = flattenStack();
-    if (coordinates) cpu.targetColor = sprite.debugBlue;
+    if (coordinates) cpu.targetColor = sprite.debugGreen;
   }
 
   if (coordinates) {
     targetX = coordinates[0];
     targetY = coordinates[1];
-    willSwapWhenTargetReached = coordinates[2];
+    swapAtTarget = coordinates[2];
     try {
       if (
         targetX < grid.COLS - 1 &&
@@ -115,27 +116,21 @@ export function cpuAction(input) {
       ) {
         // console.log("abnormality detected, flatten stack");
         coordinates = flattenStack();
-        if (coordinates) cpu.targetColor = sprite.debugYellow;
+        if (coordinates) cpu.targetColor = sprite.debugGreen;
       }
     } catch (error) {
       console.log(`Error: ${error} at lines ${error.stack}`);
       coordinates = flattenStack();
-      if (coordinates) cpu.targetColor = sprite.debugYellow;
+      if (coordinates) cpu.targetColor = sprite.debugGreen;
     }
   } else {
     // idle, return to center of board
     game.messagePriority = `Idle, raising stack size to ${stackMinimum}`;
-    cpu.targetColor = sprite.debugViolet;
+    coordinates = flattenStack();
     targetX = 2;
     targetY = 6 + Math.floor(game.highestRow / 2);
-    willSwapWhenTargetReached = false;
-    if (
-      cpu.control &&
-      stackSize < 11 &&
-      !game.currentChain &&
-      game.boardRiseSpeed > 1
-    )
-      input.raise = true;
+    swapAtTarget = false;
+    if (cpu.control && stackSize < 11 && !game.currentChain) input.raise = true;
   }
 
   if (cpu.control) {
@@ -143,7 +138,7 @@ export function cpuAction(input) {
     else if (game.cursor.y > targetY) input.up = true;
     else if (game.cursor.x > targetX) input.left = true;
     else if (game.cursor.x < targetX) input.right = true;
-    else if (willSwapWhenTargetReached) input.swap = true; // reached target
+    else if (swapAtTarget && !game.disableSwap) input.swap = true; // reached target
   }
 
   cpu.targetX = targetX;
@@ -167,7 +162,7 @@ export function cpuAction(input) {
     cpu.alreadySwapped = false;
 
   // if (
-  //   willSwapWhenTargetReached &&
+  //   swapAtTarget &&
   //   cpu.lastActionWasSwap &&
   //   cpu.prevTargetX === cpu.targetX &&
   //   cpu.prevTargetY === cpu.targetY &&
@@ -197,6 +192,7 @@ export function cpuAction(input) {
   // if (input.raise && stackSize > 9) input.raise = false;
   cpu.prevTargetX = cpu.targetX;
   cpu.prevTargetY = cpu.targetY;
+
   return input;
 }
 
@@ -204,7 +200,11 @@ function randomAction(input) {
   win.mainInfoDisplay.style.color = "red";
   game.messagePriority = `AI swapped again at same location, do random ${cpu.randomInputCounter} inputs`;
   let arr = ["down", "up", "left", "right", "swap", "swap"];
-  let selection = randInt(arr.length);
+
+  let selection = randInt(6);
+  if (selection > 3 && !ableToSwap(game.cursor.x, game.cursor.y)) {
+    selection = randInt(4);
+  }
   cpu.randomInputCounter--;
   // console.log(
   //   `random number selected is ${selection}, counter at ${cpu.randomInputCounter}`
@@ -214,6 +214,37 @@ function randomAction(input) {
   // cpu.targetY = game.cursor.y;
   cpu.targetColor = sprite.debugWhite;
   return input;
+}
+
+export function ableToSwap(x, y, swapAtTarget) {
+  // temp fixes
+  if (x > grid.COLS - 1) return false; // crash occurred at this line
+  if (x < 0) return false;
+
+  let SquareLeft = game.board[x][y];
+  let SquareRight = game.board[x + 1][y];
+  if (SquareLeft.color === "vacant" && SquareRight.color === "vacant")
+    return false;
+  if (!INTERACTIVE_TYPES.includes(SquareLeft.type)) return false;
+  if (!INTERACTIVE_TYPES.includes(SquareRight.type)) return false;
+  if (SquareLeft.timer !== 0 && SquareLeft.type !== "landing") return false;
+  if (SquareRight.timer !== 0 && SquareRight.type !== "landing") return false;
+
+  // Cannot swap directly below a block
+  if (y > 0) {
+    if (
+      SquareLeft.color === blockColor.VACANT &&
+      game.board[x][y - 1].color !== blockColor.VACANT
+    )
+      return false;
+    if (
+      SquareRight.color === blockColor.VACANT &&
+      game.board[x + 1][y - 1].color !== blockColor.VACANT
+    )
+      return false;
+  }
+
+  return [x, y, swapAtTarget]; // all tests have passed
 }
 
 //

@@ -14,6 +14,7 @@ import { updateGrid, isChainActive } from "../../puzzleleague";
 export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
 
+  // this should be moved to update grid
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][11].type == blockType.LANDING &&
@@ -23,6 +24,7 @@ export function doGravity(gameSpeed) {
       game.disableRaise = false;
     }
 
+    //
     for (let r = grid.ROWS - 1; r >= 0; r--) {
       if (
         game.board[c][r].type == blockType.LANDING &&

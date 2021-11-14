@@ -17,6 +17,7 @@ import {
 import {
   generateOpeningBoard,
   fixNextDarkStack,
+  resetGameVariables,
   startGame
 } from "./scripts/functions/startGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
@@ -62,6 +63,14 @@ import {
   loadedAudios,
   padInteger
 } from "./scripts/global.js";
+
+import {
+  resetBoardStateVars,
+  gravity,
+  checkMatches,
+  updateGridState,
+  blockPhysics
+} from "./scripts/functions/experimentalFunctions";
 
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
@@ -185,7 +194,7 @@ class Block {
     // AI Visuals
     if (cpu.showInfo) {
       DEBUG_TARGET_IMAGE.src = cpu.targetColor;
-      DEBUG_HOLE_IMAGE.src = sprite.debugYellow;
+      DEBUG_HOLE_IMAGE.src = sprite.debugTan;
       DEBUG_MATCH_IMAGE.src = sprite.debugMagenta;
 
       if (
@@ -203,7 +212,7 @@ class Block {
       if (
         this.x === cpu.holeDetectedAt[0] &&
         this.y === cpu.holeDetectedAt[1] &&
-        cpu.targetColor === sprite.debugGreen
+        cpu.targetColor === sprite.debugYellow
       ) {
         DEBUG_HOLE_IMAGE.onload = () => {
           win.ctx.drawImage(
@@ -1093,15 +1102,29 @@ export function gameLoop() {
           game.boardRiseSpeed = 1;
         }
       }
-      game.grounded = areAllBlocksGrounded();
       playerAction(action);
-      doGravity(perf.gameSpeed); // may need to run twice
-      checkMatch();
-      updateGrid();
-      isChainActive();
-      if (game.frames % 6 == 0) {
-        doPanic();
+      // game logic per block
+      resetBoardStateVars(); // used to reset things like chain or matches
+      for (let c = 0; c < grid.COLS; c++) {
+        gravity(perf.gameSpeed, c); // check gravity of column
+        checkMatches(c);
+        for (let r = grid.ROWS - 1; r >= 0; r--) {
+          updateGrid2(); // check and update state of block
+          doGravity2(perf.gameSpeed); // check if gravity should apply to block
+          checkMatch2();
+        }
       }
+      analyzeBoardStateVars();
+      // isChainActive();
+      // game.grounded = areAllBlocksGrounded();
+
+      // doGravity(perf.gameSpeed); // may need to run twice
+      // checkMatch();
+      // updateGrid();
+      // isChainActive();
+      // if (game.frames % 6 == 0) {
+      //   doPanic();
+      // }
       if (game.frames % game.boardRiseSpeed == 0) {
         if (!game.disableRaise && game.grounded && debug.freeze == 0) {
           if (game.raiseDelay > 0) {
