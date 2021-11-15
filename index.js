@@ -13,7 +13,7 @@ import {
   loadedAudios,
   leaderboard
 } from "./scripts/global";
-import { savedControls } from "./scripts/controls";
+import { defaultControls, savedControls } from "./scripts/controls";
 import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
@@ -92,6 +92,7 @@ function addEventListeners(st) {
   }
   if (st.view === "Controls") {
     // if saved
+    checkPreselectedControls(savedControls);
     document
       .getElementById("accept-game-controls")
       .addEventListener("click", function(event) {
@@ -104,8 +105,15 @@ function addEventListeners(st) {
           document.getElementById("gamepad-raise")
         );
         localStorage.setItem("controls", JSON.stringify(savedControls));
-        render(state.Home);
-        router.navigate("/Home");
+        render(state.Controls);
+      });
+    document
+      .getElementById("restore-defaults")
+      .addEventListener("click", function(event) {
+        savedControls.keyboard = defaultControls.keyboard;
+        savedControls.gamepad = defaultControls.gamepad;
+        localStorage.setItem("controls", JSON.stringify(savedControls));
+        render(state.Controls);
       });
   }
 
@@ -308,6 +316,29 @@ export function displayMessage(theMessage, error = true) {
   appMessageDisplay.append(appMessage);
   appMessage.style.color = error ? "#FF5555" : "#55FF55";
   window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+}
+
+export function checkPreselectedControls(controls) {
+  let keyboardControls = document.getElementById("keyboard-controls");
+  // determine keyboard preselection
+  keyboardControls[0].selected =
+    controls.keyboard.up[0] === 38 && controls.keyboard.swap[1] === 88; // swap is x
+  keyboardControls[1].selected =
+    controls.keyboard.up[0] === 38 && controls.keyboard.swap[1] !== 88; // swap is z
+  keyboardControls[2].selected =
+    controls.keyboard.up[0] !== 38 && controls.keyboard.swap[0] === 75; // swap is k
+  keyboardControls[3].selected =
+    controls.keyboard.up[0] !== 38 && controls.keyboard.swap[0] !== 75; // swap is l
+
+  let gamepadSwap = document.getElementById("gamepad-swap");
+  let gamepadRaise = document.getElementById("gamepad-raise");
+  let swapArray = Object.values(gamepadSwap)[0];
+  console.log(gamepadSwap[0]);
+  let gamepad;
+  for (let i = 0; i < gamepadSwap.length; i++) {
+    gamepadSwap[i].selected = controls.gamepad.swap.includes(i);
+    gamepadRaise[i].selected = controls.gamepad.raise.includes(i);
+  }
 }
 
 router.hooks({

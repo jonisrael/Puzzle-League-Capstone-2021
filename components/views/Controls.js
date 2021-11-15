@@ -53,6 +53,7 @@ export default st => html`
       </div>
       </div>
       <input type="submit" id="accept-game-controls" class="default-button" value="Save Changes"></input>
+      <button id="restore-defaults" class="default-button">Restore Defaults</button>
     </form>
 
   </section>

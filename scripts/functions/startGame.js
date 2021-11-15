@@ -44,7 +44,6 @@ export function startGame(selectedGameSpeed, version = 1) {
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay();
   game.board = generateOpeningBoard();
-  playMusic(audio.popcornMusic);
   if (loadedAudios.length == 0) loadAllAudios();
   // Set up game loop
   leaderboard.canPost = true;

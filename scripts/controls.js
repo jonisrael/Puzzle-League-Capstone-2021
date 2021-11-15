@@ -36,17 +36,17 @@ export const heldFrames = {
   swap: 0
 };
 
-export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
+export const defaultControls = {
   keyboard: {
     up: [38], // ArrowUp
     left: [37], //ArrowLeft
     down: [40], //ArrowDown
     right: [39], //ArrowRight
-    swap: [90, 83], // z, s
+    swap: [83, 88], // s, x
     raise: [82, 90] // r, z
   },
   gamepad: {
-    up: [12], // (D-Pad Up
+    up: [12], // D-Pad Up
     left: [14], // D-Pad Left
     down: [13], // D-Pad Down
     right: [15], // D-Pad Right
@@ -56,6 +56,10 @@ export const savedControls = JSON.parse(localStorage.getItem("controls")) || {
   },
   timeCreated: Date.now()
 };
+
+export const savedControls =
+  JSON.parse(localStorage.getItem("controls")) ||
+  JSON.parse(JSON.stringify(defaultControls));
 
 checkIfControlsExist(savedControls);
 
@@ -70,9 +74,9 @@ export function getNewKeyboardControls(formInput) {
   // set defaults
   const keyboard = {
     up: [38], // ArrowUp
-    left: [37], // ArrowLeft;
-    down: [40], //ArrowDown;
-    right: [39], //ArrowRight;
+    left: [37], //ArrowLeft
+    down: [40], //ArrowDown
+    right: [39], //ArrowRight
     swap: [83, 88], // s, x
     raise: [82, 90] // r, z
   };

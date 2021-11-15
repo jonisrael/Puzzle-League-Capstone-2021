@@ -317,7 +317,7 @@ h3 {
 
 select {
     display: flex;
-    text-align: center;
+    padding: 1px;
     overflow: auto;
 }
 

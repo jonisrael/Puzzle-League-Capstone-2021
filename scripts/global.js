@@ -184,6 +184,13 @@ export const win = {
   audioLoaded: false
 };
 
+export const music = [
+  audio.popcornMusic,
+  audio.scatmanMusic,
+  audio.rashidMusic,
+  audio.fireMusic
+];
+
 export const game = {
   // use let instead of export const to revert to resetGameVar
   mode: "arcade",

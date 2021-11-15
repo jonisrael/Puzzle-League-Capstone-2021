@@ -619,6 +619,7 @@ export function checkTime() {
   win.muteMusic.checked ? (game.Music.volume = 0) : (game.Music.volume = 0.1);
   switch (game.frames) {
     case -180:
+      game.Music.pause();
       debug.show = false;
       game.messagePriority = "3...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
@@ -639,9 +640,11 @@ export function checkTime() {
     case 0:
       game.messagePriority = "Go!";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.1, true);
+
       break;
     case 60:
       if (game.message === "Go!") {
+        playMusic(audio.popcornMusic);
         game.messagePriority = "";
         game.defaultMessage = "X to swap Z to lift the stack!";
         game.message = game.defaultMessage;

@@ -120,7 +120,10 @@ import DEBUGY from ".././assets/Extras/DebugSprites/debugY.png";
 
 // Import Music
 import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
-import POPCORN_SONG from ".././assets/Audio/Music/popcorn.mp3";
+import POPCORN_SONG from ".././assets/Audio/Music/popcorn.wav";
+import SCATMAN_SONG from ".././assets/Audio/Music/scatman.wav";
+import RASHID_SONG from ".././assets/Audio/Music/rashid.wav";
+import FIRE_SONG from ".././assets/Audio/Music/throwingFire.wav";
 import RESULTS_SONG from ".././assets/Audio/Music/results.wav";
 
 // Import Audio
@@ -341,6 +344,9 @@ const audio = {
   announcer4: ANN_4,
   announcerGo: ANN_GO,
   popcornMusic: POPCORN_SONG,
+  scatmanMusic: SCATMAN_SONG,
+  rashidMusic: RASHID_SONG,
+  fireMusic: FIRE_SONG,
   pause: PAUSE,
   moveCursor: MOVE_CURSOR,
   select: SWAP_SUCCESS,
