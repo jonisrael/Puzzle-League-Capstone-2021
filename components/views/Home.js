@@ -6,9 +6,7 @@ export default st => html`
       <h2 style="color:white;">Welcome to Puzzle League: Arcade Edition!</h2>
       <h1>Controls</h1>
       <ul id="controls">
-        <li>
-          Press Arrow keys to <strong>move</strong> the Cursor
-        </li>
+        <li>Press Arrow keys to <strong>move</strong> the Cursor</li>
         <li>Press S or X to <strong>swap</strong> blocks at the Cursor</li>
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
@@ -18,12 +16,19 @@ export default st => html`
           <button id="arcade-button" class="default-button start-buttons">
             Play Arcade! (Enter)
           </button>
-          <button id="wasd-arcade-button" class="default-button start-buttons" style="display:none">
+          <button
+            id="wasd-arcade-button"
+            class="default-button start-buttons"
+            style="display:none"
+          >
             Play Arcade!<br />WASD Controls<br />(W)
           </button>
         </div>
         <div id="right-column">
-          <button id="watch-ai-play-button" class="default-button start-buttons">
+          <button
+            id="watch-ai-play-button"
+            class="default-button start-buttons"
+          >
             Watch the AI Play! (B)
           </button>
         </div>
@@ -66,14 +71,19 @@ export default st => html`
       <p>
         This game is keyboard only, though I may try and add experimental
         mouse/touch support in the future for moving tiles. This game
-        <strong>does NOT usually run on Firefox correctly</strong>, but runs fine on
-        Chrome, Safari, and Edge, with Edge somehow having the best performance
-        results (If you have a Windows computer, Microsoft Edge is
+        <strong>does NOT usually run on Firefox correctly</strong>, but runs
+        fine on Chrome, Safari, and Edge, with Edge somehow having the best
+        performance results (If you have a Windows computer, Microsoft Edge is
         preinstalled).
       </p>
       <hr />
       <h1>Game Controller Support</h1>
-      <p>It is currently being developed! For now, you can use local applications like <a href = https://joytokey.net/en/>JoyToKey</a> or <a href="https://keysticks.net/">Keysticks</a> to map buttons to keyboard inputs.</p>
+      <p>
+        It is now released! However it is experimental and may not work on all
+        devices or controllers. You can click the "Set Controls" view at the top
+        to set your controls. If a gamepad is detected to be connected, a
+        message will appear at the top of the page.
+      </p>
       <hr />
       <h1 style="color:red">Notice about Posting Scores</h1>
       <p style="color:black">
@@ -85,9 +95,8 @@ export default st => html`
           >Unfortunately it is not a consistent programming language with
           running games optimally</strong
         >, and there are issues with the game running too slowly on certain
-        computers and can lead to an unintended advantage. If
-        the app detects that the in-game timer is six or more seconds behind
-        real time,
+        computers and can lead to an unintended advantage. If the app detects
+        that the in-game timer is six or more seconds behind real time,
         <strong>your score cannot be ranked.</strong>
       </p>
     </div>
