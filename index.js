@@ -65,7 +65,7 @@ function addEventListeners(st) {
           render(state[event.target.title]);
         else {
           game.mode = "arcade";
-          startGame(2);
+          startGame(2, 1);
         }
       }
     })

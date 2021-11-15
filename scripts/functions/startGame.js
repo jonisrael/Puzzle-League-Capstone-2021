@@ -21,11 +21,12 @@ import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio, audioList } from "../fileImports";
 import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
-import { gameLoop, newBlock } from "../../puzzleleague";
+import { gameLoop, newBlock, puzzleLeagueLoop } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
+import { newBlock2 } from "./experimentalFunctions";
 
-export function startGame(selectedGameSpeed) {
+export function startGame(selectedGameSpeed, version = 1) {
   // Object.keys(game).forEach(key => (game[key] = newGame[key]));
   leaderboard.reason = "";
   getWorldTimeAPI();
@@ -57,7 +58,13 @@ export function startGame(selectedGameSpeed) {
   perf.gameStartTime = perf.then;
   perf.sumOfPauseTimes = 0;
   perf.diffFromRealTime = 0;
-  requestAnimationFrame(gameLoop);
+  if (version === 1) {
+    requestAnimationFrame(gameLoop);
+  }
+
+  if (version === 2) {
+    requestAnimationFrame(puzzleLeagueLoop);
+  }
 }
 
 function createHeadsUpDisplay() {
@@ -258,9 +265,9 @@ export function resetGameVariables() {
   game.grounded = true;
   game.addToPrimaryChain = false; // used to start/continue a chain
   game.readyForNewRow = false;
-  game.disableRaise = false;
+  game.boardRiseDisabled = false;
   game.disableSwap = false;
-  game.quickRaise = false;
+  game.currentlyQuickRaising = false;
   game.raisePressed = false;
   // game.Music = gameMusic;
   game.data = {};
@@ -303,18 +310,22 @@ export function fixNextDarkStack() {
   }
 }
 
-export function generateOpeningBoard() {
+export function generateOpeningBoard(version = 1) {
   game.cursor.x = 2;
   game.cursor.y = 6;
+  let block;
   for (let c = 0; c < grid.COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
-      let block = newBlock(c, r);
+      if (version === 1) block = newBlock(c, r);
+      if (version === 2) block = newBlock2(c, r);
       game.board[c].push(block);
       if (r > 11) {
         game.board[c][r].color = PIECES[randInt(PIECES.length)];
         game.board[c][r].type = blockType.DARK;
       }
+      if (version === 1) block.draw();
+      if (version === 2) block.draw("vacant_normal");
       block.draw();
     }
   }

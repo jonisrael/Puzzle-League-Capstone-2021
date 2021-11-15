@@ -39,14 +39,15 @@ export function isGameOver() {
   if (
     game.highestRow === 0 &&
     game.currentChain === 0 &&
-    !game.disableRaise &&
-    game.raiseDelay === 0 &&
-    game.grounded
+    !game.boardRiseDisabled &&
+    game.raiseDelay === 0
   ) {
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training") {
       game.score = 0;
       game.cursor.y += 8;
+      playAudio(audio.topout);
+      console.log(game.log);
       if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
       for (let x = 0; x < grid.COLS; x++) {
         for (let y = grid.ROWS - 1; y > 3; y--) {
@@ -54,8 +55,7 @@ export function isGameOver() {
           game.board[x][y].type = blockType.NORMAL;
         }
       }
-      playAudio(audio.topout);
-      console.log(game.log);
+
       return false;
     }
     game.Music.volume = 0;
@@ -78,7 +78,7 @@ export function gameOverBoard() {
   if (game.frames == 4) {
     playAudio(audio.topout);
   }
-  game.disableRaise = true;
+  game.boardRiseDisabled = true;
   let deathRow = Math.floor(game.frames / 2);
   for (let i = 0; i < grid.COLS; i++) {
     if (game.board[i][deathRow].color != blockColor.VACANT) {

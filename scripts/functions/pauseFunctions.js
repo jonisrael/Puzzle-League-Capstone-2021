@@ -6,6 +6,8 @@ export function pause(lostFocus = false, message = "") {
   document.getElementById("fps-display").style.display = "none";
   game.paused = true;
   console.log(game);
+  console.log(win);
+  console.log(perf);
   perf.pauseStartTime = Date.now();
   playAudio(audio.pause, 0.1);
   if (lostFocus) win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus";

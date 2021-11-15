@@ -92,7 +92,7 @@ export function trySwappingBlocks(x, y) {
     swapProperties(game.board[x][y], game.board[x + 1][y]);
     // if landing, shorten timer to end the landing animation next frame.
     if (game.board[x][y].timer > 1) game.board[x][y].timer = 0;
-    if (game.board[x + 1][y].timer > 1) game.board[x][y].timer = 0;
+    if (game.board[x + 1][y].timer > 1) game.board[x+1][y].timer = 0;
     game.board[x][y].type = blockType.NORMAL;
     game.board[x + 1][y].type = blockType.NORMAL;
     game.board[x][y].availableForPrimaryChain = false;

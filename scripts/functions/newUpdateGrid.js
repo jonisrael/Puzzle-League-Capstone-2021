@@ -58,7 +58,7 @@ export function updateGrid(frameAdvance = false) {
           game.board[x][y].timer = 0;
         } else if (game.board[x][y].timer > 0) {
           game.board[x][y].timer -= 1;
-          game.disableRaise = true;
+          game.boardRiseDisabled = true;
         }
         if (
           !debug.freeze &&
@@ -86,7 +86,7 @@ export function updateGrid(frameAdvance = false) {
                 // console.log("do delay timer");
                 game.board[x][y - 1].timer = game.blockStallTime;
               }
-              game.disableRaise = false;
+              game.boardRiseDisabled = false;
               for (let i = y - 1; i > 0; i--) {
                 // create chain available blocks above current
                 // If clearing piece detected, break loop since no more chainable blocks.
@@ -138,7 +138,7 @@ export function gravity(gameSpeed, x, y, possibleLandedLocations) {
 
   if (airborne) {
     game.board[x][y].airborne = true;
-    game.disableRaise = true; // no raising when block is airborne
+    game.boardRiseDisabled = true; // no raising when block is airborne
     // Cancel landing animation since airborne
     if (game.board[x][y].type === blockType.LANDING) {
       // turn into normal block with no stall time
@@ -163,7 +163,7 @@ export function gravity(gameSpeed, x, y, possibleLandedLocations) {
     ) {
       game.board[x][y].type === blockType.NORMAL;
       game.board[x][y].touched === false;
-      game.disableRaise = false;
+      game.boardRiseDisabled = false;
     }
   }
 
@@ -235,10 +235,10 @@ function transferToNextRow(x, y) {
 // ) {
 //   if (y === 11) {
 //     game.board[x][11].type = blockType.NORMAL;
-//     game.disableRaise = false;
+//     game.boardRiseDisabled = false;
 //   } else {
 //     game.board[x][y].touched = false;
-//     game.disableRaise = false;
+//     game.boardRiseDisabled = false;
 //   }
 // }
 
@@ -249,7 +249,7 @@ function transferToNextRow(x, y) {
 //     game.board[x][11].timer == 0
 //   ) {
 //     game.board[x][11].type = blockType.NORMAL;
-//     game.disableRaise = false;
+//     game.boardRiseDisabled = false;
 //   }
 //   for (let y = grid.ROWS - 1; y >= 0; y--) {
 //     if (
@@ -266,7 +266,7 @@ function transferToNextRow(x, y) {
 //     ) {
 //       game.board[x][y].type = blockType.NORMAL;
 //       game.board[x][y].touched = false;
-//       game.disableRaise = false;
+//       game.boardRiseDisabled = false;
 //     }
 
 //     if (
@@ -275,7 +275,7 @@ function transferToNextRow(x, y) {
 //       INTERACTIVE_TYPES.includes(game.board[x][y].type)
 //     ) {
 //       // if normal block, fall one unit
-//       game.disableRaise = false;
+//       game.boardRiseDisabled = false;
 //       // When a block is ready to fall
 //       if (game.board[x][y].timer == 0) {
 //         game.board[x][y + 1].color = game.board[x][y].color;

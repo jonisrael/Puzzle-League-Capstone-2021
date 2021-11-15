@@ -126,12 +126,21 @@ section {
     padding-left: 30px; */
 }
 
+#accept-game-controls {
+    justify-content: center;
+}
+
 #leaderboard-page {
     overflow:hidden;
 }
 
 #game-container, #options-menu {
     display: flex;
+}
+
+#controls-container {
+    display: flex;
+    justify-content: center;
 }
 
 #fps-display {
@@ -141,6 +150,7 @@ section {
 }
 
 #left-column, #right-column {
+    display: flex;
     flex: 50%;
     flex-direction: row;
     justify-content: center;
@@ -184,6 +194,10 @@ section {
 
 form label {
     font-size: large;
+}
+
+label {
+    padding: 10px;
 }
 
 header {
@@ -301,6 +315,16 @@ h3 {
     text-align: center;
 }
 
+select {
+    display: flex;
+    text-align: center;
+    overflow: auto;
+}
+
+#gamepad-swap {
+    text-align: center;
+}
+
 #home-page h3 {
     text-align: left;
     text-indent: 50px;
@@ -342,6 +366,12 @@ h3 {
 
 #nav-message {
     color: orange;
+}
+
+#vl {
+    border-left: 1px solid black;
+    padding: 10px;
+    height: 200px;
 }
 
 footer {

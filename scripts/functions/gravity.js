@@ -21,7 +21,7 @@ export function doGravity(gameSpeed) {
       game.board[c][11].timer == 0
     ) {
       game.board[c][11].type = blockType.NORMAL;
-      game.disableRaise = false;
+      game.boardRiseDisabled = false;
     }
 
     //
@@ -40,7 +40,7 @@ export function doGravity(gameSpeed) {
       ) {
         game.board[c][r].type = blockType.NORMAL;
         game.board[c][r].touched = false;
-        game.disableRaise = false;
+        game.boardRiseDisabled = false;
       }
 
       if (
@@ -49,7 +49,7 @@ export function doGravity(gameSpeed) {
         INTERACTIVE_TYPES.includes(game.board[c][r].type)
       ) {
         // if normal block, fall one unit
-        game.disableRaise = false;
+        game.boardRiseDisabled = false;
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
           game.board[c][r + 1].color = game.board[c][r].color;
@@ -137,6 +137,6 @@ export function areAllBlocksGrounded() {
       game.board[c][r].touched = false;
     }
   }
-  game.disableRaise = false;
+  game.boardRiseDisabled = false;
   return true;
 }

@@ -346,7 +346,7 @@ export function updateGrid(frameAdvance = false) {
           game.board[x][y].timer = 0;
         } else if (game.board[x][y].timer > 0) {
           game.board[x][y].timer -= 1;
-          game.disableRaise = true;
+          game.boardRiseDisabled = true;
         }
         if (
           !debug.freeze &&
@@ -374,7 +374,7 @@ export function updateGrid(frameAdvance = false) {
                 // console.log("do delay timer");
                 game.board[x][y - 1].timer = game.blockStallTime;
               }
-              game.disableRaise = false;
+              game.boardRiseDisabled = false;
               for (let i = y - 1; i > 0; i--) {
                 // create chain available blocks above current
                 // If clearing piece detected, break loop since no more chainable blocks.
@@ -410,10 +410,10 @@ export function updateGrid(frameAdvance = false) {
 //       game.board[x][y].type = blockType.FACE;
 //     } else if (game.board[x][y].timer === game.leftOverTime) {
 //       game.board[x][y].timer -= 1;
-//       game.disableRaise = true;
+//       game.boardRiseDisabled = true;
 //     } else if (game.board[x][y].timer > 0) {
 //       game.board[x][y].timer -= 1;
-//       game.disableRaise = true;
+//       game.boardRiseDisabled = true;
 //     } else if (game.board[x][y].timer === 0) {
 //       game.board[x][y].type = blockType.POPPED;
 //       game.board[x][y].timer = game.board[x][y].popTimer;
@@ -426,7 +426,7 @@ export function updateGrid(frameAdvance = false) {
 //     game.board[x][y].leftoverTimer = 0;
 //   } else if (game.board[x][y].timer > 0) {
 //     game.board[x][y].timer -= 1;
-//     game.disableRaise = true;
+//     game.boardRiseDisabled = true;
 //   }
 // }
 //       }
@@ -574,11 +574,11 @@ function doPanic() {
   return panic;
 }
 
-function raiseStack() {
+function makeNewRow() {
   if (!game.grounded) {
     return false;
   }
-  if (game.disableRaise || debug.freeze == 1) {
+  if (game.boardRiseDisabled || debug.freeze == 1) {
     return false;
   }
 
@@ -1085,14 +1085,14 @@ export function gameLoop() {
         }
       }
 
-      if (game.quickRaise) {
+      if (game.currentlyQuickRaising) {
         game.disableSwap = true;
         game.message = "Quick-Raise Initiated";
         game.messageChangeDelay = 1000;
         win.mainInfoDisplay.style.color = "blue";
         if (game.rise == 0) {
           game.disableSwap = false;
-          game.quickRaise = false;
+          game.currentlyQuickRaising = false;
           game.message = "Quick-Raise Complete";
           game.messageChangeDelay = 90;
           win.mainInfoDisplay.style.color = "blue";
@@ -1126,7 +1126,7 @@ export function gameLoop() {
       //   doPanic();
       // }
       if (game.frames % game.boardRiseSpeed == 0) {
-        if (!game.disableRaise && game.grounded && debug.freeze == 0) {
+        if (!game.boardRiseDisabled && game.grounded && debug.freeze == 0) {
           if (game.raiseDelay > 0) {
             game.raiseDelay -= game.boardRiseSpeed * perf.gameSpeed;
             if (game.raiseDelay < 0) {
@@ -1135,7 +1135,7 @@ export function gameLoop() {
           } else if (game.frames > 0 && game.grounded) {
             game.rise = (game.rise + 2) % 32;
             if (perf.gameSpeed == 2 && game.rise != 0) {
-              if (game.quickRaise || game.boardRiseSpeed === 1) {
+              if (game.currentlyQuickRaising || game.boardRiseSpeed === 1) {
                 game.rise = (game.rise + 2) % 32;
               }
             }
@@ -1152,17 +1152,17 @@ export function gameLoop() {
           !game.over &&
           game.frames > 0
         ) {
-          raiseStack();
+          makeNewRow();
           game.readyForNewRow = false;
         }
       }
 
       if (game.raisePressed) {
         game.raisePressed = false;
-        if (!game.disableRaise) {
+        if (!game.boardRiseDisabled) {
           if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
             if (game.rise == 0) game.rise = 2;
-            game.quickRaise = true;
+            game.currentlyQuickRaising = true;
             game.raiseDelay = 0;
           }
         }
