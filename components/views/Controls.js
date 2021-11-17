@@ -40,8 +40,8 @@ export default st => html`
     <label for="gamepad-raise">Select Raise Gamepad Button(s) (Hold CTRL for Multiple Inputs)</label>
     <br>
       <select name="gamepad-raise" id="gamepad-raise" size="8" required multiple>
-      <option>B Button (0)</option>
-        <option>A Button (1)</option>
+      <option>A Button (0)</option>
+        <option>B Button (1)</option>
         <option>Y Button (2)</option>
         <option>X Button (3)</option>
         <option selected>L Button (4)</option>

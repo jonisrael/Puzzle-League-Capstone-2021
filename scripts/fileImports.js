@@ -119,12 +119,24 @@ import DEBUGV from ".././assets/Extras/DebugSprites/debugV.png";
 import DEBUGY from ".././assets/Extras/DebugSprites/debugY.png";
 
 // Import Music
-import OVERTIME_SONG from ".././assets/Audio/Music/overtime.mp3";
-import POPCORN_SONG from ".././assets/Audio/Music/popcorn.wav";
-import SCATMAN_SONG from ".././assets/Audio/Music/scatman.wav";
-import RASHID_SONG from ".././assets/Audio/Music/rashid.wav";
-import FIRE_SONG from ".././assets/Audio/Music/throwingFire.wav";
-import RESULTS_SONG from ".././assets/Audio/Music/results.wav";
+
+import POPCORN_SONG from ".././assets/Audio/Music/Themes/Hot Butter- Popcorn Song.mp3";
+import RASHID_SONG from ".././assets/Audio/Music/Themes/rashid.mp3";
+import CUB3D_SONG from ".././assets/Audio/Music/Themes/cub3d.mp3";
+import PHYSICS_SONG from ".././assets/Audio/Music/Themes/physics.mp3";
+import RYU_SONG from ".././assets/Audio/Music/Themes/ryu.mp3";
+import SCATMAN_SONG from ".././assets/Audio/Music/Themes/scatman.mp3";
+import HUGO_SONG from ".././assets/Audio/Music/Themes/hugo.mp3";
+import LIP_SONG from ".././assets/Audio/Music/Themes/lipTheme.mp3";
+
+import STRIKERS_SONG from ".././assets/Audio/Music/Overtime Themes/strikers.mp3";
+import GIO_SONG from ".././assets/Audio/Music/Overtime Themes/gio.mp3";
+import GRIM_SONG from ".././assets/Audio/Music/Overtime Themes/grim.mp3";
+import EDGEWORTH_SONG from ".././assets/Audio/Music/Overtime Themes/edgeworth.mp3";
+import SURGE_SONG from ".././assets/Audio/Music/Overtime Themes/surge.mp3";
+
+import RESULTS_SONG from ".././assets/Audio/Music/Results/results.mp3";
+import RESULTS_2_SONG from ".././assets/Audio/Music/Results/results2.mp3";
 
 // Import Audio
 import ANN_5 from ".././assets/Audio/Announcer/5.wav";
@@ -343,10 +355,6 @@ const audio = {
   announcer5: ANN_5,
   announcer4: ANN_4,
   announcerGo: ANN_GO,
-  popcornMusic: POPCORN_SONG,
-  scatmanMusic: SCATMAN_SONG,
-  rashidMusic: RASHID_SONG,
-  fireMusic: FIRE_SONG,
   pause: PAUSE,
   moveCursor: MOVE_CURSOR,
   select: SWAP_SUCCESS,
@@ -421,8 +429,21 @@ const audio = {
   announcerWhereComeFrom: ANN_WHERE_COME_FROM,
   announcerDeservePraise: ANN_DESERVE_PRAISE,
   announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES,
-  overtimeMusic: OVERTIME_SONG,
-  resultsMusic: RESULTS_SONG
+  popcornMusic: POPCORN_SONG,
+  scatmanMusic: SCATMAN_SONG,
+  rashidMusic: RASHID_SONG,
+  lipMusic: LIP_SONG,
+  ryuMusic: RYU_SONG,
+  hugoMusic: HUGO_SONG,
+  physicsMusic: PHYSICS_SONG,
+  cub3dMusic: CUB3D_SONG,
+  strikersMusic: STRIKERS_SONG,
+  edgeworthMusic: EDGEWORTH_SONG,
+  grimMusic: GRIM_SONG,
+  gioMusic: GIO_SONG,
+  surgeMusic: SURGE_SONG,
+  results1Music: RESULTS_SONG,
+  results2Music: RESULTS_2_SONG
 };
 
 const imageList = Object.values(sprite);

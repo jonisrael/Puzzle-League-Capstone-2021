@@ -46,7 +46,7 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
   }
 }
 
-export function playAudio(file, volume = 0.1, announcerBypass = false) {
+export function playAudio(file, volume = 0.2, announcerBypass = false) {
   // if sfx is muted but announcer is not, play sound anyway since announcer is not muted
   if (win.muteSFX.checked && !announcerBypass) return;
   let Sound = new Audio();
@@ -75,11 +75,12 @@ export function playChainSFX() {
   Sound.play();
 }
 
-export function playMusic(file, volume = 0.1, currentTime = 0, loop = true) {
+export function playMusic(file, volume = 1, currentTime = 0) {
   if (win.muteMusic.checked) return;
   game.Music.src = file;
   game.Music.volume = volume;
+  console.log(game.Music.volume);
   game.Music.currentTime = currentTime;
   game.Music.play();
-  game.Music.loop = loop;
+  // game.Music.loop = loop;
 }

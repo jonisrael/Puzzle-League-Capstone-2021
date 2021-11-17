@@ -8,7 +8,9 @@ import {
   debug,
   leaderboard,
   api,
-  cpu
+  cpu,
+  resultsMusic,
+  randInt
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -22,7 +24,6 @@ export function closeGame(gameFinished) {
   win.running = false;
   console.log("game finished:", gameFinished);
   if (!gameFinished) game.Music.volume = 0;
-  console.log("closeGame called");
   win.cvs = null;
   win.ctx = null;
   win.makeCanvas.remove();
@@ -71,7 +72,7 @@ export function gameOverBoard() {
   if (game.frames == 2) {
     getLeaderboardData();
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
-    game.Music.src = audio.resultsMusic;
+    game.Music.src = resultsMusic[randInt(resultsMusic.length)];
     game.messagePriority = "Game Over!";
     game.message = "Game Over!";
   }

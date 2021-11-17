@@ -688,7 +688,7 @@ function checkTime() {
         announcer.overtimeIndexLastPicked,
         "overtime"
       );
-      playMusic(audio.overtimeMusic, 0.2);
+      playMusic(audio.strikersMusic, 0.2);
       break;
     case 7320:
       game.messagePriority = "";

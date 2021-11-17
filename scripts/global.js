@@ -188,8 +188,22 @@ export const music = [
   audio.popcornMusic,
   audio.scatmanMusic,
   audio.rashidMusic,
-  audio.fireMusic
+  audio.hugoMusic,
+  audio.ryuMusic,
+  audio.lipMusic,
+  audio.physicsMusic,
+  audio.cub3dMusic
 ];
+
+export const overtimeMusic = [
+  audio.strikersMusic,
+  audio.grimMusic,
+  audio.edgeworthMusic,
+  audio.gioMusic,
+  audio.surgeMusic
+];
+
+export const resultsMusic = [audio.results1Music, audio.results2Music];
 
 export const game = {
   // use let instead of export const to revert to resetGameVar

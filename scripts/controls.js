@@ -51,7 +51,7 @@ export const defaultControls = {
     down: [13], // D-Pad Down
     right: [15], // D-Pad Right
     swap: [0, 1], // B, A
-    raise: [4, 5], // L, R
+    raise: [5, 7], // L, R
     pause: [8, 9] //+, -
   },
   timeCreated: Date.now()
@@ -108,9 +108,9 @@ export function getNewGamePadControls(swapInputs, raiseInputs) {
     left: [14], // D-Pad Left
     down: [13], // D-Pad Down
     right: [15], // D-Pad Right
-    swap: [],
-    raise: [],
-    pause: []
+    swap: [0, 1],
+    raise: [5, 7],
+    pause: [8]
   };
   for (let i = 0; i < swapInputs.length; i++) {
     if (swapInputs[i].selected) gameController.swap.push(i);
@@ -150,10 +150,10 @@ export function checkIfControlsExist(controls) {
     try {
       if (
         !controlsObject.timeCreated ||
-        controlsObject.timeCreated < 1636674321500 // time before latest release
+        controlsObject.timeCreated < 1637108341492 // time before latest release
       ) {
         localStorage.setItem("controls", JSON.stringify(defaultControls));
-        console.log("Controls invalid, do 11/9/2021 patch to fix.");
+        console.log("Controls invalid, do 11/16/2021 patch to fix.");
         return defaultControls;
       } else {
         console.log("controls are valid:");

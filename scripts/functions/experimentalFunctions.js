@@ -624,3 +624,347 @@ export function increaseStackHeight() {
 //
 // MAIN LOOP
 //
+export function puzzleLeagueLoop() {
+  if (!win.running || win.view !== "Home") {
+    closeGame(game.over);
+    if (win.restartGame) {
+      win.restartGame = false;
+      startGame(perf.gameSpeed, 2);
+    }
+    return;
+  }
+  requestAnimationFrame(puzzleLeagueLoop);
+  perf.now = Date.now();
+  perf.delta = perf.now - perf.then;
+  let runtime;
+  let readyForNextGameFrame = perf.delta > perf.fpsInterval;
+  if (readyForNextGameFrame) {
+    // when countdown ends, begin game
+    if (game.frames === 0) {
+      perf.gameStartTime = Date.now();
+      perf.sumOfPauseTimes = 0;
+    }
+    if (!game.over) {
+      runtime = Date.now() - perf.gameStartTime;
+      perf.realTime =
+        game.frames >= 0 ? Math.round(perf.realTime / 100 / 10) : 0;
+    }
+
+    if (game.paused) playerAction(action);
+    else {
+      game.frames += 1 * perf.gameSpeed;
+      if (game.over) {
+        let number;
+        if (game.frames > 300) {
+          number = Math.floor((300 - game.frames) / 60);
+          game.messagePriority = `Fetching leaderboard info...timeout in ${number}`;
+        } else if (game.frames > 120) {
+          game.messagePriority = `Checking ability to post scores..`;
+        }
+        if (game.frames > 180) {
+          if (leaderboard.reason === "unofficial-cpu-game") {
+            render(state.Home);
+          }
+          if (
+            leaderboard.reason[0] === "n" ||
+            (api.data !== undefined && leaderboard.data.length > 0) ||
+            game.frames === 600
+          )
+            win.running = false;
+        }
+      }
+
+      checkTime();
+
+      if (game.frames % 60 === 0 && game.frames > 0 && !game.over) {
+        game.seconds++;
+        game.defaultMessage = `Level ${game.level} | 0:${padInteger(
+          20 - (game.seconds % 20),
+          2
+        )} remaining`;
+        // overtime bonuses
+        if (game.minutes == 2) {
+          game.score += game.seconds;
+          game.log.push(
+            `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
+          );
+          console.log(game.log[game.log.length - 1]);
+        } else if (game.minutes > 3) {
+          game.score += 60;
+          game.log.push(
+            `Time: ${game.timeString}, Overtime Bonus +60, Total: ${game.score}`
+          );
+          console.log(game.log[game.log.length - 1]);
+        }
+
+        if (debug.enabled === 1) {
+          game.seconds--;
+          game.frames -= 60;
+        }
+
+        if (game.seconds % 60 === 0 && game.seconds !== 0) {
+          game.minutes++;
+          game.seconds = 0;
+        }
+
+        if (
+          game.frames % 1200 == 0 &&
+          game.level < preset.speedValues.length &&
+          game.level > 0 &&
+          !debug.enabled
+        ) {
+          // Speed the stack up every 20 seconds
+
+          if (game.frames >= 1200) {
+            game.message = `Level ${game.level +
+              1}, game speed has increased...`;
+            game.defaultMessage = game.message;
+            game.messageChangeDelay = 120;
+            playAnnouncer(
+              announcer.timeTransitionDialogue,
+              announcer.timeTransitionIndexLastPicked,
+              "timeTransition"
+            );
+            console.log(
+              `gameTime = ${game.frames / 60}, realTime = ${
+                perf.realTime
+              }, pauseTime = ${perf.sumOfPauseTimes}, timeDifference = ${
+                perf.diffFromRealTime
+              }`
+            );
+          }
+
+          if (game.level + 1 < preset.speedValues.length && game.frames > 0) {
+            game.level++;
+            updateLevelEvents(game.level);
+          }
+
+          console.log(runtime);
+          resetBoardStateVars();
+          // Game Logic
+          playerAction(action);
+          for (let c = 0; c < grid.COLS; c++) {
+            for (let r = grid.ROWS - 1; r >= 0; r--) {
+              gravity(perf.gameSpeed, c, r);
+              checkMatches(c, r);
+              updateBoardState(c, r);
+              drawSquare(c, r);
+            }
+          }
+          console.log(runtime);
+          game.cursor.draw();
+          analyzeBoard();
+          increaseStackHeight();
+
+          if (game.over && game.frames < 25) {
+            gameOverBoard();
+            drawGrid();
+          }
+
+          if (game.raisePressed) {
+            game.raisePressed = false;
+            if (!game.boardRiseDisabled) {
+              if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
+                if (game.rise == 0) game.rise = 2;
+                game.currentlyQuickRaising = true;
+                game.raiseDelay = 0;
+              }
+            }
+          }
+
+          if (game.currentlyQuickRaising) {
+            game.disableSwap = true;
+            game.message = "Quick-Raise Initiated";
+            game.messageChangeDelay = 1000;
+            win.mainInfoDisplay.style.color = "blue";
+            if (game.rise === 0) {
+              game.boardRiseSpeed = preset.speedValues[game.level];
+              game.disableSwap = false;
+              game.currentlyQuickRaising = false;
+              game.message = "Quick-Raise Complete";
+              game.messageChangeDelay = 90;
+              win.mainInfoDisplay.style.color = "blue";
+              game.raiseDelay = 0;
+            } else {
+              game.boardRiseSpeed = 1;
+            }
+          }
+        }
+      }
+      if (game.frames % 5 == 0) {
+        // fps counter
+        perf.secondsPerLoop =
+          Math.round(100 * (runtime / 1000 - perf.prev)) / 100;
+        perf.fps = Math.round(1 * 5 * (1 / perf.secondsPerLoop)) / 1;
+        perf.prev = runtime / 1000;
+      }
+      let minutesString = "";
+      let secondsString = "";
+      let scoreString = "";
+      let multiplierString = "";
+      if (game.minutes < 10) {
+        minutesString = `0${game.minutes}`;
+      } else {
+        minutesString = `${game.minutes}`;
+      }
+      if (game.seconds < 10) {
+        secondsString = `0${game.seconds}`;
+      } else {
+        secondsString = `${game.seconds}`;
+      }
+      game.timeString = `${minutesString}:${secondsString}`;
+
+      if (game.score < 10) {
+        scoreString = `0000${game.score}`;
+      } else if (game.score < 100) {
+        scoreString = `000${game.score}`;
+      } else if (game.score < 1000) {
+        scoreString = `00${game.score}`;
+      } else if (game.score < 10000) {
+        scoreString = `0${game.score}`;
+      } else {
+        scoreString = `${game.score}`;
+      }
+
+      if (game.scoreMultiplier == 1) {
+        multiplierString = "1.0x";
+      } else if (game.scoreMultiplier == 2) {
+        multiplierString = "2.0x";
+      } else {
+        multiplierString = `${game.scoreMultiplier}x`;
+      }
+      if (debug.enabled == 1) {
+        win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
+      } else {
+        win.statDisplay.innerHTML = ``;
+        win.timeDisplay.innerHTML = game.timeString;
+      }
+      if (debug.show) {
+        win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
+          game.seconds} seconds<br />Real Time: ${perf.realTime} seconds`;
+        win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
+        Stack size: ${12 - game.highestRow}<br>
+        Highest Row: ${game.highestRow}`;
+      } else {
+        win.timeDisplay.innerHTML = game.timeString;
+        win.levelDisplay.innerHTML = `${game.level}`;
+      }
+
+      if (game.frames > 60) {
+        if (game.frames % 1200 >= 1020) {
+          win.timeDisplay.style.color = "red";
+        } else {
+          if (win.timeDisplay.style.color !== "black") {
+            win.timeDisplay.style.color = "black";
+          }
+        }
+        if (game.frames % 1200 < 60) {
+          win.levelDisplay.style.color = "red";
+        } else {
+          if (win.levelDisplay.style.color !== "black") {
+            win.levelDisplay.style.color = "black";
+          }
+        }
+
+        if (game.currentChain > 0) {
+          win.scoreDisplay.style.color = "red";
+        } else {
+          if (win.scoreDisplay.style.color !== "black") {
+            win.scoreDisplay.style.color = "black";
+          }
+        }
+      }
+      win.scoreDisplay.innerHTML = scoreString;
+      win.fpsDisplay.innerHTML = `${perf.fps} fps${
+        leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
+      }`;
+      if (game.over) {
+        win.fpsDisplay.innerHTML = `Real Game Clock Time: ${perf.realTime -
+          perf.sumOfPauseTimes} seconds`;
+      }
+      win.mainInfoDisplay.innerHTML = `${game.message}`;
+      if (game.messageChangeDelay > 0) {
+        game.messageChangeDelay -= 1 * perf.gameSpeed;
+      }
+      if (game.messageChangeDelay == 0) {
+        game.message = game.defaultMessage;
+      }
+      if (game.messagePriority) game.message = game.messagePriority;
+
+      // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
+      if (!document.hasFocus() && !debug.enabled && !cpu.enabled) {
+        pause(true);
+      }
+
+      if (debug.enabled) {
+        win.controlsDisplay.innerHTML = html`
+          <label
+            >"Timers" are used for game events such as animations and how long a
+            block stalls before falling.</label
+          >
+          <ul style="font-size: large;">
+            <li>Brown: Block has a timer greater than 0</li>
+            <li>
+              Orange: Block has the ability to be added to the primary chain if
+              it lands onto a match. Disappears after a block land and fails to
+              chain. The current chain count ends when all orange circles have
+              disappeared.
+            </li>
+            <li>
+              Pink: Secondary Chainable Blocks. They are triggered if orange
+              circles already exist. Similar to orange, as they will increase
+              the current chain count if you match with them, but the chain
+              count does not wait for pink circles to still exist. If all orange
+              circles disappear, the chain count ends and all pink circles will
+              turn orange and act as a new chain.
+            </li>
+            <li>Top Left Brown: Chain count is 0</li>
+            <li>Top Left White: Chain count is 1</li>
+            <li>Top Left Pink: Chain count is >1</li>
+          </ul>
+        `;
+      } else if (game.mode === "cpu-play") {
+        if (cpu.showInfo) {
+          win.controlsDisplay.innerHTML = html`
+            <ul>
+              <li>
+                <strong>Red</strong>: AI Target, function is
+                findVerticalMatches.
+              </li>
+              <li>
+                <strong>Green</strong>: AI Target, function is
+                findHorizontalMatches
+              </li>
+              <li>
+                <strong>Magenta</strong>: During match functions, blocks that
+                the AI wants to match together.
+              </li>
+              <li>
+                <strong>Yellow</strong>: AI Target, function is flattenStack
+              </li>
+              <li>
+                <strong>Tan</strong>: While flattening stack, this is the hole
+                the AI is trying to fill.
+              </li>
+              <li>
+                <strong>Violet</strong>: When showing, the AI is doing random
+                inputs. Triggered when the AI attempts to do the same swap twice
+                at the same coordinates, the AI will do 10 random inputs to try
+                and alter the board to fix itself from getting stuck.
+              </li>
+
+              <li>
+                <strong>Blue</strong>: If nothing to do, will return to center
+                of stack and raise stack to a limit defined based on game level.
+              </li>
+            </ul>
+          `;
+        } else {
+          win.controlsDisplay.innerHTML = preset.controlsDefaultMessage;
+        }
+      }
+    } // end game not paused
+  } // end ready for next frame
+  // update realtime variables
+  perf.then = perf.now - (perf.delta % perf.fpsInterval);
+}
