@@ -186,7 +186,7 @@ export const win = {
 
 export const music = [
   audio.popcornMusic,
-  audio.scatmanMusic,
+  // audio.scatmanMusic,
   audio.rashidMusic,
   audio.hugoMusic,
   audio.ryuMusic,
@@ -198,9 +198,9 @@ export const music = [
 export const overtimeMusic = [
   audio.strikersMusic,
   audio.grimMusic,
-  audio.edgeworthMusic,
-  audio.gioMusic,
-  audio.surgeMusic
+  audio.edgeworthMusic
+  // audio.gioMusic,
+  // audio.surgeMusic
 ];
 
 export const resultsMusic = [audio.results1Music, audio.results2Music];

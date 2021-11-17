@@ -547,7 +547,7 @@ export function endChain(potentialSecondarySuccessor) {
 
 function doPanic() {
   let panic = false;
-  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 3 : 4;
+  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 3 : 5;
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][rowChecked].color != blockColor.VACANT &&
@@ -603,7 +603,7 @@ export function makeNewRow() {
   }
   fixNextDarkStack();
 
-  if (game.highestRow === 3) {
+  if (game.highestRow === 3 && game.level > 3) {
     playAnnouncer(
       announcer.panicDialogue,
       announcer.panicIndexLastPicked,
