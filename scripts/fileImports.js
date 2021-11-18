@@ -120,7 +120,7 @@ import DEBUGY from ".././assets/Extras/DebugSprites/debugY.png";
 
 // Import Music
 
-import POPCORN_SONG from ".././assets/Audio/Music/Themes/Hot Butter- Popcorn Song.mp3";
+import POPCORN_SONG from ".././assets/Audio/Music/Themes/popcorn.mp3";
 import RASHID_SONG from ".././assets/Audio/Music/Themes/rashid.mp3";
 import CUB3D_SONG from ".././assets/Audio/Music/Themes/cub3d.mp3";
 import PHYSICS_SONG from ".././assets/Audio/Music/Themes/physics.mp3";
