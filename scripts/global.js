@@ -141,11 +141,11 @@ export const grid = {
 
 export const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [60, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
-  clearValues: [116, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
-  blinkValues: [60, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
-  faceValues: [56, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
-  popMultiplier: [12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
+  speedValues: [90, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  clearValues: [150, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
+  blinkValues: [90, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
+  faceValues: [60, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
+  popMultiplier: [16, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
   stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
   controlsDefaultMessage: ""
 };
@@ -158,6 +158,7 @@ export const win = {
   gamepadPort: false,
   view: "Home",
   viewChanged: false,
+  version: 1,
   running: false,
   restartGame: false,
   makeCanvas: null,
@@ -240,7 +241,7 @@ export const game = {
   totalClears: 0,
   paused: false,
   over: false, //gameOver
-  grounded: false,
+  pauseStack: false,
   addToPrimaryChain: false, // used to start/continue a chain
   message: "",
   defaultMessage: "Welcome to Puzzle League!",
@@ -252,14 +253,15 @@ export const game = {
   currentlyQuickRaising: false,
   raisePressed: false,
   readyForNewRow: false,
-  highestRow: 0,
-  highestColIndex: 0,
-  panicIndex: 2,
+  highestRow: 11,
+  highestCols: [0, 1, 2, 3, 4, 5],
+  panicIndex: 1,
   panicSpeedDivisor: 1,
   Music: gameMusic,
   data: {},
   log: [],
   panicking: false,
+  version: 1,
   boardStateExistence: {
     clearing: false,
     grounded: false,
@@ -268,6 +270,8 @@ export const game = {
     airborne: false
   }
 };
+
+// export const newGame = JSON.parse(JSON.stringify(game));
 
 export const api = {
   data: {

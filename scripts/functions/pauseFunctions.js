@@ -10,7 +10,7 @@ export function pause(lostFocus = false, message = "") {
   console.log(perf);
   perf.pauseStartTime = Date.now();
   playAudio(audio.pause, 0.1);
-  if (lostFocus) win.mainInfoDisplay.innerHTML = "Pause -- Window Lost Focus";
+  if (lostFocus) win.mainInfoDisplay.innerHTML = "Pause -- Clicked Off Tab";
   else if (message === "aiCrash")
     win.mainInfoDisplay.innerHTML = "Pause -- AI Error";
   else win.mainInfoDisplay.innerHTML = "Pause";

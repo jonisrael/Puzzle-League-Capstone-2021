@@ -17,13 +17,13 @@ import {
 import { playChainSFX, playAudio } from "./audioFunctions";
 
 export function legalMatch(clearLocations) {
-  if (clearLocations.length == 0) {
+  if (clearLocations.length === 0) {
     return false;
   }
 
-  let clearLocationsLength = clearLocations.length;
+  let blocksCleared = clearLocations.length;
 
-  for (let i = 0; i < clearLocationsLength; i++) {
+  for (let i = 0; i < blocksCleared; i++) {
     let c = clearLocations[i][0];
     let r = clearLocations[i][1];
     for (let j = 11; j > r; j--) {
@@ -32,7 +32,7 @@ export function legalMatch(clearLocations) {
       }
     }
   }
-  game.grounded = false;
+  game.pauseStack = true;
   return true;
 }
 
@@ -134,22 +134,22 @@ export function checkMatch() {
       new Set(clearLocations.map(JSON.stringify)),
       JSON.parse
     );
-    let clearLocationsLength = clearLocations.length;
+    let blocksCleared = clearLocations.length;
 
     // now determine chain
     if (legalMatch(clearLocations)) {
       game.addToPrimaryChain = false;
-      for (let i = 0; i < clearLocationsLength - 1; i++) {
+      for (let i = 0; i < blocksCleared - 1; i++) {
         clearLocationsString += `[${clearLocations[i]}], `;
       }
-      clearLocationsString += `[${clearLocations[clearLocationsLength - 1]}].`;
+      clearLocationsString += `[${clearLocations[blocksCleared - 1]}].`;
       if (game.currentChain == 0) {
         game.chainScoreAdded = 0;
         game.addToPrimaryChain = true;
         game.currentChain++;
       } else {
         add1ToChain = false;
-        for (let i = 0; i < clearLocationsLength; i++) {
+        for (let i = 0; i < blocksCleared; i++) {
           let x = clearLocations[i][0];
           let y = clearLocations[i][1];
           if (
@@ -166,7 +166,7 @@ export function checkMatch() {
         game.addToPrimaryChain = true;
         game.currentChain++;
         playChainSFX(game.currentChain);
-      } else if (clearLocationsLength > 3 && !win.muteAnnouncer.checked) {
+      } else if (blocksCleared > 3 && !win.muteAnnouncer.checked) {
         // make sure that "hold it! is not playing instead"
         if (
           game.highestRow !== 1 ||
@@ -177,7 +177,7 @@ export function checkMatch() {
             announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
           );
       }
-      updateScore(clearLocationsLength, game.currentChain);
+      updateScore(blocksCleared, game.currentChain);
       win.mainInfoDisplay.style.color = "red";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
@@ -189,8 +189,8 @@ export function checkMatch() {
         game.blockInitialFaceTime
       );
 
-      if (clearLocationsLength != 0) {
-        game.combo = clearLocationsLength;
+      if (blocksCleared != 0) {
+        game.combo = blocksCleared;
         game.totalClears += game.combo;
         if (game.combo > game.largestCombo) game.largestCombo = game.combo;
 
@@ -269,22 +269,14 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
   }
 }
 
-export function updateScore(clearLocationsLength, currentChain) {
-  let blockBonus = clearLocationsLength * 10;
+export function updateScore(blocksCleared, currentChain) {
   let comboBonus = 0;
   let chainBonus = 0;
 
-  if (clearLocationsLength == 3) {
-    comboBonus = 0;
-  } else if (clearLocationsLength < 6) {
-    comboBonus = blockBonus - 20;
-  } else if (clearLocationsLength < 10) {
-    comboBonus = blockBonus - 10;
-  } else if (clearLocationsLength == 10) {
-    comboBonus = blockBonus;
-  } else {
-    comboBonus = 200 + 5 * (blockBonus - 100);
-  }
+  if (blocksCleared === 3) comboBonus = 0;
+  else if (blocksCleared < 6) comboBonus = 10 * blocksCleared - 20;
+  else if (blocksCleared < 10) comboBonus = 10 * blocksCleared - 10;
+  else comboBonus = 10 * blocksCleared + 30 * (blocksCleared - 10);
 
   if (currentChain == 1) {
     chainBonus = 0;
@@ -302,15 +294,26 @@ export function updateScore(clearLocationsLength, currentChain) {
     chainBonus = 1500 + 300 * (currentChain - 12);
   }
 
-  let addToScore = blockBonus + comboBonus + chainBonus;
+  let addToScore = comboBonus + chainBonus;
+  // OLD SCORING SYSTEM
   if (game.level < 7) {
     game.scoreMultiplier = 1 + 0.15 * (game.level - 1);
   } else {
     game.scoreMultiplier = 2 + 0.25 * (game.level - 7);
   }
+
+  // // NEW SCORING SYSTEM
+  // let increase = game.level % 3 === 0 ? 0.5 : game.level % 3 === 1 ? 0 : 0.25;
+  // // use this formula for v2.0 calculation except for 7 and 10
+  // let useFormula = Math.floor(game.level / 4 + 1) + increase;
+  // if (game.level === 0) game.scoreMultiplier = 1;
+  // else if (game.level === 7) game.scoreMultiplier = 3;
+  // else if (game.level < 10) game.scoreMultiplier = useFormula;
+  // else game.scoreMultiplier = 5;
+
   game.scoreUpdate = Math.round(game.scoreMultiplier * addToScore);
   game.chainScoreAdded += game.scoreUpdate;
   game.score += game.scoreUpdate;
-  let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${clearLocationsLength} combo`;
+  let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
   game.log.push(loggedScore);
 }

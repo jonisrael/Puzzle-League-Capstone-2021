@@ -14,7 +14,6 @@ import { updateGrid, isChainActive } from "../../puzzleleague";
 export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
 
-  // this should be moved to update grid
   for (let c = 0; c < grid.COLS; c++) {
     if (
       game.board[c][11].type == blockType.LANDING &&
@@ -50,6 +49,7 @@ export function doGravity(gameSpeed) {
       ) {
         // if normal block, fall one unit
         game.boardRiseDisabled = false;
+        game.pauseStack = true;
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
           game.board[c][r + 1].color = game.board[c][r].color;
@@ -60,7 +60,7 @@ export function doGravity(gameSpeed) {
           game.board[c][r + 1].availableForPrimaryChain =
             game.board[c][r].availableForPrimaryChain;
           game.board[c][r].color = blockColor.VACANT;
-          game.board[c][r].touched = false;
+          game.board[c][r + 1].airborne = true;
           possibleLandedLocations.push([c, r + 1]);
 
           //Debug
@@ -84,6 +84,7 @@ export function doGravity(gameSpeed) {
       game.board[x][y + 1].color != blockColor.VACANT
     ) {
       game.board[x][y].type = blockType.LANDING;
+      game.board[x][y].airborne = false;
       game.board[x][y].timer = 10; // 10 frames is length of landing animation
       //DEBUG
       if (debug.slowdown == 1) {

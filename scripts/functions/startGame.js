@@ -21,10 +21,10 @@ import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio, audioList } from "../fileImports";
 import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
-import { gameLoop, newBlock, puzzleLeagueLoop } from "../../puzzleleague";
+import { Cursor, gameLoop, newBlock } from "../../puzzleleague";
 import { unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
-import { newBlock2 } from "./experimentalFunctions";
+// import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed, version = 1) {
   // Object.keys(game).forEach(key => (game[key] = newGame[key]));
@@ -39,11 +39,18 @@ export function startGame(selectedGameSpeed, version = 1) {
       break;
     }
   }
+  console.log("Game Speed:", selectedGameSpeed, "| Version: ", version);
   console.log(`Gamepad Port Connected:`, win.gamepadPort);
+  // console.log(Object.keys(newGame));
+  // Object.keys(game).forEach(key => {
+  //   console.log(`Key: ${key}, gameVal ${game[key]} is now ${newGame[key]}`);
+  //   game[key] = newGame[key];
+  // });
+  // console.log(game);
   resetGameVariables();
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay();
-  game.board = generateOpeningBoard();
+  game.board = generateOpeningBoard(version);
   if (loadedAudios.length == 0) loadAllAudios();
   // Set up game loop
   leaderboard.canPost = true;
@@ -57,6 +64,7 @@ export function startGame(selectedGameSpeed, version = 1) {
   perf.gameStartTime = perf.then;
   perf.sumOfPauseTimes = 0;
   perf.diffFromRealTime = 0;
+  win.version = version;
   if (version === 1) {
     requestAnimationFrame(gameLoop);
   }
@@ -234,10 +242,12 @@ function createHeadsUpDisplay() {
 
 export function resetGameVariables() {
   game.rise = 0;
+  game.panicIndex = 1;
   game.board = [];
   game.mute = 0;
   game.volume = 1;
   game.level = 1;
+  game.highestRow = 11;
   game.boardRiseSpeed = preset.speedValues[game.level];
   game.blockClearTime = preset.clearValues[game.level];
   game.blockBlinkTime = preset.blinkValues[1];
@@ -261,7 +271,7 @@ export function resetGameVariables() {
   game.message = "Loading...";
   game.defaultMessage = "";
   game.over = false; //gameOver
-  game.grounded = true;
+  game.pauseStack = false;
   game.addToPrimaryChain = false; // used to start/continue a chain
   game.readyForNewRow = false;
   game.boardRiseDisabled = false;
@@ -317,14 +327,12 @@ export function generateOpeningBoard(version = 1) {
     game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
       if (version === 1) block = newBlock(c, r);
-      if (version === 2) block = newBlock2(c, r);
       game.board[c].push(block);
       if (r > 11) {
         game.board[c][r].color = PIECES[randInt(PIECES.length)];
         game.board[c][r].type = blockType.DARK;
       }
       if (version === 1) block.draw();
-      if (version === 2) block.draw("vacant_normal");
       block.draw();
     }
   }
@@ -334,7 +342,7 @@ export function generateOpeningBoard(version = 1) {
     while (true) {
       let x = randInt(grid.COLS);
       let y = randInt(5);
-      if (game.board[x][y].color == blockColor.VACANT) {
+      if (game.board[x][y].color === blockColor.VACANT) {
         game.board[x][y].color = PIECES[randInt(PIECES.length)];
         break;
       }
@@ -386,6 +394,7 @@ export function generateOpeningBoard(version = 1) {
             game.board[x][y].color != bottomBlock &&
             game.board[x][y].color != leftBlock
           ) {
+            // console.log(`Color of ${x}, ${y}:`, game.board[x][y].color);
             break;
           }
           game.board[x][y].color = PIECES[randInt(PIECES.length)];

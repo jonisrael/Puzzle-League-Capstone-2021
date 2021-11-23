@@ -65,7 +65,7 @@ function addEventListeners(st) {
           render(state[event.target.title]);
         else {
           game.mode = "arcade";
-          startGame(2, 1);
+          startGame(1, 1);
         }
       }
     })
@@ -147,7 +147,7 @@ function addEventListeners(st) {
       document.getElementById("arcade-button").remove();
       document.getElementById("wasd-arcade-button").remove();
       document.getElementById("watch-ai-play-button").remove();
-      startGame(2);
+      startGame(1);
     });
     document
       .getElementById("wasd-arcade-button")
@@ -158,7 +158,7 @@ function addEventListeners(st) {
         document.getElementById("arcade-button").remove();
         document.getElementById("wasd-arcade-button").remove();
         document.getElementById("watch-ai-play-button").remove();
-        startGame(2);
+        startGame(1);
       });
     document
       .getElementById("watch-ai-play-button")
@@ -167,7 +167,7 @@ function addEventListeners(st) {
         document.getElementById("arcade-button").remove();
         document.getElementById("wasd-arcade-button").remove();
         document.getElementById("watch-ai-play-button").remove();
-        startGame(2);
+        startGame(1);
       });
     document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {

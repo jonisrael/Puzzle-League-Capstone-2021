@@ -207,28 +207,33 @@ export function playerAction(input) {
     action.up = false;
     if (game.cursor.y > 1) {
       game.cursor.y -= 1;
+      win.cvs.scrollIntoView({ block: "nearest" });
       playAudio(audio.moveCursor);
     }
   } else if (input.down) {
     action.down = false;
     if (game.cursor.y < grid.ROWS - 1) {
       game.cursor.y += 1;
+      win.cvs.scrollIntoView({ block: "nearest" });
       playAudio(audio.moveCursor);
     }
   } else if (input.left) {
     action.left = false;
     if (game.cursor.x > 0) {
       game.cursor.x -= 1;
+      win.cvs.scrollIntoView({ block: "nearest" });
       playAudio(audio.moveCursor);
     }
   } else if (input.right) {
     action.right = false;
     if (game.cursor.x < grid.COLS - 2) {
       game.cursor.x += 1;
+      win.cvs.scrollIntoView({ block: "nearest" });
       playAudio(audio.moveCursor);
     }
-  } else if (input.swap) {
+  } else if (input.swap && !game.over) {
     action.swap = false;
+    win.cvs.scrollIntoView({ block: "nearest" });
     trySwappingBlocks(game.cursor.x, game.cursor.y);
   }
 

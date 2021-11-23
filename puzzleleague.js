@@ -9,7 +9,7 @@
 import html from "html-literal";
 import { displayMessage, render, router } from "./index";
 import * as state from "./store";
-import { sprite, audio, audioList } from "./scripts/fileImports";
+import { sprite, audio, audioList, loadedImages } from "./scripts/fileImports";
 import {
   legalMatch,
   checkMatch
@@ -64,15 +64,15 @@ import {
   music,
   overtimeMusic
 } from "./scripts/global.js";
-import {
-  analyzeBoard,
-  checkMatches,
-  drawSquare,
-  gravity,
-  increaseStackHeight,
-  resetBoardStateVars,
-  updateBoardState
-} from "./scripts/functions/experimentalFunctions";
+// import {
+//   analyzeBoard,
+//   checkMatches,
+//   drawSquare,
+//   gravity,
+//   increaseStackHeight,
+//   resetBoardStateVars,
+//   updateBoardState
+// } from "./scripts/functions/experimentalFunctions";
 
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
@@ -90,7 +90,7 @@ export function blockKeyOf(color, type, animationIndex = -1) {
   }
 }
 
-class Cursor {
+export class Cursor {
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -100,11 +100,9 @@ class Cursor {
     // param used to be ctx
     let pixelX = this.x * grid.SQ;
     let pixelY = this.y * grid.SQ - game.rise;
-    const CURSOR_IMAGE = new Image();
-    CURSOR_IMAGE.src = sprite.cursor;
-    CURSOR_IMAGE.onload = () => {
-      win.ctx.drawImage(CURSOR_IMAGE, pixelX, pixelY);
-    };
+    // const CURSOR_IMAGE = new Image();
+    // CURSOR_IMAGE.src = sprite.cursor;
+    win.ctx.drawImage(loadedImages.cursor, pixelX, pixelY);
   }
 }
 game.cursor = new Cursor(2, 6);
@@ -138,19 +136,6 @@ class Block {
 
   draw() {
     let animationIndex = -1;
-    const DEBUG_TARGET_IMAGE = new Image();
-    const DEBUG_HOLE_IMAGE = new Image();
-    const DEBUG_MATCH_IMAGE = new Image();
-    const DEBUGW_IMAGE = new Image();
-    const DEBUGP_IMAGE = new Image();
-    const DEBUGO_IMAGE = new Image();
-    const DEBUGB_IMAGE = new Image();
-    const DEBUGR_IMAGE = new Image();
-    const DEBUGM_IMAGE = new Image();
-    // const DEBUGT_IMAGE = new Image();
-    // const DEBUGC_IMAGE = new Image();
-    // const DEBUGV_IMAGE = new Image();
-    // const DEBUGY_IMAGE = new Image();
     if (this.type == blockType.BLINKING) {
       if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
         animationIndex = 0;
@@ -184,120 +169,91 @@ class Block {
         animationIndex = 2;
       }
     }
-    let BLOCK_IMAGE = new Image();
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
-    BLOCK_IMAGE.src = sprite[urlKey];
-    BLOCK_IMAGE.onload = () => {
-      win.ctx.drawImage(
-        BLOCK_IMAGE,
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
-    };
+    win.ctx.drawImage(
+      loadedImages[urlKey],
+      grid.SQ * this.x,
+      grid.SQ * this.y - game.rise
+    );
+    // old and inefficient
+    // let BLOCK_IMAGE = new Image();
+    // BLOCK_IMAGE.src = sprite[urlKey];
+    // BLOCK_IMAGE.onload = () => {
+    //   win.ctx.drawImage(
+    //     BLOCK_IMAGE,
+    //     grid.SQ * this.x,
+    //     grid.SQ * this.y - game.rise
+    //   );
+    // };
 
     // AI Visuals
     if (cpu.showInfo) {
-      DEBUG_TARGET_IMAGE.src = cpu.targetColor;
-      DEBUG_HOLE_IMAGE.src = sprite.debugYellow;
-      DEBUG_MATCH_IMAGE.src = sprite.debugMagenta;
-
       if (
         (this.x === cpu.targetX && this.y === cpu.targetY) ||
         (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
       ) {
-        DEBUG_TARGET_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUG_TARGET_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+        win.ctx.drawImage(
+          loadedImages[cpu.targetColor],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       }
       if (
         this.x === cpu.holeDetectedAt[0] &&
         this.y === cpu.holeDetectedAt[1] &&
         cpu.targetColor === sprite.debugGreen
       ) {
-        DEBUG_HOLE_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUG_HOLE_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+        win.ctx.drawImage(
+          loadedImages["debugYellow"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       }
       if (
         cpu.matchList.includes([this.x, this.y].join()) &&
         (cpu.targetColor === sprite.debugRed ||
           cpu.targetColor === sprite.debugGreen)
       ) {
-        DEBUG_MATCH_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUG_MATCH_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+        win.ctx.drawImage(
+          loadedImages["debugMagenta"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       }
     }
 
     //Debug Visuals
     if (debug.show == 1) {
-      if (
-        cpu.enabled &&
-        cpu.matchList.length > 2 &&
-        cpu.matchList.includes([this.x, this.y].join())
-      ) {
-        DEBUGM_IMAGE.src = sprite.debugMagenta;
-        DEBUGM_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGM_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
-      } else if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
-        DEBUGW_IMAGE.src = sprite.debugWhite;
-        DEBUGW_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGW_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+      if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
+        win.ctx.drawImage(
+          loadedImages["debugWhite"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       } else if (this.availableForPrimaryChain) {
-        DEBUGO_IMAGE.src = sprite.debugOrange;
-        DEBUGO_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGO_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+        win.ctx.drawImage(
+          loadedImages["debugOrange"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       } else if (
         this.availableForSecondaryChain ||
         (this.x == 0 && this.y == 1 && game.currentChain > 1)
       ) {
-        DEBUGP_IMAGE.src = sprite.debugPink;
-        DEBUGP_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGP_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+        win.ctx.drawImage(
+          loadedImages["debugPink"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       } else if (
         (this.timer > 0 && this.type == blockType.NORMAL) ||
         (this.x == 0 && this.y == 1 && game.currentChain < 1)
       ) {
-        DEBUGB_IMAGE.src = sprite.debugBrown;
-        DEBUGB_IMAGE.onload = () => {
-          win.ctx.drawImage(
-            DEBUGB_IMAGE,
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        };
+        win.ctx.drawImage(
+          loadedImages["debugBlue"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       }
     }
   }
@@ -309,20 +265,28 @@ export function newBlock(c, r) {
 }
 
 export function updateGrid(frameAdvance = false) {
+  game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
   let highestRowFound = false;
+  game.pauseStack = false;
+  game.highestCols = [];
   for (let y = 0; y < grid.ROWS + 2; y++) {
     for (let x = 0; x < grid.COLS; x++) {
-      if (!highestRowFound && game.board[x][y].color !== blockColor.VACANT) {
+      let Square = game.board[x][y];
+      if (!highestRowFound && Square.color !== blockColor.VACANT) {
         game.highestRow = y;
-        game.highestColIndex = x;
         highestRowFound = true;
       }
+      if (highestRowFound && Square.color !== blockColor.VACANT) {
+        if (game.highestRow === y) game.highestCols.push(x);
+      }
       // Check to see if a block is still legally in a landing animation
-      if (game.board[x][y].type === blockType.LANDING) {
+      if (Square.type === blockType.LANDING) {
+        game.pauseStack = true;
         for (let i = grid.ROWS - 1; i > y; i--) {
           if (game.board[x][i].color === blockColor.VACANT) {
-            game.board[x][y].type = blockType.NORMAL;
-            game.board[x][y].timer = 0;
+            Square.type = blockType.NORMAL;
+            Square.airborne = true;
+            Square.timer = 0;
             break;
             /* A blockColor.VACANT block below a "landed" block was detected,
                            so the animation will be cancelled. */
@@ -331,43 +295,46 @@ export function updateGrid(frameAdvance = false) {
       }
 
       if (
-        game.board[x][y].availableForPrimaryChain ||
-        game.board[x][y].availableForSecondaryChain
+        Square.availableForPrimaryChain ||
+        Square.availableForSecondaryChain
       ) {
         if (
-          game.board[x][y].color == blockColor.VACANT ||
-          (game.board[x][y].type == blockType.LANDING &&
-            game.board[x][y].timer > 8 &&
-            game.board[x][y].timer < 11)
+          Square.color == blockColor.VACANT ||
+          (Square.type == blockType.LANDING &&
+            Square.timer > 8 &&
+            Square.timer < 11)
         ) {
-          game.board[x][y].availableForPrimaryChain = false;
-          game.board[x][y].availableForSecondaryChain = false;
+          Square.availableForPrimaryChain = false;
+          Square.availableForSecondaryChain = false;
         }
       }
 
       if (0 === 0 || !frameAdvance) {
-        if (game.board[x][y].timer === -1) {
-          game.board[x][y].timer = 0;
-        } else if (game.board[x][y].timer > 0) {
-          game.board[x][y].timer -= 1;
+        if (Square.timer === -1) {
+          Square.timer = 0;
+        } else if (Square.timer > 0) {
+          Square.timer -= 1;
           game.boardRiseDisabled = true;
         }
         if (
           !debug.freeze &&
-          (game.board[x][y].type === blockType.BLINKING ||
-            game.board[x][y].type === blockType.FACE ||
-            game.board[x][y].type === blockType.POPPED)
+          (Square.type === blockType.BLINKING ||
+            Square.type === blockType.FACE ||
+            Square.type === blockType.POPPED)
         ) {
-          // console.log(x, y, game.board[x][y]);
-          switch (game.board[x][y].timer) {
-            case game.board[x][y].switchToPoppedFrame + 2:
+          game.pauseStack = true;
+          // console.log(x, y, Square);
+          switch (Square.timer) {
+            case Square.switchToPoppedFrame + 2:
               playAudio(audio.blockClear);
+              game.scoreUpdate = Math.round(game.scoreMultiplier * 10);
+              game.score += game.scoreUpdate;
               break;
             case 0:
-              game.board[x][y].color = blockColor.VACANT;
-              game.board[x][y].type = blockType.NORMAL;
-              // game.board[x][y].switchToFaceFrame = 0;
-              // game.board[x][y].switchToPoppedFrame = 0;
+              Square.color = blockColor.VACANT;
+              Square.type = blockType.NORMAL;
+              // Square.switchToFaceFrame = 0;
+              // Square.switchToPoppedFrame = 0;
               // console.log("do delay timer");
               if (
                 y > 0 &&
@@ -383,60 +350,32 @@ export function updateGrid(frameAdvance = false) {
                 // create chain available blocks above current
                 // If clearing piece detected, break loop since no more chainable blocks.
                 if (INTERACTIVE_TYPES.includes(game.board[x][i].type)) {
-                  if (game.board[x][y].availableForPrimaryChain) {
+                  if (Square.availableForPrimaryChain) {
                     game.board[x][i].availableForPrimaryChain = true;
-                  } else if (game.board[x][y].availableForSecondaryChain)
+                  } else if (Square.availableForSecondaryChain)
                     game.board[x][i].availableForSecondaryChain = true;
                 } else break; // stop iterating since this clearing block shields the other blocks
               }
               break;
-            case game.board[x][y].switchToFaceFrame:
-              game.board[x][y].type = blockType.FACE;
+            case Square.switchToFaceFrame:
+              Square.type = blockType.FACE;
               break;
-            case game.board[x][y].switchToPoppedFrame:
-              game.board[x][y].type = blockType.POPPED;
+            case Square.switchToPoppedFrame:
+              Square.type = blockType.POPPED;
               // console.log("block popped");
               break;
           }
         }
       }
-    }
-  }
+
+      if (game.panicking && game.highestCols.includes(x)) {
+        if (Square.type === "normal") Square.type = "panicking";
+      } else {
+        if (Square.type === blockType.PANICKING) Square.type = blockType.NORMAL;
+      }
+    } // end x
+  } // end y
 }
-// }
-//   if (game.board[x][y].timer === game.board[x][y].switchToFaceFrame) {
-//     game.board[x][y].type = blockType.FACE;
-//   }
-//   if (game.board[x][y].timer ===)
-//   //
-//   if (game.board[x][y].popTime > 0) {
-//     if (game.board[x][y].timer === game.blockInitialFaceTime) {
-//       game.board[x][y].type = blockType.FACE;
-//     } else if (game.board[x][y].timer === game.leftOverTime) {
-//       game.board[x][y].timer -= 1;
-//       game.boardRiseDisabled = true;
-//     } else if (game.board[x][y].timer > 0) {
-//       game.board[x][y].timer -= 1;
-//       game.boardRiseDisabled = true;
-//     } else if (game.board[x][y].timer === 0) {
-//       game.board[x][y].type = blockType.POPPED;
-//       game.board[x][y].timer = game.board[x][y].popTimer;
-//       game.board[x][y].popTimer = 0;
-//     }
-//   } else if (
-//     game.board[x][y].timer === game.board[x][y].leftoverTimer
-//   ) {
-//     game.board[x][y].type = blockType.POPPED;
-//     game.board[x][y].leftoverTimer = 0;
-//   } else if (game.board[x][y].timer > 0) {
-//     game.board[x][y].timer -= 1;
-//     game.boardRiseDisabled = true;
-//   }
-// }
-//       }
-//     }
-//   }
-// }
 
 function decreaseTimers(x, y) {
   if (game.board[x][y].timer === -1) game.board[x][y].timer = 0;
@@ -578,8 +517,8 @@ function doPanic() {
   return panic;
 }
 
-export function makeNewRow() {
-  if (!game.grounded) {
+export function createNewRow() {
+  if (game.pauseStack) {
     return false;
   }
 
@@ -610,6 +549,8 @@ export function makeNewRow() {
       "panic"
     );
   }
+  // score gained for new row passed
+  game.score += Math.floor(game.scoreMultiplier * 10);
   return true;
 }
 
@@ -644,6 +585,9 @@ export function checkTime() {
     case -60:
       game.Music.volume = 0;
       if (win.restartGame) {
+        document
+          .getElementById("home-page")
+          .scrollIntoView({ behavior: "smooth", block: "end" });
         if (!win.muteAnnouncer.checked) {
           playAudio(audio.announcerReady, 0.2, true);
           game.messagePriority = "Ready...";
@@ -657,12 +601,13 @@ export function checkTime() {
       break;
     case 0:
       game.messagePriority = "Go!";
+      if (game.mode === "cpu-play") playMusic(music[randInt(music.length)]);
       if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.1, true);
 
       break;
     case 60:
       if (game.message === "Go!") {
-        playMusic(music[randInt(music.length)]);
+        if (game.mode !== "cpu-play") playMusic(music[randInt(music.length)]);
         game.messagePriority = "";
         game.defaultMessage = "X to swap Z to lift the stack!";
         game.message = game.defaultMessage;
@@ -966,9 +911,12 @@ export function updateLevelEvents(level) {
   game.blockInitialFaceTime = preset.faceValues[game.level];
   game.blockStallTime = preset.stallValues[game.level];
   game.blockPopMultiplier = preset.popMultiplier[game.level];
+  game.panicIndex = game.level < 7 ? 1 : game.level < 10 ? 3 : 5;
 }
 
+let cnt;
 export function gameLoop() {
+  cnt++;
   // if (win.running) {
   //   document.getElementById("header").style.display = "none";
   //   document.getElementById("nav-bar").style.display = "none";
@@ -1035,6 +983,7 @@ export function gameLoop() {
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
+        cnt = 0; // game loop counter
         game.defaultMessage = `Level ${game.level} | 0:${padInteger(
           20 - (game.seconds % 20),
           2
@@ -1087,7 +1036,7 @@ export function gameLoop() {
               perf.realTime
             }, pauseTime = ${perf.sumOfPauseTimes}, timeDifference = ${
               perf.diffFromRealTime
-            }`
+            }, avg loops per sec: ${cnt}`
           );
         }
 
@@ -1114,23 +1063,21 @@ export function gameLoop() {
           game.boardRiseSpeed = 1;
         }
       }
-      game.grounded = areAllBlocksGrounded();
+      // game.pauseStack = areAllBlocksGrounded();
       playerAction(action);
       doGravity(perf.gameSpeed); // may need to run twice
       checkMatch();
       updateGrid();
       isChainActive();
-      if (game.frames % 6 == 0) {
-        doPanic();
-      }
+      // if (game.frames % 6 == 0) doPanic();
       if (game.frames % game.boardRiseSpeed == 0) {
-        if (!game.boardRiseDisabled && game.grounded && debug.freeze == 0) {
+        if (!game.boardRiseDisabled && !game.pauseStack && debug.freeze == 0) {
           if (game.raiseDelay > 0) {
             game.raiseDelay -= game.boardRiseSpeed * perf.gameSpeed;
             if (game.raiseDelay < 0) {
               game.raiseDelay = 0;
             }
-          } else if (game.frames > 0 && game.grounded) {
+          } else if (game.frames > 0 && !game.pauseStack) {
             game.rise = (game.rise + 2) % 32;
             if (perf.gameSpeed == 2 && game.rise != 0) {
               if (game.currentlyQuickRaising || game.boardRiseSpeed === 1) {
@@ -1139,7 +1086,11 @@ export function gameLoop() {
             }
           }
         }
-        if (game.highestRow === 0 && game.currentChain > 0 && game.grounded) {
+        if (
+          game.highestRow === 0 &&
+          game.currentChain > 0 &&
+          !game.pauseStack
+        ) {
           console.log("not dead yet! Go back!");
           game.rise = 30;
         }
@@ -1150,7 +1101,7 @@ export function gameLoop() {
           !game.over &&
           game.frames > 0
         ) {
-          makeNewRow();
+          createNewRow();
           game.readyForNewRow = false;
         }
       }
@@ -1178,15 +1129,8 @@ export function gameLoop() {
         drawGrid();
       }
 
-      // Try and control a frame rate based
-      // on computer performance by decreasing or increasing
-      // the amount of times the game.board is drawn per second
       drawGrid();
-      // if (!game.over) {
-      //   if (game.frames % perf.drawDivisor == 0) {
-      //     drawGrid();
-      //   }
-      // }
+
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         perf.diffFromRealTime = Math.abs(
           perf.realTime - perf.sumOfPauseTimes - game.frames / 60
@@ -1256,7 +1200,7 @@ export function gameLoop() {
         win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
           game.seconds} seconds<br />Real Time: ${perf.realTime} seconds`;
         win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
-        Stack size: ${12 - game.highestRow}<br>
+        Score Multiplier: ${game.scoreMultiplier}<br>
         Highest Row: ${game.highestRow}`;
       } else {
         win.timeDisplay.innerHTML = game.timeString;

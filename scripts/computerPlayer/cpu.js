@@ -60,7 +60,7 @@ export function cpuAction(input) {
   let stackSize = 12 - game.highestRow;
   let coordinates = false;
   let dir =
-    game.highestColIndex < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
+    game.highestCols[0] < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
 
   // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
   //   coordinates = flattenStack();
