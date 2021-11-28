@@ -22,6 +22,7 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;
+  game.Music.pause();
   console.log("game finished:", gameFinished);
   if (!gameFinished) game.Music.volume = 0;
   win.cvs = null;

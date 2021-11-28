@@ -791,10 +791,8 @@ function KEYBOARD_CONTROL(event) {
       game.mode = "arcade";
       startGame(2);
     } else if (event.keyCode === 87 && win.patchNotesShown) {
-      // w for "wasd" controls
-      game.controls = "wasd";
       document.getElementById("arcade-button").remove();
-      document.getElementById("wasd-arcade-button").remove();
+      document.getElementById("training-mode").remove();
       document.getElementById("watch-ai-play-button").remove();
       game.mode = "arcade";
       startGame(2);
@@ -841,7 +839,7 @@ function KEYBOARD_CONTROL(event) {
     }
   }
   // Game Controls
-  if (win.running & !game.over) {
+  if (win.running && !game.over) {
     if (game.mode !== "cpu-play" || debug.enabled) {
       if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
       if (savedControls.keyboard.down.includes(event.keyCode)) {

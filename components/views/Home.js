@@ -17,7 +17,7 @@ export default st => html`
             Play Arcade! (Enter)
           </button>
           <button
-            id="wasd-arcade-button"
+            id="training-mode"
             class="default-button start-buttons"
             style="display:none"
           >

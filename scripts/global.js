@@ -224,7 +224,6 @@ export const game = {
   blockPopMultiplier: preset.popMultiplier[1],
   blockInitialFaceTime: preset.faceValues[1],
   blockStallTime: preset.stallValues[1],
-  controls: "arrow",
   raiseDelay: 0,
   frames: -180,
   finalTime: 0,

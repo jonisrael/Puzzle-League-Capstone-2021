@@ -143,29 +143,25 @@ function addEventListeners(st) {
     document.getElementById("arcade-button").addEventListener("click", () => {
       api.data = getWorldTimeAPI();
       game.mode = "arcade";
-      game.controls = "arrow";
       document.getElementById("arcade-button").remove();
-      document.getElementById("wasd-arcade-button").remove();
+      document.getElementById("training-mode").remove();
       document.getElementById("watch-ai-play-button").remove();
       startGame(1);
     });
-    document
-      .getElementById("wasd-arcade-button")
-      .addEventListener("click", () => {
-        api.data = getWorldTimeAPI();
-        game.mode = "arcade";
-        game.controls = "wasd";
-        document.getElementById("arcade-button").remove();
-        document.getElementById("wasd-arcade-button").remove();
-        document.getElementById("watch-ai-play-button").remove();
-        startGame(1);
-      });
+    document.getElementById("training-mode").addEventListener("click", () => {
+      api.data = getWorldTimeAPI();
+      game.mode = "training";
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-mode").remove();
+      document.getElementById("watch-ai-play-button").remove();
+      startGame(1);
+    });
     document
       .getElementById("watch-ai-play-button")
       .addEventListener("click", () => {
         game.mode = "cpu-play";
         document.getElementById("arcade-button").remove();
-        document.getElementById("wasd-arcade-button").remove();
+        document.getElementById("training-mode").remove();
         document.getElementById("watch-ai-play-button").remove();
         startGame(1);
       });
