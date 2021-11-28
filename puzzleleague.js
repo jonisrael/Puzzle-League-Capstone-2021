@@ -20,7 +20,11 @@ import {
   startGame
 } from "./scripts/functions/startGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
-import { doGravity, areAllBlocksGrounded } from "./scripts/functions/gravity";
+import {
+  doGravity,
+  areAllBlocksGrounded,
+  isBlockAirborne
+} from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
 import {
@@ -119,7 +123,8 @@ class Block {
     airborne = false,
     touched = false,
     availableForPrimaryChain = false,
-    availableForSecondaryChain = false
+    availableForSecondaryChain = false,
+    swapDirection = 0
   ) {
     this.x = x;
     this.y = y;
@@ -132,49 +137,155 @@ class Block {
     this.touched = touched;
     this.availableForPrimaryChain = availableForPrimaryChain; // When disappear, chain ends
     this.availableForSecondaryChain = availableForSecondaryChain;
+    this.swapDirection = swapDirection;
+  }
+
+  drawSwappingBlocks() {
+    let xOffset = (grid.SQ * this.timer) / 4;
+    win.ctx.drawImage(
+      loadedImages[`${this.color}_normal`],
+      grid.SQ * this.x + xOffset * this.swapDirection,
+      grid.SQ * this.y - game.rise
+    );
+  }
+
+  drawDebugDots() {
+    //Debug Visuals
+    if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
+      win.ctx.drawImage(
+        loadedImages["debugWhite"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    } else if (this.touched) {
+      win.ctx.drawImage(
+        loadedImages["debugBlue"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    } else if (this.availableForPrimaryChain) {
+      win.ctx.drawImage(
+        loadedImages["debugOrange"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    } else if (
+      this.availableForSecondaryChain ||
+      (this.x == 0 && this.y == 1 && game.currentChain > 1)
+    ) {
+      win.ctx.drawImage(
+        loadedImages["debugPink"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    } else if (
+      this.timer > 0 ||
+      (this.x == 0 && this.y == 1 && game.currentChain < 1)
+    ) {
+      win.ctx.drawImage(
+        loadedImages["debugWhite"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+  }
+
+  // AI Visuals
+  drawAILogic() {
+    if (
+      (this.x === cpu.targetX && this.y === cpu.targetY) ||
+      (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
+    ) {
+      win.ctx.drawImage(
+        loadedImages[cpu.targetColor],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+    if (
+      this.x === cpu.holeDetectedAt[0] &&
+      this.y === cpu.holeDetectedAt[1] &&
+      cpu.targetColor === sprite.debugGreen
+    ) {
+      win.ctx.drawImage(
+        loadedImages["debugYellow"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+    if (
+      cpu.matchList.includes([this.x, this.y].join()) &&
+      (cpu.targetColor === sprite.debugRed ||
+        cpu.targetColor === sprite.debugGreen)
+    ) {
+      win.ctx.drawImage(
+        loadedImages["debugMagenta"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
   }
 
   draw() {
     let animationIndex = -1;
-    if (this.type == blockType.BLINKING) {
-      if ((game.frames % 4 >= 0 && game.frames % 4 < 2) || debug.freeze == 1) {
-        animationIndex = 0;
-      } else {
-        animationIndex = 1;
-      }
-    } else if (this.type == blockType.PANICKING) {
-      if (game.highestRow === 0) {
-        animationIndex = 0;
-      } else if (game.frames % 18 >= 0 && game.frames % 18 < 3) {
-        animationIndex = 0;
-      } else if (
-        (game.frames % 18 >= 3 && game.frames % 18 < 6) ||
-        (game.frames % 18 >= 15 && game.frames % 18 < 18)
-      ) {
-        animationIndex = 1;
-      } else if (
-        (game.frames % 18 >= 6 && game.frames % 18 < 9) ||
-        (game.frames % 18 >= 12 && game.frames % 18 < 15)
-      ) {
-        animationIndex = 2;
-      } else {
-        animationIndex = 3;
-      }
-    } else if (this.type == blockType.LANDING) {
-      if (this.timer > 5 || this.timer < 0) {
-        animationIndex = 0;
-      } else if (this.timer > 2) {
-        animationIndex = 1;
-      } else {
-        animationIndex = 2;
-      }
+    switch (this.type) {
+      case blockType.BLINKING:
+        if (
+          (game.frames % 4 >= 0 && game.frames % 4 < 2) ||
+          debug.freeze == 1
+        ) {
+          animationIndex = 0;
+        } else {
+          animationIndex = 1;
+        }
+        break;
+      case blockType.PANICKING:
+        if (game.highestRow === 0) {
+          animationIndex = 0;
+        } else if (game.frames % 18 >= 0 && game.frames % 18 < 3) {
+          animationIndex = 0;
+        } else if (
+          (game.frames % 18 >= 3 && game.frames % 18 < 6) ||
+          (game.frames % 18 >= 15 && game.frames % 18 < 18)
+        ) {
+          animationIndex = 1;
+        } else if (
+          (game.frames % 18 >= 6 && game.frames % 18 < 9) ||
+          (game.frames % 18 >= 12 && game.frames % 18 < 15)
+        ) {
+          animationIndex = 2;
+        } else {
+          animationIndex = 3;
+        }
+        break;
+      case blockType.LANDING:
+        if (this.timer > 5 || this.timer < 0) {
+          animationIndex = 0;
+        } else if (this.timer > 2) {
+          animationIndex = 1;
+        } else {
+          animationIndex = 2;
+        }
+        break;
     }
+
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
+    if (this.type === "landing" && this.timer > 9)
+      urlKey = `${this.color}_normal`;
     win.ctx.drawImage(
       loadedImages[urlKey],
       grid.SQ * this.x,
       grid.SQ * this.y - game.rise
     );
+
+    // if (this.type === blockType.SWAPPING) {
+    // let xOffset = (grid.SQ * this.swapDirection*(1 - this.timer)) / 4;
+    //   win.ctx.drawImage(
+    //     loadedImages[`${this.color}_normal`],
+    //     grid.SQ * this.x + xOffset,
+    //     grid.SQ * this.y - game.rise
+    //   );
+    // }
     // old and inefficient
     // let BLOCK_IMAGE = new Image();
     // BLOCK_IMAGE.src = sprite[urlKey];
@@ -185,78 +296,7 @@ class Block {
     //     grid.SQ * this.y - game.rise
     //   );
     // };
-
-    // AI Visuals
-    if (cpu.showInfo) {
-      if (
-        (this.x === cpu.targetX && this.y === cpu.targetY) ||
-        (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
-      ) {
-        win.ctx.drawImage(
-          loadedImages[cpu.targetColor],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      }
-      if (
-        this.x === cpu.holeDetectedAt[0] &&
-        this.y === cpu.holeDetectedAt[1] &&
-        cpu.targetColor === sprite.debugGreen
-      ) {
-        win.ctx.drawImage(
-          loadedImages["debugYellow"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      }
-      if (
-        cpu.matchList.includes([this.x, this.y].join()) &&
-        (cpu.targetColor === sprite.debugRed ||
-          cpu.targetColor === sprite.debugGreen)
-      ) {
-        win.ctx.drawImage(
-          loadedImages["debugMagenta"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      }
-    }
-
-    //Debug Visuals
-    if (debug.show == 1) {
-      if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
-        win.ctx.drawImage(
-          loadedImages["debugWhite"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      } else if (this.availableForPrimaryChain) {
-        win.ctx.drawImage(
-          loadedImages["debugOrange"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      } else if (
-        this.availableForSecondaryChain ||
-        (this.x == 0 && this.y == 1 && game.currentChain > 1)
-      ) {
-        win.ctx.drawImage(
-          loadedImages["debugPink"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      } else if (
-        (this.timer > 0 && this.type == blockType.NORMAL) ||
-        (this.x == 0 && this.y == 1 && game.currentChain < 1)
-      ) {
-        win.ctx.drawImage(
-          loadedImages["debugBlue"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      }
-    }
-  }
+  } // end draw()
 }
 
 export function newBlock(c, r) {
@@ -272,6 +312,13 @@ export function updateGrid(frameAdvance = false) {
   for (let y = 0; y < grid.ROWS + 2; y++) {
     for (let x = 0; x < grid.COLS; x++) {
       let Square = game.board[x][y];
+      if (Square.color === "vacant") {
+        Square.availableForPrimaryChain = false;
+        Square.availableForSecondaryChain = false;
+        Square.touched = false;
+        Square.airborne = false;
+        Square.timer = 0;
+      }
       if (!highestRowFound && Square.color !== blockColor.VACANT) {
         game.highestRow = y;
         highestRowFound = true;
@@ -282,9 +329,16 @@ export function updateGrid(frameAdvance = false) {
       // Check to see if a block is still legally in a landing animation
       if (Square.type === blockType.LANDING) {
         game.pauseStack = true;
-        for (let i = grid.ROWS - 1; i > y; i--) {
-          if (game.board[x][i].color === blockColor.VACANT) {
+        if (Square.timer < 9) {
+          Square.addToPrimaryChain = false;
+          Square.addToSecondaryChain = false;
+          Square.touched = false;
+        }
+        for (let j = grid.ROWS - 1; j > y; j--) {
+          if (game.board[x][j].color === blockColor.VACANT) {
             Square.type = blockType.NORMAL;
+            Square.addToPrimaryChain = false;
+            Square.addToSecondaryChain = false;
             Square.airborne = true;
             Square.timer = 0;
             break;
@@ -300,71 +354,91 @@ export function updateGrid(frameAdvance = false) {
       ) {
         if (
           Square.color == blockColor.VACANT ||
-          (Square.type == blockType.LANDING &&
-            Square.timer > 8 &&
-            Square.timer < 11)
+          (Square.type == blockType.LANDING && Square.timer < 9)
         ) {
           Square.availableForPrimaryChain = false;
           Square.availableForSecondaryChain = false;
         }
       }
 
-      if (0 === 0 || !frameAdvance) {
-        if (Square.timer === -1) {
-          Square.timer = 0;
-        } else if (Square.timer > 0) {
-          Square.timer -= 1;
+      if (Square.timer === -1) {
+        Square.timer = 0;
+      } else if (Square.timer > 0) {
+        Square.timer -= 1;
+        if (Square.type !== blockType.SWAPPING) {
+          Square.swapDirection = 0;
           game.boardRiseDisabled = true;
         }
-        if (
-          !debug.freeze &&
-          (Square.type === blockType.BLINKING ||
-            Square.type === blockType.FACE ||
-            Square.type === blockType.POPPED)
-        ) {
-          game.pauseStack = true;
-          // console.log(x, y, Square);
-          switch (Square.timer) {
-            case Square.switchToPoppedFrame + 2:
-              playAudio(audio.blockClear);
-              game.scoreUpdate = Math.round(game.scoreMultiplier * 10);
-              game.score += game.scoreUpdate;
-              break;
-            case 0:
-              Square.color = blockColor.VACANT;
-              Square.type = blockType.NORMAL;
-              // Square.switchToFaceFrame = 0;
-              // Square.switchToPoppedFrame = 0;
-              // console.log("do delay timer");
-              if (
-                y > 0 &&
-                game.board[x][y - 1].color != blockColor.VACANT &&
-                INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
-              ) {
-                // Give interactive pieces a slight delay timer
-                // console.log("do delay timer");
-                game.board[x][y - 1].timer = game.blockStallTime;
-              }
-              game.boardRiseDisabled = false;
-              for (let i = y - 1; i > 0; i--) {
-                // create chain available blocks above current
-                // If clearing piece detected, break loop since no more chainable blocks.
-                if (INTERACTIVE_TYPES.includes(game.board[x][i].type)) {
-                  if (Square.availableForPrimaryChain) {
-                    game.board[x][i].availableForPrimaryChain = true;
-                  } else if (Square.availableForSecondaryChain)
-                    game.board[x][i].availableForSecondaryChain = true;
-                } else break; // stop iterating since this clearing block shields the other blocks
-              }
-              break;
-            case Square.switchToFaceFrame:
-              Square.type = blockType.FACE;
-              break;
-            case Square.switchToPoppedFrame:
-              Square.type = blockType.POPPED;
-              // console.log("block popped");
-              break;
+      }
+      if (Square.type !== blockType.SWAPPING) {
+        Square.swapDirection = 0;
+      }
+      if (Square.type === blockType.SWAPPING && Square.timer === 0) {
+        Square.type = blockType.NORMAL;
+        if (isBlockAirborne(Square)) {
+          Square.timer = game.blockStallTime;
+          Square.touched = true;
+          Square.availableForPrimaryChain = false;
+          Square.availableForSecondaryChain = false;
+        }
+        if (Square.color === "vacant") {
+          for (let j = Square.y - 1; j >= 0; j--) {
+            let nextAboveSquare = game.board[Square.x][j];
+            nextAboveSquare.touched = true;
+            nextAboveSquare.availableForPrimaryChain = false;
+            nextAboveSquare.availableForSecondaryChain = false;
+            if (!INTERACTIVE_TYPES.includes(nextAboveSquare.type)) break;
           }
+        }
+      } else if (
+        !debug.freeze &&
+        (Square.type === blockType.BLINKING ||
+          Square.type === blockType.FACE ||
+          Square.type === blockType.POPPED)
+      ) {
+        game.pauseStack = true;
+        game.boardRiseDisabled = true;
+        // console.log(x, y, Square);
+        switch (Square.timer) {
+          case Square.switchToPoppedFrame + 2:
+            playAudio(audio.blockClear);
+            game.scoreUpdate = Math.round(game.scoreMultiplier * 10);
+            game.score += game.scoreUpdate;
+            break;
+          case 0:
+            Square.color = blockColor.VACANT;
+            Square.type = blockType.NORMAL;
+            // Square.switchToFaceFrame = 0;
+            // Square.switchToPoppedFrame = 0;
+            // console.log("do delay timer");
+            if (
+              y > 0 &&
+              game.board[x][y - 1].color != blockColor.VACANT &&
+              INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
+            ) {
+              // Give interactive pieces a slight delay timer
+              // console.log("do delay timer");
+              game.board[x][y - 1].timer = game.blockStallTime;
+            }
+            game.boardRiseDisabled = false;
+            for (let j = y - 1; j >= 0; j--) {
+              // create chain available blocks above current
+              // If clearing piece detected, break loop since no more chainable blocks.
+              if (INTERACTIVE_TYPES.includes(game.board[x][j].type)) {
+                if (Square.availableForPrimaryChain) {
+                  game.board[x][j].availableForPrimaryChain = true;
+                } else if (Square.availableForSecondaryChain)
+                  game.board[x][j].availableForSecondaryChain = true;
+              } else break; // stop iterating since this clearing block shields the other blocks
+            }
+            break;
+          case Square.switchToFaceFrame:
+            Square.type = blockType.FACE;
+            break;
+          case Square.switchToPoppedFrame:
+            Square.type = blockType.POPPED;
+            // console.log("block popped");
+            break;
         }
       }
 
@@ -393,9 +467,31 @@ function decreaseTimers(x, y) {
 }
 
 export function drawGrid() {
+  let blocksAreSwapping = false; // to be placed on top of drawn grid
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 1; y++) {
-      game.board[x][y].draw();
+      let Square = game.board[x][y];
+      Square.draw();
+      if (Square.swapDirection) blocksAreSwapping = true;
+    }
+  }
+  if (blocksAreSwapping) {
+    for (let x = grid.COLS - 1; x >= 0; x--) {
+      for (let y = 0; y < grid.ROWS + 1; y++) {
+        let Square = game.board[x][y];
+        if (Square.swapDirection && Square.timer > 0)
+          Square.drawSwappingBlocks();
+      }
+    }
+  }
+
+  if (debug.show || cpu.showInfo) {
+    for (let x = grid.COLS - 1; x >= 0; x--) {
+      for (let y = 0; y < grid.ROWS + 1; y++) {
+        let Square = game.board[x][y];
+        if (debug.show) Square.drawDebugDots();
+        if (cpu.showInfo) Square.drawAILogic();
+      }
     }
   }
   if (!game.over) {
@@ -722,7 +818,12 @@ function KEYBOARD_CONTROL(event) {
       game.paused ? unpause() : pause();
   }
   if (game.paused) {
+    if (event.keyCode == 70 && debug.enabled) {
+      debug.advanceOneFrame = true;
+      unpause();
+    }
     if (event.keyCode == 67) unpause(); // c
+
     if (event.keyCode == 82) {
       // r
       playAudio(audio.select);
@@ -740,11 +841,13 @@ function KEYBOARD_CONTROL(event) {
     }
   }
   // Game Controls
-  if (win.running & !game.over && !game.paused) {
+  if (win.running & !game.over) {
     if (game.mode !== "cpu-play" || debug.enabled) {
       if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
-      if (savedControls.keyboard.down.includes(event.keyCode))
+      if (savedControls.keyboard.down.includes(event.keyCode)) {
         action.down = true;
+      }
+
       if (savedControls.keyboard.left.includes(event.keyCode))
         action.left = true; // left arrow
       if (savedControls.keyboard.right.includes(event.keyCode))
@@ -850,15 +953,9 @@ function KEYBOARD_CONTROL(event) {
         gameOverBoard();
         drawGrid();
       }
-      if (event.keyCode == 70 || event.keyCode == 81) {
-        // f, q
-        debug.freeze = (debug.freeze + 1) % 2;
-      } else if (
-        event.keyCode == 77 &&
-        game.level < preset.speedValues.length
-      ) {
+      if (event.keyCode == 77 && game.level < preset.speedValues.length) {
         //m
-        if (game.level + 1 < preset.speedValues.length) {
+        if (0 === 0 || game.level + 1 < preset.speedValues.length) {
           game.level++;
           updateLevelEvents(game.level);
         }
@@ -905,27 +1002,32 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function updateLevelEvents(level) {
-  game.boardRiseSpeed = preset.speedValues[game.level];
-  game.blockClearTime = preset.clearValues[game.level];
-  game.blockBlinkTime = preset.blinkValues[game.level];
-  game.blockInitialFaceTime = preset.faceValues[game.level];
-  game.blockStallTime = preset.stallValues[game.level];
-  game.blockPopMultiplier = preset.popMultiplier[game.level];
+  if (level > 10) {
+    game.boardRiseSpeed = 10 - level;
+    level = 10;
+  } else game.boardRiseSpeed = preset.speedValues[level];
+  game.blockClearTime = preset.clearValues[level];
+  game.blockBlinkTime = preset.blinkValues[level];
+  game.blockInitialFaceTime = preset.faceValues[level];
+  game.blockStallTime = preset.stallValues[level];
+  game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex = game.level < 7 ? 1 : game.level < 10 ? 3 : 5;
 }
 
 let cnt;
 export function gameLoop() {
   cnt++;
-  // if (win.running) {
-  //   document.getElementById("header").style.display = "none";
-  //   document.getElementById("nav-bar").style.display = "none";
-  //   document.getElementById("footer").style.display = "none";
-  // } else {
-  //   document.getElementById("header").style.display = "block";
-  //   document.getElementById("nav-bar").style.display = "flex";
-  //   document.getElementById("footer").style.display = "block";
-  // }
+  if (win.running && !game.paused && !debug.enabled) {
+    document.getElementById("header").style.display = "none";
+    document.getElementById("nav-bar").style.display = "none";
+    document.getElementById("footer").style.display = "none";
+    document.getElementById("pause-button").style.display = "block";
+  } else {
+    document.getElementById("header").style.display = "block";
+    document.getElementById("nav-bar").style.display = "flex";
+    document.getElementById("footer").style.display = "block";
+    document.getElementById("pause-button").style.display = "none";
+  }
   if (!win.audioLoaded) {
     if (audioList.length == loadedAudios.length) win.audioLoaded = true;
   }
@@ -953,7 +1055,11 @@ export function gameLoop() {
         : (perf.realTime = 0);
     }
 
-    if (game.paused) playerAction(action);
+    if (game.paused) {
+      playerAction(action);
+      if (debug.enabled)
+        win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
+    }
 
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * perf.gameSpeed;
@@ -983,13 +1089,18 @@ export function gameLoop() {
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
+        if (game.Music.currentTime >= game.Music.duration) {
+          playMusic(music[randInt(music.length)]);
+          console.log("Track ended, now playing", game.Music.src);
+        }
+
         cnt = 0; // game loop counter
         game.defaultMessage = `Level ${game.level} | 0:${padInteger(
           20 - (game.seconds % 20),
           2
         )} remaining`;
         // overtime bonuses
-        if (game.minutes == 2) {
+        if (!cpu.enabled && game.minutes == 2) {
           game.score += game.seconds;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
@@ -1000,7 +1111,7 @@ export function gameLoop() {
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +60, Total: ${game.score}`
           );
-          console.log(game.log[game.log.length - 1]);
+          console.log("Game Log Size:", game.log[game.log.length - 1]);
         }
 
         if (debug.enabled === 1) {
@@ -1064,12 +1175,11 @@ export function gameLoop() {
         }
       }
       // game.pauseStack = areAllBlocksGrounded();
-      playerAction(action);
       doGravity(perf.gameSpeed); // may need to run twice
       checkMatch();
       updateGrid();
       isChainActive();
-      // if (game.frames % 6 == 0) doPanic();
+
       if (game.frames % game.boardRiseSpeed == 0) {
         if (!game.boardRiseDisabled && !game.pauseStack && debug.freeze == 0) {
           if (game.raiseDelay > 0) {
@@ -1106,17 +1216,6 @@ export function gameLoop() {
         }
       }
 
-      if (game.raisePressed) {
-        game.raisePressed = false;
-        if (!game.boardRiseDisabled) {
-          if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
-            if (game.rise == 0) game.rise = 2;
-            game.currentlyQuickRaising = true;
-            game.raiseDelay = 0;
-          }
-        }
-      }
-
       if (!game.over && isGameOver(game.score)) {
         game.finalTime = (game.frames / 60).toFixed(1);
         game.frames = 0;
@@ -1130,6 +1229,24 @@ export function gameLoop() {
       }
 
       drawGrid();
+
+      playerAction(action);
+
+      if (game.raisePressed) {
+        game.raisePressed = false;
+        if (!game.boardRiseDisabled) {
+          if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
+            if (game.rise == 0) game.rise = 2;
+            game.currentlyQuickRaising = true;
+            game.raiseDelay = 0;
+          }
+        }
+      }
+
+      if (game.swapPressed) {
+        game.swapPressed = false;
+        trySwappingBlocks(game.cursor.x, game.cursor.y);
+      }
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         perf.diffFromRealTime = Math.abs(
@@ -1232,9 +1349,12 @@ export function gameLoop() {
         }
       }
       win.scoreDisplay.innerHTML = scoreString;
-      win.fpsDisplay.innerHTML = `${perf.fps} fps${
-        leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
-      }`;
+
+      if (debug.advanceOneFrame) win.fpsDisplay.innerHTML = "";
+      else
+        win.fpsDisplay.innerHTML = `${perf.fps} fps${
+          leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
+        }`;
       if (game.over) {
         win.fpsDisplay.innerHTML = `Real Game Clock Time: ${perf.realTime -
           perf.sumOfPauseTimes} seconds`;
@@ -1321,7 +1441,7 @@ export function gameLoop() {
         }
       }
     }
-    // outside pause loop
+    // outside unpause loop
   }
   // update realtime variables
   perf.then = perf.now - (perf.delta % perf.fpsInterval);

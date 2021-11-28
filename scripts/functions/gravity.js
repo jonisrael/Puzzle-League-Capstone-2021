@@ -85,7 +85,7 @@ export function doGravity(gameSpeed) {
     ) {
       game.board[x][y].type = blockType.LANDING;
       game.board[x][y].airborne = false;
-      game.board[x][y].timer = 10; // 10 frames is length of landing animation
+      game.board[x][y].timer = 11; // 10 frames is length of landing animation
       //DEBUG
       if (debug.slowdown == 1) {
         game.board[x][y].timer = 120;
@@ -140,4 +140,19 @@ export function areAllBlocksGrounded() {
   }
   game.boardRiseDisabled = false;
   return true;
+}
+
+export function isBlockAirborne(Square) {
+  let c = Square.x;
+  let r = Square.y;
+  if (r === grid.ROWS - 1) return false; // not airborne since on bottom row
+
+  // if non-interactive block is directly below block, it is not airborne.
+  if (!INTERACTIVE_TYPES.includes(game.board[c][r + 1].type)) return false;
+
+  // check if there is a vacant block below -- if so it is airborne
+  for (let y = r + 1; r < grid.ROWS - 1; r++) {
+    if (game.board[c][y].color === "vacant") return true;
+  }
+  return false;
 }

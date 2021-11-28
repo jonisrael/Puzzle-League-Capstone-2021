@@ -5,6 +5,7 @@ import BLINKING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
 import DARK_B from ".././assets/Sprites/blueTriangle/dark.png";
 import DEAD_B from ".././assets/Sprites/blueTriangle/death.png";
 import POPPED_B from ".././assets/Sprites/blueTriangle/empty.png";
+import SWAPPING_B from ".././assets/Sprites/blueTriangle/swapping.png";
 import FACE_B from ".././assets/Sprites/blueTriangle/face.png";
 import LANDING_0_B from ".././assets/Sprites/blueTriangle/landing/0.png";
 import LANDING_1_B from ".././assets/Sprites/blueTriangle/landing/1.png";
@@ -19,6 +20,7 @@ import BLINKING_0_C from ".././assets/Sprites/cyanStar/clearing/0.png";
 import BLINKING_1_C from ".././assets/Sprites/cyanStar/clearing/1.png";
 import DARK_C from ".././assets/Sprites/cyanStar/dark.png";
 import DEAD_C from ".././assets/Sprites/cyanStar/death.png";
+import SWAPPING_C from ".././assets/Sprites/cyanStar/swapping.png";
 import POPPED_C from ".././assets/Sprites/cyanStar/empty.png";
 import FACE_C from ".././assets/Sprites/cyanStar/face.png";
 import LANDING_0_C from ".././assets/Sprites/cyanStar/landing/0.png";
@@ -34,6 +36,7 @@ import BLINKING_0_G from ".././assets/Sprites/greenCircle/clearing/0.png";
 import BLINKING_1_G from ".././assets/Sprites/greenCircle/clearing/1.png";
 import DARK_G from ".././assets/Sprites/greenCircle/dark.png";
 import DEAD_G from ".././assets/Sprites/greenCircle/death.png";
+import SWAPPING_G from ".././assets/Sprites/greenCircle/swapping.png";
 import POPPED_G from ".././assets/Sprites/greenCircle/empty.png";
 import FACE_G from ".././assets/Sprites/greenCircle/face.png";
 import LANDING_0_G from ".././assets/Sprites/greenCircle/landing/0.png";
@@ -49,6 +52,7 @@ import BLINKING_0_P from ".././assets/Sprites/purpleDiamond/clearing/0.png";
 import BLINKING_1_P from ".././assets/Sprites/purpleDiamond/clearing/1.png";
 import DARK_P from ".././assets/Sprites/purpleDiamond/dark.png";
 import DEAD_P from ".././assets/Sprites/purpleDiamond/death.png";
+import SWAPPING_P from ".././assets/Sprites/purpleDiamond/swapping.png";
 import POPPED_P from ".././assets/Sprites/purpleDiamond/empty.png";
 import FACE_P from ".././assets/Sprites/purpleDiamond/face.png";
 import LANDING_0_P from ".././assets/Sprites/purpleDiamond/landing/0.png";
@@ -64,6 +68,7 @@ import BLINKING_0_R from ".././assets/Sprites/redHeart/clearing/0.png";
 import BLINKING_1_R from ".././assets/Sprites/redHeart/clearing/1.png";
 import DARK_R from ".././assets/Sprites/redHeart/dark.png";
 import DEAD_R from ".././assets/Sprites/redHeart/death.png";
+import SWAPPING_R from ".././assets/Sprites/redHeart/swapping.png";
 import POPPED_R from ".././assets/Sprites/redHeart/empty.png";
 import FACE_R from ".././assets/Sprites/redHeart/face.png";
 import LANDING_0_R from ".././assets/Sprites/redHeart/landing/0.png";
@@ -79,6 +84,7 @@ import BLINKING_0_Y from ".././assets/Sprites/yellowLightning/clearing/0.png";
 import BLINKING_1_Y from ".././assets/Sprites/yellowLightning/clearing/1.png";
 import DARK_Y from ".././assets/Sprites/yellowLightning/dark.png";
 import DEAD_Y from ".././assets/Sprites/yellowLightning/death.png";
+import SWAPPING_Y from ".././assets/Sprites/yellowLightning/swapping.png";
 import POPPED_Y from ".././assets/Sprites/yellowLightning/empty.png";
 import FACE_Y from ".././assets/Sprites/yellowLightning/face.png";
 import LANDING_0_Y from ".././assets/Sprites/yellowLightning/landing/0.png";
@@ -95,6 +101,7 @@ import BLINKING_0_V from ".././assets/Sprites/vacantSquare/clearing/0.png";
 import BLINKING_1_V from ".././assets/Sprites/vacantSquare/clearing/1.png";
 import DARK_V from ".././assets/Sprites/vacantSquare/dark.png";
 import DEAD_V from ".././assets/Sprites/vacantSquare/death.png";
+import SWAPPING_V from ".././assets/Sprites/vacantSquare/swapping.png";
 import POPPED_V from ".././assets/Sprites/vacantSquare/empty.png";
 import FACE_V from ".././assets/Sprites/vacantSquare/face.png";
 import LANDING_0_V from ".././assets/Sprites/vacantSquare/landing/0.png";
@@ -232,6 +239,7 @@ const sprite = {
   blue_face: FACE_B,
   blue_dark: DARK_B,
   blue_dead: DEAD_B,
+  blue_swapping: SWAPPING_B,
   blue_popped: POPPED_B,
   blue_blinking_0: BLINKING_0_B,
   blue_blinking_1: BLINKING_1_B,
@@ -247,6 +255,7 @@ const sprite = {
   cyan_face: FACE_C,
   cyan_dark: DARK_C,
   cyan_dead: DEAD_C,
+  cyan_swapping: SWAPPING_C,
   cyan_popped: POPPED_C,
   cyan_blinking_0: BLINKING_0_C,
   cyan_blinking_1: BLINKING_1_C,
@@ -262,6 +271,7 @@ const sprite = {
   green_face: FACE_G,
   green_dark: DARK_G,
   green_dead: DEAD_G,
+  green_swapping: SWAPPING_G,
   green_popped: POPPED_G,
   green_blinking_0: BLINKING_0_G,
   green_blinking_1: BLINKING_1_G,
@@ -277,6 +287,7 @@ const sprite = {
   purple_face: FACE_P,
   purple_dark: DARK_P,
   purple_dead: DEAD_P,
+  purple_swapping: SWAPPING_P,
   purple_popped: POPPED_P,
   purple_blinking_0: BLINKING_0_P,
   purple_blinking_1: BLINKING_1_P,
@@ -292,6 +303,7 @@ const sprite = {
   red_face: FACE_R,
   red_dark: DARK_R,
   red_dead: DEAD_R,
+  red_swapping: SWAPPING_R,
   red_popped: POPPED_R,
   red_blinking_0: BLINKING_0_R,
   red_blinking_1: BLINKING_1_R,
@@ -307,6 +319,7 @@ const sprite = {
   yellow_face: FACE_Y,
   yellow_dark: DARK_Y,
   yellow_dead: DEAD_Y,
+  yellow_swapping: SWAPPING_Y,
   yellow_popped: POPPED_Y,
   yellow_blinking_0: BLINKING_0_Y,
   yellow_blinking_1: BLINKING_1_Y,
@@ -322,6 +335,7 @@ const sprite = {
   vacant_face: FACE_V,
   vacant_dark: DARK_V,
   vacant_dead: DEAD_V,
+  vacant_swapping: SWAPPING_V,
   vacant_popped: POPPED_V,
   vacant_blinking_0: BLINKING_0_V,
   vacant_blinking_1: BLINKING_1_V,
@@ -354,6 +368,7 @@ const spriteCopy = {
   blue_face: FACE_B,
   blue_dark: DARK_B,
   blue_dead: DEAD_B,
+  blue_swapping: SWAPPING_B,
   blue_popped: POPPED_B,
   blue_blinking_0: BLINKING_0_B,
   blue_blinking_1: BLINKING_1_B,
@@ -369,6 +384,7 @@ const spriteCopy = {
   cyan_face: FACE_C,
   cyan_dark: DARK_C,
   cyan_dead: DEAD_C,
+  cyan_swapping: SWAPPING_C,
   cyan_popped: POPPED_C,
   cyan_blinking_0: BLINKING_0_C,
   cyan_blinking_1: BLINKING_1_C,
@@ -384,6 +400,7 @@ const spriteCopy = {
   green_face: FACE_G,
   green_dark: DARK_G,
   green_dead: DEAD_G,
+  green_swapping: SWAPPING_G,
   green_popped: POPPED_G,
   green_blinking_0: BLINKING_0_G,
   green_blinking_1: BLINKING_1_G,
@@ -399,6 +416,7 @@ const spriteCopy = {
   purple_face: FACE_P,
   purple_dark: DARK_P,
   purple_dead: DEAD_P,
+  purple_swapping: SWAPPING_P,
   purple_popped: POPPED_P,
   purple_blinking_0: BLINKING_0_P,
   purple_blinking_1: BLINKING_1_P,
@@ -414,6 +432,7 @@ const spriteCopy = {
   red_face: FACE_R,
   red_dark: DARK_R,
   red_dead: DEAD_R,
+  red_swapping: SWAPPING_R,
   red_popped: POPPED_R,
   red_blinking_0: BLINKING_0_R,
   red_blinking_1: BLINKING_1_R,
@@ -429,6 +448,7 @@ const spriteCopy = {
   yellow_face: FACE_Y,
   yellow_dark: DARK_Y,
   yellow_dead: DEAD_Y,
+  yellow_swapping: SWAPPING_Y,
   yellow_popped: POPPED_Y,
   yellow_blinking_0: BLINKING_0_Y,
   yellow_blinking_1: BLINKING_1_Y,
@@ -444,6 +464,7 @@ const spriteCopy = {
   vacant_face: FACE_V,
   vacant_dark: DARK_V,
   vacant_dead: DEAD_V,
+  vacant_swapping: SWAPPING_V,
   vacant_popped: POPPED_V,
   vacant_blinking_0: BLINKING_0_V,
   vacant_blinking_1: BLINKING_1_V,

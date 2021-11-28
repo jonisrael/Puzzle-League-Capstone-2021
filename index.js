@@ -315,6 +315,10 @@ export function displayMessage(theMessage, error = true) {
   appMessage.innerHTML = `<br /><u>${theMessage}</u><br><br><hr>`;
   appMessageDisplay.append(appMessage);
   appMessage.style.color = error ? "#FF5555" : "#55FF55";
+  setTimeout(() => {
+    if (appMessageDisplay) appMessageDisplay.remove();
+    else console.log("message is not there");
+  }, 5000);
   window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 }
 

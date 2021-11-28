@@ -51,6 +51,7 @@ const direction = [
 ];
 
 export function cpuAction(input) {
+  if (game.frames < 20) return input;
   win.mainInfoDisplay.style.color = "green";
   // if (game.frames % 4 < 2) return input;
   let stackMinimum = 4;
@@ -69,10 +70,7 @@ export function cpuAction(input) {
     return randomAction(input);
   }
 
-  if (game.boardRiseSpeed === 1) stackMinimum = 4;
-  else if (game.boardRiseSpeed < 4 && game.frames > 9600) stackMinimum = 5;
-  else if (game.boardRiseSpeed < 4) stackMinimum = 8;
-  else stackMinimum = 11;
+  stackMinimum = game.boardRiseSpeed < 4 ? 8 : 11;
 
   if (!coordinates) {
     if (stackSize >= stackMinimum || game.currentChain > 0) {
@@ -119,7 +117,7 @@ export function cpuAction(input) {
         if (coordinates) cpu.targetColor = sprite.debugGreen;
       }
     } catch (error) {
-      console.log(`Error: ${error} at lines ${error.stack}`);
+      // console.log(`Error: ${error} at lines ${error.stack}`);
       coordinates = flattenStack();
       if (coordinates) cpu.targetColor = sprite.debugGreen;
     }
@@ -194,11 +192,11 @@ export function cpuAction(input) {
   cpu.prevTargetY = cpu.targetY;
 
   return input;
-}
+} // end cpuAction
 
 function randomAction(input) {
   win.mainInfoDisplay.style.color = "red";
-  game.messagePriority = `AI swapped again at same location, do random ${cpu.randomInputCounter} inputs`;
+  game.messagePriority = `AI Stuck, do ${cpu.randomInputCounter} random inputs`;
   let arr = ["down", "up", "left", "right", "swap", "swap"];
 
   let selection = randInt(6);

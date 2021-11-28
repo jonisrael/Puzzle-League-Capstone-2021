@@ -37,6 +37,8 @@ export function closeGame(gameFinished) {
 }
 
 export function isGameOver() {
+  // if score > 1 million or 100 minutes have passed
+  if (game.score >= 999999 || game.frames === 360000) return true;
   if (
     game.highestRow === 0 &&
     game.currentChain === 0 &&

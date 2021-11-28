@@ -13,16 +13,14 @@ import {
   api,
   newGame,
   leaderboard,
-  loadedAudios,
-  loadAllAudios,
   cpu
 } from "../global";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
-import { audio, audioList } from "../fileImports";
+import { audio, audioList, loadedAudios } from "../fileImports";
 import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
 import { Cursor, gameLoop, newBlock } from "../../puzzleleague";
-import { unpause } from "./pauseFunctions";
+import { pause, unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
@@ -51,7 +49,6 @@ export function startGame(selectedGameSpeed, version = 1) {
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay();
   game.board = generateOpeningBoard(version);
-  if (loadedAudios.length == 0) loadAllAudios();
   // Set up game loop
   leaderboard.canPost = true;
   debug.enabled = false;
@@ -68,28 +65,30 @@ export function startGame(selectedGameSpeed, version = 1) {
   if (version === 1) {
     requestAnimationFrame(gameLoop);
   }
-
-  if (version === 2) {
-    requestAnimationFrame(puzzleLeagueLoop);
-  }
 }
 
 function createHeadsUpDisplay() {
   let container = document.getElementById("container");
   container.innerHTML = ""; // Empties the home page
+
+  let appContainer = document.createElement("div");
+  appContainer = document.createElement("div");
+  appContainer.setAttribute("id", "app-container");
+  container.appendChild(appContainer);
+
   win.fpsDisplay = document.createElement("p");
   win.fpsDisplay.setAttribute("id", "fps-display");
   win.fpsDisplay.style.color = "black";
-  container.appendChild(win.fpsDisplay);
+  appContainer.appendChild(win.fpsDisplay);
 
   win.mainInfoDisplay = document.createElement("h2");
   win.mainInfoDisplay.setAttribute("id", "main-info");
   win.mainInfoDisplay.innerHTML = "Loading...";
-  container.appendChild(win.mainInfoDisplay);
+  appContainer.appendChild(win.mainInfoDisplay);
 
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
-  container.appendChild(gameContainer);
+  appContainer.appendChild(gameContainer);
 
   let column1 = document.createElement("div");
   column1.setAttribute("id", "column1");
@@ -142,6 +141,7 @@ function createHeadsUpDisplay() {
   leftHudElements.appendChild(win.levelDisplay);
 
   let controls = document.createElement("div");
+  controls.style.display = "none";
   controls.setAttribute("id", "controls");
   if (game.mode !== "cpu-play") {
     preset.controlsDefaultMessage = `
@@ -238,6 +238,15 @@ function createHeadsUpDisplay() {
     win.running = false;
     render(state.Home);
   });
+
+  let pauseButton = document.createElement("button");
+  pauseButton.setAttribute("id", "pause-button");
+  pauseButton.className = "pause-buttons default-button";
+  pauseButton.innerHTML = "Pause";
+  appContainer.append(pauseButton);
+  pauseButton.addEventListener("click", event => {
+    pause();
+  });
 }
 
 export function resetGameVariables() {
@@ -255,7 +264,7 @@ export function resetGameVariables() {
   game.blockPopMultiplier = preset.popMultiplier[1];
   game.blockStallTime = preset.stallValues[game.level];
   game.raiseDelay = 0;
-  game.frames = loadedAudios.length == audioList.length ? -186 : -210;
+  game.frames = -186;
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;

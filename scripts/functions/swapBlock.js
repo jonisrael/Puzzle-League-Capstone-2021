@@ -91,36 +91,37 @@ export function trySwappingBlocks(x, y) {
     playAudio(audio.select);
     swapProperties(game.board[x][y], game.board[x + 1][y]);
     // if landing, shorten timer to end the landing animation next frame.
-    if (game.board[x][y].timer > 1) game.board[x][y].timer = 0;
-    if (game.board[x + 1][y].timer > 1) game.board[x+1][y].timer = 0;
-    game.board[x][y].type = blockType.NORMAL;
-    game.board[x + 1][y].type = blockType.NORMAL;
+    game.board[x][y].timer = 4;
+    game.board[x + 1][y].timer = 4;
+    game.board[x][y].type = blockType.SWAPPING;
+    game.board[x][y].swapDirection = 1;
+    game.board[x + 1][y].type = blockType.SWAPPING;
+    game.board[x + 1][y].swapDirection = -1;
     game.board[x][y].availableForPrimaryChain = false;
     game.board[x + 1][y].availableForSecondaryChain = false;
 
-    if (y < 11) {
-      //Check to see if block is about to fall
-      // Check left block after swap
-      if (
-        game.board[x][y].color != blockColor.VACANT &&
-        game.board[x][y + 1].color == blockColor.VACANT
-      ) {
-        game.board[x][y].timer = game.blockStallTime; // Default 12 frames
-        game.board[x][y].touched = true; // used for properly counting chains
-        game.board[x][y].availableForSecondaryChain = false; // Don't allow the block to be used for chains
-        game.board[x][y].availableForPrimaryChain = false;
-      }
-      // Check right block after swap
-      if (
-        game.board[x + 1][y].color != blockColor.VACANT &&
-        game.board[x + 1][y + 1].color == blockColor.VACANT
-      ) {
-        game.board[x + 1][y].timer = game.blockStallTime; // Default 12 frames
-        game.board[x + 1][y].touched = true; // used for properly counting chains
-        game.board[x][y].availableForPrimaryChain = false; // Don't allow it to be used for chains
-        game.board[x][y].availableForSecondaryChain = false;
-      }
-    }
+    // if (y < 11) {
+    //   //Check to see if block is about to fall
+    //   // Check left block after swap
+    //   if (
+    //     game.board[x][y].color != blockColor.VACANT &&
+    //     game.board[x][y + 1].color == blockColor.VACANT
+    //   ) {
+    //     game.board[x][y].timer = game.blockStallTime; // Default 12 frames
+    //     game.board[x][y].touched = true; // used for properly counting chains
+    //     game.board[x][y].availableForSecondaryChain = false; // Don't allow the block to be used for chains
+    //     game.board[x][y].availableForPrimaryChain = false;
+    //   }
+    //   // Check right block after swap
+    //   if (
+    //     game.board[x + 1][y].color != blockColor.VACANT &&
+    //     game.board[x + 1][y + 1].color == blockColor.VACANT
+    //   ) {
+    //     game.board[x + 1][y].touched = true; // used for properly counting chains
+    //     game.board[x][y].availableForPrimaryChain = false; // Don't allow it to be used for chains
+    //     game.board[x][y].availableForSecondaryChain = false;
+    //   }
+    // }
 
     if (y > 0) {
       // Check to see if there are blocks above a vacant block
@@ -131,11 +132,16 @@ export function trySwappingBlocks(x, y) {
         INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
       ) {
         game.board[x][y - 1].type = blockType.NORMAL;
-        game.board[x][y - 1].timer = game.blockStallTime;
-        for (let i = y - 1; i >= 0; i--) {
-          game.board[x][i].touched = true;
+        game.board[x][y - 1].timer = game.blockStallTime + 4;
+        for (let j = y - 1; j >= 0; j--) {
+          game.board[x][j].touched = true;
           game.board[x][y].availableForPrimaryChain = false;
           game.board[x][y].availableForSecondaryChain = false;
+          if (
+            game.board[x][j].color === "vacant" ||
+            !INTERACTIVE_TYPES.includes(game.board[x][j])
+          )
+            break;
         }
       }
       // Check right column
@@ -146,13 +152,18 @@ export function trySwappingBlocks(x, y) {
       ) {
         game.board[x + 1][y - 1].type = blockType.NORMAL;
         game.board[x + 1][y - 1].timer = game.blockStallTime; // Default 12 frames
-        for (let i = y - 1; i >= 0; i--) {
-          game.board[x + 1][i].touched = true;
+        for (let j = y - 1; j >= 0; j--) {
+          game.board[x + 1][j].touched = true;
           game.board[x + 1][y].availableForPrimaryChain = false;
           game.board[x + 1][y].availableForSecondaryChain = false;
+          if (
+            game.board[x + 1][j].color === "vacant" ||
+            !INTERACTIVE_TYPES.includes(game.board[x + 1][j])
+          )
+            break;
         }
       }
-    }
+    } // end if y>0 check above for vacant block
   } else {
     win.mainInfoDisplay.style.color = "purple";
     cpu.swapSuccess = false;

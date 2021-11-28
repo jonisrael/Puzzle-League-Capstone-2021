@@ -102,13 +102,14 @@ export const blockColor = {
 
 export const blockType = {
   NORMAL: "normal",
+  PANICKING: "panicking",
+  LANDING: "landing",
+  SWAPPING: "swapping",
   POPPED: "popped",
   FACE: "face",
   DARK: "dark",
   DEAD: "dead",
-  BLINKING: "blinking",
-  LANDING: "landing",
-  PANICKING: "panicking"
+  BLINKING: "blinking"
 };
 
 export const PIECES = [
@@ -124,6 +125,7 @@ export const INTERACTIVE_TYPES = [
   blockType.NORMAL,
   blockType.LANDING,
   blockType.PANICKING
+  // blockType.SWAPPING,
 ];
 
 export const grid = {
@@ -251,6 +253,7 @@ export const game = {
   boardRiseDisabled: false,
   disableSwap: false,
   currentlyQuickRaising: false,
+  swapPressed: false,
   raisePressed: false,
   readyForNewRow: false,
   highestRow: 11,
@@ -310,7 +313,7 @@ export const debug = {
   slowdown: 0,
   freeze: 0,
   show: 0,
-  frameAdvance: false
+  advanceOneFrame: false
 };
 
 export const cpu = {

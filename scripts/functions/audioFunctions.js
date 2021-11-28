@@ -1,5 +1,5 @@
 import { audio } from "../fileImports";
-import { game, win, announcer, randInt, cpu } from "../global";
+import { game, win, announcer, randInt, cpu, music } from "../global";
 
 export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
   if (win.muteAnnouncer.checked) return;
@@ -82,5 +82,9 @@ export function playMusic(file, volume = 1, currentTime = 0) {
   console.log(game.Music.volume);
   game.Music.currentTime = currentTime;
   game.Music.play();
+  // if (game.Music.onended) {
+  //   console.log(game.Music.src, "has ended");
+  //   playMusic(music[randInt(music.length)]);
+  // }
   // game.Music.loop = loop;
 }

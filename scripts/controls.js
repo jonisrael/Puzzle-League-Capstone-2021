@@ -9,16 +9,6 @@ import { render } from "..";
 import * as state from "../store";
 
 export const action = {
-  up: false,
-  down: false,
-  left: false,
-  right: false,
-  swap: false,
-  raise: false,
-  pause: false
-};
-
-export const holdTime = {
   up: 0,
   down: 0,
   left: 0,
@@ -28,13 +18,29 @@ export const holdTime = {
   pause: 0
 };
 
-export const heldFrames = {
-  up: 0,
-  down: 0,
-  left: 0,
-  right: 0,
-  swap: 0
-};
+export const holdTime = JSON.parse(JSON.stringify(action));
+export const pressed = JSON.parse(JSON.stringify(action));
+export const heldFrames = JSON.parse(JSON.stringify(action));
+
+// export const holdTime = {
+//   up: 0,
+//   down: 0,
+//   left: 0,
+//   right: 0,
+//   swap: 0,
+//   raise: 0,
+//   pause: 0
+// };
+
+// export const pressed = JSON.stringify
+
+// export const heldFrames = {
+//   up: 0,
+//   down: 0,
+//   left: 0,
+//   right: 0,
+//   swap: 0
+// };
 
 export const defaultControls = {
   keyboard: {
@@ -202,6 +208,11 @@ export function playerAction(input) {
   } else if (!cpu.enabled) {
     input = playerInput();
   }
+  if (debug.advanceOneFrame) {
+    pause();
+    debug.advanceOneFrame = false;
+  }
+
   // first input checker, "else if" is required for priority, so case does not work.
   if (input.up) {
     action.up = false;
@@ -233,8 +244,8 @@ export function playerAction(input) {
     }
   } else if (input.swap && !game.over) {
     action.swap = false;
+    game.swapPressed = true;
     win.cvs.scrollIntoView({ block: "nearest" });
-    trySwappingBlocks(game.cursor.x, game.cursor.y);
   }
 
   // second input checker
@@ -281,6 +292,7 @@ function playerInput() {
   }
 
   if (!game.paused) {
+    // accept input if initially pressed or key is held over 200ms
     if (action.up && (holdTime.up === 0 || holdTime.up >= 12)) {
       input.up = true;
     } else if (action.left && (holdTime.left === 0 || holdTime.left >= 12)) {
@@ -298,11 +310,8 @@ function playerInput() {
     } else if (action.pause && holdTime.pause === 0) {
       input.pause = true;
     }
-  } else {
-    if (
-      (action.pause && holdTime.pause === 0) ||
-      (action.swap && holdTime.swap === 0)
-    ) {
+  } else if (game.paused) {
+    if (action.pause && holdTime.pause === 0) {
       input.pause = true;
     } else if (action.raise && holdTime.raise === 0) {
       playAudio(audio.select);

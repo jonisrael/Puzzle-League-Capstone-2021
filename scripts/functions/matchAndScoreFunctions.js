@@ -5,16 +5,25 @@ import {
   hold_it,
   blockColor,
   blockType,
-  INTERACTIVE_TYPES,
   grid,
   game,
   debug,
   win,
   preset,
-  randInt
+  randInt,
+  cpu
 } from "../global";
 
 import { playChainSFX, playAudio } from "./audioFunctions";
+
+function squareIsMatchable(c, r) {
+  let Square = game.board[c][r];
+  return (
+    (Square.type === "normal" && Square.timer === 0) ||
+    (Square.type === "panicking" && Square.timer === 0) ||
+    (Square.type === "landing" && Square.timer < 10)
+  );
+}
 
 export function legalMatch(clearLocations) {
   if (clearLocations.length === 0) {
@@ -49,13 +58,14 @@ export function checkMatch() {
     for (let c = 0; c < grid.COLS; c++) {
       // Check Vertical and afterwards, horizontal
       for (let r = 1; r < grid.ROWS - 1; r++) {
+        let Square = game.board[c][r];
         if (
-          game.board[c][r].color != blockColor.VACANT &&
-          game.board[c][r].color == game.board[c][r - 1].color &&
-          game.board[c][r].color == game.board[c][r + 1].color &&
-          INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
-          INTERACTIVE_TYPES.includes(game.board[c][r - 1].type) &&
-          INTERACTIVE_TYPES.includes(game.board[c][r + 1].type)
+          Square.color != blockColor.VACANT &&
+          Square.color == game.board[c][r - 1].color &&
+          Square.color == game.board[c][r + 1].color &&
+          squareIsMatchable(c, r) &&
+          squareIsMatchable(c, r - 1) &&
+          squareIsMatchable(c, r + 1)
         ) {
           checkAgain = true;
           clearLocations.push([c, r - 1]);
@@ -64,20 +74,20 @@ export function checkMatch() {
           // Check for four, five, and six clear
           if (
             r < 10 &&
-            game.board[c][r].color == game.board[c][r + 2].color &&
-            INTERACTIVE_TYPES.includes(game.board[c][r + 2].type)
+            Square.color == game.board[c][r + 2].color &&
+            squareIsMatchable(c, r + 2)
           ) {
             clearLocations.push([c, r + 2]);
             if (
               r < 9 &&
-              game.board[c][r].color == game.board[c][r + 3].color &&
-              INTERACTIVE_TYPES.includes(game.board[c][r + 3].type)
+              Square.color == game.board[c][r + 3].color &&
+              squareIsMatchable(c, r + 3)
             ) {
               clearLocations.push([c, r + 3]);
               if (
                 r < 8 &&
-                game.board[c][r].color == game.board[c][r + 4].color &&
-                INTERACTIVE_TYPES.includes(game.board[c][r + 4].type)
+                Square.color == game.board[c][r + 4].color &&
+                squareIsMatchable(c, r + 4)
               ) {
                 clearLocations.push([c, r + 4]);
               }
@@ -91,13 +101,14 @@ export function checkMatch() {
     for (let c = 1; c < grid.COLS - 1; c++) {
       // Check Horizontal
       for (let r = 0; r < grid.ROWS; r++) {
+        let Square = game.board[c][r];
         if (
-          game.board[c][r].color != blockColor.VACANT &&
-          game.board[c][r].color == game.board[c - 1][r].color &&
-          game.board[c][r].color == game.board[c + 1][r].color &&
-          INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
-          INTERACTIVE_TYPES.includes(game.board[c - 1][r].type) &&
-          INTERACTIVE_TYPES.includes(game.board[c + 1][r].type)
+          Square.color != blockColor.VACANT &&
+          Square.color == game.board[c - 1][r].color &&
+          Square.color == game.board[c + 1][r].color &&
+          squareIsMatchable(c, r) &&
+          squareIsMatchable(c - 1, r) &&
+          squareIsMatchable(c + 1, r)
         ) {
           checkAgain = true;
           clearLocations.push([c - 1, r]);
@@ -105,20 +116,20 @@ export function checkMatch() {
           clearLocations.push([c + 1, r]);
           if (
             c < 4 &&
-            game.board[c][r].color == game.board[c + 2][r].color &&
-            INTERACTIVE_TYPES.includes(game.board[c + 2][r].type)
+            Square.color == game.board[c + 2][r].color &&
+            squareIsMatchable(c + 2, r)
           ) {
             clearLocations.push([c + 2, r]);
             if (
               c < 3 &&
-              game.board[c][r].color == game.board[c + 3][r].color &&
-              INTERACTIVE_TYPES.includes(game.board[c + 3][r].type)
+              Square.color == game.board[c + 3][r].color &&
+              squareIsMatchable(c + 3, r)
             ) {
               clearLocations.push([c + 3, r]);
               if (
                 c < 2 &&
-                game.board[c][r].color == game.board[c + 4][r].color &&
-                INTERACTIVE_TYPES.includes(game.board[c + 4][r].type)
+                Square.color == game.board[c + 4][r].color &&
+                squareIsMatchable(c + 4, r)
               ) {
                 clearLocations.push([c + 4, r]);
               }
@@ -243,12 +254,13 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     let extraFaceTime = game.blockPopMultiplier * i;
     let c = matchLocations[i][0];
     let r = matchLocations[i][1];
+    let Square = game.board[c][r];
 
-    game.board[c][r].type = blockType.BLINKING;
-    game.board[c][r].timer = blinkTime + initialFaceTime + totalPopTime;
-    game.board[c][r].switchToFaceFrame = initialFaceTime + totalPopTime;
-    game.board[c][r].switchToPoppedFrame = totalPopTime - extraFaceTime;
-    // console.log(c, r, "assigned to:", game.board[c][r]);
+    Square.type = blockType.BLINKING;
+    Square.timer = blinkTime + initialFaceTime + totalPopTime;
+    Square.switchToFaceFrame = initialFaceTime + totalPopTime;
+    Square.switchToPoppedFrame = totalPopTime - extraFaceTime;
+    // console.log(c, r, "assigned to:", Square);
     // console.log(
     //   "blink time",
     //   blinkTime,
@@ -260,11 +272,11 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     //   extraFaceTime
     // );
     if (game.addToPrimaryChain) {
-      game.board[c][r].availableForPrimaryChain = true;
-      game.board[c][r].availableForSecondaryChain = false;
+      Square.availableForPrimaryChain = true;
+      Square.availableForSecondaryChain = false;
     } else {
-      game.board[c][r].availableForPrimaryChain = false;
-      game.board[c][r].availableForSecondaryChain = true;
+      Square.availableForPrimaryChain = false;
+      Square.availableForSecondaryChain = true;
     }
   }
 }
@@ -314,6 +326,8 @@ export function updateScore(blocksCleared, currentChain) {
   game.scoreUpdate = Math.round(game.scoreMultiplier * addToScore);
   game.chainScoreAdded += game.scoreUpdate;
   game.score += game.scoreUpdate;
-  let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
-  game.log.push(loggedScore);
+  if (game.log.length < 500) {
+    let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
+    game.log.push(loggedScore);
+  }
 }

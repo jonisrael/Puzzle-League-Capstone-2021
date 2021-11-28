@@ -120,8 +120,13 @@ section {
 }
 
 #page-body {
+    position: relative;
     background-color: grey;
-    width: 95%;
+    /* width: 95%; */
+    /* margin: 0; */
+    /* top: 50%;
+    left: 50%; */
+    /* transform: translate(0%, 25%); */
     /* padding-right: 30px;
     padding-left: 30px; */
 }
@@ -138,15 +143,25 @@ section {
     display: flex;
 }
 
+#app-container {
+    /* padding: 10px; */
+    margin: 0 auto;
+    /* overflow: auto; */
+    /* min-width: 90%;
+    min-height: 90%; */
+    max-width: 95%;
+    max-height: 95%;
+}
+
 #controls-container {
     display: flex;
     justify-content: center;
 }
 
 #fps-display {
-    font-size: x-small;
+    font-size: 0.6em;
     text-align: left;
-    padding-top: 5px;
+    padding-top: 2px;
 }
 
 #left-column, #right-column {
@@ -231,7 +246,9 @@ header {
 #best-scores-table {
     max-width: 75%;
     margin: 0 auto;
-    padding-left: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 1em;
 }
 
 table {
@@ -267,11 +284,14 @@ iframe {
 
 canvas {
     display: flex;
+    /* position: sticky;p */
     justify-content: center;
     align-items: center;
     margin: 0 auto;
     border: 10px solid burlywood;
     min-width: 70%;
+    min-height: 50%;
+    max-height: 90%;
     max-width: 85%;
 }
 
@@ -279,6 +299,7 @@ canvas {
     display: flex;
     justify-content: center;
     text-align: center;
+    padding-top: 30px;
     padding-bottom: 30px;
 }
 
@@ -313,6 +334,7 @@ h3 {
     list-style-type: none;
     font-size: large;
     text-align: center;
+    overflow: hidden;
 }
 
 select {
