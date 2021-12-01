@@ -22,13 +22,12 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;
-  game.Music.pause();
   console.log("game finished:", gameFinished);
   if (!gameFinished) game.Music.volume = 0;
   win.cvs = null;
   win.ctx = null;
   win.makeCanvas.remove();
-  if (gameFinished) {
+  if (gameFinished && !cpu.enabled) {
     // if (cpu.enabled) {
     //   win.restartGame = true;
     //   return;

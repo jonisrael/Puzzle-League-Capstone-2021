@@ -57,6 +57,26 @@ export function trySwappingBlocks(x, y) {
       }
     }
   }
+  // if (y < 11) {
+  //   // Do not swap if not on a clearing block and a vacant block is detected.
+  //   for (let j = y; j < grid.ROWS; j++) {
+  //     if (
+  //       (game.board[x][y].color != blockColor.VACANT &&
+  //         INTERACTIVE_TYPES.includes(game.board[x][y].type) &&
+  //         INTERACTIVE_TYPES.includes(game.board[x][y + 1].type) &&
+  //         game.board[x][j].color === blockColor.VACANT) ||
+  //       (game.board[x + 1][y].color !== blockColor.VACANT &&
+  //         INTERACTIVE_TYPES.includes(game.board[x + 1][y].type) &&
+  //         INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
+  //         game.board[x + 1][j].color === blockColor.VACANT)
+  //     ) {
+  //       legalSwap = false;
+  //       game.message = "Swap Failed: Airborne Block";
+  //       game.messageChangeDelay = 90;
+  //       break;
+  //     }
+  //   }
+  // }
   // Do not swap if a falling block is one unit ABOVE the cursor
   if (y > 0) {
     if (
@@ -97,8 +117,12 @@ export function trySwappingBlocks(x, y) {
     game.board[x][y].swapDirection = 1;
     game.board[x + 1][y].type = blockType.SWAPPING;
     game.board[x + 1][y].swapDirection = -1;
-    game.board[x][y].availableForPrimaryChain = false;
-    game.board[x + 1][y].availableForSecondaryChain = false;
+    // game.board[x][y].availableForPrimaryChain = false;
+    // game.board[x + 1][y].availableForPrimaryChain = false;
+    // game.board[x][y].availableForSecondaryChain = false;
+    // game.board[x + 1][y].availableForSecondaryChain = false;
+    game.board[x][y].touched = true;
+    game.board[x + 1][y].touched = true;
 
     // if (y < 11) {
     //   //Check to see if block is about to fall

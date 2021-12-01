@@ -184,7 +184,8 @@ export const win = {
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx"),
-  audioLoaded: false
+  audioLoaded: false,
+  mouseIsDown: false
 };
 
 export const music = [
@@ -224,6 +225,7 @@ export const game = {
   blockPopMultiplier: preset.popMultiplier[1],
   blockInitialFaceTime: preset.faceValues[1],
   blockStallTime: preset.stallValues[1],
+  boardRiseRestarter: 0,
   raiseDelay: 0,
   frames: -180,
   finalTime: 0,
@@ -354,6 +356,7 @@ export const loadedAudios = [];
 
 // Preload all audios, then play them at zero volume.
 export function loadAllAudios() {
+  console.log("loading audios");
   for (let i = 0; i < audioList.length; i++) {
     let audio = new Audio();
     audio.src = audioList[i];

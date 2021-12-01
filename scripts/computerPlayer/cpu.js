@@ -82,7 +82,7 @@ export function cpuAction(input) {
         }
         coordinates = findVerticalMatches(10 - row, dir);
         if (coordinates) {
-          cpu.targetColor = sprite.debugRed;
+          cpu.targetColor = sprite.debugYellow;
           break;
         }
       }
@@ -93,7 +93,7 @@ export function cpuAction(input) {
   if (!coordinates) {
     // console.log("attempting to flatten stack");
     coordinates = flattenStack();
-    if (coordinates) cpu.targetColor = sprite.debugGreen;
+    if (coordinates) cpu.targetColor = sprite.debugViolet;
   }
 
   if (coordinates) {
@@ -114,12 +114,12 @@ export function cpuAction(input) {
       ) {
         // console.log("abnormality detected, flatten stack");
         coordinates = flattenStack();
-        if (coordinates) cpu.targetColor = sprite.debugGreen;
+        if (coordinates) cpu.targetColor = sprite.debugRed;
       }
     } catch (error) {
       // console.log(`Error: ${error} at lines ${error.stack}`);
       coordinates = flattenStack();
-      if (coordinates) cpu.targetColor = sprite.debugGreen;
+      if (coordinates) cpu.targetColor = sprite.debugRed;
     }
   } else {
     // idle, return to center of board
@@ -210,7 +210,7 @@ function randomAction(input) {
   input[arr[selection]] = true;
   // cpu.targetX = game.cursor.x;
   // cpu.targetY = game.cursor.y;
-  cpu.targetColor = sprite.debugWhite;
+  cpu.targetColor = sprite.debugBrown;
   return input;
 }
 

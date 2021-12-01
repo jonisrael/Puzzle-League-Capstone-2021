@@ -22,6 +22,7 @@ import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
 import { Cursor, gameLoop, newBlock } from "../../puzzleleague";
 import { pause, unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
+import { action } from "../controls";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed, version = 1) {
@@ -103,10 +104,12 @@ function createHeadsUpDisplay() {
   // create leftHudElements
   let leftHudElements = document.createElement("div");
   leftHudElements.setAttribute("id", "left-hud-elements");
+  leftHudElements.className = ".hidden-mobile";
   column1.append(leftHudElements);
   // create rightHudElements
   let rightHudElements = document.createElement("div");
   rightHudElements.setAttribute("id", "right-hud-elements");
+  rightHudElements.className = ".hidden-mobile";
   column3.append(rightHudElements);
   // create HUD elements
   win.statDisplay = document.createElement("h2");
@@ -247,6 +250,42 @@ function createHeadsUpDisplay() {
   pauseButton.addEventListener("click", event => {
     pause();
   });
+
+  win.makeCanvas.addEventListener("mousedown", function(e) {
+    getCursorPosition(win.makeCanvas, e);
+    // logButtons(e);
+    win.mouseIsDown = true;
+  });
+  document.addEventListener("mouseup", function(e) {
+    win.mouseIsDown = false;
+  });
+}
+
+// function logButtons(e) {
+//   console.log(`${e.buttons} (${e.type})`); // log.nodeValue= `${e.buttons} (${e.type})`;
+// }
+
+function getCursorPosition(canvas, event) {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  findBlockInfoByClickPosition(x, y);
+  // console.log("x: " + x + " y: " + y);
+  return [x, y];
+}
+
+function findBlockInfoByClickPosition(x, y) {
+  let pixelX = x - 10;
+  let pixelY = y - 10 + game.rise;
+  let blockXInt = Math.floor(pixelX / grid.SQ);
+  let blockYInt = Math.floor(pixelY / grid.SQ);
+  // console.log(blockXInt, blockYInt, game.rise);
+  // console.log(Math.floor(pixelX), Math.floor(pixelY));
+  console.log(
+    "Clicked Coordinate:",
+    game.board[blockXInt][blockYInt],
+    `FRAME ${game.frames}\n`
+  );
 }
 
 export function resetGameVariables() {

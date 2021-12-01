@@ -15,7 +15,11 @@ export function pause(lostFocus = false, message = "") {
     "perf:",
     perf,
     "action:",
-    action
+    action,
+    `At ${game.cursor.x}, ${game.cursor.y}`,
+    game.board[game.cursor.x][game.cursor.y],
+    `At ${game.cursor.x + 1}, ${game.cursor.y}`,
+    game.board[game.cursor.x + 1][game.cursor.y]
   );
 
   perf.pauseStartTime = Date.now();

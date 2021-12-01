@@ -149,6 +149,7 @@ export function checkMatch() {
 
     // now determine chain
     if (legalMatch(clearLocations)) {
+      game.boardRiseRestarter = 0; // restart failsafe timer
       game.addToPrimaryChain = false;
       for (let i = 0; i < blocksCleared - 1; i++) {
         clearLocationsString += `[${clearLocations[i]}], `;

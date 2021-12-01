@@ -301,7 +301,7 @@ function playerInput() {
       input.down = true;
     } else if (action.right && (holdTime.right === 0 || holdTime.right >= 12)) {
       input.right = true;
-    } else if (action.swap && (holdTime.swap === 0 || holdTime.swap >= 12)) {
+    } else if (action.swap && holdTime.swap === 0) {
       input.swap = true;
     }
     // separate input
@@ -338,7 +338,6 @@ function playerInput() {
 }
 
 function pollGamepadInputs(gamepad) {
-  if (game.frames === 2) console.log(savedControls.gamepad);
   let buttonList = gamepad.buttons;
   let buttonsPressed = [];
   for (let i = 0; i < buttonList.length; i++) {

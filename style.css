@@ -289,10 +289,13 @@ canvas {
     align-items: center;
     margin: 0 auto;
     border: 10px solid burlywood;
-    min-width: 70%;
-    min-height: 50%;
-    max-height: 90%;
-    max-width: 85%;
+    /* @media screen and (max-width: 600px) {
+        min-width: 70%;
+        min-height: 50%;
+        max-height: 90%;
+        max-width: 85%;
+    } */
+
 }
 
 #high-score-display {
@@ -358,22 +361,31 @@ select {
     color:black;
 }
 
+@media screen and (max-width: 600px) {
+    .hidden-mobile {
+        display: none;
+    }
+}
+
 #left-hud-elements {
     background-color: whitesmoke;
     border: solid black 2px;
     border-radius: 10px;
     width: 80%;
+    /* display: none; */
 }
 
 #right-hud-elements {
     border: 1px solid black;
     padding-bottom: 1rem;
+    /* display: none; */
 }
 
 #right-hud-elements h2 {
     text-align: center;
     font-size: large;
     color: blue;
+
 }
 
 #right-hud-elements ol {

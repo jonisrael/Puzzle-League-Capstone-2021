@@ -1,5 +1,7 @@
 // Import Image Sprites
 import CURSOR from ".././assets/Sprites/cursor.png";
+import SINGLE_CURSOR from ".././assets/Sprites/single_cursor.png";
+import GRID_LINE from ".././assets/Sprites/grid_line.png";
 import BLINKING_0_B from ".././assets/Sprites/blueTriangle/clearing/0.png";
 import BLINKING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
 import DARK_B from ".././assets/Sprites/blueTriangle/dark.png";
@@ -235,6 +237,8 @@ import TOPOUT from ".././assets/Audio/topout.wav";
 // Images
 const sprite = {
   cursor: CURSOR,
+  single_cursor: SINGLE_CURSOR,
+  grid_line: GRID_LINE,
   blue_normal: NORMAL_B,
   blue_face: FACE_B,
   blue_dark: DARK_B,
@@ -362,144 +366,18 @@ const sprite = {
   debugYellow: DEBUGY
 };
 
-const spriteCopy = {
-  cursor: CURSOR,
-  blue_normal: NORMAL_B,
-  blue_face: FACE_B,
-  blue_dark: DARK_B,
-  blue_dead: DEAD_B,
-  blue_swapping: SWAPPING_B,
-  blue_popped: POPPED_B,
-  blue_blinking_0: BLINKING_0_B,
-  blue_blinking_1: BLINKING_1_B,
-  blue_landing_0: LANDING_0_B,
-  blue_landing_1: LANDING_1_B,
-  blue_landing_2: LANDING_2_B,
-  blue_panicking_0: PANICKING_0_B,
-  blue_panicking_1: PANICKING_1_B,
-  blue_panicking_2: PANICKING_2_B,
-  blue_panicking_3: PANICKING_3_B,
-
-  cyan_normal: NORMAL_C,
-  cyan_face: FACE_C,
-  cyan_dark: DARK_C,
-  cyan_dead: DEAD_C,
-  cyan_swapping: SWAPPING_C,
-  cyan_popped: POPPED_C,
-  cyan_blinking_0: BLINKING_0_C,
-  cyan_blinking_1: BLINKING_1_C,
-  cyan_landing_0: LANDING_0_C,
-  cyan_landing_1: LANDING_1_C,
-  cyan_landing_2: LANDING_2_C,
-  cyan_panicking_0: PANICKING_0_C,
-  cyan_panicking_1: PANICKING_1_C,
-  cyan_panicking_2: PANICKING_2_C,
-  cyan_panicking_3: PANICKING_3_C,
-
-  green_normal: NORMAL_G,
-  green_face: FACE_G,
-  green_dark: DARK_G,
-  green_dead: DEAD_G,
-  green_swapping: SWAPPING_G,
-  green_popped: POPPED_G,
-  green_blinking_0: BLINKING_0_G,
-  green_blinking_1: BLINKING_1_G,
-  green_landing_0: LANDING_0_G,
-  green_landing_1: LANDING_1_G,
-  green_landing_2: LANDING_2_G,
-  green_panicking_0: PANICKING_0_G,
-  green_panicking_1: PANICKING_1_G,
-  green_panicking_2: PANICKING_2_G,
-  green_panicking_3: PANICKING_3_G,
-
-  purple_normal: NORMAL_P,
-  purple_face: FACE_P,
-  purple_dark: DARK_P,
-  purple_dead: DEAD_P,
-  purple_swapping: SWAPPING_P,
-  purple_popped: POPPED_P,
-  purple_blinking_0: BLINKING_0_P,
-  purple_blinking_1: BLINKING_1_P,
-  purple_landing_0: LANDING_0_P,
-  purple_landing_1: LANDING_1_P,
-  purple_landing_2: LANDING_2_P,
-  purple_panicking_0: PANICKING_0_P,
-  purple_panicking_1: PANICKING_1_P,
-  purple_panicking_2: PANICKING_2_P,
-  purple_panicking_3: PANICKING_3_P,
-
-  red_normal: NORMAL_R,
-  red_face: FACE_R,
-  red_dark: DARK_R,
-  red_dead: DEAD_R,
-  red_swapping: SWAPPING_R,
-  red_popped: POPPED_R,
-  red_blinking_0: BLINKING_0_R,
-  red_blinking_1: BLINKING_1_R,
-  red_landing_0: LANDING_0_R,
-  red_landing_1: LANDING_1_R,
-  red_landing_2: LANDING_2_R,
-  red_panicking_0: PANICKING_0_R,
-  red_panicking_1: PANICKING_1_R,
-  red_panicking_2: PANICKING_2_R,
-  red_panicking_3: PANICKING_3_R,
-
-  yellow_normal: NORMAL_Y,
-  yellow_face: FACE_Y,
-  yellow_dark: DARK_Y,
-  yellow_dead: DEAD_Y,
-  yellow_swapping: SWAPPING_Y,
-  yellow_popped: POPPED_Y,
-  yellow_blinking_0: BLINKING_0_Y,
-  yellow_blinking_1: BLINKING_1_Y,
-  yellow_landing_0: LANDING_0_Y,
-  yellow_landing_1: LANDING_1_Y,
-  yellow_landing_2: LANDING_2_Y,
-  yellow_panicking_0: PANICKING_0_Y,
-  yellow_panicking_1: PANICKING_1_Y,
-  yellow_panicking_2: PANICKING_2_Y,
-  yellow_panicking_3: PANICKING_3_Y,
-
-  vacant_normal: NORMAL_V,
-  vacant_face: FACE_V,
-  vacant_dark: DARK_V,
-  vacant_dead: DEAD_V,
-  vacant_swapping: SWAPPING_V,
-  vacant_popped: POPPED_V,
-  vacant_blinking_0: BLINKING_0_V,
-  vacant_blinking_1: BLINKING_1_V,
-  vacant_landing_0: LANDING_0_V,
-  vacant_landing_1: LANDING_1_V,
-  vacant_landing_2: LANDING_2_V,
-  vacant_panicking_0: PANICKING_0_V,
-  vacant_panicking_1: PANICKING_1_V,
-  vacant_panicking_2: PANICKING_2_V,
-  vacant_panicking_3: PANICKING_3_V,
-
-  // debug items
-  debugCursor: DEBUG_CURSOR,
-  debugWhite: DEBUGW,
-  debugOrange: DEBUGO,
-  debugBrown: DEBUGB,
-  debugPink: DEBUGP,
-  debugRed: DEBUGR,
-  debugMagenta: DEBUGM,
-  debugBlue: DEBUGC,
-  debugGreen: DEBUGG,
-  debugTan: DEBUGT,
-  debugViolet: DEBUGV,
-  debugYellow: DEBUGY
-};
+const spriteCopy = JSON.parse(JSON.stringify(sprite));
 
 const audio = {
   announcer3: ANN_3, // loading first
   announcer2: ANN_2,
   announcer1: ANN_1,
+  announcerGo: ANN_GO,
+  announcerReady: ANN_READY,
+  moveCursor: MOVE_CURSOR,
   announcer5: ANN_5,
   announcer4: ANN_4,
-  announcerGo: ANN_GO,
   pause: PAUSE,
-  moveCursor: MOVE_CURSOR,
   select: SWAP_SUCCESS,
   selectionFailed: SWAP_FAILED,
   topout: TOPOUT,
@@ -536,7 +414,6 @@ const audio = {
   announcerNowsYourChance: ANN_NOWS_YOUR_CHANCE,
   announcerPickUpPace: ANN_PICK_UP_PACE,
   announcerAreYouReady: ANN_ARE_YOU_READY,
-  announcerReady: ANN_READY,
   announcerLetsGetStarted: ANN_LETS_GET_STARTED,
   announcerTraining: ANN_TRAINING,
   announcerPayoff: ANN_PAYOFF,
@@ -593,15 +470,15 @@ const imageKeys = Object.keys(sprite);
 const imageList = Object.values(sprite);
 
 // Load all images
-let loadedImages = {};
+let loadedSprites = {};
 for (let i = 0; i < imageKeys.length; i++) {
   let img = new Image();
   img.src = imageList[i];
-  loadedImages[imageKeys[i]] = img;
+  loadedSprites[imageKeys[i]] = img;
 }
 
 const audioList = Object.values(audio); // used to preload audios upon first game launch
-export { sprite, audio, loadedImages, audioList };
+export { sprite, audio, loadedSprites, audioList };
 
 /* Fun note for programmer: EXPORTING the loaded Images here
 are what allow the program to preload the images for use, even

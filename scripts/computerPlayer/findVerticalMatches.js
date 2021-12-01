@@ -80,9 +80,9 @@ function startVerticalSwapping(matchLocations) {
       return false;
     return ableToSwap(inputArr[0], inputArr[1], true);
   } catch (error) {
-    console.log(`A bug occurred running the startVerticalSwapping function:`);
-    console.log(error, error.stack);
-    console.log("Parameters || matchLocations:", matchLocations);
+    // console.log(`A bug occurred running the startVerticalSwapping function:`);
+    // console.log(error, error.stack);
+    // console.log("Parameters || matchLocations:", matchLocations);
     return false;
   }
 }

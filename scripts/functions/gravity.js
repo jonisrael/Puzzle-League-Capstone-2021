@@ -145,14 +145,16 @@ export function areAllBlocksGrounded() {
 export function isBlockAirborne(Square) {
   let c = Square.x;
   let r = Square.y;
-  if (r === grid.ROWS - 1) return false; // not airborne since on bottom row
-
+  if (r >= grid.ROWS - 1) return false; // not airborne since on bottom row
   // if non-interactive block is directly below block, it is not airborne.
   if (!INTERACTIVE_TYPES.includes(game.board[c][r + 1].type)) return false;
+  if (Square.color === blockColor.VACANT) return false;
 
   // check if there is a vacant block below -- if so it is airborne
-  for (let y = r + 1; r < grid.ROWS - 1; r++) {
-    if (game.board[c][y].color === "vacant") return true;
+  for (let j = r + 1; j < grid.ROWS; j++) {
+    if (game.board[c][j].color === "vacant") {
+      return true;
+    }
   }
   return false;
 }

@@ -34,9 +34,9 @@ export function findHorizontalMatches(r) {
     }
     return false;
   } catch (error) {
-    console.log(`A bug occurred while finding a horizontal match:`);
-    console.log(error, error.stack);
-    console.log("Parameters || row", r);
+    // console.log(`A bug occurred while finding a horizontal match:`);
+    // console.log(error, error.stack);
+    // console.log("Parameters || row", r);
     return false;
   }
 }
