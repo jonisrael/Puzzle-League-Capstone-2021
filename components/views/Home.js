@@ -70,7 +70,7 @@ export default st => html`
       <h1>Compatibility</h1>
       <p>
         This game is keyboard only, though I may try and add experimental
-        mouse/touch support in the future for moving tiles. This game
+        touch/touch support in the future for moving tiles. This game
         <strong>does NOT usually run on Firefox correctly</strong>, but runs
         fine on Chrome, Safari, and Edge, with Edge somehow having the best
         performance results (If you have a Windows computer, Microsoft Edge is

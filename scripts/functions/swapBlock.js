@@ -5,13 +5,18 @@ import {
   blockColor,
   blockType,
   win,
-  cpu
+  cpu,
+  touch,
+  hold_it,
+  randInt,
+  CLEARING_TYPES
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
+import { stickyCheck } from "./stickyFunctions";
 
 export function trySwappingBlocks(x, y) {
-  if (game.disableSwap || game.frames < 0) {
+  if (game.disableSwap || game.frames < 0 || x > grid.COLS - 2 || game.over) {
     return;
   }
 
@@ -23,8 +28,8 @@ export function trySwappingBlocks(x, y) {
     game.board[x + 1][y].color == blockColor.VACANT
   ) {
     legalSwap = false;
-    game.message = "Swap Failed: Both Squares Empty";
-    game.messageChangeDelay = 90;
+    // game.message = "Swap Failed: Both Squares Empty";
+    // game.messageChangeDelay = 60;
   }
 
   // Check if blocks are clearing
@@ -33,8 +38,8 @@ export function trySwappingBlocks(x, y) {
     !INTERACTIVE_TYPES.includes(game.board[x + 1][y].type)
   ) {
     legalSwap = false;
-    game.message = "Swap Failed: Clearing Block";
-    game.messageChangeDelay = 90;
+    // game.message = "Swap Failed: Clearing Block";
+    // game.messageChangeDelay = 60;
   }
 
   // Do not swap if not on a clearing block and a vacant block is detected.
@@ -51,8 +56,8 @@ export function trySwappingBlocks(x, y) {
           game.board[x + 1][j].color === blockColor.VACANT)
       ) {
         legalSwap = false;
-        game.message = "Swap Failed: Airborne Block";
-        game.messageChangeDelay = 90;
+        // game.message = "Swap Failed: Airborne Block";
+        // game.messageChangeDelay = 90;
         break;
       }
     }
@@ -88,8 +93,8 @@ export function trySwappingBlocks(x, y) {
         game.board[x + 1][y].color == blockColor.VACANT)
     ) {
       legalSwap = false;
-      game.message = "Swap Failed: Below an Airborne Block";
-      game.messageChangeDelay = 90;
+      // game.message = "Swap Failed: Below an Airborne Block";
+      // game.messageChangeDelay = 90;
     }
   }
 
@@ -107,12 +112,17 @@ export function trySwappingBlocks(x, y) {
   // }
 
   if (legalSwap) {
+    if (touch.enabled && touch.moveToTarget) {
+      touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
+      game.cursor.x = touch.selectedBlock.x;
+      game.cursor.y = touch.selectedBlock.y;
+    }
     cpu.swapSuccess = true;
     playAudio(audio.select);
     swapProperties(game.board[x][y], game.board[x + 1][y]);
     // if landing, shorten timer to end the landing animation next frame.
-    game.board[x][y].timer = 4;
-    game.board[x + 1][y].timer = 4;
+    game.board[x][y].timer = 5;
+    game.board[x + 1][y].timer = 5;
     game.board[x][y].type = blockType.SWAPPING;
     game.board[x][y].swapDirection = 1;
     game.board[x + 1][y].type = blockType.SWAPPING;
@@ -187,8 +197,36 @@ export function trySwappingBlocks(x, y) {
             break;
         }
       }
-    } // end if y>0 check above for vacant block
-  } else {
+    } // end y > 0 condition
+
+    if (touch.enabled && touch.moveToTarget) {
+      touch.moveToTarget = !stickyCheck(
+        touch.selectedBlock.x,
+        touch.selectedBlock.y
+      );
+      if (game.cursor_type !== "cursor" && !touch.moveToTarget) {
+        playAudio(hold_it[randInt(hold_it.length)], 0.3);
+        game.message = "Sticky activated";
+      }
+    }
+  } else if (!legalSwap) {
+    if (
+      touch.enabled &&
+      touch.moveToTarget &&
+      game.board[x][y].type !== "swapping" &&
+      game.board[x + 1][y].type !== "swapping"
+    ) {
+      // stop trying to swap since illegal swap has been made
+      console.log(
+        "frame",
+        game.frames,
+        "stopping swap due to illegal move",
+        game.board[x][y],
+        game.board[x + 1][y]
+      );
+      touch.moveToTarget = false;
+      game.swapPressed = false;
+    }
     win.mainInfoDisplay.style.color = "purple";
     cpu.swapSuccess = false;
     // console.log("swap failed at", x, y, game.frames);

@@ -66,8 +66,10 @@ import {
   loadedAudios,
   padInteger,
   music,
-  overtimeMusic
+  overtimeMusic,
+  touch
 } from "./scripts/global.js";
+import { updateMousePosition } from "./scripts/clickControls";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -106,7 +108,7 @@ export class Cursor {
     let pixelY = this.y * grid.SQ - game.rise;
     // const CURSOR_IMAGE = new Image();
     // CURSOR_IMAGE.src = sprite.cursor;
-    win.ctx.drawImage(loadedSprites.cursor, pixelX, pixelY);
+    win.ctx.drawImage(loadedSprites[game.cursor_type], pixelX, pixelY);
   }
 }
 game.cursor = new Cursor(2, 6);
@@ -141,15 +143,16 @@ class Block {
   }
 
   drawGridLines() {
-    win.ctx.drawImage(
-      loadedSprites[`grid_line`],
-      grid.SQ * this.x,
-      grid.SQ * this.y - game.rise
-    );
+    if (this.y > 0)
+      win.ctx.drawImage(
+        loadedSprites[`grid_line`],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
   }
 
   drawSwappingBlocks() {
-    let xOffset = (grid.SQ * this.timer) / 4;
+    let xOffset = (grid.SQ * (this.timer - 1)) / 4;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
       grid.SQ * this.x + xOffset * this.swapDirection,
@@ -208,6 +211,38 @@ class Block {
         grid.SQ * this.x,
         grid.SQ * this.y - game.rise
       );
+    }
+    if (this.x === touch.keySquare.x && this.y === touch.keySquare.y) {
+      win.ctx.drawImage(
+        loadedSprites["debugYellow"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+    if (game.cursor_type !== "cursor") {
+      if (
+        this.x === touch.target.x &&
+        this.y === touch.target.y &&
+        touch.moveToTarget
+      ) {
+        win.ctx.drawImage(
+          loadedSprites["debugRed"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
+      }
+
+      if (
+        touch.thereIsABlockCurrentlySelected &&
+        this.x === touch.selectedBlock.x &&
+        this.y === touch.selectedBlock.y
+      ) {
+        win.ctx.drawImage(
+          loadedSprites["debugGreen"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
+      }
     }
   }
 
@@ -376,7 +411,6 @@ export function updateGrid(frameAdvance = false) {
           Square.availableForSecondaryChain = false;
         }
       }
-
       if (Square.timer === -1) {
         Square.timer = 0;
       } else if (Square.timer > 0) {
@@ -388,11 +422,10 @@ export function updateGrid(frameAdvance = false) {
           game.boardRiseDisabled = true;
         }
       }
-      if (Square.type !== blockType.SWAPPING) {
-        Square.swapDirection = 0;
-      }
+
       if (Square.type === blockType.SWAPPING && Square.timer === 0) {
         Square.type = blockType.NORMAL;
+        Square.swapDirection = 0;
         if (Square.airborne) {
           Square.timer = game.blockStallTime;
           Square.touched = true;
@@ -494,6 +527,8 @@ export function drawGrid() {
       let Square = game.board[x][y];
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
+
+      if (game.cursor_type !== "cursor") Square.drawGridLines();
     }
   }
   if (blocksAreSwapping) {
@@ -512,11 +547,10 @@ export function drawGrid() {
         let Square = game.board[x][y];
         if (cpu.showInfo) Square.drawAILogic();
         if (debug.show) Square.drawDebugDots();
-        if (debug.show) Square.drawGridLines();
       }
     }
   }
-  if (!game.over) {
+  if (!game.over && game.cursor_type !== "invisible") {
     game.cursor.draw();
   }
 }
@@ -648,6 +682,12 @@ export function createNewRow() {
     game.cursor.y -= 1;
   }
 
+  if (touch.enabled) {
+    touch.mouse.y -= 1;
+    touch.selectedBlock.y -= 1;
+    touch.target.y -= 1;
+  }
+
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 1; r < grid.ROWS; r++) {
       // Raise all grid.ROWS, then delete bottom grid.ROWS.
@@ -682,6 +722,7 @@ export function checkTime() {
     : (game.Music.volume = 0.2);
   switch (game.frames) {
     case -180:
+      pastGameState = JSON.parse(JSON.stringify(game));
       game.Music.pause();
       if (win.restartGame) {
         game.frames = -62;
@@ -767,7 +808,7 @@ export function checkTime() {
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
-    case 7200:
+    case 7200 || 10800:
       game.messagePriority = "Overtime, I hope you're ready...";
       game.defaultMessage = game.message;
       playAnnouncer(
@@ -836,9 +877,10 @@ function KEYBOARD_CONTROL(event) {
     // p or pause/break or esc
     if (event.keyCode == 80 || event.keyCode == 19 || event.keyCode == 27)
       game.paused ? unpause() : pause();
+    if (event.keyCode === 70 && debug.enabled) if (!game.paused) pause();
   }
   if (game.paused) {
-    if (event.keyCode == 70 && debug.enabled) {
+    if (event.keyCode === 70 && debug.enabled) {
       debug.advanceOneFrame = true;
       unpause();
     }
@@ -952,6 +994,17 @@ function KEYBOARD_CONTROL(event) {
     }
 
     if (debug.enabled == 1) {
+      if (event.keyCode === 89) {
+        console.log(game, pastGameState);
+        game.seconds = pastSeconds;
+        for (let x = 0; x < grid.COLS; x++) {
+          for (let y = 0; y < grid.ROWS + 2; y++) {
+            Object.keys(game.board[x][y]).forEach(
+              key => (game.board[x][y][key] = pastGameState.board[x][y][key])
+            );
+          }
+        }
+      }
       if (event.keyCode === 66) {
         // b
         cpu.enabled = (cpu.enabled + 1) % 2;
@@ -1034,7 +1087,10 @@ export function updateLevelEvents(level) {
   game.panicIndex = game.level < 7 ? 1 : game.level < 10 ? 3 : 5;
 }
 
+// GAME HERE
 let cnt;
+let pastGameState = JSON.parse(JSON.stringify(game));
+let pastSeconds = 0;
 export function gameLoop() {
   cnt++;
   if (win.running && !game.paused && !debug.enabled) {
@@ -1085,7 +1141,8 @@ export function gameLoop() {
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * perf.gameSpeed;
       game.boardRiseRestarter += 1 * perf.gameSpeed; // Failsafe to restart stack rise
-      // if (win.mouseIsDown) console.log(win.mouseIsDown);
+      // if (touch.down) {
+      // }
 
       if (game.over) {
         let number;
@@ -1112,6 +1169,11 @@ export function gameLoop() {
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
+        if (debug.enabled && game.seconds % 5 === 1) {
+          pastGameState = JSON.parse(JSON.stringify(game));
+          pastSeconds = game.seconds;
+        }
+
         if (game.Music.currentTime >= game.Music.duration) {
           playMusic(music[randInt(music.length)]);
           console.log("Track ended, now playing", game.Music.src);
@@ -1138,7 +1200,7 @@ export function gameLoop() {
         }
 
         if (debug.enabled === 1) {
-          game.seconds--;
+          // game.seconds--;
           game.frames -= 60;
         }
       }
@@ -1160,11 +1222,12 @@ export function gameLoop() {
           game.message = `Level ${game.level + 1}, game speed has increased...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          playAnnouncer(
-            announcer.timeTransitionDialogue,
-            announcer.timeTransitionIndexLastPicked,
-            "timeTransition"
-          );
+          if (game.frames !== 7200 && game.frames !== 10800)
+            playAnnouncer(
+              announcer.timeTransitionDialogue,
+              announcer.timeTransitionIndexLastPicked,
+              "timeTransition"
+            );
           console.log(
             `gameTime = ${game.frames / 60}, realTime = ${
               perf.realTime
@@ -1275,8 +1338,43 @@ export function gameLoop() {
       }
 
       if (game.swapPressed) {
-        game.swapPressed = false;
-        trySwappingBlocks(game.cursor.x, game.cursor.y);
+        if (!touch.enabled || !touch.moveToTarget) {
+          game.swapPressed = false;
+          trySwappingBlocks(game.cursor.x, game.cursor.y);
+        } else {
+          if (touch.selectedBlock.x < touch.target.x) {
+            trySwappingBlocks(touch.selectedBlock.x, touch.selectedBlock.y);
+            // console.log(
+            //   "frame",
+            //   game.frames,
+            //   "right swap tried:\n",
+            //   "selected block",
+            //   game.board[touch.selectedBlock.x][touch.selectedBlock.y],
+            //   "the block swapped with is",
+            //   game.board[touch.selectedBlock.x + 1][touch.selectedBlock.y],
+            //   "target is",
+            //   game.board[touch.target.x][touch.target.y]
+            // );
+          } else if (touch.selectedBlock.x > touch.target.x) {
+            trySwappingBlocks(touch.selectedBlock.x - 1, touch.selectedBlock.y);
+            // console.log(touch.selectedBlock.x, touch.target.x);
+            // console.log(
+            //   "frame",
+            //   game.frames,
+            //   "right swap tried:\n",
+            //   "target is",
+            //   game.board[touch.target.x][touch.target.y],
+            //   "the block swapped with is",
+            //   game.board[touch.selectedBlock.x - 1][touch.selectedBlock.y],
+            //   "selected block",
+            //   game.board[touch.selectedBlock.x][touch.selectedBlock.y]
+            // );
+          } else {
+            game.swapPressed = false;
+            touch.moveToTarget = false; // block has reached target
+            console.log("frame", game.frames, "target reached.");
+          }
+        }
       }
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
@@ -1346,7 +1444,7 @@ export function gameLoop() {
       }
       if (debug.show) {
         win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
-          game.seconds} seconds<br />Real Time: ${perf.realTime} seconds`;
+          game.seconds} sec<br />Real Time: ${perf.realTime} sec`;
         win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
         Score Multiplier: ${game.scoreMultiplier}<br>
         Highest Row: ${game.highestRow}`;

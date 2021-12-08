@@ -26,7 +26,12 @@ export function closeGame(gameFinished) {
   if (!gameFinished) game.Music.volume = 0;
   win.cvs = null;
   win.ctx = null;
-  win.makeCanvas.remove();
+  win.canvas.remove();
+  // if (document.getElementById("home-page")) {
+  //   document.getElementById("home-page").onmousedown = true;
+  //   document.getElementById("home-page").onselectstart = true;
+  // }
+
   if (gameFinished && !cpu.enabled) {
     // if (cpu.enabled) {
     //   win.restartGame = true;

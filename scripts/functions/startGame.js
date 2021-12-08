@@ -23,6 +23,7 @@ import { Cursor, gameLoop, newBlock } from "../../puzzleleague";
 import { pause, unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 import { action } from "../controls";
+import { createClickListeners } from "../clickControls";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed, version = 1) {
@@ -71,6 +72,10 @@ export function startGame(selectedGameSpeed, version = 1) {
 function createHeadsUpDisplay() {
   let container = document.getElementById("container");
   container.innerHTML = ""; // Empties the home page
+  // if (document.getElementById("home-page")) {
+  //   document.getElementById("home-page").onmousedown = false;
+  //   document.getElementById("home-page").onselectstart = false;
+  // }
 
   let appContainer = document.createElement("div");
   appContainer = document.createElement("div");
@@ -197,11 +202,11 @@ function createHeadsUpDisplay() {
   if (game.mode !== "cpu-play") rightHudElements.appendChild(bestScoresDisplay);
 
   // Make Canvas, then append it to home page
-  win.makeCanvas = document.createElement(`canvas`);
-  win.makeCanvas.setAttribute("id", "canvas");
-  win.makeCanvas.setAttribute("width", "192");
-  win.makeCanvas.setAttribute("height", "384");
-  column2.appendChild(win.makeCanvas);
+  win.canvas = document.createElement(`canvas`);
+  win.canvas.setAttribute("id", "canvas");
+  win.canvas.setAttribute("width", "192");
+  win.canvas.setAttribute("height", "384");
+  column2.appendChild(win.canvas);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
   column3.appendChild(win.highScoreDisplay);
@@ -251,41 +256,7 @@ function createHeadsUpDisplay() {
     pause();
   });
 
-  win.makeCanvas.addEventListener("mousedown", function(e) {
-    getCursorPosition(win.makeCanvas, e);
-    // logButtons(e);
-    win.mouseIsDown = true;
-  });
-  document.addEventListener("mouseup", function(e) {
-    win.mouseIsDown = false;
-  });
-}
-
-// function logButtons(e) {
-//   console.log(`${e.buttons} (${e.type})`); // log.nodeValue= `${e.buttons} (${e.type})`;
-// }
-
-function getCursorPosition(canvas, event) {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  findBlockInfoByClickPosition(x, y);
-  // console.log("x: " + x + " y: " + y);
-  return [x, y];
-}
-
-function findBlockInfoByClickPosition(x, y) {
-  let pixelX = x - 10;
-  let pixelY = y - 10 + game.rise;
-  let blockXInt = Math.floor(pixelX / grid.SQ);
-  let blockYInt = Math.floor(pixelY / grid.SQ);
-  // console.log(blockXInt, blockYInt, game.rise);
-  // console.log(Math.floor(pixelX), Math.floor(pixelY));
-  console.log(
-    "Clicked Coordinate:",
-    game.board[blockXInt][blockYInt],
-    `FRAME ${game.frames}\n`
-  );
+  createClickListeners();
 }
 
 export function resetGameVariables() {

@@ -6,6 +6,7 @@ import { action } from "../controls";
 export function pause(lostFocus = false, message = "") {
   document.getElementById("fps-display").style.display = "none";
   game.paused = true;
+
   console.log(
     `FRAME ${game.frames}\n`,
     "game:",
@@ -16,10 +17,10 @@ export function pause(lostFocus = false, message = "") {
     perf,
     "action:",
     action,
-    `At ${game.cursor.x}, ${game.cursor.y}`,
     game.board[game.cursor.x][game.cursor.y],
-    `At ${game.cursor.x + 1}, ${game.cursor.y}`,
-    game.board[game.cursor.x + 1][game.cursor.y]
+    game.cursor_type === "cursor"
+      ? game.board[game.cursor.x + 1][game.cursor.y]
+      : ""
   );
 
   perf.pauseStartTime = Date.now();

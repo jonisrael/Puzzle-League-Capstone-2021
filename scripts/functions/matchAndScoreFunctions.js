@@ -21,7 +21,8 @@ function squareIsMatchable(c, r) {
   return (
     (Square.type === "normal" && Square.timer === 0) ||
     (Square.type === "panicking" && Square.timer === 0) ||
-    (Square.type === "landing" && Square.timer < 10)
+    (Square.type === "landing" && Square.timer < 10) ||
+    (Square.type === "swapping" && Square.timer === 1)
   );
 }
 

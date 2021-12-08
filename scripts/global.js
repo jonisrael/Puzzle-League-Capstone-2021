@@ -104,6 +104,7 @@ export const blockType = {
   NORMAL: "normal",
   PANICKING: "panicking",
   LANDING: "landing",
+  STALLING: "stalling",
   SWAPPING: "swapping",
   POPPED: "popped",
   FACE: "face",
@@ -128,6 +129,8 @@ export const INTERACTIVE_TYPES = [
   // blockType.SWAPPING,
 ];
 
+export const CLEARING_TYPES = ["blinking", "face", "popped"];
+
 export const grid = {
   COLS: 6,
   ROWS: 12,
@@ -143,7 +146,7 @@ export const grid = {
 
 export const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [90, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  speedValues: [58, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
   clearValues: [150, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
   blinkValues: [90, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
   faceValues: [60, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
@@ -163,7 +166,7 @@ export const win = {
   version: 1,
   running: false,
   restartGame: false,
-  makeCanvas: null,
+  canvas: null,
   cvs: null,
   ctx: null,
   mainInfoDisplay: null,
@@ -184,8 +187,7 @@ export const win = {
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx"),
-  audioLoaded: false,
-  mouseIsDown: false
+  audioLoaded: false
 };
 
 export const music = [
@@ -199,6 +201,20 @@ export const music = [
   audio.cub3dMusic
 ];
 
+export const touch = {
+  enabled: true,
+  thereIsABlockCurrentlySelected: false,
+  mouse: {
+    clicked: true,
+    x: 2, // actual mouse loc, updates while mouse is down
+    y: 6 // actual mouse loc, updates while mouse is down
+  },
+  selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
+  moveToTarget: false,
+  target: { x: 2, y: 6 }, // swap until target is reached
+  keySquare: { x: 2, y: 6 }
+};
+
 export const overtimeMusic = [
   audio.strikersMusic,
   audio.grimMusic,
@@ -209,11 +225,12 @@ export const overtimeMusic = [
 
 export const resultsMusic = [audio.results1Music, audio.results2Music];
 
-export const game = {
+export let game = {
   // use let instead of export const to revert to resetGameVar
   mode: "arcade",
   controller: null,
   cursor: null,
+  cursor_type: "cursor",
   rise: 0,
   board: [],
   mute: 0,
@@ -225,6 +242,8 @@ export const game = {
   blockPopMultiplier: preset.popMultiplier[1],
   blockInitialFaceTime: preset.faceValues[1],
   blockStallTime: preset.stallValues[1],
+  blockSelectedXCHANGE: 2,
+  blockSelectedYCHANGE: 6,
   boardRiseRestarter: 0,
   raiseDelay: 0,
   frames: -180,
@@ -416,4 +435,18 @@ export function padInteger(integer, digits) {
       else return `${integer}`;
   }
   return "Error: Can only pad digits 2-6";
+}
+
+export function blockIsSolid(x, y) {
+  return (
+    INTERACTIVE_TYPES.includes(game.board[x][y].type) &&
+    game.board[x][y].color !== "vacant"
+  );
+}
+
+export function blockVacantOrClearing(x, y) {
+  return (
+    game.board[x][y].color === "vacant" ||
+    INTERACTIVE_TYPES.includes(game.board[x][y].type)
+  );
 }
