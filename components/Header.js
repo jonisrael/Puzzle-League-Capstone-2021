@@ -2,7 +2,7 @@ import html from "html-literal";
 
 export default st => html`
   <header id="header">
-    <h1>Puzzle League Arcade (12/28 3:08pm)</h1>
+    <h1>Puzzle League Arcade (12/28 4:13pm)</h1>
     <h1 style="color:white">${st.header}</h1>
 
     <ul id="sound-mute-menu">

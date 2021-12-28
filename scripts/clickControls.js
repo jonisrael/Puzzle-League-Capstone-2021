@@ -18,8 +18,8 @@ export function updateMousePosition(canvas, e) {
   let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
   const rect = canvas.getBoundingClientRect();
   const ratio = win.canvas.width / win.canvas.clientWidth;
-  const pixelX = ratio * (clientX - rect.left - 10);
-  const pixelY = ratio * (clientY - rect.top - 10 + game.rise);
+  const pixelX = ratio * (clientX - rect.left - 20);
+  const pixelY = ratio * (clientY - rect.top - 20 + game.rise);
   let x = Math.floor(pixelX / grid.SQ);
   let y = Math.floor(pixelY / grid.SQ);
   // Accept position only if inside game grid
@@ -74,8 +74,8 @@ export function selectBlock() {
 
 export function moveBlockByRelease() {
   if (
-    touch.mouse.y <= touch.selectedBlock.y + 10 &&
-    touch.mouse.y >= touch.selectedBlock.y - 10 &&
+    touch.mouse.y <= touch.selectedBlock.y + 20 &&
+    touch.mouse.y >= touch.selectedBlock.y - 20 &&
     (touch.mouse.x !== touch.selectedBlock.x ||
       touch.mouse.y !== touch.selectedBlock.y)
   ) {
@@ -113,17 +113,20 @@ function doMouseDown(e) {
     touch.moveToTarget = false;
     return;
   }
-  game.cursor.x = touch.mouse.x;
-  game.cursor.y = touch.mouse.y;
   if (game.board[game.cursor.x][game.cursor.y].color === "vacant") {
-    console.log(game.frames, "single click");
-    if (touch.tripleClickCounter === 2) {
-      console.log("triple click!");
+    if (
+      touch.doubleClickCounter === 1 &&
+      Math.abs(touch.mouse.x - game.cursor.x) < 2 &&
+      Math.abs(touch.mouse.y - game.cursor.y) < 2
+    ) {
       if (game.frames > 0 && game.highestRow > 1) game.raisePressed = true;
     }
-    if (touch.tripleClickTimer === 0) touch.tripleClickTimer = 30;
-    touch.tripleClickCounter++;
+    if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
+    touch.doubleClickCounter++;
   }
+  game.cursor.x = touch.mouse.x;
+  game.cursor.y = touch.mouse.y;
+
   if (game.frames >= 0) selectBlock();
 }
 
