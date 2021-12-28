@@ -290,7 +290,6 @@ canvas {
     align-items: center;
     margin: 0 auto;
     border: 10px solid burlywood;
-    touch-action: none;
     /* min-width: 100%; */
     /* @media screen and (max-width: 600px) {
         min-width: 70%;

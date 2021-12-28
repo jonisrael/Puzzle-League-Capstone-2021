@@ -120,6 +120,7 @@ export function createClickListeners() {
   });
 
   win.canvas.addEventListener("touchdown", function(e) {
+    e.preventDefault();
     if (!touch.enabled) return;
     touch.moveToTarget = false;
     touch.mouse.clicked = true;
@@ -147,6 +148,7 @@ export function createClickListeners() {
   });
 
   win.canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault();
     if (!touch.enabled) return;
     // if (!updateMousePosition(win.canvas, e)) return;
     updateMousePosition(win.canvas, e);
@@ -166,6 +168,7 @@ export function createClickListeners() {
   });
 
   document.addEventListener("touchend", function(e) {
+    e.preventDefault();
     if (!touch.enabled || game.frames < 0) return;
     touch.mouse.clicked = false;
     updateMousePosition(win.canvas, e);
