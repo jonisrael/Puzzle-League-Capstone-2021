@@ -274,11 +274,11 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     //   extraFaceTime
     // );
     if (game.addToPrimaryChain) {
-      Square.availableForPrimaryChain = true;
-      Square.availableForSecondaryChain = false;
+      Square.availForPrimaryChain = true;
+      Square.availForSecondaryChain = false;
     } else {
-      Square.availableForPrimaryChain = false;
-      Square.availableForSecondaryChain = true;
+      Square.availForPrimaryChain = false;
+      Square.availForSecondaryChain = true;
     }
   }
 }

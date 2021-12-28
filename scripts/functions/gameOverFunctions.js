@@ -10,7 +10,8 @@ import {
   api,
   cpu,
   resultsMusic,
-  randInt
+  randInt,
+  perf
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -98,7 +99,8 @@ export function gameOverBoard() {
 function endGame() {
   console.log("Game over!");
   console.log(`Score: ${game.score}`);
-  console.log(`High Score: ${game.highScore}`);
+  console.log(`Real time:`, perf.realTime);
+  console.log(`Game time:`, Math.round(game.frames / 60));
   // enter new high scores
   let pastHighScore = localStorage.getItem("highScore");
   if (game.score > parseInt(pastHighScore) && !cpu.enabled) {

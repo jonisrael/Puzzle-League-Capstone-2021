@@ -241,14 +241,14 @@ export function playerAction(input) {
     }
   } else if (input.swap && !game.over) {
     action.swap = false;
-    game.cursor_type = "cursor";
+    game.cursor_type = "defaultCursor";
     if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
     game.swapPressed = true;
     win.cvs.scrollIntoView({ block: "nearest" });
   }
 
   if (cursorMoved) {
-    game.cursor_type = "cursor";
+    game.cursor_type = "defaultCursor";
     if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
     win.cvs.scrollIntoView({ block: "nearest" });
     playAudio(audio.moveCursor);

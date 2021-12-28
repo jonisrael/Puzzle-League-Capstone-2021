@@ -3,7 +3,7 @@ import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 import { action } from "../controls";
 
-export function pause(lostFocus = false, message = "") {
+export function pause(lostFocus = false, message = "Pause") {
   document.getElementById("fps-display").style.display = "none";
   game.paused = true;
 
@@ -11,26 +11,29 @@ export function pause(lostFocus = false, message = "") {
     `FRAME ${game.frames}\n`,
     "game:",
     game,
-    "win:",
-    win,
-    "perf:",
-    perf,
-    "action:",
-    action,
     game.board[game.cursor.x][game.cursor.y],
-    game.cursor_type === "cursor"
+    game.cursor_type === "defaultCursor"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : ""
   );
+  //   "win:",
+  //   win,
+  //   "perf:",
+  //   perf,
+  //   "action:",
+  //   action,
+  //   game.board[game.cursor.x][game.cursor.y],
+
+  // );
 
   perf.pauseStartTime = Date.now();
   if (!debug.enabled) playAudio(audio.pause, 0.1);
   if (lostFocus) win.mainInfoDisplay.innerHTML = "Pause -- Clicked Off Tab";
   else if (message === "aiCrash")
     win.mainInfoDisplay.innerHTML = "Pause -- AI Error";
-  else if (debug.enabled)
+  else if (debug.enabled && message === "Pause")
     win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
-  else win.mainInfoDisplay.innerHTML = "Pause";
+  else win.mainInfoDisplay.innerHTML = message;
   game.Music.volume *= 0.25;
   // game.Music.pause();
   if (debug.enabled) return; // keep board showing in debug mode

@@ -70,7 +70,7 @@ export function cpuAction(input) {
     return randomAction(input);
   }
 
-  stackMinimum = game.boardRiseSpeed < 4 ? 8 : 11;
+  stackMinimum = game.boardRiseSpeed < 4 ? 4 : 11;
 
   if (!coordinates) {
     if (stackSize >= stackMinimum || game.currentChain > 0) {

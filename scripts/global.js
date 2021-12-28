@@ -1,6 +1,6 @@
 import { audio, audioList, sprite } from "./fileImports";
-
 import { checkIfControlsExist, setNewControls } from "./controls";
+
 // checkIfControlsExist(savedControls);
 
 // export let savedControls = {};
@@ -129,6 +129,14 @@ export const INTERACTIVE_TYPES = [
   // blockType.SWAPPING,
 ];
 
+export const SOLID_TYPES = [
+  "normal",
+  "landing",
+  "panicking",
+  "swapping",
+  "stalling"
+];
+
 export const CLEARING_TYPES = ["blinking", "face", "popped"];
 
 export const grid = {
@@ -146,12 +154,12 @@ export const grid = {
 
 export const preset = {
   //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [58, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
-  clearValues: [150, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
-  blinkValues: [90, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
-  faceValues: [60, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
-  popMultiplier: [16, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
-  stallValues: [30, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
+  speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
+  blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
+  faceValues: [80, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
+  popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
+  stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
   controlsDefaultMessage: ""
 };
 
@@ -205,14 +213,17 @@ export const touch = {
   enabled: true,
   thereIsABlockCurrentlySelected: false,
   mouse: {
-    clicked: true,
+    clicked: false,
     x: 2, // actual mouse loc, updates while mouse is down
     y: 6 // actual mouse loc, updates while mouse is down
   },
+  mouseStart: { x: 2, y: 6 },
   selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
   moveToTarget: false,
+  arrowList: [],
   target: { x: 2, y: 6 }, // swap until target is reached
-  keySquare: { x: 2, y: 6 }
+  keySquare: { x: 2, y: 6 },
+  swapOrderPrepared: false
 };
 
 export const overtimeMusic = [
@@ -230,7 +241,7 @@ export let game = {
   mode: "arcade",
   controller: null,
   cursor: null,
-  cursor_type: "cursor",
+  cursor_type: "defaultCursor",
   rise: 0,
   board: [],
   mute: 0,
@@ -285,13 +296,9 @@ export let game = {
   log: [],
   panicking: false,
   version: 1,
-  boardStateExistence: {
-    clearing: false,
-    grounded: false,
-    panicking: false,
-    touched: false,
-    airborne: false
-  }
+  boardIsClearing: false,
+  boardHasAirborneBlock: false,
+  VacantBlock: {}
 };
 
 // export const newGame = JSON.parse(JSON.stringify(game));
@@ -333,7 +340,9 @@ export const debug = {
   slowdown: 0,
   freeze: 0,
   show: 0,
-  advanceOneFrame: false
+  updateGameState: false,
+  advanceOneFrame: false,
+  pastGameState: {}
 };
 
 export const cpu = {
@@ -370,6 +379,8 @@ export const leaderboard = {
   userPostedScore: "",
   reason: ""
 };
+
+export let updateGameState = false;
 
 export const loadedAudios = [];
 
@@ -437,16 +448,83 @@ export function padInteger(integer, digits) {
   return "Error: Can only pad digits 2-6";
 }
 
-export function blockIsSolid(x, y) {
+export function blockIsSolid(Square, allowStallingType = true) {
+  // returns true if block is not vacant and of interactive type
+  if (!Square) return false;
+  // let isStalling = allowStallingType ? Square.type === "stalling" : false;
+  let result =
+    Square.color !== "vacant" &&
+    SOLID_TYPES.includes(game.board[Square.x][Square.y].type);
+  return result;
+}
+
+export function blockVacOrClearing(Square) {
+  if (!Square) return false;
+  // if (Square.x )
   return (
-    INTERACTIVE_TYPES.includes(game.board[x][y].type) &&
-    game.board[x][y].color !== "vacant"
+    game.board[Square.x][Square.y].color === "vacant" ||
+    CLEARING_TYPES.includes(game.board[Square.x][Square.y].type)
   );
 }
 
-export function blockVacantOrClearing(x, y) {
-  return (
-    game.board[x][y].color === "vacant" ||
-    INTERACTIVE_TYPES.includes(game.board[x][y].type)
-  );
+export function findStallingOrFallingBlockAbove(x, y) {
+  if (
+    INTERACTIVE_TYPES.includes(game.board[x][y - 1]) &&
+    game.board[x][y - 1] !== "vacant"
+  )
+    return false;
+  for (let j = y - 2; j >= 0; j--) {
+    if (
+      INTERACTIVE_TYPES.includes(
+        game.board[x][j] || game.board[x][j].type === "stalling"
+      )
+    ) {
+      return [x, j];
+    }
+  }
+}
+
+export function outOfRange(x, y) {
+  return x < 0 || x >= grid.COLS || y < 0 || y >= grid.ROWS;
+}
+
+export function transferProperties(FirstBlock, SecondBlock, type) {
+  let FirstKeys = Object.keys(FirstBlock).splice(2);
+  let SecondKeys = Object.keys(SecondBlock).splice(2);
+  let TempBlock = JSON.parse(JSON.stringify(SecondBlock));
+
+  SecondKeys.forEach(key => (SecondBlock[key] = FirstBlock[key]));
+  if (type === "between") {
+    FirstKeys.forEach(key => (FirstBlock[key] = TempBlock[key]));
+  } else if (type === "to") {
+    FirstKeys.forEach(key => (FirstBlock[key] = game.VacantBlock[key]));
+  }
+
+  // // Transfer everything except x and y coordinates
+  // let tempProperties = [
+  //   FirstBlock.color,
+  //   FirstBlock.type,
+  //   FirstBlock.timer,
+  //   FirstBlock.touched,
+  //   FirstBlock.availForPrimaryChain,
+  //   FirstBlock.availForSecondaryChain
+  // ];
+  // FirstBlock.color = SecondBlock.color;
+  // SecondBlock.color = tempProperties[0];
+
+  // FirstBlock.type = SecondBlock.type;
+  // SecondBlock.type = tempProperties[1];
+
+  // FirstBlock.timer = SecondBlock.timer;
+  // SecondBlock.timer = tempProperties[2];
+
+  // FirstBlock.touched = SecondBlock.touched;
+  // SecondBlock.touched = tempProperties[3];
+
+  // FirstBlock.availForPrimaryChain = SecondBlock.availForPrimaryChain;
+  // SecondBlock.availForPrimaryChain = tempProperties[4];
+
+  // FirstBlock.availForSecondaryChain =
+  //   SecondBlock.availForSecondaryChain;
+  // SecondBlock.availForPrimaryChain = tempProperties[5];
 }

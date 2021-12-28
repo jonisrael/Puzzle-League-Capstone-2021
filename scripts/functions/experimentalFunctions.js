@@ -47,8 +47,8 @@
 //     switchToPoppedFrame = 0,
 //     airborne = false,
 //     touched = false,
-//     availableForPrimaryChain = false,
-//     availableForSecondaryChain = false
+//     availForPrimaryChain = false,
+//     availForSecondaryChain = false
 //   ) {
 //     this.x = x;
 //     this.y = y;
@@ -59,8 +59,8 @@
 //     this.switchToPoppedFrame = switchToPoppedFrame;
 //     this.airborne = airborne;
 //     this.touched = touched;
-//     this.availableForPrimaryChain = availableForPrimaryChain; // When disappear, chain ends
-//     this.availableForSecondaryChain = availableForSecondaryChain;
+//     this.availForPrimaryChain = availForPrimaryChain; // When disappear, chain ends
+//     this.availForSecondaryChain = availForSecondaryChain;
 //   }
 
 //   draw(urlKey) {
@@ -113,8 +113,8 @@
 //   switchToPoppedFrame: 0,
 //   touched: false,
 //   airborne: false,
-//   availableForPrimaryChain: false,
-//   availableForSecondaryChain: false
+//   availForPrimaryChain: false,
+//   availForSecondaryChain: false
 // };
 
 // export function resetBoardStateVars() {
@@ -206,9 +206,9 @@
 //     currentBoardState.aBlockIsInLandingAnimation = true;
 //   if (!INTERACTIVE_TYPES.includes(Square.type))
 //     currentBoardState.aBlockIsClearing = true;
-//   if (Square.availableForPrimaryChain)
+//   if (Square.availForPrimaryChain)
 //     currentBoardState.primaryChainExists = true;
-//   if (Square.availableForSecondaryChain)
+//   if (Square.availForSecondaryChain)
 //     currentBoardState.secondaryChainExists = true;
 
 //   // if on new row and non-vacant block is found, it is now the highest row.
@@ -374,14 +374,14 @@
 
 //   // after being in landing animation for a bit, remove ability to be chainable.
 //   if (Square.type === "landing" && Square.timer > 8 && Square.timer < 11) {
-//     Square.availableForPrimaryChain = false;
-//     Square.availableForSecondaryChain = false;
+//     Square.availForPrimaryChain = false;
+//     Square.availForSecondaryChain = false;
 //   }
 
-//   if (Square.availableForPrimaryChain || Square.availableForSecondaryChain) {
+//   if (Square.availForPrimaryChain || Square.availForSecondaryChain) {
 //     if (Square.color === "vacant") {
-//       Square.availableForPrimaryChain = false;
-//       Square.availableForSecondaryChain = false;
+//       Square.availForPrimaryChain = false;
+//       Square.availForSecondaryChain = false;
 //     }
 //   }
 
@@ -395,10 +395,10 @@
 //       // make all blocks above it chainable
 //       for (let j = r - 1; j >= 0; j--) {
 //         if (INTERACTIVE_TYPES.includes(game.board[c][r].type)) {
-//           if (game.board[c][r].availableForPrimaryChain) {
-//             game.board[c][j].availableForPrimaryChain = true;
-//           } else if (game.board[c][r].availableForSecondaryChain)
-//             game.board[c][j].availableForSecondaryChain = true;
+//           if (game.board[c][r].availForPrimaryChain) {
+//             game.board[c][j].availForPrimaryChain = true;
+//           } else if (game.board[c][r].availForSecondaryChain)
+//             game.board[c][j].availForSecondaryChain = true;
 //         } else {
 //           // break; // used to break loop if not interactive?
 //         }
@@ -497,11 +497,11 @@
 //     game.board[c][r].switchToFaceFrame = initialFaceTime + totalPopTime;
 //     game.board[c][r].switchToPoppedFrame = totalPopTime - extraFaceTime;
 //     if (game.addToPrimaryChain) {
-//       game.board[c][r].availableForPrimaryChain = true;
-//       game.board[c][r].availableForSecondaryChain = false;
+//       game.board[c][r].availForPrimaryChain = true;
+//       game.board[c][r].availForSecondaryChain = false;
 //     } else {
-//       game.board[c][r].availableForPrimaryChain = false;
-//       game.board[c][r].availableForSecondaryChain = true;
+//       game.board[c][r].availForPrimaryChain = false;
+//       game.board[c][r].availForSecondaryChain = true;
 //     }
 //   }
 // }
@@ -546,12 +546,12 @@
 //   let SquareRight = game.board[c][r + 1];
 //   SquareLeft.type = blockType.NORMAL;
 //   SquareLeft.timer = 0;
-//   SquareLeft.availableForPrimaryChain = false;
-//   SquareLeft.availableForSecondaryChain = false;
+//   SquareLeft.availForPrimaryChain = false;
+//   SquareLeft.availForSecondaryChain = false;
 //   SquareRight.type = blockType.NORMAL;
 //   SquareRight.timer = 0;
-//   SquareRight.availableForPrimaryChain = false;
-//   SquareRight.availableForSecondaryChain = false;
+//   SquareRight.availForPrimaryChain = false;
+//   SquareRight.availForSecondaryChain = false;
 
 //   // check if there are vacant blocks below the left or right block
 //   if (r < 11) {
@@ -561,14 +561,14 @@
 //     if (SquareLeft.color !== "vacant" && SquareBelowLeft.color === "vacant") {
 //       SquareLeft.timer = game.blockStallTime;
 //       SquareLeft.touched = true;
-//       SquareLeft.availableForPrimaryChain = false;
-//       SquareLeft.availableForSecondaryChain = false;
+//       SquareLeft.availForPrimaryChain = false;
+//       SquareLeft.availForSecondaryChain = false;
 //     }
 //     if (SquareRight.color !== "vacant" && SquareBelowRight.color === "vacant") {
 //       SquareRight.timer = game.blockStallTime;
 //       SquareRight.touched = true;
-//       SquareRight.availableForPrimaryChain = false;
-//       SquareRight.availableForSecondaryChain = false;
+//       SquareRight.availForPrimaryChain = false;
+//       SquareRight.availForSecondaryChain = false;
 //     }
 //   }
 
@@ -581,8 +581,8 @@
 //         game.board[c][j].type = blockType.NORMAL;
 //         game.board[c][j].timer = game.blockStallTime;
 //         game.board[c][j].touched = true;
-//         game.board[c][j].availableForPrimaryChain = false;
-//         game.board[c][j].availableForSecondaryChain = false;
+//         game.board[c][j].availForPrimaryChain = false;
+//         game.board[c][j].availForSecondaryChain = false;
 //       }
 //     }
 //     if (SquareRight.color === blockColor.VACANT) {
@@ -592,8 +592,8 @@
 //         game.board[c + 1][j].type = blockType.NORMAL;
 //         game.board[c + 1][j].timer = game.blockStallTime;
 //         game.board[c + 1][j].touched = true;
-//         game.board[c + 1][j].availableForPrimaryChain = false;
-//         game.board[c + 1][j].availableForSecondaryChain = false;
+//         game.board[c + 1][j].availForPrimaryChain = false;
+//         game.board[c + 1][j].availForSecondaryChain = false;
 //       }
 //     }
 //   }

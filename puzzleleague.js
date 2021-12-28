@@ -67,9 +67,19 @@ import {
   padInteger,
   music,
   overtimeMusic,
-  touch
+  touch,
+  CLEARING_TYPES,
+  blockIsSolid,
+  blockVacOrClearing,
+  transferProperties
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
+import {
+  KeySquare,
+  match,
+  SelectedBlock
+} from "./scripts/functions/stickyFunctions";
+import { updateGrid } from "./scripts/functions/updateGrid";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -117,16 +127,17 @@ class Block {
   constructor(
     x,
     y,
-    color,
-    type,
+    color = "vacant",
+    type = "normal",
     timer = 0,
     switchToFaceFrame = 0,
     switchToPoppedFrame = 0,
     airborne = false,
     touched = false,
-    availableForPrimaryChain = false,
-    availableForSecondaryChain = false,
-    swapDirection = 0
+    availForPrimaryChain = false,
+    availForSecondaryChain = false,
+    swapDirection = 0,
+    lightTimer = 0
   ) {
     this.x = x;
     this.y = y;
@@ -137,19 +148,58 @@ class Block {
     this.switchToPoppedFrame = switchToPoppedFrame;
     this.airborne = airborne;
     this.touched = touched;
-    this.availableForPrimaryChain = availableForPrimaryChain; // When disappear, chain ends
-    this.availableForSecondaryChain = availableForSecondaryChain;
+    this.availForPrimaryChain = availForPrimaryChain; // When disappear, chain ends
+    this.availForSecondaryChain = availForSecondaryChain;
     this.swapDirection = swapDirection;
+    this.lightTimer = lightTimer;
   }
 
   drawGridLines() {
-    if (this.y > 0)
+    let filename = "grid_line";
+    if (this.y === 0) filename = "grid_line_red";
+    else if (this.lightTimer > 0) {
+      // filename = "light_up";
+      if (
+        this.x === match[0][0] &&
+        this.y === match[0][1] &&
+        INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
+      )
+        filename = "light_up";
+      if (
+        this.x === match[1][0] &&
+        this.y === match[1][1] &&
+        INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
+      )
+        filename = "light_up";
+      if (
+        this.x === match[2][0] &&
+        this.y === match[2][1] &&
+        INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
+      )
+        filename = "light_up";
       win.ctx.drawImage(
-        loadedSprites[`grid_line`],
+        loadedSprites[filename],
         grid.SQ * this.x,
         grid.SQ * this.y - game.rise
       );
+    }
   }
+  // drawGridLines() {
+  //   let filename = "grid_line";
+  //   if (this.y === 0) filename = "grid_line_red";
+  //   if (this.x === KeySquare.First.x && this.y === KeySquare.First.y)
+  //     filename = "light_up";
+  //   if (this.x === KeySquare.Second.x && this.y === KeySquare.Second.y)
+  //     filename = "light_up";
+  //   if (this.x === KeySquare.Third.x && this.y === KeySquare.Third.y)
+  //     filename = "light_up";
+
+  //   win.ctx.drawImage(
+  //     loadedSprites[filename],
+  //     grid.SQ * this.x,
+  //     grid.SQ * this.y - game.rise
+  //   );
+  // }
 
   drawSwappingBlocks() {
     let xOffset = (grid.SQ * (this.timer - 1)) / 4;
@@ -160,8 +210,51 @@ class Block {
     );
   }
 
+  drawArrows() {
+    if (touch.target.x === -1 || touch.target.y === -1) {
+      [touch.target.x, touch.target.y] = [game.cursor.x, game.cursor.y];
+      touch.arrowList.length = 0;
+      return;
+    }
+    let fileName = "";
+    let move = CLEARING_TYPES.includes(
+      game.board[touch.target.x][touch.target.y].type
+    )
+      ? "Buffer"
+      : "Move";
+    let coordinates = `${this.x},${this.y}`;
+    if (touch.moveToTarget) {
+      let dir = touch.target.x < touch.mouseStart.x ? "Left" : "Right";
+      if (touch.arrowList[0] === coordinates)
+        fileName = `arrow${dir}${move}Start`;
+      else if (touch.arrowList[touch.arrowList.length - 1] === coordinates)
+        fileName = `arrow${dir}${move}End`;
+      else if (touch.arrowList.includes(coordinates))
+        fileName = `arrowMid${move}`;
+      if (fileName) {
+        {
+          win.ctx.drawImage(
+            loadedSprites[fileName],
+            grid.SQ * this.x,
+            grid.SQ * this.y - game.rise
+          );
+        }
+      }
+    } else touch.arrowList.length = 0;
+  }
+
   drawDebugDots() {
     //Debug Visuals
+    if (
+      this.timer > 0 ||
+      (this.x == 0 && this.y == 1 && game.currentChain < 1)
+    ) {
+      win.ctx.drawImage(
+        loadedSprites["debugWhite"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
     if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
       win.ctx.drawImage(
         loadedSprites["debugWhite"],
@@ -183,7 +276,7 @@ class Block {
         grid.SQ * this.y - game.rise
       );
     }
-    if (this.availableForPrimaryChain) {
+    if (this.availForPrimaryChain) {
       win.ctx.drawImage(
         loadedSprites["debugOrange"],
         grid.SQ * this.x,
@@ -191,7 +284,7 @@ class Block {
       );
     }
     if (
-      this.availableForSecondaryChain ||
+      this.availForSecondaryChain ||
       (this.x == 0 && this.y == 1 && game.currentChain > 1)
     ) {
       win.ctx.drawImage(
@@ -202,24 +295,8 @@ class Block {
         8
       );
     }
-    if (
-      this.timer > 0 ||
-      (this.x == 0 && this.y == 1 && game.currentChain < 1)
-    ) {
-      win.ctx.drawImage(
-        loadedSprites["debugWhite"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
-    }
-    if (this.x === touch.keySquare.x && this.y === touch.keySquare.y) {
-      win.ctx.drawImage(
-        loadedSprites["debugYellow"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
-    }
-    if (game.cursor_type !== "cursor") {
+
+    if (game.cursor_type !== "defaultCursor") {
       if (
         this.x === touch.target.x &&
         this.y === touch.target.y &&
@@ -243,6 +320,29 @@ class Block {
           grid.SQ * this.y - game.rise
         );
       }
+
+      if (
+        game.currentChain > 0 &&
+        this.x === KeySquare.Highest.x &&
+        this.y === KeySquare.Highest.y
+      ) {
+        win.ctx.drawImage(
+          loadedSprites["debugGreen"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
+      }
+    }
+    if (
+      game.currentChain > 0 &&
+      this.x === KeySquare.Lowest.x &&
+      this.y === KeySquare.Lowest.y
+    ) {
+      win.ctx.drawImage(
+        loadedSprites["debugMagenta"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
     }
   }
 
@@ -318,8 +418,9 @@ class Block {
     }
 
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
-    if (this.type === "landing" && this.timer > 9)
+    if ((this.type === "landing" && this.timer > 9) || this.type === "stalling")
       urlKey = `${this.color}_normal`;
+    if (this.type === "swapping") urlKey = `vacant_normal`;
     win.ctx.drawImage(
       loadedSprites[urlKey],
       grid.SQ * this.x,
@@ -347,177 +448,11 @@ class Block {
   } // end draw()
 }
 
+game.VacantBlock = new Block(0, 0);
+
 export function newBlock(c, r) {
   let block = new Block(c, r, blockColor.VACANT, blockType.NORMAL, 0);
   return block;
-}
-
-export function updateGrid(frameAdvance = false) {
-  game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
-  let highestRowFound = false;
-  game.pauseStack = false;
-  game.highestCols = [];
-  for (let y = 0; y < grid.ROWS + 2; y++) {
-    for (let x = 0; x < grid.COLS; x++) {
-      let Square = game.board[x][y];
-      Square.airborne = isBlockAirborne(Square);
-      if (!Square.airborne && Square.type !== blockType.LANDING)
-        Square.touched = false;
-      if (Square.color === "vacant") {
-        Square.availableForPrimaryChain = false;
-        Square.availableForSecondaryChain = false;
-        Square.touched = false;
-        Square.timer = 0;
-      }
-      if (!highestRowFound && Square.color !== blockColor.VACANT) {
-        game.highestRow = y;
-        highestRowFound = true;
-      }
-      if (highestRowFound && Square.color !== blockColor.VACANT) {
-        if (game.highestRow === y) game.highestCols.push(x);
-      }
-      // Check to see if a block is still legally in a landing animation
-      if (Square.type === blockType.LANDING) {
-        game.pauseStack = true;
-        if (Square.timer < 9) {
-          Square.addToPrimaryChain = false;
-          Square.addToSecondaryChain = false;
-          Square.touched = false;
-        }
-        for (let j = grid.ROWS - 1; j > y; j--) {
-          if (game.board[x][j].color === blockColor.VACANT) {
-            Square.type = blockType.NORMAL;
-            Square.addToPrimaryChain = false;
-            Square.addToSecondaryChain = false;
-            Square.touched = false;
-            Square.airborne = true;
-            Square.timer = 0;
-            break;
-            /* A blockColor.VACANT block below a "landed" block was detected,
-                           so the animation will be cancelled. */
-          }
-        }
-      }
-
-      if (
-        Square.availableForPrimaryChain ||
-        Square.availableForSecondaryChain
-      ) {
-        if (
-          Square.color == blockColor.VACANT ||
-          (Square.type == blockType.LANDING && Square.timer < 9)
-        ) {
-          Square.availableForPrimaryChain = false;
-          Square.availableForSecondaryChain = false;
-        }
-      }
-      if (Square.timer === -1) {
-        Square.timer = 0;
-      } else if (Square.timer > 0) {
-        if (Square.timer === 1 && INTERACTIVE_TYPES.includes(Square.type))
-          Square.timer = -1;
-        else Square.timer -= 1;
-        if (Square.type !== blockType.SWAPPING) {
-          Square.swapDirection = 0;
-          game.boardRiseDisabled = true;
-        }
-      }
-
-      if (Square.type === blockType.SWAPPING && Square.timer === 0) {
-        Square.type = blockType.NORMAL;
-        Square.swapDirection = 0;
-        if (Square.airborne) {
-          Square.timer = game.blockStallTime;
-          Square.touched = true;
-          Square.availableForPrimaryChain = false;
-          Square.availableForSecondaryChain = false;
-        }
-        if (Square.color === "vacant") {
-          for (let j = Square.y - 1; j >= 0; j--) {
-            let nextAboveSquare = game.board[Square.x][j];
-            nextAboveSquare.touched = true;
-            nextAboveSquare.availableForPrimaryChain = false;
-            nextAboveSquare.availableForSecondaryChain = false;
-            if (!INTERACTIVE_TYPES.includes(nextAboveSquare.type)) break;
-          }
-        }
-      } else if (
-        !debug.freeze &&
-        (Square.type === blockType.BLINKING ||
-          Square.type === blockType.FACE ||
-          Square.type === blockType.POPPED)
-      ) {
-        game.pauseStack = true;
-        game.boardRiseDisabled = true;
-        // console.log(x, y, Square);
-        switch (Square.timer) {
-          case Square.switchToPoppedFrame + 2:
-            playAudio(audio.blockClear);
-            game.scoreUpdate = Math.round(game.scoreMultiplier * 10);
-            game.score += game.scoreUpdate;
-            break;
-          case 0:
-            Square.color = blockColor.VACANT;
-            Square.type = blockType.NORMAL;
-            // Square.switchToFaceFrame = 0;
-            // Square.switchToPoppedFrame = 0;
-            // console.log("do delay timer");
-            if (
-              y > 0 &&
-              game.board[x][y - 1].color != blockColor.VACANT &&
-              INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
-            ) {
-              // Give interactive pieces a slight delay timer
-              // console.log("do delay timer");
-              game.board[x][y - 1].timer = game.blockStallTime;
-            }
-            game.boardRiseDisabled = false;
-            for (let j = y - 1; j >= 0; j--) {
-              // create chain available blocks above current
-              // If clearing piece detected, break loop since no more chainable blocks.
-              if (INTERACTIVE_TYPES.includes(game.board[x][j].type)) {
-                if (Square.availableForPrimaryChain) {
-                  game.board[x][j].availableForPrimaryChain = true;
-                  // game.board[x][j].touched = false;
-                } else if (Square.availableForSecondaryChain) {
-                  game.board[x][j].availableForSecondaryChain = true;
-                  // game.board[x][j].touched = false;
-                }
-              } else break; // stop iterating since this clearing block shields the other blocks
-            }
-            break;
-          case Square.switchToFaceFrame:
-            Square.type = blockType.FACE;
-            break;
-          case Square.switchToPoppedFrame:
-            Square.type = blockType.POPPED;
-            // console.log("block popped");
-            break;
-        }
-      }
-
-      if (game.panicking && game.highestCols.includes(x)) {
-        if (Square.type === "normal") Square.type = "panicking";
-      } else {
-        if (Square.type === blockType.PANICKING) Square.type = blockType.NORMAL;
-      }
-    } // end x
-  } // end y
-}
-
-function decreaseTimers(x, y) {
-  if (game.board[x][y].timer === -1) game.board[x][y].timer = 0;
-  else if (game.board[x][y].timer > 0) game.board[x][y].timer -= 1;
-
-  if (game.board[x][y].blinkTimer === -1) game.board[x][y].blinkTimer = 0;
-  else if (game.board[x][y].blinkTimer > 0) game.board[x][y].blinkTimer -= 1;
-
-  if (game.board[x][y].faceTimer === -1) game.board[x][y].faceTimer = 0;
-  else if (game.board[x][y].faceTimer > 0) game.board[x][y].faceTimer -= 1;
-
-  if (game.board[x][y].leftoverTimer === -1) game.board[x][y].leftoverTimer = 0;
-  else if (game.board[x][y].leftoverTimer > 0)
-    game.board[x][y].leftoverTimer -= 1;
 }
 
 export function drawGrid() {
@@ -528,7 +463,9 @@ export function drawGrid() {
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
 
-      if (game.cursor_type !== "cursor") Square.drawGridLines();
+      if (game.cursor_type !== "defaultCursor") {
+        Square.drawGridLines();
+      }
     }
   }
   if (blocksAreSwapping) {
@@ -550,7 +487,35 @@ export function drawGrid() {
       }
     }
   }
-  if (!game.over && game.cursor_type !== "invisible") {
+
+  if (game.cursor_type !== "defaultCursor") {
+    for (let x = 0; x < grid.COLS; x++) {
+      for (let y = 0; y < grid.ROWS + 1; y++) {
+        let Square = game.board[x][y];
+        if (game.cursor_type !== "defaultCursor") {
+          if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
+            touch.moveToTarget = false;
+          if (!touch.moveToTarget && touch.arrowList.length)
+            touch.arrowList = [];
+          Square.drawArrows();
+        }
+      }
+    }
+  }
+
+  if (!game.over) {
+    if (game.cursor_type !== "defaultCursor") {
+      if (touch.moveToTarget) game.cursor_type = "movingCursor";
+      else if (blockIsSolid(game.board[game.cursor.x][game.cursor.y])) {
+        game.cursor_type = touch.mouse.clicked
+          ? "legalCursorDown"
+          : "legalCursorUp";
+      } else {
+        game.cursor_type = touch.mouse.clicked
+          ? "illegalCursorDown"
+          : "illegalCursorUp";
+      }
+    }
     game.cursor.draw();
   }
 }
@@ -559,9 +524,9 @@ export function isChainActive() {
   let potentialSecondarySuccessor = false;
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
-      if (game.board[x][y].availableForPrimaryChain) {
+      if (game.board[x][y].availForPrimaryChain) {
         return true;
-      } else if (game.board[x][y].availableForSecondaryChain) {
+      } else if (game.board[x][y].availForSecondaryChain) {
         potentialSecondarySuccessor = true;
       }
     }
@@ -627,46 +592,13 @@ export function endChain(potentialSecondarySuccessor) {
   if (potentialSecondarySuccessor) {
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
-        if (game.board[x][y].availableForSecondaryChain) {
-          game.board[x][y].availableForPrimaryChain = true;
-          game.board[x][y].availableForSecondaryChain = false;
+        if (game.board[x][y].availForSecondaryChain) {
+          game.board[x][y].availForPrimaryChain = true;
+          game.board[x][y].availForSecondaryChain = false;
         }
       }
     }
   }
-}
-
-function doPanic() {
-  let panic = false;
-  let rowChecked = game.level < 7 ? 1 : game.level < 10 ? 3 : 5;
-  for (let c = 0; c < grid.COLS; c++) {
-    if (
-      game.board[c][rowChecked].color != blockColor.VACANT &&
-      game.raiseDelay < 60
-    ) {
-      for (let r = 0; r < grid.ROWS; r++) {
-        if (game.board[c][r].type == blockType.NORMAL) {
-          game.board[c][r].type = blockType.PANICKING;
-          panic = true;
-        }
-      }
-    } else {
-      for (let r = 0; r < grid.ROWS; r++) {
-        if (game.board[c][r].type == blockType.PANICKING) {
-          game.board[c][r].type = blockType.NORMAL;
-        }
-      }
-    }
-  }
-  if (panic) {
-    game.message = "Danger! Watch your stack!";
-    game.messageChangeDelay = 90;
-    win.mainInfoDisplay.style.color = "red";
-  }
-  if (!panic && game.message === "Danger! Watch your stack") {
-    game.message = game.defaultMessage;
-  }
-  return panic;
 }
 
 export function createNewRow() {
@@ -691,8 +623,8 @@ export function createNewRow() {
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 1; r < grid.ROWS; r++) {
       // Raise all grid.ROWS, then delete bottom grid.ROWS.
-      game.board[c][r - 1].color = game.board[c][r].color;
-      game.board[c][r].color = blockColor.VACANT;
+      transferProperties(game.board[c][r], game.board[c][r - 1], "to");
+      // game.board[c][r - 1].color = game.board[c][r].color;
     }
     game.board[c][11].color = game.board[c][12].color;
     game.board[c][12].color = game.board[c][13].color;
@@ -722,7 +654,6 @@ export function checkTime() {
     : (game.Music.volume = 0.2);
   switch (game.frames) {
     case -180:
-      pastGameState = JSON.parse(JSON.stringify(game));
       game.Music.pause();
       if (win.restartGame) {
         game.frames = -62;
@@ -958,6 +889,7 @@ function KEYBOARD_CONTROL(event) {
       // tilda `~
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
+        if (game.frames < 0) game.frames = -2;
         debug.show = 1;
         leaderboard.canPost = false;
         leaderboard.reason = "debug";
@@ -994,13 +926,20 @@ function KEYBOARD_CONTROL(event) {
     }
 
     if (debug.enabled == 1) {
+      if (event.keyCode === 188) console.log(touch, KeySquare, match);
       if (event.keyCode === 89) {
-        console.log(game, pastGameState);
+        // y
+        console.log(game, debug);
         game.seconds = pastSeconds;
+        game.cursor.x = debug.pastGameState.cursor.x;
+        game.cursor.y = debug.pastGameState.cursor.y;
+        game.cursor_type = debug.pastGameState.cursor_type;
+        game.rise = debug.pastGameState.rise;
         for (let x = 0; x < grid.COLS; x++) {
           for (let y = 0; y < grid.ROWS + 2; y++) {
             Object.keys(game.board[x][y]).forEach(
-              key => (game.board[x][y][key] = pastGameState.board[x][y][key])
+              key =>
+                (game.board[x][y][key] = debug.pastGameState.board[x][y][key])
             );
           }
         }
@@ -1089,7 +1028,6 @@ export function updateLevelEvents(level) {
 
 // GAME HERE
 let cnt;
-let pastGameState = JSON.parse(JSON.stringify(game));
 let pastSeconds = 0;
 export function gameLoop() {
   cnt++;
@@ -1170,7 +1108,6 @@ export function gameLoop() {
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
         if (debug.enabled && game.seconds % 5 === 1) {
-          pastGameState = JSON.parse(JSON.stringify(game));
           pastSeconds = game.seconds;
         }
 
@@ -1269,7 +1206,7 @@ export function gameLoop() {
       if (game.frames % game.boardRiseSpeed == 0) {
         if (game.boardRiseRestarter >= 300) {
           game.boardRiseRestarter = 0;
-          console.log("board rise timeout, restarting it");
+          console.log(game.frames, "board rise timeout, restarting it");
           game.boardRiseDisabled = false;
           game.pauseStack = false;
         }
@@ -1444,7 +1381,7 @@ export function gameLoop() {
       }
       if (debug.show) {
         win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
-          game.seconds} sec<br />Real Time: ${perf.realTime} sec`;
+          game.seconds} sec<br />Real Time: ${perf.realTime.toFixed(1)} sec`;
         win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
         Score Multiplier: ${game.scoreMultiplier}<br>
         Highest Row: ${game.highestRow}`;

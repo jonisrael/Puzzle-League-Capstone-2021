@@ -1,7 +1,30 @@
 // Import Image Sprites
-import CURSOR from ".././assets/Sprites/cursor.png";
-import SINGLE_CURSOR from ".././assets/Sprites/single_cursor.png";
+import CURSOR from ".././assets/Sprites/cursors/default_cursor.png";
+import LEGAL_SELECTION_CURSOR from ".././assets/Sprites/cursors/selected_cursor.png";
+import ILLEGAL_SELECTION_CURSOR from ".././assets/Sprites/cursors/invalid_selection_cursor.png";
+import SELECTABLE_CURSOR from ".././assets/Sprites/cursors/selectable_cursor.png";
+import MOVING_CURSOR from ".././assets/Sprites/cursors/selectable_cursor_pink.png";
+import UNSELECTABLE_CURSOR from ".././assets/Sprites/cursors/unselectable_cursor.png";
 import GRID_LINE from ".././assets/Sprites/grid_line.png";
+import GRID_LINE_RED from ".././assets/Sprites/grid_line_red.png";
+import LIGHT from ".././assets/Sprites/lightThick.png";
+import PINK_LIGHT from ".././assets/Sprites/pinkLight.png";
+import ORANGE_LIGHT from ".././assets/Sprites/orangeLight.png";
+import L_ARROW_START_ORNG from ".././assets/Sprites/arrows/leftArrowStartOrange.png";
+import L_ARROW_START_PINK from ".././assets/Sprites/arrows/leftArrowStartPink.png";
+import L_ARROW_END_ORNG from ".././assets/Sprites/arrows/leftArrowEndOrange.png";
+import L_ARROW_END_PINK from ".././assets/Sprites/arrows/leftArrowEndPink.png";
+import R_ARROW_START_ORNG from ".././assets/Sprites/arrows/rightArrowStartOrange.png";
+import R_ARROW_START_PINK from ".././assets/Sprites/arrows/rightArrowStartPink.png";
+import R_ARROW_END_ORNG from ".././assets/Sprites/arrows/rightArrowEndOrange.png";
+import R_ARROW_END_PINK from ".././assets/Sprites/arrows/rightArrowEndPink.png";
+import H_ARROW_MID from ".././assets/Sprites/arrows/midArrow.png";
+import H_ARROW_MID_PINK from ".././assets/Sprites/arrows/midArrowPink.png";
+import D_ARROW_START from ".././assets/Sprites/arrows/downArrowStart.png";
+import D_ARROW_END from ".././assets/Sprites/arrows/downArrowEnd.png";
+import D_ARROW_MID from ".././assets/Sprites/arrows/downMidArrow.png";
+import LtD_ARROW from ".././assets/Sprites/arrows/leftToDownArrow.png";
+import RtD_ARROW from ".././assets/Sprites/arrows/rightToDownArrow.png";
 import BLINKING_0_B from ".././assets/Sprites/blueTriangle/clearing/0.png";
 import BLINKING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
 import DARK_B from ".././assets/Sprites/blueTriangle/dark.png";
@@ -236,14 +259,21 @@ import TOPOUT from ".././assets/Audio/topout.wav";
 
 // Images
 const sprite = {
-  cursor: CURSOR,
-  single_cursor: SINGLE_CURSOR,
+  defaultCursor: CURSOR,
+  legalCursorDown: LEGAL_SELECTION_CURSOR,
+  illegalCursorDown: ILLEGAL_SELECTION_CURSOR,
+  legalCursorUp: SELECTABLE_CURSOR,
+  illegalCursorUp: UNSELECTABLE_CURSOR,
+  movingCursor: MOVING_CURSOR,
   grid_line: GRID_LINE,
+  grid_line_red: GRID_LINE_RED,
+  light_up: LIGHT,
+  light_pink: PINK_LIGHT,
+  light_orange: ORANGE_LIGHT,
   blue_normal: NORMAL_B,
   blue_face: FACE_B,
   blue_dark: DARK_B,
   blue_dead: DEAD_B,
-  blue_swapping: SWAPPING_B,
   blue_popped: POPPED_B,
   blue_blinking_0: BLINKING_0_B,
   blue_blinking_1: BLINKING_1_B,
@@ -259,7 +289,6 @@ const sprite = {
   cyan_face: FACE_C,
   cyan_dark: DARK_C,
   cyan_dead: DEAD_C,
-  cyan_swapping: SWAPPING_C,
   cyan_popped: POPPED_C,
   cyan_blinking_0: BLINKING_0_C,
   cyan_blinking_1: BLINKING_1_C,
@@ -275,7 +304,6 @@ const sprite = {
   green_face: FACE_G,
   green_dark: DARK_G,
   green_dead: DEAD_G,
-  green_swapping: SWAPPING_G,
   green_popped: POPPED_G,
   green_blinking_0: BLINKING_0_G,
   green_blinking_1: BLINKING_1_G,
@@ -291,7 +319,6 @@ const sprite = {
   purple_face: FACE_P,
   purple_dark: DARK_P,
   purple_dead: DEAD_P,
-  purple_swapping: SWAPPING_P,
   purple_popped: POPPED_P,
   purple_blinking_0: BLINKING_0_P,
   purple_blinking_1: BLINKING_1_P,
@@ -307,7 +334,6 @@ const sprite = {
   red_face: FACE_R,
   red_dark: DARK_R,
   red_dead: DEAD_R,
-  red_swapping: SWAPPING_R,
   red_popped: POPPED_R,
   red_blinking_0: BLINKING_0_R,
   red_blinking_1: BLINKING_1_R,
@@ -323,7 +349,6 @@ const sprite = {
   yellow_face: FACE_Y,
   yellow_dark: DARK_Y,
   yellow_dead: DEAD_Y,
-  yellow_swapping: SWAPPING_Y,
   yellow_popped: POPPED_Y,
   yellow_blinking_0: BLINKING_0_Y,
   yellow_blinking_1: BLINKING_1_Y,
@@ -350,6 +375,23 @@ const sprite = {
   vacant_panicking_1: PANICKING_1_V,
   vacant_panicking_2: PANICKING_2_V,
   vacant_panicking_3: PANICKING_3_V,
+
+  // arrow items
+  arrowLeftMoveStart: L_ARROW_START_ORNG,
+  arrowLeftBufferStart: L_ARROW_START_PINK,
+  arrowLeftMoveEnd: L_ARROW_END_ORNG,
+  arrowLeftBufferEnd: L_ARROW_END_PINK,
+  arrowRightMoveStart: R_ARROW_START_ORNG,
+  arrowRightBufferStart: R_ARROW_START_PINK,
+  arrowRightMoveEnd: R_ARROW_END_ORNG,
+  arrowRightBufferEnd: R_ARROW_END_PINK,
+  arrowMidMove: H_ARROW_MID,
+  arrowMidBuffer: H_ARROW_MID_PINK,
+  arrowDownStart: D_ARROW_START,
+  arrowDownEnd: D_ARROW_END,
+  arrowDownMid: D_ARROW_MID,
+  arrowLtD: LtD_ARROW,
+  arrowRtD: RtD_ARROW,
 
   // debug items
   debugCursor: DEBUG_CURSOR,

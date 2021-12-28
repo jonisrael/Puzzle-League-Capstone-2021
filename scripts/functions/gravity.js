@@ -4,12 +4,15 @@ import {
   grid,
   game,
   INTERACTIVE_TYPES,
-  debug
+  debug,
+  touch,
+  transferProperties
 } from "../global";
 
 import { checkMatch } from "./matchAndScoreFunctions";
-// import { updateGrid } from "./updateGrid";
-import { updateGrid, isChainActive } from "../../puzzleleague";
+import { updateGrid } from "./updateGrid";
+import { isChainActive } from "../../puzzleleague";
+import { SelectedBlock } from "./stickyFunctions";
 
 export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
@@ -52,14 +55,15 @@ export function doGravity(gameSpeed) {
         game.pauseStack = true;
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
-          game.board[c][r + 1].color = game.board[c][r].color;
-          game.board[c][r + 1].type = game.board[c][r].type;
-          game.board[c][r + 1].touched = game.board[c][r].touched;
-          game.board[c][r + 1].availableForSecondaryChain =
-            game.board[c][r].availableForSecondaryChain;
-          game.board[c][r + 1].availableForPrimaryChain =
-            game.board[c][r].availableForPrimaryChain;
-          game.board[c][r].color = blockColor.VACANT;
+          if (
+            touch.moveToTarget &&
+            SelectedBlock.x === c &&
+            SelectedBlock.y === r
+          ) {
+            game.cursor.y += 1;
+            touch.target.y += 1;
+          }
+          transferProperties(game.board[c][r], game.board[c][r + 1], "to");
           game.board[c][r + 1].airborne = true;
           possibleLandedLocations.push([c, r + 1]);
 
