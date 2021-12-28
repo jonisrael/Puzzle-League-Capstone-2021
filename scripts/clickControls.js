@@ -119,6 +119,22 @@ export function createClickListeners() {
     if (game.frames >= 0) selectBlock();
   });
 
+  win.canvas.addEventListener("touchdown", function(e) {
+    if (!touch.enabled) return;
+    touch.moveToTarget = false;
+    touch.mouse.clicked = true;
+    if (!updateMousePosition(win.canvas, e)) {
+      // click was outside the borders of the canvas
+      touch.thereIsABlockCurrentlySelected = false;
+      touch.moveToTarget = false;
+      return;
+    }
+    console.log(game.cursor, touch.mouse);
+    game.cursor.x = touch.mouse.x;
+    game.cursor.y = touch.mouse.y;
+    if (game.frames >= 0) selectBlock();
+  });
+
   win.canvas.addEventListener("mousemove", function(e) {
     if (!touch.enabled) return;
     // if (!updateMousePosition(win.canvas, e)) return;
@@ -130,7 +146,26 @@ export function createClickListeners() {
     }
   });
 
+  win.canvas.addEventListener("touchmove", function(e) {
+    if (!touch.enabled) return;
+    // if (!updateMousePosition(win.canvas, e)) return;
+    updateMousePosition(win.canvas, e);
+    if (touch.mouse.clicked && !touch.thereIsABlockCurrentlySelected) {
+      game.cursor.x = touch.mouse.x;
+      game.cursor.y = touch.mouse.y;
+      selectBlock();
+    }
+  });
+
   document.addEventListener("mouseup", function(e) {
+    if (!touch.enabled || game.frames < 0) return;
+    touch.mouse.clicked = false;
+    updateMousePosition(win.canvas, e);
+    if (touch.thereIsABlockCurrentlySelected && !touch.moveToTarget)
+      moveBlockByRelease();
+  });
+
+  document.addEventListener("touchend", function(e) {
     if (!touch.enabled || game.frames < 0) return;
     touch.mouse.clicked = false;
     updateMousePosition(win.canvas, e);
