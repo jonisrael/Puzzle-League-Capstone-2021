@@ -90,7 +90,6 @@ export function moveBlockByRelease() {
   let dir = touch.target.x < touch.selectedBlock.x ? -1 : 1;
 
   for (let i = touch.selectedBlock.x; i !== touch.target.x; i += dir) {
-    console.log(game.board[i][touch.selectedBlock.y]);
     if (CLEARING_TYPES.includes(game.board[i][touch.selectedBlock.y].type)) {
       touch.target.x = i;
       touch.target.y = touch.selectedBlock.y;
@@ -114,7 +113,6 @@ function doMouseDown(e) {
     touch.moveToTarget = false;
     return;
   }
-  console.log(game.cursor, touch.mouse);
   game.cursor.x = touch.mouse.x;
   game.cursor.y = touch.mouse.y;
   if (game.frames >= 0) selectBlock();
