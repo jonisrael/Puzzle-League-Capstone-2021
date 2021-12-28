@@ -38,6 +38,7 @@ export function closeGame(gameFinished) {
     //   win.restartGame = true;
     //   return;
     // }
+    game.Music.src = resultsMusic[randInt(resultsMusic.length)];
     afterGame();
   }
 }
@@ -67,7 +68,7 @@ export function isGameOver() {
 
       return false;
     }
-    game.Music.volume = 0;
+    if (game.frames < 7200) game.Music.volume = 0;
     endGame();
     return true;
   }
@@ -80,7 +81,6 @@ export function gameOverBoard() {
   if (game.frames == 2) {
     getLeaderboardData();
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
-    game.Music.src = resultsMusic[randInt(resultsMusic.length)];
     game.messagePriority = "Game Over!";
     game.message = "Game Over!";
   }
