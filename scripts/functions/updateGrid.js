@@ -18,6 +18,15 @@ export function updateGrid(frameAdvance = false) {
   let highestRowFound = false;
   game.pauseStack = false;
   game.highestCols = [];
+  if (touch.tripleClickTimer > 0) {
+    if (touch.tripleClickTimer === 30)
+      console.log(game.frames, touch.tripleClickCounter, "start");
+    touch.tripleClickTimer -= 1;
+    if (touch.tripleClickTimer === 0) {
+      console.log(game.frames, touch.tripleClickCounter, "end");
+      touch.tripleClickCounter = 0;
+    }
+  }
   for (let y = 0; y < grid.ROWS + 2; y++) {
     for (let x = 0; x < grid.COLS; x++) {
       let Square = game.board[x][y];

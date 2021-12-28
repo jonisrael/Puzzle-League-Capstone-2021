@@ -115,11 +115,19 @@ function doMouseDown(e) {
   }
   game.cursor.x = touch.mouse.x;
   game.cursor.y = touch.mouse.y;
+  if (game.board[game.cursor.x][game.cursor.y].color === "vacant") {
+    console.log(game.frames, "single click");
+    if (touch.tripleClickCounter === 2) {
+      console.log("triple click!");
+      if (game.frames > 0 && game.highestRow > 1) game.raisePressed = true;
+    }
+    if (touch.tripleClickTimer === 0) touch.tripleClickTimer = 30;
+    touch.tripleClickCounter++;
+  }
   if (game.frames >= 0) selectBlock();
 }
 
 function doMouseMove(e) {
-  console.log(e);
   if (!touch.enabled) return;
   // if (!updateMousePosition(win.canvas, e)) return;
   updateMousePosition(win.canvas, e);

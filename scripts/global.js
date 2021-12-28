@@ -223,7 +223,9 @@ export const touch = {
   arrowList: [],
   target: { x: 2, y: 6 }, // swap until target is reached
   keySquare: { x: 2, y: 6 },
-  swapOrderPrepared: false
+  swapOrderPrepared: false,
+  tripleClickCounter: 0,
+  tripleClickTimer: 0
 };
 
 export const overtimeMusic = [
