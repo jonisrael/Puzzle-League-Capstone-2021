@@ -119,7 +119,13 @@ function doMouseDown(e) {
       Math.abs(touch.mouse.x - game.cursor.x) < 2 &&
       Math.abs(touch.mouse.y - game.cursor.y) < 2
     ) {
-      if (game.frames > 0 && game.highestRow > 1) game.raisePressed = true;
+      if (game.frames > 0 && game.highestRow > 1) {
+        game.raisePressed = true;
+        touch.doubleClickCounter = 0;
+        touch.doubleClickTimer += 20;
+
+        if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
+      }
     }
     if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
     touch.doubleClickCounter++;
