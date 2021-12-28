@@ -11,13 +11,15 @@ import {
   win
 } from "./global";
 
-export function updateMousePosition(canvas, event, click) {
+export function updateMousePosition(canvas, e) {
   if (!touch.enabled) return;
-
+  if (e.type[0] === "t" && !e.touches[0]) return false;
+  let clientX = e.type[0] === "t" ? e.touches[0].clientX : e.clientX;
+  let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
   const rect = canvas.getBoundingClientRect();
   const ratio = win.canvas.width / win.canvas.clientWidth;
-  const pixelX = ratio * (event.clientX - rect.left - 10);
-  const pixelY = ratio * (event.clientY - rect.top - 10 + game.rise);
+  const pixelX = ratio * (clientX - rect.left - 10);
+  const pixelY = ratio * (clientY - rect.top - 10 + game.rise);
   let x = Math.floor(pixelX / grid.SQ);
   let y = Math.floor(pixelY / grid.SQ);
   // Accept position only if inside game grid
@@ -102,78 +104,68 @@ export function moveBlockByRelease() {
   // game.cursor.y = touch.mouse.y;
 }
 
+function doMouseDown(e) {
+  if (!touch.enabled) return;
+  touch.moveToTarget = false;
+  touch.mouse.clicked = true;
+  if (!updateMousePosition(win.canvas, e)) {
+    // click was outside the borders of the canvas
+    touch.thereIsABlockCurrentlySelected = false;
+    touch.moveToTarget = false;
+    return;
+  }
+  console.log(game.cursor, touch.mouse);
+  game.cursor.x = touch.mouse.x;
+  game.cursor.y = touch.mouse.y;
+  if (game.frames >= 0) selectBlock();
+}
+
+function doMouseMove(e) {
+  console.log(e);
+  if (!touch.enabled) return;
+  // if (!updateMousePosition(win.canvas, e)) return;
+  updateMousePosition(win.canvas, e);
+  if (touch.mouse.clicked && !touch.thereIsABlockCurrentlySelected) {
+    game.cursor.x = touch.mouse.x;
+    game.cursor.y = touch.mouse.y;
+    selectBlock();
+  }
+}
+
+function doMouseUp(e) {
+  if (!touch.enabled || game.frames < 0) return;
+  touch.mouse.clicked = false;
+  updateMousePosition(win.canvas, e);
+  if (touch.thereIsABlockCurrentlySelected && !touch.moveToTarget)
+    moveBlockByRelease();
+}
+
 export function createClickListeners() {
   win.canvas.addEventListener("mousedown", function(e) {
-    if (!touch.enabled) return;
-    touch.moveToTarget = false;
-    touch.mouse.clicked = true;
-    if (!updateMousePosition(win.canvas, e)) {
-      // click was outside the borders of the canvas
-      touch.thereIsABlockCurrentlySelected = false;
-      touch.moveToTarget = false;
-      return;
-    }
-    console.log(game.cursor, touch.mouse);
-    game.cursor.x = touch.mouse.x;
-    game.cursor.y = touch.mouse.y;
-    if (game.frames >= 0) selectBlock();
+    doMouseDown(e);
   });
 
-  win.canvas.addEventListener("touchdown", function(e) {
+  win.canvas.addEventListener("touchstart", function(e) {
     e.preventDefault();
-    if (!touch.enabled) return;
-    touch.moveToTarget = false;
-    touch.mouse.clicked = true;
-    if (!updateMousePosition(win.canvas, e)) {
-      // click was outside the borders of the canvas
-      touch.thereIsABlockCurrentlySelected = false;
-      touch.moveToTarget = false;
-      return;
-    }
-    console.log(game.cursor, touch.mouse);
-    game.cursor.x = touch.mouse.x;
-    game.cursor.y = touch.mouse.y;
-    if (game.frames >= 0) selectBlock();
+    doMouseDown(e);
   });
 
   win.canvas.addEventListener("mousemove", function(e) {
-    if (!touch.enabled) return;
-    // if (!updateMousePosition(win.canvas, e)) return;
-    updateMousePosition(win.canvas, e);
-    if (touch.mouse.clicked && !touch.thereIsABlockCurrentlySelected) {
-      game.cursor.x = touch.mouse.x;
-      game.cursor.y = touch.mouse.y;
-      selectBlock();
-    }
+    doMouseMove(e);
   });
 
   win.canvas.addEventListener("touchmove", function(e) {
     e.preventDefault();
-    if (!touch.enabled) return;
-    // if (!updateMousePosition(win.canvas, e)) return;
-    updateMousePosition(win.canvas, e);
-    if (touch.mouse.clicked && !touch.thereIsABlockCurrentlySelected) {
-      game.cursor.x = touch.mouse.x;
-      game.cursor.y = touch.mouse.y;
-      selectBlock();
-    }
+    doMouseMove(e);
   });
 
   document.addEventListener("mouseup", function(e) {
-    if (!touch.enabled || game.frames < 0) return;
-    touch.mouse.clicked = false;
-    updateMousePosition(win.canvas, e);
-    if (touch.thereIsABlockCurrentlySelected && !touch.moveToTarget)
-      moveBlockByRelease();
+    doMouseUp(e);
   });
 
-  document.addEventListener("touchend", function(e) {
+  win.canvas.addEventListener("touchend", function(e) {
     e.preventDefault();
-    if (!touch.enabled || game.frames < 0) return;
-    touch.mouse.clicked = false;
-    updateMousePosition(win.canvas, e);
-    if (touch.thereIsABlockCurrentlySelected && !touch.moveToTarget)
-      moveBlockByRelease();
+    doMouseUp(e);
   });
 
   win.canvas.addEventListener("contextmenu", function(e) {
@@ -183,17 +175,17 @@ export function createClickListeners() {
   });
 }
 
-function moveBlockByClick() {
-  // Now try to move block, but not if too vertically far away from selectedBlock y
-  if (
-    touch.mouse.y > touch.selectedBlock.y + 2 ||
-    touch.mouse.y < touch.selectedBlock.y - 2
-  ) {
-    game.cursor.x = touch.mouse.x;
-    game.cursor.y = touch.mouse.y;
-    return; // changed cursor, but no swap done.
-  }
-  touch.target.x = touch.mouse.x; // move based on x coordinate
-  touch.target.y = touch.selectedBlock.y; // moved based on the row of the block
-  touch.moveToTarget = true; // now, do continuous swapping function.
-}
+// function moveBlockByClick() {
+//   // Now try to move block, but not if too vertically far away from selectedBlock y
+//   if (
+//     touch.mouse.y > touch.selectedBlock.y + 2 ||
+//     touch.mouse.y < touch.selectedBlock.y - 2
+//   ) {
+//     game.cursor.x = touch.mouse.x;
+//     game.cursor.y = touch.mouse.y;
+//     return; // changed cursor, but no swap done.
+//   }
+//   touch.target.x = touch.mouse.x; // move based on x coordinate
+//   touch.target.y = touch.selectedBlock.y; // moved based on the row of the block
+//   touch.moveToTarget = true; // now, do continuous swapping function.
+// }

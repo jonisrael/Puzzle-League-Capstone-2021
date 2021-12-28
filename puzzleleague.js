@@ -1076,6 +1076,7 @@ export function gameLoop() {
         win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
     }
 
+    // Big Game Loop
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * perf.gameSpeed;
       game.boardRiseRestarter += 1 * perf.gameSpeed; // Failsafe to restart stack rise
