@@ -784,14 +784,14 @@
 //         game.disableSwap = true;
 //         game.message = "Quick-Raise Initiated";
 //         game.messageChangeDelay = 1000;
-//         win.mainInfoDisplay.style.color = "blue";
+//         win.mainInfoDisplay.style.color = "black";
 //         if (game.rise === 0) {
 //           game.boardRiseSpeed = preset.speedValues[game.level];
 //           game.disableSwap = false;
 //           game.currentlyQuickRaising = false;
 //           game.message = "Quick-Raise Complete";
 //           game.messageChangeDelay = 90;
-//           win.mainInfoDisplay.style.color = "blue";
+//           win.mainInfoDisplay.style.color = "black";
 //           game.raiseDelay = 0;
 //         } else {
 //           game.boardRiseSpeed = 1;
@@ -859,14 +859,14 @@
 
 //       if (game.frames > 60) {
 //         if (game.frames % 1200 >= 1020) {
-//           win.timeDisplay.style.color = "red";
+//           win.timeDisplay.style.color = "black";
 //         } else {
 //           if (win.timeDisplay.style.color !== "black") {
 //             win.timeDisplay.style.color = "black";
 //           }
 //         }
 //         if (game.frames % 1200 < 60) {
-//           win.levelDisplay.style.color = "red";
+//           win.levelDisplay.style.color = "black";
 //         } else {
 //           if (win.levelDisplay.style.color !== "black") {
 //             win.levelDisplay.style.color = "black";
@@ -874,7 +874,7 @@
 //         }
 
 //         if (game.currentChain > 0) {
-//           win.scoreDisplay.style.color = "red";
+//           win.scoreDisplay.style.color = "black";
 //         } else {
 //           if (win.scoreDisplay.style.color !== "black") {
 //             win.scoreDisplay.style.color = "black";
@@ -935,7 +935,7 @@
 //           win.controlsDisplay.innerHTML = html`
 //             <ul>
 //               <li>
-//                 <strong>Red</strong>: AI Target, function is
+//                 <strong>black</strong>: AI Target, function is
 //                 findVerticalMatches.
 //               </li>
 //               <li>
@@ -961,7 +961,7 @@
 //               </li>
 
 //               <li>
-//                 <strong>Blue</strong>: If nothing to do, will return to center
+//                 <strong>black</strong>: If nothing to do, will return to center
 //                 of stack and raise stack to a limit defined based on game level.
 //               </li>
 //             </ul>

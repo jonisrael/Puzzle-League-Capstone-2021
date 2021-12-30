@@ -91,11 +91,11 @@ export const hold_it = [
 ];
 
 export const blockColor = {
-  BLUE: "blue",
+  RED: "red",
   CYAN: "cyan",
   GREEN: "green",
   PURPLE: "purple",
-  RED: "red",
+  BLUE: "blue",
   YELLOW: "yellow",
   VACANT: "vacant"
 };
@@ -178,10 +178,13 @@ export const win = {
   cvs: null,
   ctx: null,
   mainInfoDisplay: null,
+  gameInfoTable: null,
   fpsDisplay: null,
   statDisplay: null,
   scoreHeader: null,
   scoreDisplay: null,
+  multiplierHeader: null,
+  multiplierDisplay: null,
   chainDisplay: null,
   timeHeader: null,
   timeDisplay: null,

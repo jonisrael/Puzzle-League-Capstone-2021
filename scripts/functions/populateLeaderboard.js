@@ -22,7 +22,7 @@ export function populateLeaderboard() {
           ? " font-weight: bold; background-color: orange;"
           : ""
       }
-      ${fullMatchIndex == rank ? " background-color: yellow; color:blue" : ""}
+      ${fullMatchIndex == rank ? " background-color: yellow; color:black" : ""}
       '${fullMatchIndex == rank ? "id='user-post'" : ""}>
         <td>
           ${rank + 1}

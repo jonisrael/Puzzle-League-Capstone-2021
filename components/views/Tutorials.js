@@ -18,7 +18,7 @@ export default st => html`
       ></iframe>
     </div>
     <br />
-    <hr color="red" />
+    <hr color="black" />
     <br />
     <h2>Intermediate Chain Example & Explanation</h2>
     <iframe
@@ -31,7 +31,7 @@ export default st => html`
       allowfullscreen
     ></iframe>
     <br />
-    <hr color="red" />
+    <hr color="black" />
     <br />
     <h2>Advanced 9x Chain Example</h2>
     <iframe

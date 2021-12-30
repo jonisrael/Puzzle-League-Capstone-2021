@@ -28,9 +28,6 @@ dotenv.config();
 export const router = new Navigo(window.location.origin);
 
 export function render(st) {
-  console.log(`loaded audios: ${loadedAudios.length}`);
-  console.log("state list:", state);
-  console.log("state:", st);
   win.view = st.view;
   win.viewChanged = true;
   document.querySelector("#root").innerHTML = `
@@ -42,7 +39,7 @@ export function render(st) {
   router.updatePageLinks();
 
   // localStorage.removeItem("patchNotesShown");
-  console.log("patch notes shown:", localStorage.getItem("patchNotesShown"));
+  // console.log("patch notes shown:", localStorage.getItem("patchNotesShown"));
   if (st.view === "Home" && !localStorage.getItem("patchNotesShown")) {
     // win.patchNotesShown = true;
     showPatchNotes();
@@ -353,7 +350,7 @@ router.hooks({
         document.getElementById("leaderboard-page").innerHTML =
           "Fetching Leaderboard...if 15 seconds have passed, try refreshing the page.";
         document.getElementById("leaderboard-page").style =
-          "color:red; font-size:large; text-align: center; padding: 10px;";
+          "color:black; font-size:large; text-align: center; padding: 10px;";
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
           .then(response => {

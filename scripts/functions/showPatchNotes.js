@@ -19,11 +19,11 @@ export function showPatchNotes() {
         >https://youtu.be/QOKbWRvVWUM</a
       >
     </h2>
-    <h2 style="color:blue">Click Anywhere or Press Any Key to Continue</h2>
+    <h2 style="color:black">Click Anywhere or Press Any Key to Continue</h2>
   `;
 }
 
-// <h2 style="color:blue;">
+// <h2 style="color:black;">
 //   v1.01 (10/06/21) Patch Notes
 // </h2>
 // <label>Game Changes</label>

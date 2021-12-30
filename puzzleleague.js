@@ -583,7 +583,7 @@ export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain > game.largestChain)
     game.largestChain = game.currentChain;
   if (game.chainScoreAdded !== 0) {
-    win.mainInfoDisplay.style.color = "blue";
+    win.mainInfoDisplay.style.color = "black";
   }
   // if another chain is currently clearing, chain is 1. Otherwise, chain is 0.
   game.currentChain = potentialSecondarySuccessor ? 1 : 0;
@@ -894,7 +894,7 @@ function KEYBOARD_CONTROL(event) {
         leaderboard.canPost = false;
         leaderboard.reason = "debug";
         perf.unrankedReason = "debug mode was activated.";
-        win.fpsDisplay.style.color = "red";
+        win.fpsDisplay.style.color = "black";
         // game.boardRiseSpeed = preset.speedValues[0];
         // game.blockClearTime = preset.clearValues[0];
         // game.blockStallTime = preset.stallValues[0];
@@ -1185,13 +1185,13 @@ export function gameLoop() {
         game.disableSwap = true;
         game.message = "Quick-Raise Initiated";
         game.messageChangeDelay = 1000;
-        win.mainInfoDisplay.style.color = "blue";
+        win.mainInfoDisplay.style.color = "black";
         if (game.rise == 0) {
           game.disableSwap = false;
           game.currentlyQuickRaising = false;
           game.message = "Quick-Raise Complete";
           game.messageChangeDelay = 90;
-          win.mainInfoDisplay.style.color = "blue";
+          win.mainInfoDisplay.style.color = "black";
           game.raiseDelay = 0;
           game.boardRiseSpeed = preset.speedValues[game.level];
         } else {
@@ -1319,17 +1319,17 @@ export function gameLoop() {
         perf.diffFromRealTime = Math.abs(
           perf.realTime - perf.sumOfPauseTimes - game.frames / 60
         );
-        if (perf.diffFromRealTime >= 6 && game.mode !== "cpu-play") {
+        if (perf.diffFromRealTime >= 15 && game.mode !== "cpu-play") {
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
           perf.unrankedReason = `leaderboard posting disabled, behind real clock by
           ${perf.diffFromRealTime.toFixed(1)} seconds`;
-          win.fpsDisplay.style.color = "red";
+          win.fpsDisplay.style.color = "black";
         }
         //  else if (perf.diffFromRealTime >= 3) {
         //   perf.unrankedReason = `warning, game is running slowly, behind real clock by
         //   ${perf.diffFromRealTime.toFixed(1)} seconds`;
-        //   win.fpsDisplay.style.color = "blue";
+        //   win.fpsDisplay.style.color = "black";
         // }
       }
       if (game.frames % 5 == 0) {
@@ -1393,14 +1393,14 @@ export function gameLoop() {
 
       if (game.frames > 60) {
         if (game.frames % 1200 >= 1020) {
-          win.timeDisplay.style.color = "red";
+          win.timeDisplay.style.color = "black";
         } else {
           if (win.timeDisplay.style.color !== "black") {
             win.timeDisplay.style.color = "black";
           }
         }
         if (game.frames % 1200 < 60) {
-          win.levelDisplay.style.color = "red";
+          win.levelDisplay.style.color = "black";
         } else {
           if (win.levelDisplay.style.color !== "black") {
             win.levelDisplay.style.color = "black";
@@ -1408,7 +1408,7 @@ export function gameLoop() {
         }
 
         if (game.currentChain > 0) {
-          win.scoreDisplay.style.color = "red";
+          win.scoreDisplay.style.color = "black";
         } else {
           if (win.scoreDisplay.style.color !== "black") {
             win.scoreDisplay.style.color = "black";
@@ -1416,6 +1416,7 @@ export function gameLoop() {
         }
       }
       win.scoreDisplay.innerHTML = scoreString;
+      win.multiplierDisplay.innerHTML = `${game.scoreMultiplier.toFixed(2)}x`;
 
       if (debug.advanceOneFrame) win.fpsDisplay.innerHTML = "";
       else
@@ -1472,7 +1473,7 @@ export function gameLoop() {
           win.controlsDisplay.innerHTML = html`
             <ul>
               <li>
-                <strong>Red</strong>: AI Target, function is
+                <strong>black</strong>: AI Target, function is
                 findVerticalMatches.
               </li>
               <li>
@@ -1498,7 +1499,7 @@ export function gameLoop() {
               </li>
 
               <li>
-                <strong>Blue</strong>: If nothing to do, will return to center
+                <strong>black</strong>: If nothing to do, will return to center
                 of stack and raise stack to a limit defined based on game level.
               </li>
             </ul>

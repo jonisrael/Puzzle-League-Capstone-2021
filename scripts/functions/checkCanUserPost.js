@@ -30,9 +30,9 @@ export function checkCanUserPost() {
   }
   let container = document.getElementById("container");
   if (!leaderboard.canPost) {
-    container.innerHTML += `<h2 style="color:red">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
+    container.innerHTML += `<h2 style="color:black">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
     if (leaderboard.reason == "slow") {
-      container.innerHTML += `<p>This is because the in-game clock time was at least six seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:red; font-weight:bold">but the actual real time of the game was ${perf.realTime} seconds.</span></p><br />`;
+      container.innerHTML += `<p>This is because the in-game clock time was at least six seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:black; font-weight:bold">but the actual real time of the game was ${perf.realTime} seconds.</span></p><br />`;
       container.innerHTML += `
       <label" for="troubleshooting" style="font-size:large">
         Troubleshooting Performance Issues:

@@ -15,7 +15,6 @@ import {
   leaderboard,
   cpu
 } from "../global";
-import html from "html-literal";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio, audioList, loadedAudios } from "../fileImports";
@@ -78,26 +77,8 @@ function createHeadsUpDisplay() {
   //   document.getElementById("home-page").onselectstart = false;
   // }
 
-  let headerRow = document.createElement("tr");
-  let infoRow = document.createElement("tr");
-  win.timeHeader = document.createElement("th");
-  win.scoreHeader = document.createElement("th");
-  win.levelHeader = document.createElement("th");
-  win.multiplierHeader = document.createElement("th");
-  win.statDisplay = document.createElement("td"); // only used for debug
-  win.scoreDisplay = document.createElement("td");
-  win.timeDisplay = document.createElement("td");
-  win.levelDisplay = document.createElement("td");
-  win.multiplierDisplay = document.createElement("td");
-  win.chainDisplay = document.createElement("td");
-
-  // set HUD element IDs
-  win.statDisplay.setAttribute("id", "all-stats");
-  win.scoreDisplay.setAttribute("id", "score");
-  win.timeDisplay.setAttribute("id", "time");
-  win.levelDisplay.setAttribute("id", "level");
-
   let appContainer = document.createElement("div");
+  appContainer = document.createElement("div");
   appContainer.setAttribute("id", "app-container");
   container.appendChild(appContainer);
 
@@ -110,36 +91,6 @@ function createHeadsUpDisplay() {
   win.mainInfoDisplay.setAttribute("id", "main-info");
   win.mainInfoDisplay.innerHTML = "Loading...";
   appContainer.appendChild(win.mainInfoDisplay);
-
-  let topSection = document.createElement("div");
-  topSection.setAttribute("id", "top-section");
-  appContainer.appendChild(topSection);
-
-  win.gameInfoTable = document.createElement("table");
-  win.gameInfoTable.setAttribute("id", "game-info");
-  win.gameInfoTable.appendChild(headerRow);
-  topSection.appendChild(win.gameInfoTable);
-  headerRow.appendChild(win.timeHeader);
-  headerRow.appendChild(win.scoreHeader);
-  headerRow.appendChild(win.levelHeader);
-  headerRow.appendChild(win.multiplierHeader);
-  win.gameInfoTable.appendChild(infoRow);
-  infoRow.appendChild(win.timeDisplay);
-  infoRow.appendChild(win.scoreDisplay);
-  infoRow.appendChild(win.levelDisplay);
-  infoRow.appendChild(win.multiplierDisplay);
-  // win.gameInfoTable.innerHTML = `
-  //   <tr style="color:black">
-  //     <th>${win.timeHeader.innerHTML}</th>
-  //     <th>${win.scoreHeader.innerHTML}</th>
-  //     <th>${win.levelHeader.innerHTML}</th>
-  //   </tr>
-  //   <tr>
-  //     <td>${win.timeDisplay.innerHTML}</td>
-  //     <td>${win.scoreDisplay.innerHTML}</td>
-  //     <td>${win.levelDisplay.innerHTML}</td>
-  //   </tr>
-  // `;
 
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
@@ -166,6 +117,14 @@ function createHeadsUpDisplay() {
   rightHudElements.className = ".hidden-mobile";
   column3.append(rightHudElements);
   // create HUD elements
+  win.statDisplay = document.createElement("h2");
+  win.chainDisplay = document.createElement("h2");
+  win.scoreHeader = document.createElement("h2");
+  win.scoreDisplay = document.createElement("h2");
+  win.timeHeader = document.createElement("h2");
+  win.timeDisplay = document.createElement("h2");
+  win.levelHeader = document.createElement("h2");
+  win.levelDisplay = document.createElement("h2");
 
   win.scoreHeader.innerHTML = "SCORE";
   win.scoreHeader.style.color = "black";
@@ -173,18 +132,21 @@ function createHeadsUpDisplay() {
   win.timeHeader.style.color = "black";
   win.levelHeader.innerHTML = "LEVEL";
   win.levelHeader.style.color = "black";
-  win.multiplierHeader.innerHTML = "SCORE MULTIPLIER";
-  win.multiplierHeader.style.color = "black";
 
+  // set HUD element IDs
+  win.statDisplay.setAttribute("id", "all-stats");
+  win.scoreDisplay.setAttribute("id", "score");
+  win.timeDisplay.setAttribute("id", "time");
+  win.levelDisplay.setAttribute("id", "level");
   // append HUD elements
 
-  // leftHudElements.appendChild(win.statDisplay);
-  // leftHudElements.appendChild(win.scoreHeader);
-  // leftHudElements.appendChild(win.scoreDisplay);
-  // leftHudElements.appendChild(win.timeHeader);
-  // leftHudElements.appendChild(win.timeDisplay);
-  // leftHudElements.appendChild(win.levelHeader);
-  // leftHudElements.appendChild(win.levelDisplay);
+  leftHudElements.appendChild(win.statDisplay);
+  leftHudElements.appendChild(win.scoreHeader);
+  leftHudElements.appendChild(win.scoreDisplay);
+  leftHudElements.appendChild(win.timeHeader);
+  leftHudElements.appendChild(win.timeDisplay);
+  leftHudElements.appendChild(win.levelHeader);
+  leftHudElements.appendChild(win.levelDisplay);
 
   let controls = document.createElement("div");
   controls.style.display = "none";

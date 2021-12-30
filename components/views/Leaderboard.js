@@ -11,9 +11,9 @@ export default st => html`
     <button class="refresh default-button" id="refresh-top">
       Refresh Leaderboard
     </button>
-    <h2 style="color:blue">Ranked</h2>
+    <h2 style="color:black">Ranked</h2>
     <table id="ranked-table">
-      <tr style="color:blue">
+      <tr style="color:black">
         <th>RANK</th>
         <th>SCORE</th>
         <th>NAME</th>

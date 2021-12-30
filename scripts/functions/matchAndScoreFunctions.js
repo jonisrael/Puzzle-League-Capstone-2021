@@ -191,7 +191,7 @@ export function checkMatch() {
           );
       }
       updateScore(blocksCleared, game.currentChain);
-      win.mainInfoDisplay.style.color = "red";
+      win.mainInfoDisplay.style.color = "black";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
 

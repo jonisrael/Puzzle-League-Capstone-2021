@@ -42,9 +42,9 @@ export function afterGame() {
   let scoreMessage = document.createElement("h2");
   scoreMessage.setAttribute = ("id", "score-message");
   scoreMessage.className = "postgame-info";
-  scoreMessage.style.color = "red";
+  scoreMessage.style.color = "black";
   scoreMessage.innerHTML = `Final Score: ${game.score}`;
-  scoreMessage.style.color = leaderboard.canPost ? "blue" : "red";
+  scoreMessage.style.color = leaderboard.canPost ? "black" : "black";
   div1.appendChild(scoreMessage);
 
   let durationMessage = document.createElement("h2");
@@ -147,7 +147,7 @@ export function submitResults() {
     "value",
     `Submit Name${leaderboard.canPost ? " " : " (Unranked)"}`
   );
-  submitForm.style.color = leaderboard.canPost ? "black" : "red";
+  submitForm.style.color = leaderboard.canPost ? "black" : "black";
   submitForm.className = "default-button";
   form.appendChild(submitForm);
 

@@ -55,13 +55,13 @@ body {
     position: fixed;
     justify-content: center;
     font-size: 72px;
-    color: blue;
+    color: #FF8484;
     background-color: silver;
     padding: 10px;
 }
 
 #main-info {
-    color: blue;
+    color: #FF8484;
     font-size: xx-large;
 }
 
@@ -75,7 +75,7 @@ body {
     margin: 20px;
     border-radius: 10px;
     padding: 50px;
-    background-color: #ADD8E6;
+    background-image: linear-gradient(to bottom right, red,#FF8484);
     font-size: x-large;
     align-items: center;
 }
@@ -89,7 +89,7 @@ body {
 
 .default-button:hover {
     border-radius: 10px;
-    background-color: blue;
+    background-color: #FF8484;
     font-size: x-large;
 }
 
@@ -105,7 +105,7 @@ body {
 
 #enter-name {
     font-size: x-large;
-    color: blue;
+    color: #FF8484;
 }
 
 section {
@@ -131,8 +131,25 @@ section {
     padding-left: 30px; */
 }
 
+/* #top-section {
+    justify-content: center;
+} */
+
+#game-info {
+    /* display: table-row; */
+    display: inline;
+    align-items: center;
+    margin: 0 auto;
+}
+
 #accept-game-controls {
     justify-content: center;
+}
+
+#game-info th, #game-info td {
+    font-size: small;
+    padding: 0.2rem;
+    width: 80px;
 }
 
 #leaderboard-page {
@@ -170,6 +187,12 @@ section {
     flex: 50%;
     flex-direction: row;
     justify-content: center;
+}
+
+#pause-button {
+    display: block;
+    margin: 0 auto;
+    align-items: center;
 }
 
 .pause-buttons {
@@ -236,7 +259,7 @@ header {
 }
 
 #ranked-scores-display {
-    color: blue;
+    color: #FF8484;
 }
 
 #score {
@@ -266,11 +289,11 @@ table {
     padding: 8px;
   }
 
-  tr:nth-child(even) {
-    background-color: #ADD8E6;
-  }
   tr:nth-child(odd) {
-    background-color: whitesmoke;
+    background-image: linear-gradient(to bottom, red,#FF8484)
+  }
+  tr:nth-child(even) {
+    background-image: linear-gradient(to bottom, silver, whitesmoke);
   }
 
 iframe {
@@ -322,17 +345,17 @@ p {
 }
 
 h1 {
-    color: blue;
+    color: red;
     text-align: center;
 }
 
 h2 {
-    color: black;
+    color: red;
     text-align: center;
 }
 
 h3 {
-    color: blue;
+    color: #FF8484;
 }
 
 #controls {
@@ -360,7 +383,7 @@ select {
 #left-hud-elements h2 {
     text-align: center;
     font-size: x-large;
-    color:black;
+    color:red;
 }
 
 @media screen and (max-width: 600px) {
@@ -371,14 +394,14 @@ select {
 
 #left-hud-elements {
     background-color: whitesmoke;
-    border: solid black 2px;
+    border: solid red 2px;
     border-radius: 10px;
     width: 80%;
-    /* display: none; */
+    display: none;
 }
 
 #right-hud-elements {
-    border: 1px solid black;
+    border: 1px solid red;
     padding-bottom: 1rem;
     /* display: none; */
 }
@@ -386,17 +409,17 @@ select {
 #right-hud-elements h2 {
     text-align: center;
     font-size: large;
-    color: blue;
+    color: #FF8484;
 
 }
 
 #right-hud-elements ol {
-    color: blue;
+    color: #FF8484;
 }
 
 #right-hud-elements li {
     text-align: center;
-    color: black;
+    color: red;
     padding-right: 1rem;
 }
 
@@ -405,7 +428,7 @@ select {
 }
 
 #vl {
-    border-left: 1px solid black;
+    border-left: 1px solid red;
     padding: 10px;
     height: 200px;
 }
@@ -454,7 +477,7 @@ footer {
     text-decoration: none;
   }
 
-  /* Change the link color to #111 (black) on hover */
+  /* Change the link color to #111 (red) on hover */
   #nav-bar li a:hover {
     background-color: #111;
   }

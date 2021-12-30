@@ -85,7 +85,7 @@ export default st => html`
         message will appear at the top of the page.
       </p>
       <hr />
-      <h1 style="color:red">Notice about Posting Scores</h1>
+      <h1 style="color:black">Notice about Posting Scores</h1>
       <p style="color:black">
         This game was written in javascript as a capstone for the
         <a href="https://savvycoders.com/fullstackdevelopmentcourse/"

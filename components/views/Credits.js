@@ -21,7 +21,7 @@ export default st => html`
           "Hold It!" Voice Samples from the Phoenix Wright Ace Attorney series
           (2005)
         </li>
-        <li>Red Coin 1-8 sound effects from Super Mario 64 (1996)</li>
+        <li>black Coin 1-8 sound effects from Super Mario 64 (1996)</li>
         <li>
           "Menu Move","Menu Select" sound effects from Super Smash Bros. (1998)
         </li>

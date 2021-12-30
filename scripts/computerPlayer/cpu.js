@@ -195,7 +195,7 @@ export function cpuAction(input) {
 } // end cpuAction
 
 function randomAction(input) {
-  win.mainInfoDisplay.style.color = "red";
+  win.mainInfoDisplay.style.color = "black";
   game.messagePriority = `AI Stuck, do ${cpu.randomInputCounter} random inputs`;
   let arr = ["down", "up", "left", "right", "swap", "swap"];
 
@@ -364,9 +364,9 @@ export function ableToSwap(x, y, swapAtTarget) {
 //   for (let r = 0; r < grid.ROWS; r++) {
 //     for (let c = grid.COLS - 2; c >= 0; c--) {
 //       if (
-//         game.board[c][r].color === blockColor.RED &&
+//         game.board[c][r].color === blockColor.black &&
 //         INTERACTIVE_TYPES.includes(game.board[c][r].type) &&
-//         game.board[c + 1][r].color !== blockColor.RED &&
+//         game.board[c + 1][r].color !== blockColor.black &&
 //         INTERACTIVE_TYPES.includes(game.board[c + 1][r].type)
 //       ) {
 //         redX = c;
