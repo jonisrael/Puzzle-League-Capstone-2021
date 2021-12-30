@@ -177,12 +177,12 @@ class Block {
         INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
       )
         filename = "light_up";
-      win.ctx.drawImage(
-        loadedSprites[filename],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
     }
+    win.ctx.drawImage(
+      loadedSprites[filename],
+      grid.SQ * this.x,
+      grid.SQ * this.y - game.rise
+    );
   }
   // drawGridLines() {
   //   let filename = "grid_line";
