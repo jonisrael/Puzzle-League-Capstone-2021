@@ -214,6 +214,7 @@ export const music = [
 
 export const touch = {
   enabled: true,
+  disableAllMoveOrders: false,
   thereIsABlockCurrentlySelected: false,
   mouse: {
     clicked: false,
@@ -222,7 +223,8 @@ export const touch = {
   },
   mouseStart: { x: 2, y: 6 },
   selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
-  moveToTarget: false,
+  moveOrderExists: false,
+  moveOrderList: [],
   arrowList: [],
   target: { x: 2, y: 6 }, // swap until target is reached
   keySquare: { x: 2, y: 6 },

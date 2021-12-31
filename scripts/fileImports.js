@@ -250,6 +250,7 @@ import CHAIN9 from ".././assets/Audio/Super Mario 64 Red Coin 8.wav";
 import PAUSE from ".././assets/Audio/pause.wav";
 import SWAP_SUCCESS from ".././assets/Audio/SwapSuccess.wav";
 import SWAP_FAILED from ".././assets/Audio/SwapFailed.wav";
+import SMART_MATCH from ".././assets/Audio/smartMatch.mp3";
 import FANFARE1 from ".././assets/Audio/fanfare1.wav";
 import FANFARE2 from ".././assets/Audio/fanfare2.wav";
 import FANFARE3 from ".././assets/Audio/fanfare3.wav";
@@ -424,6 +425,7 @@ const audio = {
   selectionFailed: SWAP_FAILED,
   topout: TOPOUT,
   blockClear: BLOCK_CLEAR,
+  smartMatch: SMART_MATCH,
   chain2: CHAIN2,
   chain3: CHAIN3,
   chain4: CHAIN4,

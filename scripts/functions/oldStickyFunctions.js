@@ -59,13 +59,13 @@ export function stickyCheck(x, y) {
   SelectedBlock.pairsWith = determinePair(omit);
   switch (SelectedBlock.pairsWith) {
     case "left": {
-      if (findKeySquareSide(x, y, "l") && stickySide(x - 1, y, "l", 1)) {
+      if (findTouchOrderside(x, y, "l") && stickySide(x - 1, y, "l", 1)) {
         result = `"Left |L| LPair + Main"`;
       }
       break;
     }
     case "right": {
-      if (findKeySquareSide(x, y, "r") && stickySide(x + 1, y, "r", 1)) {
+      if (findTouchOrderside(x, y, "r") && stickySide(x + 1, y, "r", 1)) {
         result = "Main RPair |R| Right";
       }
       break;
@@ -89,9 +89,9 @@ export function stickyCheck(x, y) {
       break;
     }
     case "NONE": {
-      if (findKeySquareSide(x, y, "l") && stickySide(x, y, "l")) {
+      if (findTouchOrderside(x, y, "l") && stickySide(x, y, "l")) {
         result = "Main + BPair |L| Bottom";
-      } else if (findKeySquareSide(x, y, "r") && stickySide(x, y, "r")) {
+      } else if (findTouchOrderside(x, y, "r") && stickySide(x, y, "r")) {
         result = "Top  |R| Main + BPair";
       }
       if (findKeySquareBelow(x, y) && stickyFloor(x, y)) {
@@ -303,7 +303,7 @@ function findKeySquareAbove(x, y) {
   }
 }
 
-function findKeySquareSide(x, y, side) {
+function findTouchOrderside(x, y, side) {
   try {
     let dir = side === "l" ? -1 : 1;
     if (outOfRange(x + dir, y)) return false;
@@ -324,7 +324,7 @@ function findKeySquareSide(x, y, side) {
     return false;
   } catch (e) {
     console.error(
-      `findKeySquareSide(${x}, ${y}, ${side}) crashed.`,
+      `findTouchOrderside(${x}, ${y}, ${side}) crashed.`,
       e,
       e.stack,
       KeySquare

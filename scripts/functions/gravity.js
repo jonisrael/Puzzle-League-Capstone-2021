@@ -56,7 +56,7 @@ export function doGravity(gameSpeed) {
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
           if (
-            touch.moveToTarget &&
+            touch.moveOrderExists &&
             SelectedBlock.x === c &&
             SelectedBlock.y === r
           ) {

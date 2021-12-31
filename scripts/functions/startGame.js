@@ -394,11 +394,11 @@ export function generateOpeningBoard(version = 1) {
     }
   }
 
-  for (let i = 0; i < 30; i++) {
-    // Generate 30 random blocks on bottom 6 grid.ROWS.
+  for (let i = 0; i < 40; i++) {
+    // Generate 42 random blocks on bottom 6 grid.ROWS.
     while (true) {
       let x = randInt(grid.COLS);
-      let y = randInt(6);
+      let y = randInt(7);
       if (game.board[x][y].color === blockColor.VACANT) {
         game.board[x][y].color = PIECES[randInt(PIECES.length)];
         break;

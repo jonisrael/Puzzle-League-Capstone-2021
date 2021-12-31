@@ -75,7 +75,8 @@ import {
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
-  KeySquare,
+  TouchOrder,
+  TouchOrders,
   match,
   SelectedBlock
 } from "./scripts/functions/stickyFunctions";
@@ -137,7 +138,8 @@ class Block {
     availForPrimaryChain = false,
     availForSecondaryChain = false,
     swapDirection = 0,
-    lightTimer = 0
+    lightTimer = 0,
+    swapOrders = JSON.parse(JSON.stringify(TouchOrder))
   ) {
     this.x = x;
     this.y = y;
@@ -152,6 +154,7 @@ class Block {
     this.availForSecondaryChain = availForSecondaryChain;
     this.swapDirection = swapDirection;
     this.lightTimer = lightTimer;
+    this.swapOrders = swapOrders;
   }
 
   drawGridLines() {
@@ -187,11 +190,11 @@ class Block {
   // drawGridLines() {
   //   let filename = "grid_line";
   //   if (this.y === 0) filename = "grid_line_red";
-  //   if (this.x === KeySquare.First.x && this.y === KeySquare.First.y)
+  //   if (this.x === TouchOrders[0].KeySquare.First.x && this.y === TouchOrders[0].KeySquare.First.y)
   //     filename = "light_up";
-  //   if (this.x === KeySquare.Second.x && this.y === KeySquare.Second.y)
+  //   if (this.x === TouchOrders[0].KeySquare.Second.x && this.y === TouchOrders[0].KeySquare.Second.y)
   //     filename = "light_up";
-  //   if (this.x === KeySquare.Third.x && this.y === KeySquare.Third.y)
+  //   if (this.x === TouchOrders[0].KeySquare.Third.x && this.y === TouchOrders[0].KeySquare.Third.y)
   //     filename = "light_up";
 
   //   win.ctx.drawImage(
@@ -223,7 +226,7 @@ class Block {
       ? "Buffer"
       : "Move";
     let coordinates = `${this.x},${this.y}`;
-    if (touch.moveToTarget) {
+    if (touch.moveOrderExists) {
       let dir = touch.target.x < touch.mouseStart.x ? "Left" : "Right";
       if (touch.arrowList[0] === coordinates)
         fileName = `arrow${dir}${move}Start`;
@@ -300,7 +303,7 @@ class Block {
       if (
         this.x === touch.target.x &&
         this.y === touch.target.y &&
-        touch.moveToTarget
+        touch.moveOrderExists
       ) {
         win.ctx.drawImage(
           loadedSprites["debugRed"],
@@ -323,8 +326,8 @@ class Block {
 
       if (
         game.currentChain > 0 &&
-        this.x === KeySquare.Highest.x &&
-        this.y === KeySquare.Highest.y
+        this.x === TouchOrders[0].KeySquare.Highest.x &&
+        this.y === TouchOrders[0].KeySquare.Highest.y
       ) {
         win.ctx.drawImage(
           loadedSprites["debugGreen"],
@@ -335,8 +338,8 @@ class Block {
     }
     if (
       game.currentChain > 0 &&
-      this.x === KeySquare.Lowest.x &&
-      this.y === KeySquare.Lowest.y
+      this.x === TouchOrders[0].KeySquare.Lowest.x &&
+      this.y === TouchOrders[0].KeySquare.Lowest.y
     ) {
       win.ctx.drawImage(
         loadedSprites["debugMagenta"],
@@ -494,8 +497,8 @@ export function drawGrid() {
         let Square = game.board[x][y];
         if (game.cursor_type !== "defaultCursor") {
           if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
-            touch.moveToTarget = false;
-          if (!touch.moveToTarget && touch.arrowList.length)
+            touch.moveOrderExists = false;
+          if (!touch.moveOrderExists && touch.arrowList.length)
             touch.arrowList = [];
           Square.drawArrows();
         }
@@ -505,7 +508,7 @@ export function drawGrid() {
 
   if (!game.over) {
     if (game.cursor_type !== "defaultCursor") {
-      if (touch.moveToTarget) game.cursor_type = "movingCursor";
+      if (touch.moveOrderExists) game.cursor_type = "movingCursor";
       else if (blockIsSolid(game.board[game.cursor.x][game.cursor.y])) {
         game.cursor_type = touch.mouse.clicked
           ? "legalCursorDown"
@@ -926,7 +929,8 @@ function KEYBOARD_CONTROL(event) {
     }
 
     if (debug.enabled == 1) {
-      if (event.keyCode === 188) console.log(touch, KeySquare, match);
+      if (event.keyCode === 188)
+        console.log(touch, TouchOrders[0].KeySquare, match);
       if (event.keyCode === 89) {
         // y
         console.log(game, debug);
@@ -1276,40 +1280,28 @@ export function gameLoop() {
       }
 
       if (game.swapPressed) {
-        if (!touch.enabled || !touch.moveToTarget) {
+        if (!touch.enabled || !touch.moveOrderExists) {
           game.swapPressed = false;
           trySwappingBlocks(game.cursor.x, game.cursor.y);
         } else {
+          // for (let order in touch.moveOrderList) {
+          //   let [c, r] = [order[0], order[1]];
+          //   if (game.board[c][r].x < game.board[c][r].target.x) {
+          //     trySwappingBlocks(c, r);
+          //   } else if (game.board[c][r].x > game.board[c][r].target.x) {
+          //     trySwappingBlocks(c - 1, r);
+          //   } else {
+          //     game.board[c][r].swapOrders.active = false;
+          //   }
+          // }
+          // game.swapPressed = false;
           if (touch.selectedBlock.x < touch.target.x) {
             trySwappingBlocks(touch.selectedBlock.x, touch.selectedBlock.y);
-            // console.log(
-            //   "frame",
-            //   game.frames,
-            //   "right swap tried:\n",
-            //   "selected block",
-            //   game.board[touch.selectedBlock.x][touch.selectedBlock.y],
-            //   "the block swapped with is",
-            //   game.board[touch.selectedBlock.x + 1][touch.selectedBlock.y],
-            //   "target is",
-            //   game.board[touch.target.x][touch.target.y]
-            // );
           } else if (touch.selectedBlock.x > touch.target.x) {
             trySwappingBlocks(touch.selectedBlock.x - 1, touch.selectedBlock.y);
-            // console.log(touch.selectedBlock.x, touch.target.x);
-            // console.log(
-            //   "frame",
-            //   game.frames,
-            //   "right swap tried:\n",
-            //   "target is",
-            //   game.board[touch.target.x][touch.target.y],
-            //   "the block swapped with is",
-            //   game.board[touch.selectedBlock.x - 1][touch.selectedBlock.y],
-            //   "selected block",
-            //   game.board[touch.selectedBlock.x][touch.selectedBlock.y]
-            // );
           } else {
             game.swapPressed = false;
-            touch.moveToTarget = false; // block has reached target
+            touch.moveOrderExists = false; // block has reached target
             console.log("frame", game.frames, "target reached.");
           }
         }

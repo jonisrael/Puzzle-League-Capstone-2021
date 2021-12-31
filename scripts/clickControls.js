@@ -3,6 +3,7 @@ import { SelectedBlock } from "./functions/stickyFunctions";
 import {
   blockIsSolid,
   CLEARING_TYPES,
+  cpu,
   debug,
   game,
   grid,
@@ -12,7 +13,7 @@ import {
 } from "./global";
 
 export function updateMousePosition(canvas, e) {
-  if (!touch.enabled) return;
+  if (!touch.enabled || cpu.enabled) return;
   if (e.type[0] === "t" && !e.touches[0]) return false;
   let clientX = e.type[0] === "t" ? e.touches[0].clientX : e.clientX;
   let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
@@ -37,6 +38,7 @@ export function updateMousePosition(canvas, e) {
 }
 
 export function moveBlockByDrag(x, y) {
+  if (!touch.enabled || cpu.enabled) return;
   if (x >= 0 && x < 6 && y > 0 && y < 12) {
     if (x < game.cursor.x) {
       game.cursor.x = x;
@@ -73,6 +75,7 @@ export function selectBlock() {
 }
 
 export function moveBlockByRelease() {
+  if (cpu.enabled) return;
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
@@ -81,7 +84,7 @@ export function moveBlockByRelease() {
   ) {
     touch.target.x = touch.mouse.x; // move to x--coordinate
     touch.target.y = touch.selectedBlock.y; // remains on same row
-    touch.moveToTarget = true;
+    touch.moveOrderExists = true;
     if (game.currentChain === 0) debug.updateGameState = true;
     game.swapPressed = true;
   }
@@ -104,13 +107,13 @@ export function moveBlockByRelease() {
 }
 
 function doMouseDown(e) {
-  if (!touch.enabled) return;
-  touch.moveToTarget = false;
+  if (!touch.enabled || cpu.enabled) return;
+  touch.moveOrderExists = false;
   touch.mouse.clicked = true;
   if (!updateMousePosition(win.canvas, e)) {
     // click was outside the borders of the canvas
     touch.thereIsABlockCurrentlySelected = false;
-    touch.moveToTarget = false;
+    touch.moveOrderExists = false;
     return;
   }
   if (game.board[game.cursor.x][game.cursor.y].color === "vacant") {
@@ -151,7 +154,7 @@ function doMouseUp(e) {
   if (!touch.enabled || game.frames < 0) return;
   touch.mouse.clicked = false;
   updateMousePosition(win.canvas, e);
-  if (touch.thereIsABlockCurrentlySelected && !touch.moveToTarget)
+  if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists)
     moveBlockByRelease();
 }
 
@@ -202,5 +205,5 @@ export function createClickListeners() {
 //   }
 //   touch.target.x = touch.mouse.x; // move based on x coordinate
 //   touch.target.y = touch.selectedBlock.y; // moved based on the row of the block
-//   touch.moveToTarget = true; // now, do continuous swapping function.
+//   touch.moveOrderExists = true; // now, do continuous swapping function.
 // }

@@ -10,11 +10,14 @@ import {
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { isBlockAirborne } from "./gravity";
+import { trySwappingBlocks } from "./swapBlock";
 
 export function updateGrid(frameAdvance = false) {
   game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
   game.boardIsClearing = false;
   game.boardHasAirborneBlock = false;
+  // touch.moveOrderExists = false;
+  touch.moveOrderList.length = 0;
   let highestRowFound = false;
   game.pauseStack = false;
   game.highestCols = [];
@@ -28,6 +31,11 @@ export function updateGrid(frameAdvance = false) {
       Square.airborne = isBlockAirborne(Square);
       if (Square.airborne) {
         game.boardHasAirborneBlock = true;
+      }
+      if (Square.swapOrders.active) {
+        touch.moveOrderExists = true;
+        if (touch.disableAllMoveOrders) Square.swapOrders.active = false;
+        else touch.moveOrderList.push([x, y]);
       }
       if (!Square.airborne && Square.type !== "landing") {
         game.availForPrimaryChain = false;
@@ -184,4 +192,5 @@ export function updateGrid(frameAdvance = false) {
       }
     } // end x
   } // end y
+  touch.disableAllMoveOrders = false;
 }

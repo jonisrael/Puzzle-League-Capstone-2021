@@ -16,7 +16,13 @@ import {
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
-import { KeySquare, match, pair, sticky, stickyCheck } from "./stickyFunctions";
+import {
+  TouchOrders,
+  match,
+  pair,
+  sticky,
+  stickyCheck
+} from "./stickyFunctions";
 import { pause } from "./pauseFunctions";
 
 export function trySwappingBlocks(x, y) {
@@ -85,9 +91,11 @@ export function trySwappingBlocks(x, y) {
   }
   if (touch.enabled && touch.mouse.clicked) {
     legalSwap = false;
-    touch.moveToTarget = false;
+    touch.moveOrderExists = false;
+    touch.disableAllMoveOrders = true;
     touch.thereIsABlockCurrentlySelected = false;
     touch.arrowList.length = 0;
+    touch.moveOrderList.length = 0;
   }
 
   if (legalSwap) {
@@ -95,7 +103,7 @@ export function trySwappingBlocks(x, y) {
       debug.pastGameState = JSON.parse(JSON.stringify(game));
       debug.updateGameState = false;
     }
-    if (touch.enabled && touch.moveToTarget) {
+    if (touch.enabled && touch.moveOrderExists) {
       touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
       game.cursor.x = touch.selectedBlock.x;
       game.cursor.y = touch.selectedBlock.y;
@@ -178,13 +186,13 @@ export function trySwappingBlocks(x, y) {
       }
     } // end y > 0 condition
 
-    if (touch.moveToTarget) {
+    if (touch.moveOrderExists) {
       try {
-        touch.moveToTarget = !stickyCheck(
+        touch.moveOrderExists = !stickyCheck(
           touch.selectedBlock.x,
           touch.selectedBlock.y
         );
-        // touch.moveToTarget = !sticky(
+        // touch.moveOrderExists = !sticky(
         //   touch.selectedBlock.x,
         //   touch.selectedBlock.y
         // );
@@ -198,9 +206,9 @@ export function trySwappingBlocks(x, y) {
 
       if (
         (game.cursor_type !== "defaultCursor" || 0 == 0) &&
-        !touch.moveToTarget
+        !touch.moveOrderExists
       ) {
-        playAudio(hold_it[randInt(hold_it.length)], 0.3);
+        playAudio(audio.smartMatch);
         game.board[match[0][0]][match[0][1]].lightTimer = 65;
         game.board[match[1][0]][match[1][1]].lightTimer = 65;
         game.board[match[2][0]][match[2][1]].lightTimer = 65;
@@ -210,7 +218,7 @@ export function trySwappingBlocks(x, y) {
   } else if (!legalSwap) {
     if (
       touch.enabled &&
-      touch.moveToTarget &&
+      touch.moveOrderExists &&
       LeftBlock.type !== "swapping" &&
       RightBlock.type !== "swapping" &&
       !CLEARING_TYPES.includes(LeftBlock.type) &&
@@ -224,13 +232,13 @@ export function trySwappingBlocks(x, y) {
         LeftBlock,
         RightBlock
       );
-      touch.moveToTarget = false;
+      touch.moveOrderExists = false;
       game.swapPressed = false;
     }
     win.mainInfoDisplay.style.color = "purple";
     cpu.swapSuccess = false;
     // console.log("swap failed at", x, y, game.frames);
-    if (!touch.moveToTarget) playAudio(audio.selectionFailed);
+    if (!touch.moveOrderExists) playAudio(audio.selectionFailed);
     // else {
     //   playAudio(audio.selectionFailed);
     // }
