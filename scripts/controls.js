@@ -217,7 +217,7 @@ export function playerAction(input) {
   let cursorMoved = false;
   if (input.up) {
     action.up = false;
-    if (game.cursor.y > 1) {
+    if (game.cursor.y > 1 || (game.cursor.y === 1 && game.rise === 0)) {
       game.cursor.y -= 1;
       cursorMoved = true;
     }
@@ -257,7 +257,7 @@ export function playerAction(input) {
   // second input checker
   if (input.raise) {
     action.raise = false;
-    if (game.frames > 0) game.raisePressed = true;
+    game.raisePressed = true;
     win.cvs.scrollIntoView({ block: "nearest" });
   }
 

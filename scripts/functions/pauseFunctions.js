@@ -1,4 +1,4 @@
-import { game, win, perf, debug } from "../global";
+import { game, win, perf, debug, touch } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 import { action } from "../controls";
@@ -12,6 +12,8 @@ export function pause(lostFocus = false, message = "Pause") {
     "game:",
     game,
     game.board[game.cursor.x][game.cursor.y],
+    "touch",
+    touch,
     game.cursor_type === "defaultCursor"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : ""

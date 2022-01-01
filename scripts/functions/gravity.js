@@ -6,7 +6,8 @@ import {
   INTERACTIVE_TYPES,
   debug,
   touch,
-  transferProperties
+  transferProperties,
+  CLEARING_TYPES
 } from "../global";
 
 import { checkMatch } from "./matchAndScoreFunctions";
@@ -157,6 +158,11 @@ export function isBlockAirborne(Square) {
   // check if there is a vacant block below -- if so it is airborne
   for (let j = r + 1; j < grid.ROWS; j++) {
     if (game.board[c][j].color === "vacant") {
+      for (let k = j - 1; k >= 0; k--) {
+        if (CLEARING_TYPES.includes(game.board[c][k])) break;
+        if (game.board[c][k].color !== "vacant")
+          game.board[c][k].airborne = true;
+      }
       return true;
     }
   }

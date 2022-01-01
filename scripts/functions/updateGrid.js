@@ -16,6 +16,7 @@ export function updateGrid(frameAdvance = false) {
   game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
   game.boardIsClearing = false;
   game.boardHasAirborneBlock = false;
+  game.boardHasSwappingBlock = false;
   // touch.moveOrderExists = false;
   touch.moveOrderList.length = 0;
   let highestRowFound = false;
@@ -32,6 +33,7 @@ export function updateGrid(frameAdvance = false) {
       if (Square.airborne) {
         game.boardHasAirborneBlock = true;
       }
+      if (Square.type === "swapping") game.boardHasSwappingBlock = true;
       if (Square.swapOrders.active) {
         touch.moveOrderExists = true;
         if (touch.disableAllMoveOrders) Square.swapOrders.active = false;
@@ -99,7 +101,7 @@ export function updateGrid(frameAdvance = false) {
 
       if (Square.lightTimer > 0) {
         Square.lightTimer--;
-        if (CLEARING_TYPES.includes(Square.type)) Square.lightTimer = 0;
+        // if (blockVacOrClearing(Square)) Square.lightTimer = 0;
       }
 
       if (Square.type === "stalling" && Square.timer === 0) {

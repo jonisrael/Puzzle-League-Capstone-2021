@@ -162,23 +162,11 @@ class Block {
     if (this.y === 0) filename = "grid_line_red";
     else if (this.lightTimer > 0) {
       // filename = "light_up";
-      if (
-        this.x === match[0][0] &&
-        this.y === match[0][1] &&
-        INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
-      )
+      if (this.x === match[0][0] && this.y === match[0][1])
         filename = "light_up";
-      if (
-        this.x === match[1][0] &&
-        this.y === match[1][1] &&
-        INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
-      )
+      if (this.x === match[1][0] && this.y === match[1][1])
         filename = "light_up";
-      if (
-        this.x === match[2][0] &&
-        this.y === match[2][1] &&
-        INTERACTIVE_TYPES.includes(game.board[this.x][this.y].type)
-      )
+      if (this.x === match[2][0] && this.y === match[2][1])
         filename = "light_up";
     }
     win.ctx.drawImage(
@@ -265,13 +253,6 @@ class Block {
         grid.SQ * this.y - game.rise
       );
     }
-    if (this.airborne) {
-      win.ctx.drawImage(
-        loadedSprites["debugViolet"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
-    }
     if (this.touched) {
       win.ctx.drawImage(
         loadedSprites["debugBlue"],
@@ -296,6 +277,14 @@ class Block {
         grid.SQ * this.y - game.rise + 12,
         8,
         8
+      );
+    }
+
+    if (this.airborne) {
+      win.ctx.drawImage(
+        loadedSprites["debugRed"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
       );
     }
 
@@ -335,17 +324,18 @@ class Block {
           grid.SQ * this.y - game.rise
         );
       }
-    }
-    if (
-      game.currentChain > 0 &&
-      this.x === TouchOrders[0].KeySquare.Lowest.x &&
-      this.y === TouchOrders[0].KeySquare.Lowest.y
-    ) {
-      win.ctx.drawImage(
-        loadedSprites["debugMagenta"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+
+      if (
+        game.currentChain > 0 &&
+        this.x === TouchOrders[0].KeySquare.Lowest.x &&
+        this.y === TouchOrders[0].KeySquare.Lowest.y
+      ) {
+        win.ctx.drawImage(
+          loadedSprites["debugMagenta"],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
+      }
     }
   }
 
@@ -391,7 +381,7 @@ class Block {
         }
         break;
       case blockType.PANICKING:
-        if (game.highestRow === 0) {
+        if (game.highestRow === 0 || this.y === 0) {
           animationIndex = 0;
         } else if (game.frames % 18 >= 0 && game.frames % 18 < 3) {
           animationIndex = 0;
@@ -423,6 +413,8 @@ class Block {
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
     if ((this.type === "landing" && this.timer > 9) || this.type === "stalling")
       urlKey = `${this.color}_normal`;
+    if (this.y === 0 && blockIsSolid(this))
+      urlKey = `${this.color}_panicking_0`;
     if (this.type === "swapping") urlKey = `vacant_normal`;
     win.ctx.drawImage(
       loadedSprites[urlKey],
@@ -605,7 +597,7 @@ export function endChain(potentialSecondarySuccessor) {
 }
 
 export function createNewRow() {
-  if (game.pauseStack || game.highestRow === 0) {
+  if (game.pauseStack || game.highestRow < 1) {
     return false;
   }
 
@@ -1027,7 +1019,8 @@ export function updateLevelEvents(level) {
   game.blockInitialFaceTime = preset.faceValues[level];
   game.blockStallTime = preset.stallValues[level];
   game.blockPopMultiplier = preset.popMultiplier[level];
-  game.panicIndex = game.level < 7 ? 1 : game.level < 10 ? 3 : 5;
+  game.panicIndex =
+    game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 10 ? 3 : 5;
 }
 
 // GAME HERE
@@ -1208,6 +1201,9 @@ export function gameLoop() {
       updateGrid();
       isChainActive();
 
+      if (!game.boardRiseSpeed)
+        game.boardRiseSpeed = preset.speedValues[game.level];
+
       if (game.frames % game.boardRiseSpeed == 0) {
         if (game.boardRiseRestarter >= 300) {
           game.boardRiseRestarter = 0;
@@ -1222,8 +1218,13 @@ export function gameLoop() {
             if (game.raiseDelay < 0) {
               game.raiseDelay = 0;
             }
-          } else if (game.frames > 0 && !game.pauseStack) {
+          } else if (
+            game.frames > 0 &&
+            !game.pauseStack &&
+            !game.boardHasAirborneBlock
+          ) {
             game.rise = (game.rise + 2) % 32;
+            if (game.cursor.y === 0 && game.rise !== 0) game.cursor.y += 1;
             game.boardRiseRestarter = 0; // restart failsafe timer
             if (perf.gameSpeed == 2 && game.rise != 0) {
               if (game.currentlyQuickRaising || game.boardRiseSpeed === 1) {
@@ -1232,20 +1233,13 @@ export function gameLoop() {
             }
           }
         }
-        if (
-          game.highestRow === 0 &&
-          game.currentChain > 0 &&
-          !game.pauseStack
-        ) {
-          console.log("not dead yet! Go back!");
-          game.rise = 30;
-        }
         if (game.rise >= 28) game.readyForNewRow = true;
         if (
           game.readyForNewRow &&
           game.rise == 0 &&
           !game.over &&
-          game.frames > 0
+          game.frames > 0 &&
+          game.highestRow > 0
         ) {
           createNewRow();
           game.readyForNewRow = false;
@@ -1269,7 +1263,8 @@ export function gameLoop() {
       playerAction(action);
 
       if (game.raisePressed) {
-        game.raisePressed = false;
+        if (game.frames < -2) game.frames = -2;
+        else game.raisePressed = false;
         if (!game.boardRiseDisabled) {
           if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
             if (game.rise == 0) game.rise = 2;

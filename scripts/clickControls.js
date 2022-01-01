@@ -27,7 +27,7 @@ export function updateMousePosition(canvas, e) {
   if (x >= 0 && x < grid.COLS && y >= 1 && y < grid.ROWS) {
     touch.mouse.x = x;
     touch.mouse.y = y;
-    if (touch.mouse.clicked && game.frames) {
+    if (touch.mouse.clicked) {
       game.cursor_type = blockIsSolid(game.board[x][y])
         ? "legalSelectionCursor"
         : "illegalSelectionCursor";
@@ -122,7 +122,7 @@ function doMouseDown(e) {
       Math.abs(touch.mouse.x - game.cursor.x) < 2 &&
       Math.abs(touch.mouse.y - game.cursor.y) < 2
     ) {
-      if (game.frames > 0 && game.highestRow > 1) {
+      if (game.highestRow > 1) {
         game.raisePressed = true;
         touch.doubleClickCounter = 0;
         touch.doubleClickTimer += 20;
@@ -151,7 +151,7 @@ function doMouseMove(e) {
 }
 
 function doMouseUp(e) {
-  if (!touch.enabled || game.frames < 0) return;
+  if (!touch.enabled) return;
   touch.mouse.clicked = false;
   updateMousePosition(win.canvas, e);
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists)

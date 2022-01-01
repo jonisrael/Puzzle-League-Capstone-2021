@@ -237,7 +237,7 @@ export function checkMatch() {
             );
           }
         }
-        if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
+        // if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
       }
     } else {
       done = true; // Needs to end if confirm clear fails

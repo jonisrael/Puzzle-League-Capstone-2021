@@ -48,7 +48,10 @@ export function isGameOver() {
   if (game.score >= 999999 || game.frames === 360000) return true;
   if (
     game.highestRow === 0 &&
+    game.rise > 0 &&
     game.currentChain === 0 &&
+    !game.boardIsClearing &&
+    !game.boardHasSwappingBlock &&
     !game.boardRiseDisabled &&
     game.raiseDelay === 0
   ) {
@@ -70,6 +73,7 @@ export function isGameOver() {
     }
     if (game.frames < 7200) game.Music.volume = 0;
     endGame();
+    game.rise = 0;
     return true;
   }
   return false;

@@ -305,6 +305,7 @@ export let game = {
   version: 1,
   boardIsClearing: false,
   boardHasAirborneBlock: false,
+  boardHasSwappingBlock: false,
   VacantBlock: {}
 };
 

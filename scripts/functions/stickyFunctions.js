@@ -10,7 +10,8 @@ import {
   blockIsSolid,
   blockVacOrClearing,
   outOfRange,
-  SOLID_TYPES
+  SOLID_TYPES,
+  debug
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { pause } from "./pauseFunctions";
@@ -65,11 +66,12 @@ console.log(TouchOrders);
 export let match = [[], [], []];
 
 export function ThreeBlocksMatch() {
-  for (let i = 0; i < match.length; i++) {
+  for (let i = 0; i < match[0].length; i++) {
+    console.log("match fired");
     if (match[i][0] === -1) return false;
     for (let j = i + 1; j < match.length; j++) {
+      console.log("compare", i, "to", j);
       if (JSON.stringify(match[i]) === JSON.stringify(match[j])) {
-        // pause("Pause -- A duplicate match occurred");
         return false;
       }
     }
@@ -128,10 +130,7 @@ export function stickyCheck(x, y) {
   if ((result = checkBufferedSwap(x, y))) {
     return !!result;
   }
-  if (
-    (result = checkIfFallingBlockMatches(SelectedBlock)) &&
-    ThreeBlocksMatch()
-  ) {
+  if ((result = checkIfFallingBlockMatches(SelectedBlock))) {
     console.log(game.frames, `results2:`, result, `${match}`);
     return !!result;
   }
@@ -192,7 +191,7 @@ export function stickyCheck(x, y) {
       break;
     case "b":
       if (y + 2 >= grid.ROWS) break;
-      // playAudio(audio.announcerGo);
+      if (debug.enabled) playAudio(audio.announcerGo);
       [NextBlock, type] = checkPairWithFirstNonVacantBlock(SelectedBlock);
       if (type) match[1] = [NextBlock.x, NextBlock.y];
       MainBlock = type === "BPair" ? NextBlock : SelectedBlock;
@@ -200,8 +199,9 @@ export function stickyCheck(x, y) {
       break;
   }
   console.log(game.frames, `results1:`, result, `${match}`);
-  if (match[0][0] === -1 || match[1][0] === -1 || match[2][0] === -1) {
-    console.log("fake match detected");
+  if (match[2][0] !== -1 && match[1][0] !== -1 && !ThreeBlocksMatch()) {
+    console.log("fake match detected:", match);
+    if (debug.enabled) pause("Fake match detected, check console");
     result = false;
   }
   return !!result; // send true if not falsy value
