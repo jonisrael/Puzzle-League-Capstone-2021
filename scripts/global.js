@@ -391,15 +391,32 @@ export const leaderboard = {
 export let updateGameState = false;
 
 export const loadedAudios = [];
+export const essentialAudios = audioList.slice(0, 15);
+export let audioLoadedPercentage = 0;
 
 // Preload all audios, then play them at zero volume.
-export function loadAllAudios() {
-  console.log("loading audios");
-  for (let i = 0; i < audioList.length; i++) {
-    let audio = new Audio();
-    audio.src = audioList[i];
-    audio.volume = 0;
-    audio.play();
+
+export function checkIfEssentialAudioLoaded() {
+  for (let audio of essentialAudios) {
+    if (audio.currentTime >= audio.duration) {
+      loadedAudios.push(audio);
+      audioLoadedPercentage =
+        Math.floor((100 * loadedAudios.length) / 16) / 100;
+    }
+  }
+  if (loadedAudios.length === 16) {
+    console.log("audio load complete");
+    return true;
+  }
+  return false;
+}
+
+export function loadAllAudios(essential) {
+  let [indexStart, indexEnd] = essential ? [0, 16] : [16, audioList.length];
+  for (let i = indexStart; i < indexEnd; i++) {
+    let sfx = new Audio(audioList[i]);
+    sfx.volume = 0;
+    sfx.play();
     loadedAudios[i] = audio;
   }
 }

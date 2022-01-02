@@ -71,7 +71,10 @@ import {
   CLEARING_TYPES,
   blockIsSolid,
   blockVacOrClearing,
-  transferProperties
+  transferProperties,
+  checkIfEssentialAudioLoaded,
+  loadAllAudios,
+  audioLoadedPercentage
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -1040,9 +1043,6 @@ export function gameLoop() {
     if (document.getElementById("pause-button"))
       document.getElementById("pause-button").style.display = "none";
   }
-  if (!win.audioLoaded) {
-    if (audioList.length == loadedAudios.length) win.audioLoaded = true;
-  }
   if (!win.running || win.view !== "Home") {
     closeGame(game.over);
     if (win.restartGame) {
@@ -1065,6 +1065,12 @@ export function gameLoop() {
       game.frames >= 0
         ? (perf.realTime = Math.round(perf.realTime / 100) / 10)
         : (perf.realTime = 0);
+    }
+
+    if (!win.audioLoaded) {
+      win.audioLoaded = checkIfEssentialAudioLoaded();
+      win.mainInfoDisplay.innerHTML = `Loading -- ${audioLoadedPercentage}%`;
+      if (win.audioLoaded) loadAllAudios(false);
     }
 
     if (game.paused) {

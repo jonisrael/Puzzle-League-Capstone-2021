@@ -165,13 +165,13 @@ function addEventListeners(st) {
     document.addEventListener("click", () => {
       if (loadedAudios.length == 0) {
         console.log("user has clicked the document, loading audios.");
-        loadAllAudios();
+        loadAllAudios(true);
       }
     });
     document.addEventListener("keydown", () => {
       if (loadedAudios.length == 0) {
         console.log("user has pressed a key, loading audios.");
-        loadAllAudios();
+        loadAllAudios(true);
       }
     });
     win.muteAnnouncer.checked =
