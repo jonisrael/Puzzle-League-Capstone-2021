@@ -1,8 +1,8 @@
 import html from "html-literal";
 
-export default st => html`
+export default (st) => html`
   <header id="header">
-    <h1>Puzzle League Arcade (01/02 7:09pm)</h1>
+    <h1>Puzzle League Arcade (01/02 10:09pm)</h1>
     <h1 style="color:white">${st.header}</h1>
 
     <ul id="sound-mute-menu">

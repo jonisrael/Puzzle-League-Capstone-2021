@@ -406,7 +406,6 @@ export function checkIfEssentialAudioLoaded() {
     }
   }
   if (essentialAudios.length === 0) {
-    console.log("audio load complete", loadedAudios);
     return true;
   }
   return false;
@@ -422,7 +421,6 @@ export function loadAllAudios(essential) {
     loadedAudios[i] = sfx;
     if (essential) essentialAudios[i] = sfx;
   }
-  console.log(loadedAudios);
 }
 
 for (let i = 1; i <= 5; i++) {
@@ -439,7 +437,7 @@ export const bestScores = [
   parseInt(localStorage.getItem("bestScore1") || 500),
   parseInt(localStorage.getItem("bestScore2") || 400),
   parseInt(localStorage.getItem("bestScore3") || 300),
-  parseInt(localStorage.getItem("bestScore4") || 200),
+  parseInt(localStorage.getItem( "bestScore4") || 200),
   parseInt(localStorage.getItem("bestScore5") || 100)
 ];
 
