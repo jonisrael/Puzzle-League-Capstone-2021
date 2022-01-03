@@ -74,7 +74,8 @@ import {
   transferProperties,
   checkIfEssentialAudioLoaded,
   loadAllAudios,
-  audioLoadedPercentage
+  audioLoadedPercentage,
+  essentialAudios
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -925,7 +926,14 @@ function KEYBOARD_CONTROL(event) {
 
     if (debug.enabled == 1) {
       if (event.keyCode === 188)
-        console.log(touch, TouchOrders[0].KeySquare, match);
+        // ,
+        console.log(
+          touch,
+          TouchOrders[0].KeySquare,
+          match,
+          loadedAudios,
+          essentialAudios
+        );
       if (event.keyCode === 89) {
         // y
         console.log(game, debug);
