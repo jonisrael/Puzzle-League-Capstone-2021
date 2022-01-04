@@ -10,7 +10,7 @@ export const announcer = {
   openingDialogue: [
     audio.announcerAreYouReady,
     audio.announcerLetsGetStarted,
-    audio.announcerReady
+    audio.announcerReady,
   ],
   comboDialogue: [
     audio.announcerBeautiful,
@@ -18,42 +18,45 @@ export const announcer = {
     audio.announcerThereItIs,
     audio.announcerPayoff,
     audio.announcerClear,
-    audio.announcerNowsYourChance
+    audio.announcerNowsYourChance,
   ],
   smallChainDialogue: [
     audio.announcerBeautiful,
     audio.announcerWhatARush,
-    audio.announcerIncredibleCantBelieve
+    audio.announcerInvincible,
+    audio.announcerIncredibleCantBelieve,
   ],
   mediumChainDialogue: [
     audio.announcerMovesLikeThat,
-    audio.announcerWhereComeFrom
+    audio.announcerWhereComeFrom,
+    audio.announcerWhatPower,
   ],
   largeChainDialogue: [
     audio.announcerAnythingLike,
     audio.announcerComboIntense,
-    audio.announcerPerfect
+    audio.announcerPerfect,
   ],
   bestChainDialogue: [
-    audio.announcerUnbelievable
+    audio.announcerUnbelievable,
+    audio.announcerDecisiveStrength,
+    audio.announcerNoDoubt,
     // audio.announcerMakeNoMistake,
-    // audio.announcerDecisiveStrength
   ],
   timeTransitionDialogue: [
     audio.announcerTimeMarchesOn,
     audio.announcerLetsKeepItUp,
-    audio.announcerPickUpPace
+    audio.announcerPickUpPace,
   ],
   hurryUpDialogue: [
     audio.announcerTenSeconds,
-    audio.announcerAllBoilsDown
+    audio.announcerAllBoilsDown,
     // audio.announcerNotMuchTimeLeft
   ],
   panicDialogue: [
     audio.announcerHowMuchLonger,
     audio.announcerIsItTheEnd,
     audio.announcerCallThisOne,
-    audio.announcerFatLadySing
+    audio.announcerFatLadySing,
     // audio.announcerItAintOver
   ],
   overtimeDialogue: [
@@ -61,7 +64,8 @@ export const announcer = {
     audio.announcerIHopeReady,
     audio.announcerFireworks,
     audio.announcerLetsGetStarted,
-    audio.announcerBraceYourself
+    audio.announcerBraceYourself,
+    audio.announcerComboIntense,
     // audio.announcerBattleOfEndurance
   ],
   endgameDialogue: [
@@ -69,7 +73,7 @@ export const announcer = {
     audio.announcerTraining,
     audio.announcerNeverForgetEvent,
     audio.announcerOnlyWordWorthy,
-    audio.announcerWatchChampBask
+    audio.announcerWatchChampBask,
   ],
   openingIndexLastPicked: -1, // These are used to minimize repeat dialogues
   smallChainIndexLastPicked: -1,
@@ -80,14 +84,14 @@ export const announcer = {
   hurryUpIndexLastPicked: -1,
   panicIndexLastPicked: -1,
   overtimeIndexLastPicked: -1,
-  endgameIndexLastPicked: -1
+  endgameIndexLastPicked: -1,
 };
 
 export const hold_it = [
   audio.holdIt1,
   audio.holdIt2,
   audio.holdIt3,
-  audio.holdIt4
+  audio.holdIt4,
 ];
 
 export const blockColor = {
@@ -97,7 +101,7 @@ export const blockColor = {
   PURPLE: "purple",
   BLUE: "blue",
   YELLOW: "yellow",
-  VACANT: "vacant"
+  VACANT: "vacant",
 };
 
 export const blockType = {
@@ -110,7 +114,7 @@ export const blockType = {
   FACE: "face",
   DARK: "dark",
   DEAD: "dead",
-  BLINKING: "blinking"
+  BLINKING: "blinking",
 };
 
 export const PIECES = [
@@ -119,13 +123,13 @@ export const PIECES = [
   blockColor.PURPLE,
   blockColor.RED,
   blockColor.YELLOW,
-  blockColor.BLUE
+  blockColor.BLUE,
 ];
 
 export const INTERACTIVE_TYPES = [
   blockType.NORMAL,
   blockType.LANDING,
-  blockType.PANICKING
+  blockType.PANICKING,
   // blockType.SWAPPING,
 ];
 
@@ -134,7 +138,7 @@ export const SOLID_TYPES = [
   "landing",
   "panicking",
   "swapping",
-  "stalling"
+  "stalling",
 ];
 
 export const CLEARING_TYPES = ["blinking", "face", "popped"];
@@ -142,7 +146,7 @@ export const CLEARING_TYPES = ["blinking", "face", "popped"];
 export const grid = {
   COLS: 6,
   ROWS: 12,
-  SQ: 32
+  SQ: 32,
 };
 
 // Old values  00, 00, 20, 40, 60,80,100,120,08,09,10
@@ -160,7 +164,7 @@ export const preset = {
   faceValues: [80, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
   popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
-  controlsDefaultMessage: ""
+  controlsDefaultMessage: "",
 };
 
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
@@ -198,18 +202,18 @@ export const win = {
   muteAnnouncer: document.getElementById("mute-announcer"),
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx"),
-  audioLoaded: false
+  audioLoaded: false,
 };
 
 export const music = [
   audio.popcornMusic,
   // audio.scatmanMusic,
   audio.rashidMusic,
-  audio.hugoMusic,
+  // audio.hugoMusic,
   audio.ryuMusic,
   audio.lipMusic,
   audio.physicsMusic,
-  audio.cub3dMusic
+  audio.cub3dMusic,
 ];
 
 export const touch = {
@@ -219,7 +223,7 @@ export const touch = {
   mouse: {
     clicked: false,
     x: 2, // actual mouse loc, updates while mouse is down
-    y: 6 // actual mouse loc, updates while mouse is down
+    y: 6, // actual mouse loc, updates while mouse is down
   },
   mouseStart: { x: 2, y: 6 },
   selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
@@ -230,13 +234,13 @@ export const touch = {
   keySquare: { x: 2, y: 6 },
   swapOrderPrepared: false,
   doubleClickCounter: 0,
-  doubleClickTimer: 0
+  doubleClickTimer: 0,
 };
 
 export const overtimeMusic = [
   audio.strikersMusic,
   audio.grimMusic,
-  audio.edgeworthMusic
+  audio.edgeworthMusic,
   // audio.gioMusic,
   // audio.surgeMusic
 ];
@@ -306,7 +310,7 @@ export let game = {
   boardIsClearing: false,
   boardHasAirborneBlock: false,
   boardHasSwappingBlock: false,
-  VacantBlock: {}
+  VacantBlock: {},
 };
 
 // export const newGame = JSON.parse(JSON.stringify(game));
@@ -318,8 +322,8 @@ export const api = {
     year: "",
     hour: "",
     minute: "",
-    meridian: ""
-  }
+    meridian: "",
+  },
 };
 
 export const perf = {
@@ -340,7 +344,7 @@ export const perf = {
   then: 0,
   now: 0,
   delta: 0,
-  diffFromRealTime: 0
+  diffFromRealTime: 0,
 };
 
 export const debug = {
@@ -350,7 +354,7 @@ export const debug = {
   show: 0,
   updateGameState: false,
   advanceOneFrame: false,
-  pastGameState: {}
+  pastGameState: {},
 };
 
 export const cpu = {
@@ -377,7 +381,7 @@ export const cpu = {
   randomInputCounter: 0,
   prevSwapX: 0,
   prevSwapY: 0,
-  alreadySwapped: false
+  alreadySwapped: false,
 };
 
 export const leaderboard = {
@@ -385,7 +389,7 @@ export const leaderboard = {
   canPost: true,
   userPostedName: "",
   userPostedScore: "",
-  reason: ""
+  reason: "",
 };
 
 export let updateGameState = false;
@@ -437,8 +441,8 @@ export const bestScores = [
   parseInt(localStorage.getItem("bestScore1") || 500),
   parseInt(localStorage.getItem("bestScore2") || 400),
   parseInt(localStorage.getItem("bestScore3") || 300),
-  parseInt(localStorage.getItem( "bestScore4") || 200),
-  parseInt(localStorage.getItem("bestScore5") || 100)
+  parseInt(localStorage.getItem("bestScore4") || 200),
+  parseInt(localStorage.getItem("bestScore5") || 100),
 ];
 
 export function randInt(max) {
@@ -520,11 +524,11 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
   let SecondKeys = Object.keys(SecondBlock).splice(2);
   let TempBlock = JSON.parse(JSON.stringify(SecondBlock));
 
-  SecondKeys.forEach(key => (SecondBlock[key] = FirstBlock[key]));
+  SecondKeys.forEach((key) => (SecondBlock[key] = FirstBlock[key]));
   if (type === "between") {
-    FirstKeys.forEach(key => (FirstBlock[key] = TempBlock[key]));
+    FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
   } else if (type === "to") {
-    FirstKeys.forEach(key => (FirstBlock[key] = game.VacantBlock[key]));
+    FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
   }
 
   // // Transfer everything except x and y coordinates

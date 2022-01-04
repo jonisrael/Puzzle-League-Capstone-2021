@@ -171,92 +171,96 @@ import RESULTS_SONG from ".././assets/Audio/Music/Results/results.mp3";
 import RESULTS_2_SONG from ".././assets/Audio/Music/Results/results2.mp3";
 
 // Import Audio
-import ANN_5 from ".././assets/Audio/Announcer/5.wav";
-import ANN_4 from ".././assets/Audio/Announcer/4.wav";
-import ANN_3 from ".././assets/Audio/Announcer/3.wav";
-import ANN_2 from ".././assets/Audio/Announcer/2.wav";
-import ANN_1 from ".././assets/Audio/Announcer/1.wav";
-import ANN_GO from ".././assets/Audio/Announcer/go.wav";
+import ANN_5 from ".././assets/Audio/Announcer/5.mp3";
+import ANN_4 from ".././assets/Audio/Announcer/4.mp3";
+import ANN_3 from ".././assets/Audio/Announcer/3.mp3";
+import ANN_2 from ".././assets/Audio/Announcer/2.mp3";
+import ANN_1 from ".././assets/Audio/Announcer/1.mp3";
+import ANN_GO from ".././assets/Audio/Announcer/go.mp3";
+import ANN_TRAINING_STAGE from ".././assets/Audio/Announcer/training stage.mp3";
 
-import ANN_PICK_UP_PACE from ".././assets/Audio/Announcer/pick up the pace.wav";
-import ANN_ARE_YOU_READY from ".././assets/Audio/Announcer/are you ready.wav";
-import ANN_WATCH_CHAMP_BASK from ".././assets/Audio/Announcer/watch the champ bask in glory.wav";
-import ANN_ONLY_WORD_WORTHY from ".././assets/Audio/Announcer/beautiful thats the only word worthy of such strength.wav";
+import ANN_PICK_UP_PACE from ".././assets/Audio/Announcer/pick up the pace.mp3";
+import ANN_ARE_YOU_READY from ".././assets/Audio/Announcer/are you ready.mp3";
+import ANN_WATCH_CHAMP_BASK from ".././assets/Audio/Announcer/watch the champ bask in glory.mp3";
+import ANN_ONLY_WORD_WORTHY from ".././assets/Audio/Announcer/beautiful thats the only word worthy of such strength.mp3";
 
-import ANN_ALL_THE_GLORY from ".././assets/Audio/Announcer/all the glory goes to the winner.wav";
-import ANN_FAT_LADY_SING from ".././assets/Audio/Announcer/the fat lady is about to sing.wav";
-import ANN_NOT_MUCH_TIME from ".././assets/Audio/Announcer/not much time left.wav";
+import ANN_ALL_THE_GLORY from ".././assets/Audio/Announcer/all the glory goes to the winner.mp3";
+import ANN_FAT_LADY_SING from ".././assets/Audio/Announcer/the fat lady is about to sing.mp3";
+import ANN_NOT_MUCH_TIME from ".././assets/Audio/Announcer/not much time left.mp3";
 
-import ANN_LETS_KEEP_IT_UP from ".././assets/Audio/Announcer/lets keep it up.wav";
-import ANN_BATTLE_CONTINUES from ".././assets/Audio/Announcer/and the battle continues.wav";
-import ANN_AINT_OVER from ".././assets/Audio/Announcer/it aint over till its over.wav";
-import ANN_PERFECT from ".././assets/Audio/Announcer/perfect.wav";
-import ANN_LETS_GET_STARTED from ".././assets/Audio/Announcer/lets get started.wav";
-import ANN_READY from ".././assets/Audio/Announcer/ready.wav";
-import ANN_NOWS_YOUR_CHANCE from ".././assets/Audio/Announcer/nows your chance.wav";
-import ANN_TRAINING from ".././assets/Audio/Announcer/all the training and practice led up to this very moment.wav";
-import ANN_PAYOFF from ".././assets/Audio/Announcer/and there's the payoff.wav";
-import ANN_BEAUTIFUL from ".././assets/Audio/Announcer/beautiful.wav";
-import ANN_BRING_US_HOME from ".././assets/Audio/Announcer/bring us home.wav";
-import ANN_BRACE_YOURSELF from ".././assets/Audio/Announcer/brace yourself.wav";
-import ANN_CLEAR from ".././assets/Audio/Announcer/clear.wav";
-import ANN_FANTASTIC_COMBO from ".././assets/Audio/Announcer/fantastic combo.wav";
-import ANN_HOW_MUCH_LONGER from ".././assets/Audio/Announcer/how much longer can this go on.wav";
-import ANN_I_HOPE_READY from ".././assets/Audio/Announcer/i hope you're ready.wav";
-import ANN_SOMETHING_BIG from ".././assets/Audio/Announcer/i think we're about to see something big.wav";
-import ANN_CALL_THIS_ONE from ".././assets/Audio/Announcer/i'm almost ready to call this one.wav";
-import ANN_COMBO_INTENSE from ".././assets/Audio/Announcer/i've never seen a combo that intense.wav";
-import ANN_ANYTHING_LIKE from ".././assets/Audio/Announcer/i've never seen anything like this.wav";
-import ANN_INCRED_BELIEVE from ".././assets/Audio/Announcer/incredible I can't believe it.wav";
-import ANN_INCRED_TECHNIQUE from ".././assets/Audio/Announcer/incredible technique.wav";
-import ANN_IS_THE_END from ".././assets/Audio/Announcer/is this it, is this the end.wav";
-import ANN_KO from ".././assets/Audio/Announcer/KO.wav";
-import ANN_ALL_BOILS from ".././assets/Audio/Announcer/it all boils down to these last moments.wav";
-import ANN_ANY_MORE_INTENSE from ".././assets/Audio/Announcer/it doesn't get any more intense than this.wav";
-import ANN_WONT_BE_LONG from ".././assets/Audio/Announcer/it won't be long now.wav";
-import ANN_FIREWORKS from ".././assets/Audio/Announcer/looks like we can expect fireworks.wav";
-import ANN_NO_ONE_SEE from ".././assets/Audio/Announcer/no one could have seen that coming.wav";
-import ANN_TEN_SECONDS from ".././assets/Audio/Announcer/ten seconds to destiny.wav";
-import ANN_WORLD_ANTICIPATION from ".././assets/Audio/Announcer/the world is holding its breath in anticipation.wav";
-import ANN_THERE_IT_IS from ".././assets/Audio/Announcer/there it is.wav";
-import ANN_COULD_BE_END from ".././assets/Audio/Announcer/this could be the end.wav";
-import ANN_TURN_ALL_AROUND from ".././assets/Audio/Announcer/this could turn it all around.wav";
-import ANN_TIME_MARCHES_ON from ".././assets/Audio/Announcer/time marches on.wav";
-import ANN_UNBELIEVABLE from ".././assets/Audio/Announcer/unbelievable.wav";
-import ANN_NOW_OR_NEVER from ".././assets/Audio/Announcer/watch closely, it's now or never.wav";
-import ANN_NEVER_FORGET_EVENT from ".././assets/Audio/Announcer/we are never going to forget this event.wav";
-import ANN_WHAT_RUSH from ".././assets/Audio/Announcer/what a rush.wav";
-import ANN_WHERE_COME_FROM from ".././assets/Audio/Announcer/where did that come from.wav";
-import ANN_DESERVE_PRAISE from ".././assets/Audio/Announcer/you deserve praise my friend.wav";
-import ANN_YOU_DONT_SEE_MOVES from ".././assets/Audio/Announcer/you don't see moves like that everyday folks.wav";
-import ANN_MAKE_NO_MISTAKE from ".././assets/Audio/Announcer/make no mistake there is no doubt.wav";
-import ANN_DECISIVE_STRENGTH from ".././assets/Audio/Announcer/decisive strength.wav";
+import ANN_LETS_KEEP_IT_UP from ".././assets/Audio/Announcer/lets keep it up.mp3";
+import ANN_BATTLE_CONTINUES from ".././assets/Audio/Announcer/and the battle continues.mp3";
+import ANN_AINT_OVER from ".././assets/Audio/Announcer/it aint over till its over.mp3";
+import ANN_PERFECT from ".././assets/Audio/Announcer/perfect.mp3";
+import ANN_LETS_GET_STARTED from ".././assets/Audio/Announcer/lets get started.mp3";
+import ANN_READY from ".././assets/Audio/Announcer/ready.mp3";
+import ANN_NOWS_YOUR_CHANCE from ".././assets/Audio/Announcer/nows your chance.mp3";
+import ANN_TRAINING from ".././assets/Audio/Announcer/all the training and practice led up to this very moment.mp3";
+import ANN_PAYOFF from ".././assets/Audio/Announcer/and there-s the payoff.mp3";
+import ANN_BEAUTIFUL from ".././assets/Audio/Announcer/beautiful.mp3";
+import ANN_BRING_US_HOME from ".././assets/Audio/Announcer/bring us home.mp3";
+import ANN_BRACE_YOURSELF from ".././assets/Audio/Announcer/brace yourself.mp3";
+import ANN_CLEAR from ".././assets/Audio/Announcer/clear.mp3";
+import ANN_FANTASTIC_COMBO from ".././assets/Audio/Announcer/fantastic combo.mp3";
+import ANN_HOW_MUCH_LONGER from ".././assets/Audio/Announcer/how much longer can this go on.mp3";
+import ANN_I_HOPE_READY from ".././assets/Audio/Announcer/i hope you-re ready.mp3";
+import ANN_SOMETHING_BIG from ".././assets/Audio/Announcer/i think we-re about to see something big.mp3";
+import ANN_CALL_THIS_ONE from ".././assets/Audio/Announcer/i-m almost ready to call this one.mp3";
+import ANN_COMBO_INTENSE from ".././assets/Audio/Announcer/i-ve never seen a combo that intense.mp3";
+import ANN_ANYTHING_LIKE from ".././assets/Audio/Announcer/i-ve never seen anything like this.mp3";
+import ANN_INCRED_BELIEVE from ".././assets/Audio/Announcer/incredible I can-t believe it.mp3";
+import ANN_INCRED_TECHNIQUE from ".././assets/Audio/Announcer/incredible technique.mp3";
+import ANN_WHAT_POWER from ".././assets/Audio/Announcer/what power.mp3";
+import ANN_IS_THE_END from ".././assets/Audio/Announcer/is this it, is this the end.mp3";
+import ANN_KO from ".././assets/Audio/Announcer/KO.mp3";
+import ANN_ALL_BOILS from ".././assets/Audio/Announcer/it all boils down to these last moments.mp3";
+import ANN_ANY_MORE_INTENSE from ".././assets/Audio/Announcer/it doesn-t get any more intense than this.mp3";
+import ANN_WONT_BE_LONG from ".././assets/Audio/Announcer/it won-t be long now.mp3";
+import ANN_FIREWORKS from ".././assets/Audio/Announcer/looks like we can expect fireworks.mp3";
+import ANN_NO_ONE_SEE from ".././assets/Audio/Announcer/no one could have seen that coming.mp3";
+import ANN_TEN_SECONDS from ".././assets/Audio/Announcer/ten seconds to destiny.mp3";
+import ANN_WORLD_ANTICIPATION from ".././assets/Audio/Announcer/the world is holding its breath in anticipation.mp3";
+import ANN_THERE_IT_IS from ".././assets/Audio/Announcer/there it is.mp3";
+import ANN_INVINCIBLE from ".././assets/Audio/Announcer/invincible.mp3";
+import ANN_NO_DOUBT from ".././assets/Audio/Announcer/no doubt.mp3";
+import ANN_COULD_BE_END from ".././assets/Audio/Announcer/this could be the end.mp3";
+import ANN_TURN_ALL_AROUND from ".././assets/Audio/Announcer/this could turn it all around.mp3";
+import ANN_TIME_MARCHES_ON from ".././assets/Audio/Announcer/time marches on.mp3";
+import ANN_UNBELIEVABLE from ".././assets/Audio/Announcer/unbelievable.mp3";
+import ANN_NOW_OR_NEVER from ".././assets/Audio/Announcer/watch closely, it-s now or never.mp3";
+import ANN_NEVER_FORGET_EVENT from ".././assets/Audio/Announcer/we are never going to forget this event.mp3";
+import ANN_WHAT_RUSH from ".././assets/Audio/Announcer/what a rush.mp3";
+import ANN_WHERE_COME_FROM from ".././assets/Audio/Announcer/where did that come from.mp3";
+import ANN_DESERVE_PRAISE from ".././assets/Audio/Announcer/you deserve praise my friend.mp3";
+import ANN_YOU_DONT_SEE_MOVES from ".././assets/Audio/Announcer/you don-t see moves like that everyday folks.mp3";
+import ANN_MAKE_NO_MISTAKE from ".././assets/Audio/Announcer/make no mistake there is no doubt.mp3";
+import ANN_DECISIVE_STRENGTH from ".././assets/Audio/Announcer/decisive strength.mp3";
 
-import HOLD_IT_1 from ".././assets/Audio/holdIt1.wav";
-import HOLD_IT_2 from ".././assets/Audio/holdIt2.wav";
-import HOLD_IT_3 from ".././assets/Audio/holdIt3.wav";
-import HOLD_IT_4 from ".././assets/Audio/holdIt4.wav";
+import HOLD_IT_1 from ".././assets/Audio/holdIt1.mp3";
+import HOLD_IT_2 from ".././assets/Audio/holdIt2.mp3";
+import HOLD_IT_3 from ".././assets/Audio/holdIt3.mp3";
+import HOLD_IT_4 from ".././assets/Audio/holdIt4.mp3";
 
-import MOVE_CURSOR from ".././assets/Audio/MoveCursor.wav";
-import BLOCK_CLEAR from ".././assets/Audio/clearBlock.wav";
-import CHAIN2 from ".././assets/Audio/Super Mario 64 Red Coin 1.wav";
-import CHAIN3 from ".././assets/Audio/Super Mario 64 Red Coin 2.wav";
-import CHAIN4 from ".././assets/Audio/Super Mario 64 Red Coin 3.wav";
-import CHAIN5 from ".././assets/Audio/Super Mario 64 Red Coin 4.wav";
-import CHAIN6 from ".././assets/Audio/Super Mario 64 Red Coin 5.wav";
-import CHAIN7 from ".././assets/Audio/Super Mario 64 Red Coin 6.wav";
-import CHAIN8 from ".././assets/Audio/Super Mario 64 Red Coin 7.wav";
-import CHAIN9 from ".././assets/Audio/Super Mario 64 Red Coin 8.wav";
-import PAUSE from ".././assets/Audio/pause.wav";
-import SWAP_SUCCESS from ".././assets/Audio/SwapSuccess.wav";
-import SWAP_FAILED from ".././assets/Audio/SwapFailed.wav";
+import MOVE_CURSOR from ".././assets/Audio/MoveCursor.mp3";
+import BLOCK_CLEAR from ".././assets/Audio/clearBlock.mp3";
+import CHAIN2 from ".././assets/Audio/Super Mario 64 Red Coin 1.mp3";
+import CHAIN3 from ".././assets/Audio/Super Mario 64 Red Coin 2.mp3";
+import CHAIN4 from ".././assets/Audio/Super Mario 64 Red Coin 3.mp3";
+import CHAIN5 from ".././assets/Audio/Super Mario 64 Red Coin 4.mp3";
+import CHAIN6 from ".././assets/Audio/Super Mario 64 Red Coin 5.mp3";
+import CHAIN7 from ".././assets/Audio/Super Mario 64 Red Coin 6.mp3";
+import CHAIN8 from ".././assets/Audio/Super Mario 64 Red Coin 7.mp3";
+import CHAIN9 from ".././assets/Audio/Super Mario 64 Red Coin 8.mp3";
+import PAUSE from ".././assets/Audio/pause.mp3";
+import SWAP_SUCCESS from ".././assets/Audio/SwapSuccess.mp3";
+import SWAP_FAILED from ".././assets/Audio/SwapFailed.mp3";
 import SMART_MATCH from ".././assets/Audio/smartMatch.mp3";
-import FANFARE1 from ".././assets/Audio/fanfare1.wav";
-import FANFARE2 from ".././assets/Audio/fanfare2.wav";
-import FANFARE3 from ".././assets/Audio/fanfare3.wav";
-import FANFARE4 from ".././assets/Audio/fanfare4.wav";
-import FANFARE5 from ".././assets/Audio/fanfare5.wav";
-import TOPOUT from ".././assets/Audio/topout.wav";
+import FANFARE1 from ".././assets/Audio/fanfare1.mp3";
+import FANFARE2 from ".././assets/Audio/fanfare2.mp3";
+import FANFARE3 from ".././assets/Audio/fanfare3.mp3";
+import FANFARE4 from ".././assets/Audio/fanfare4.mp3";
+import FANFARE5 from ".././assets/Audio/fanfare5.mp3";
+import TOPOUT from ".././assets/Audio/topout.mp3";
 
 // Images
 const sprite = {
@@ -406,7 +410,7 @@ const sprite = {
   debugGreen: DEBUGG,
   debugTan: DEBUGT,
   debugViolet: DEBUGV,
-  debugYellow: DEBUGY
+  debugYellow: DEBUGY,
 };
 
 const spriteCopy = JSON.parse(JSON.stringify(sprite));
@@ -425,6 +429,7 @@ const audio = {
   chain3: CHAIN3,
   chain4: CHAIN4,
   announcerReady: ANN_READY,
+  announcerTrainingStage: ANN_TRAINING_STAGE,
   pause: PAUSE,
   topout: TOPOUT,
   fanfare1: FANFARE1,
@@ -458,6 +463,7 @@ const audio = {
   announcerBattleContinues: ANN_BATTLE_CONTINUES,
   announcerAintOver: ANN_AINT_OVER,
   announcerPerfect: ANN_PERFECT,
+  announcerNoDoubt: ANN_NO_DOUBT,
   announcerNowsYourChance: ANN_NOWS_YOUR_CHANCE,
   announcerPickUpPace: ANN_PICK_UP_PACE,
   announcerAreYouReady: ANN_ARE_YOU_READY,
@@ -474,6 +480,8 @@ const audio = {
   announcerCallThisOne: ANN_CALL_THIS_ONE,
   announcerComboIntense: ANN_COMBO_INTENSE,
   announcerAnythingLike: ANN_ANYTHING_LIKE,
+  announcerWhatPower: ANN_WHAT_POWER,
+  announcerInvincible: ANN_INVINCIBLE,
   announcerIncredibleCantBelieve: ANN_INCRED_BELIEVE,
   announcerIncredibleTechnique: ANN_INCRED_TECHNIQUE,
   announcerIsItTheEnd: ANN_IS_THE_END,
@@ -510,7 +518,7 @@ const audio = {
   gioMusic: GIO_SONG,
   surgeMusic: SURGE_SONG,
   results1Music: RESULTS_SONG,
-  results2Music: RESULTS_2_SONG
+  results2Music: RESULTS_2_SONG,
 };
 
 const imageKeys = Object.keys(sprite);
