@@ -153,6 +153,7 @@ import DEBUGY from ".././assets/Extras/DebugSprites/debugY.png";
 // Import Music
 
 import POPCORN_SONG from ".././assets/Audio/Music/Themes/popcorn.mp3";
+import POPCORN_SONG_EXTENDED from ".././assets/Audio/Music/Themes/popcornExtended.mp3";
 import RASHID_SONG from ".././assets/Audio/Music/Themes/rashid.mp3";
 import CUB3D_SONG from ".././assets/Audio/Music/Themes/cub3d.mp3";
 import PHYSICS_SONG from ".././assets/Audio/Music/Themes/physics.mp3";
@@ -505,6 +506,7 @@ const audio = {
   announcerDeservePraise: ANN_DESERVE_PRAISE,
   announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES,
   popcornMusic: POPCORN_SONG,
+  popcornExtendedMusic: POPCORN_SONG_EXTENDED,
   scatmanMusic: SCATMAN_SONG,
   rashidMusic: RASHID_SONG,
   lipMusic: LIP_SONG,

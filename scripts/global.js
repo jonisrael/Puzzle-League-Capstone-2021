@@ -50,7 +50,7 @@ export const announcer = {
   hurryUpDialogue: [
     audio.announcerTenSeconds,
     audio.announcerAllBoilsDown,
-    // audio.announcerNotMuchTimeLeft
+    audio.announcerNotMuchTimeLeft,
   ],
   panicDialogue: [
     audio.announcerHowMuchLonger,
@@ -65,7 +65,6 @@ export const announcer = {
     audio.announcerFireworks,
     audio.announcerLetsGetStarted,
     audio.announcerBraceYourself,
-    audio.announcerComboIntense,
     // audio.announcerBattleOfEndurance
   ],
   endgameDialogue: [
@@ -157,10 +156,13 @@ export const grid = {
 //  clearValues: [60, 60, 54, 48, 42, 36, 30, 24, 20, 16, 12],
 
 export const preset = {
-  //            00, 00, 20, 40, 60,80,100,120,08,09,10
-  speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  //            00, 00, 30, 60, 90,120,150,180,210,240,270
+  // old speed values
+  // speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  speedValues: [59, 48, 24, 12, 10, 6, 4, 2, 2, 2, 1],
   clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
   blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
+  scoreMultValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
   faceValues: [80, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
   popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
@@ -206,14 +208,15 @@ export const win = {
 };
 
 export const music = [
-  audio.popcornMusic,
-  // audio.scatmanMusic,
-  audio.rashidMusic,
-  // audio.hugoMusic,
+  // audio.popcornMusic,
+  audio.popcornExtendedMusic,
   audio.ryuMusic,
   audio.lipMusic,
   audio.physicsMusic,
   audio.cub3dMusic,
+  // audio.scatmanMusic,
+  // audio.rashidMusic,
+  // audio.hugoMusic,
 ];
 
 export const touch = {
@@ -272,7 +275,7 @@ export let game = {
   finalTime: 0,
   seconds: 0,
   minutes: 0,
-  timeString: "",
+  timeString: "0:00",
   score: 0,
   scoreUpdate: 0,
   scoreMultiplier: 1,
@@ -281,6 +284,7 @@ export let game = {
   combo: 0,
   lastChain: 0,
   largestChain: 0,
+  largestChainScore: 0,
   largestCombo: 0,
   totalClears: 0,
   paused: false,
@@ -311,6 +315,11 @@ export let game = {
   boardHasAirborneBlock: false,
   boardHasSwappingBlock: false,
   VacantBlock: {},
+};
+
+export const lastIndex = {
+  music: -1,
+  overtimeMusic: -1,
 };
 
 // export const newGame = JSON.parse(JSON.stringify(game));
@@ -445,8 +454,31 @@ export const bestScores = [
   parseInt(localStorage.getItem("bestScore5") || 100),
 ];
 
-export function randInt(max) {
-  return Math.floor(Math.random() * max);
+export function randInt(
+  max,
+  firstElementSkewed = false,
+  ignoreIndex = -1,
+  title = ""
+) {
+  // if (debug.enabled) console.log(max, firstElementSkewed, ignoreIndex, title);
+  let done = false;
+  let randomIndexSelected = -2;
+  while (!done) {
+    done = true;
+    randomIndexSelected = Math.floor(max * Math.random());
+    if (ignoreIndex === randomIndexSelected) {
+      done = false;
+      if (debug.enabled) console.log("ignore index", ignoreIndex);
+    }
+    if (firstElementSkewed && ignoreIndex !== 0 && Math.random() < 0.25) {
+      if (debug.enabled) console.log("first element reselected by skew");
+      randomIndexSelected = 0;
+    }
+  }
+  if (title) lastIndex[title] = randomIndexSelected;
+  // if (debug.enabled && title === "music")
+  //   console.log("random music ind selected: ", randomIndexSelected);
+  return randomIndexSelected;
 }
 
 export function padInteger(integer, digits) {
@@ -559,3 +591,16 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
   //   SecondBlock.availForSecondaryChain;
   // SecondBlock.availForPrimaryChain = tempProperties[5];
 }
+
+// 2 minute preset
+// export const preset = {
+//   //            00, 00, 20, 40, 60,80,100,120,08,09,10
+//   speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+//   clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
+//   blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
+//   scoreMultValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
+//   faceValues: [80, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
+//   popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
+//   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
+//   controlsDefaultMessage: "",
+// };

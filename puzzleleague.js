@@ -12,18 +12,18 @@ import * as state from "./store";
 import { sprite, audio, audioList, loadedSprites } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch
+  checkMatch,
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
-  startGame
+  startGame,
 } from "./scripts/functions/startGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne
+  isBlockAirborne,
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
@@ -32,19 +32,19 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction
+  playerAction,
 } from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic
+  playMusic,
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard
+  gameOverBoard,
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -75,14 +75,15 @@ import {
   checkIfEssentialAudioLoaded,
   loadAllAudios,
   audioLoadedPercentage,
-  essentialAudios
+  essentialAudios,
+  lastIndex,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
   match,
-  SelectedBlock
+  SelectedBlock,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 // import {
@@ -447,10 +448,10 @@ class Block {
   } // end draw()
 }
 
-game.VacantBlock = new Block(0, 0);
+game.VacantBlock = new Block(-2, -2);
 
 export function newBlock(c, r) {
-  let block = new Block(c, r, blockColor.VACANT, blockType.NORMAL, 0);
+  let block = new Block(c, r);
   return block;
 }
 
@@ -488,17 +489,21 @@ export function drawGrid() {
   }
 
   if (game.cursor_type !== "defaultCursor") {
-    for (let x = 0; x < grid.COLS; x++) {
-      for (let y = 0; y < grid.ROWS + 1; y++) {
-        let Square = game.board[x][y];
-        if (game.cursor_type !== "defaultCursor") {
-          if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
-            touch.moveOrderExists = false;
-          if (!touch.moveOrderExists && touch.arrowList.length)
-            touch.arrowList = [];
-          Square.drawArrows();
+    try {
+      for (let x = 0; x < grid.COLS; x++) {
+        for (let y = 0; y < grid.ROWS + 1; y++) {
+          let Square = game.board[x][y];
+          if (game.cursor_type !== "defaultCursor") {
+            if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
+              touch.moveOrderExists = false;
+            if (!touch.moveOrderExists && touch.arrowList.length)
+              touch.arrowList = [];
+            Square.drawArrows();
+          }
         }
       }
+    } catch (error) {
+      0 === 0;
     }
   }
 
@@ -579,10 +584,12 @@ export function endChain(potentialSecondarySuccessor) {
   } else if (game.currentChain == 1) {
     game.message = `Combo added ${game.chainScoreAdded} to your score.`;
   }
-  if (game.currentChain > game.largestChain)
+  if (game.currentChain > game.largestChain) {
     game.largestChain = game.currentChain;
-  if (game.chainScoreAdded !== 0) {
-    win.mainInfoDisplay.style.color = "black";
+  }
+
+  if (game.chainScoreAdded > game.largestChainScore) {
+    game.largestChainScore = game.chainScoreAdded;
   }
   // if another chain is currently clearing, chain is 1. Otherwise, chain is 0.
   game.currentChain = potentialSecondarySuccessor ? 1 : 0;
@@ -631,7 +638,7 @@ export function createNewRow() {
   }
   fixNextDarkStack();
 
-  if (game.highestRow === 3 && game.level > 3) {
+  if (game.highestRow === 3 && game.level > 3 && game.mode !== "training") {
     playAnnouncer(
       announcer.panicDialogue,
       announcer.panicIndexLastPicked,
@@ -639,7 +646,10 @@ export function createNewRow() {
     );
   }
   // score gained for new row passed
-  game.score += Math.floor(game.scoreMultiplier * 10);
+  if (game.mode !== "training") {
+    game.score += Math.floor(game.scoreMultiplier * 10);
+  }
+
   return true;
 }
 
@@ -671,7 +681,14 @@ export function checkTime() {
       game.messagePriority = "2...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
       break;
+    case -74:
+      if (game.mode !== "training") break;
+      game.messagePriority = "Training Stage...";
+      if (!win.muteAnnouncer.checked)
+        playAudio(audio.announcerTrainingStage, 0.2, true);
+      break;
     case -60:
+      if (game.mode === "training") break;
       game.Music.volume = 0;
       if (win.restartGame) {
         document
@@ -690,20 +707,18 @@ export function checkTime() {
       break;
     case 0:
       game.messagePriority = "Go!";
-      if (game.mode === "cpu-play") playMusic(music[randInt(music.length)]);
       if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.1, true);
 
       break;
     case 60:
-      if (game.message === "Go!") {
-        if (game.mode !== "cpu-play") playMusic(music[randInt(music.length)]);
-        game.messagePriority = "";
-        game.defaultMessage = "X to swap Z to lift the stack!";
-        game.message = game.defaultMessage;
-      }
+      if (!debug.enabled)
+        playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
+      game.messagePriority = "";
+      game.defaultMessage = "X to swap Z to lift the stack!";
+      game.message = game.defaultMessage;
 
       break;
-    case 6600:
+    case 10200:
       game.messagePriority = "10 seconds before overtime!";
       playAnnouncer(
         announcer.hurryUpDialogue,
@@ -711,34 +726,34 @@ export function checkTime() {
         "hurryUp"
       );
       break;
-    case 6660:
+    case 10260:
       game.messagePriority = "";
       break;
-    case 6900:
+    case 10500:
       game.messagePriority = "5 seconds before overtime...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer5, 0.2, true);
       break;
-    case 6960:
+    case 10560:
       game.messagePriority = "4 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer4, 0.2, true);
       break;
-    case 7020:
+    case 10620:
       game.messagePriority = "3 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
-    case 7080:
+    case 10680:
       game.messagePriority = "2 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
       break;
-    case 7140:
+    case 10740:
       game.messagePriority = "1 second before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
-    case 7200 || 10800:
+    case 10800:
       game.messagePriority = "Overtime, I hope you're ready...";
       game.defaultMessage = game.message;
       playAnnouncer(
@@ -746,7 +761,6 @@ export function checkTime() {
         announcer.overtimeIndexLastPicked,
         "overtime"
       );
-      playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
       break;
     case 7320:
       game.messagePriority = "";
@@ -780,20 +794,24 @@ function KEYBOARD_CONTROL(event) {
     if ((event.keyCode == 32 || event.keyCode == 13) && win.patchNotesShown) {
       // space or enter
       document.getElementById("arcade-button").remove();
-      document.getElementById("watch-ai-play-button").remove();
-      game.mode = "arcade";
-      startGame(2);
-    } else if (event.keyCode === 87 && win.patchNotesShown) {
-      document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
       document.getElementById("watch-ai-play-button").remove();
       game.mode = "arcade";
-      startGame(2);
-    } else if (event.keyCode === 66 && win.patchNotesShown) {
+      startGame(1);
+    } else if (event.keyCode === 84 && win.patchNotesShown) {
+      // t
       document.getElementById("arcade-button").remove();
+      document.getElementById("training-mode").remove();
+      document.getElementById("watch-ai-play-button").remove();
+      game.mode = "training";
+      startGame(1);
+    } else if (event.keyCode === 66 && win.patchNotesShown) {
+      // b
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-mode").remove();
       document.getElementById("watch-ai-play-button").remove();
       game.mode = "cpu-play";
-      startGame(2);
+      startGame(1);
     }
   } else if (document.getElementById("watch-ai-play-button")) {
     if ((event.keyCode == 83 || event.keyCode == 84) && win.patchNotesShown) {
@@ -869,26 +887,18 @@ function KEYBOARD_CONTROL(event) {
         gameOverBoard();
         drawGrid();
       }
-      if (event.keyCode === 77) {
-        // m
-        game.level = preset.speedValues.length - 1;
-        console.log("pressed");
-        cpu.userChangedSpeed = true;
-        updateLevelEvents(game.level);
-      }
-      if (event.keyCode === 78) {
-        // n
-        if (game.level > 0) game.level -= 1;
-        cpu.userChangedSpeed = true;
-        updateLevelEvents(game.level);
-      }
     }
 
     if (event.keyCode == 192) {
       // tilda `~
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
-        if (game.frames < 0) game.frames = -2;
+        if (game.frames < 0) {
+          game.frames = -2;
+          playMusic(
+            music[randInt(music.length, true, lastIndex.music, "music")]
+          );
+        }
         debug.show = 1;
         leaderboard.canPost = false;
         leaderboard.reason = "debug";
@@ -924,65 +934,76 @@ function KEYBOARD_CONTROL(event) {
       }
     }
 
-    if (debug.enabled == 1) {
-      if (event.keyCode === 188)
-        // ,
-        console.log(
-          touch,
-          TouchOrders[0].KeySquare,
-          match,
-          loadedAudios,
-          essentialAudios
-        );
-      if (event.keyCode === 89) {
-        // y
-        console.log(game, debug);
-        game.seconds = pastSeconds;
-        game.cursor.x = debug.pastGameState.cursor.x;
-        game.cursor.y = debug.pastGameState.cursor.y;
-        game.cursor_type = debug.pastGameState.cursor_type;
-        game.rise = debug.pastGameState.rise;
-        for (let x = 0; x < grid.COLS; x++) {
-          for (let y = 0; y < grid.ROWS + 2; y++) {
-            Object.keys(game.board[x][y]).forEach(
-              key =>
-                (game.board[x][y][key] = debug.pastGameState.board[x][y][key])
-            );
-          }
-        }
-      }
-      if (event.keyCode === 66) {
-        // b
-        cpu.enabled = (cpu.enabled + 1) % 2;
-        cpu.control = (cpu.control + 1) % 2;
-        console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
-        if (cpu.enabled === 0) cpu.control = 0;
-      }
-      if (event.keyCode == 75) {
-        // k
-        game.finalTime = (game.frames / 60).toFixed(1);
-        game.frames = 0;
-        game.over = true;
-        for (let c = 0; c < grid.COLS; c++) {
-          for (let r = 0; r < grid.ROWS; r++) {
-            game.board[c][r].type = blockType.LANDING;
-            game.board[c][r].timer = -2;
-          }
-        }
-        gameOverBoard();
-        drawGrid();
-      }
-      if (event.keyCode == 77 && game.level < preset.speedValues.length) {
+    if (debug.enabled || game.mode === "training") {
+      if (event.keyCode == 77 || event.keycode === 187) {
         //m
         if (0 === 0 || game.level + 1 < preset.speedValues.length) {
           game.level++;
           updateLevelEvents(game.level);
+          if (game.level === 7) {
+            playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
+          }
         }
-      } else if (event.keyCode == 78 && game.level > 0) {
+      } else if (event.keyCode == 78 || event.keycode === 189) {
         //n
         if (game.level - 1 > -1) {
           game.level--;
           updateLevelEvents(game.level);
+          if (game.level === 6) {
+            playMusic(
+              music[randInt(music.length, true, lastIndex.music, "music")]
+            );
+          }
+        }
+      }
+
+      if (debug.enabled == 1) {
+        if (event.keyCode === 188)
+          // ,
+          console.log(
+            touch,
+            TouchOrders[0].KeySquare,
+            match,
+            loadedAudios,
+            essentialAudios
+          );
+        if (event.keyCode === 89) {
+          // y
+          console.log(game, debug);
+          game.seconds = pastSeconds;
+          game.cursor.x = debug.pastGameState.cursor.x;
+          game.cursor.y = debug.pastGameState.cursor.y;
+          game.cursor_type = debug.pastGameState.cursor_type;
+          game.rise = debug.pastGameState.rise;
+          for (let x = 0; x < grid.COLS; x++) {
+            for (let y = 0; y < grid.ROWS + 2; y++) {
+              Object.keys(game.board[x][y]).forEach(
+                (key) =>
+                  (game.board[x][y][key] = debug.pastGameState.board[x][y][key])
+              );
+            }
+          }
+        }
+        if (event.keyCode === 66) {
+          // b
+          cpu.enabled = (cpu.enabled + 1) % 2;
+          cpu.control = (cpu.control + 1) % 2;
+          console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
+          if (cpu.enabled === 0) cpu.control = 0;
+        }
+        if (event.keyCode == 75) {
+          // k
+          game.finalTime = (game.frames / 60).toFixed(1);
+          game.frames = 0;
+          game.over = true;
+          for (let c = 0; c < grid.COLS; c++) {
+            for (let r = 0; r < grid.ROWS; r++) {
+              game.board[c][r].type = blockType.LANDING;
+              game.board[c][r].timer = -2;
+            }
+          }
+          gameOverBoard();
+          drawGrid();
         }
 
         // Debug codes
@@ -1021,10 +1042,19 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function updateLevelEvents(level) {
+  if (game.level > preset.speedValues.length - 1) {
+    game.level--;
+    return;
+  }
+  if (game.level < 0) {
+    game.level++;
+    return;
+  }
   if (level > 10) {
     game.boardRiseSpeed = 10 - level;
     level = 10;
   } else game.boardRiseSpeed = preset.speedValues[level];
+  game.scoreMultiplier = preset.scoreMultValues[level];
   game.blockClearTime = preset.clearValues[level];
   game.blockBlinkTime = preset.blinkValues[level];
   game.blockInitialFaceTime = preset.faceValues[level];
@@ -1124,17 +1154,21 @@ export function gameLoop() {
         }
 
         if (game.Music.currentTime >= game.Music.duration) {
-          playMusic(music[randInt(music.length)]);
+          playMusic(
+            music[randInt(music.length, true, lastIndex.music, "music")]
+          );
           console.log("Track ended, now playing", game.Music.src);
         }
 
         cnt = 0; // game loop counter
-        game.defaultMessage = `Level ${game.level} | 0:${padInteger(
-          20 - (game.seconds % 20),
-          2
-        )} remaining`;
+        if (game.mode !== "training") {
+          game.defaultMessage = `Level ${game.level} | 0:${padInteger(
+            30 - (game.seconds % 20),
+            2
+          )} remaining`;
+        }
         // overtime bonuses
-        if (!cpu.enabled && game.minutes == 2) {
+        if (!cpu.enabled && game.minutes == 3) {
           game.score += game.seconds;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
@@ -1159,7 +1193,8 @@ export function gameLoop() {
       }
 
       if (
-        game.frames % 1200 == 0 &&
+        game.frames % 1800 == 0 &&
+        game.mode !== "training" &&
         game.level < preset.speedValues.length &&
         game.level > 0 &&
         !debug.enabled &&
@@ -1167,11 +1202,11 @@ export function gameLoop() {
       ) {
         // Speed the stack up every 20 seconds
 
-        if (game.frames >= 1200) {
+        if (game.frames >= 1800) {
           game.message = `Level ${game.level + 1}, game speed has increased...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          if (game.frames !== 7200 && game.frames !== 10800)
+          if (game.frames !== 10800 && game.frames !== 16200)
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
@@ -1188,6 +1223,9 @@ export function gameLoop() {
 
         if (game.level + 1 < preset.speedValues.length && game.frames > 0) {
           game.level++;
+          if (game.level === 7) {
+            playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
+          }
           updateLevelEvents(game.level);
         }
       }
@@ -1390,31 +1428,6 @@ export function gameLoop() {
       } else {
         win.timeDisplay.innerHTML = game.timeString;
         win.levelDisplay.innerHTML = `${game.level}`;
-      }
-
-      if (game.frames > 60) {
-        if (game.frames % 1200 >= 1020) {
-          win.timeDisplay.style.color = "black";
-        } else {
-          if (win.timeDisplay.style.color !== "black") {
-            win.timeDisplay.style.color = "black";
-          }
-        }
-        if (game.frames % 1200 < 60) {
-          win.levelDisplay.style.color = "black";
-        } else {
-          if (win.levelDisplay.style.color !== "black") {
-            win.levelDisplay.style.color = "black";
-          }
-        }
-
-        if (game.currentChain > 0) {
-          win.scoreDisplay.style.color = "black";
-        } else {
-          if (win.scoreDisplay.style.color !== "black") {
-            win.scoreDisplay.style.color = "black";
-          }
-        }
       }
       win.scoreDisplay.innerHTML = scoreString;
       win.multiplierDisplay.innerHTML = `${game.scoreMultiplier.toFixed(2)}x`;

@@ -11,7 +11,7 @@ import {
   win,
   preset,
   randInt,
-  cpu
+  cpu,
 } from "../global";
 
 import { playChainSFX, playAudio } from "./audioFunctions";
@@ -160,6 +160,7 @@ export function checkMatch() {
         game.chainScoreAdded = 0;
         game.addToPrimaryChain = true;
         game.currentChain++;
+        if (game.mode === "training") game.score = 0;
       } else {
         add1ToChain = false;
         for (let i = 0; i < blocksCleared; i++) {
@@ -231,6 +232,7 @@ export function checkMatch() {
             10 * (game.combo - 4);
           if (potentialRaiseDelay > game.raiseDelay)
             game.raiseDelay = potentialRaiseDelay;
+          if (game.raiseDelay < 12) game.raiseDelay = 12;
           if (debug.enabled) {
             console.log(
               `New Raise Delay = ${game.raiseDelay} = 6 * (${game.boardRiseSpeed}) + 6 * (${game.currentChain} - 1)))`
@@ -309,21 +311,6 @@ export function updateScore(blocksCleared, currentChain) {
   }
 
   let addToScore = comboBonus + chainBonus;
-  // OLD SCORING SYSTEM
-  // if (game.level < 7) {
-  //   game.scoreMultiplier = 1 + 0.15 * (game.level - 1);
-  // } else {
-  //   game.scoreMultiplier = 2 + 0.25 * (game.level - 7);
-  // }
-
-  // NEW SCORING SYSTEM
-  let increase = game.level % 3 === 0 ? 0.5 : game.level % 3 === 1 ? 0 : 0.25;
-  // use this formula for v2.0 calculation except for 7 and 10
-  let useFormula = Math.floor(game.level / 4 + 1) + increase;
-  if (game.level === 0) game.scoreMultiplier = 1;
-  else if (game.level === 7) game.scoreMultiplier = 3;
-  else if (game.level < 10) game.scoreMultiplier = useFormula;
-  else game.scoreMultiplier = 5;
 
   game.scoreUpdate = Math.round(game.scoreMultiplier * addToScore);
   game.chainScoreAdded += game.scoreUpdate;

@@ -13,14 +13,19 @@ import {
   api,
   newGame,
   leaderboard,
-  cpu
+  cpu,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio, audioList, loadedAudios } from "../fileImports";
 import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
-import { Cursor, gameLoop, newBlock } from "../../puzzleleague";
+import {
+  Cursor,
+  gameLoop,
+  newBlock,
+  updateLevelEvents,
+} from "../../puzzleleague";
 import { pause, unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 import { action } from "../controls";
@@ -49,15 +54,20 @@ export function startGame(selectedGameSpeed, version = 1) {
   // });
   // console.log(game);
   resetGameVariables();
+  if (game.mode === "training") game.frames = -76;
+  cpu.enabled = cpu.control = game.mode === "cpu-play";
+  cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay();
+  win.timeDisplay.innerHTML = "00:00";
+  win.scoreDisplay.innerHTML = "00000";
+  win.levelDisplay.innerHTML = "1";
+  win.multiplierDisplay.innerHTML = "1.00x";
   game.board = generateOpeningBoard(version);
   // Set up game loop
   leaderboard.canPost = true;
   debug.enabled = false;
   debug.show = false;
-  cpu.enabled = cpu.control = game.mode === "cpu-play";
-  cpu.showInfo = false;
   perf.gameSpeed = selectedGameSpeed;
   perf.fpsInterval = (1000 * selectedGameSpeed) / 60;
   perf.then = Date.now();
@@ -155,18 +165,6 @@ function createHeadsUpDisplay() {
   column3.setAttribute("id", "column3");
   gameContainer.append(column3);
 
-  // create leftHudElements
-  let leftHudElements = document.createElement("div");
-  leftHudElements.setAttribute("id", "left-hud-elements");
-  leftHudElements.className = ".hidden-mobile";
-  column1.append(leftHudElements);
-  // create rightHudElements
-  let rightHudElements = document.createElement("div");
-  rightHudElements.setAttribute("id", "right-hud-elements");
-  rightHudElements.className = ".hidden-mobile";
-  column3.append(rightHudElements);
-  // create HUD elements
-
   win.scoreHeader.innerHTML = "SCORE";
   win.scoreHeader.style.color = "black";
   win.timeHeader.innerHTML = "TIME";
@@ -213,31 +211,13 @@ function createHeadsUpDisplay() {
   controls.innerHTML = preset.controlsDefaultMessage;
   win.controlsDisplay = controls;
 
-  rightHudElements.appendChild(controls);
-
-  let bestScoresDisplay = document.createElement("table");
-  bestScoresDisplay.setAttribute("id", "best-scores-table");
-  let bestScoresString = `
-  <tr>
-    <th>Rank</th>
-    <th>Best Scores</th>
-  </tr>`;
-
-  for (let i = 0; i < bestScores.length; i++) {
-    bestScoresString += `
-    <tr>
-      <td>
-      #${i + 1}
-      </td>
-      <td>
-        ${bestScores[i]}
-      </td>
-    </tr>
-    `;
+  column3.appendChild(controls);
+  // setUpQuickStatDisplay(column1);
+  if (game.mode === "arcade") {
+    setUpBestScoreDisplay(column3);
+  } else if (game.mode === "training") {
+    setUpTrainingMode(column3);
   }
-  bestScoresString += `</table>`;
-  bestScoresDisplay.innerHTML = bestScoresString;
-  if (game.mode !== "cpu-play") rightHudElements.appendChild(bestScoresDisplay);
 
   // Make Canvas, then append it to home page
   win.canvas = document.createElement(`canvas`);
@@ -258,7 +238,7 @@ function createHeadsUpDisplay() {
   resumeButton.style.display = "none";
   resumeButton.innerHTML = "<u>C</u>ontinue";
   column2.appendChild(resumeButton);
-  resumeButton.addEventListener("click", event => {
+  resumeButton.addEventListener("click", (event) => {
     unpause();
   });
 
@@ -269,7 +249,7 @@ function createHeadsUpDisplay() {
   restartButton.style.display = "none";
   restartButton.innerHTML = "<u>R</u>estart";
   column2.appendChild(restartButton);
-  restartButton.addEventListener("click", event => {
+  restartButton.addEventListener("click", (event) => {
     win.running = false;
     win.restartGame = true;
   });
@@ -280,7 +260,7 @@ function createHeadsUpDisplay() {
   mainMenuButton.style.display = "none";
   mainMenuButton.innerHTML = "<u>M</u>enu";
   column2.appendChild(mainMenuButton);
-  mainMenuButton.addEventListener("click", event => {
+  mainMenuButton.addEventListener("click", (event) => {
     win.running = false;
     render(state.Home);
   });
@@ -290,7 +270,7 @@ function createHeadsUpDisplay() {
   pauseButton.className = "pause-buttons default-button";
   pauseButton.innerHTML = "Pause";
   appContainer.append(pauseButton);
-  pauseButton.addEventListener("click", event => {
+  pauseButton.addEventListener("click", (event) => {
     pause();
   });
 
@@ -323,6 +303,7 @@ export function resetGameVariables() {
   game.combo = 0;
   game.lastChain = 0;
   game.largestChain = 0;
+  game.largestChainScore = 0;
   game.largestCombo = 0;
   game.totalClears = 0;
   game.message = "Loading...";
@@ -385,7 +366,7 @@ export function generateOpeningBoard(version = 1) {
     for (let r = 0; r < grid.ROWS + 2; r++) {
       if (version === 1) block = newBlock(c, r);
       game.board[c].push(block);
-      if (r > 11) {
+      if (r >= grid.ROWS) {
         game.board[c][r].color = PIECES[randInt(PIECES.length)];
         game.board[c][r].type = blockType.DARK;
       }
@@ -476,4 +457,75 @@ export function generateOpeningBoard(version = 1) {
   }
   fixNextDarkStack();
   return game.board;
+}
+
+function setUpBestScoreDisplay(column3) {
+  let bestScoresDisplay = document.createElement("table");
+  bestScoresDisplay.setAttribute("id", "best-scores-table");
+  let bestScoresString = `
+  <tr>
+    <th>Rank</th>
+    <th>Best Scores</th>
+  </tr>`;
+
+  for (let i = 0; i < bestScores.length; i++) {
+    bestScoresString += `
+    <tr>
+      <td>
+      #${i + 1}
+      </td>
+      <td>
+        ${bestScores[i]}
+      </td>
+    </tr>
+    `;
+  }
+  bestScoresString += `</table>`;
+  bestScoresDisplay.innerHTML = bestScoresString;
+  if (game.mode === "arcade") column3.appendChild(bestScoresDisplay);
+}
+
+function setUpTrainingMode(column3) {
+  console.log("setting up training mode");
+  let levelUp = document.createElement("button");
+  levelUp.setAttribute("id", "level-up-button");
+  levelUp.className = "default-button level-button";
+  levelUp.innerHTML = "Level + (M)";
+  column3.appendChild(levelUp);
+  let levelDown = document.createElement("button");
+  levelDown.setAttribute("id", "level-up-button");
+  levelDown.className = "default-button level-button";
+  levelDown.innerHTML = "Level - (N)";
+  column3.appendChild(levelDown);
+
+  levelUp.addEventListener("click", () => {
+    game.level++;
+    updateLevelEvents(game.level);
+  });
+  levelDown.addEventListener("click", () => {
+    game.level--;
+    updateLevelEvents(game.level);
+  });
+}
+
+export function createTutorialBoard(squareColors) {
+  let block;
+  for (let c = 0; c < grid.COLS; c++) {
+    game.board.push([]);
+    for (let r = 0; r < grid.ROWS + 2; r++) {
+      block = newBlock(c, r);
+      game.board[c].push(block);
+      if (r > grid.ROWS - 1) {
+        game.board[c][r].color = PIECES[randInt(PIECES.length)];
+        game.board[c][r].type = blockType.DARK;
+      }
+      block.draw();
+    }
+
+    for (let coordStr of Object.keys(squareColors)) {
+      let c = JSON.parse(coordStr)[0];
+      let r = JSON.parse(coordStr)[1];
+      game.board[c][r].color = squareColors[coordStr];
+    }
+  }
 }

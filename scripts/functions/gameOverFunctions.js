@@ -11,7 +11,7 @@ import {
   cpu,
   resultsMusic,
   randInt,
-  perf
+  perf,
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -57,17 +57,28 @@ export function isGameOver() {
   ) {
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training") {
-      game.score = 0;
+      game.score = game.frames = game.minutes = game.seconds = 0;
+      game.raiseDelay = 60;
       game.cursor.y += 8;
       playAudio(audio.topout);
       console.log(game.log);
-      if (game.cursor.y >= grid.ROWS) game.cursor.y = 8;
+      game.log.length = 0;
+      if (game.cursor.y >= grid.ROWS) game.cursor.y = 6;
       for (let x = 0; x < grid.COLS; x++) {
-        for (let y = grid.ROWS - 1; y > 3; y--) {
+        for (let y = grid.ROWS - 1; y > 5; y--) {
           game.board[x][y].color = blockColor.VACANT;
           game.board[x][y].type = blockType.NORMAL;
         }
       }
+      // for (let x = 0; x < grid.COLS; x++) {
+      //   for (let y = 0; y < grid.ROWS; y++) {
+      //     if (y === 0 && game.board[x][0].color === "vacant") {
+      //       break;
+      //     }
+      //     game.board[x][y].color = blockColor.VACANT;
+      //     game.board[x][y].type = blockType.NORMAL;
+      //   }
+      // }
 
       return false;
     }
@@ -122,7 +133,7 @@ function sendData(name = "Anon", score, minutes, seconds) {
   let data = {
     name: name,
     score: score,
-    duration: duration
+    duration: duration,
   };
   console.log(data);
   return data;

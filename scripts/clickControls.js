@@ -9,7 +9,7 @@ import {
   grid,
   INTERACTIVE_TYPES,
   touch,
-  win
+  win,
 } from "./global";
 
 export function updateMousePosition(canvas, e) {
@@ -85,8 +85,8 @@ export function moveBlockByRelease() {
     touch.target.x = touch.mouse.x; // move to x--coordinate
     touch.target.y = touch.selectedBlock.y; // remains on same row
     touch.moveOrderExists = true;
-    if (game.currentChain === 0) debug.updateGameState = true;
     game.swapPressed = true;
+    if (game.currentChain === 0) debug.updateGameState = true;
   }
   touch.thereIsABlockCurrentlySelected = false;
 

@@ -45,11 +45,6 @@ body {
   padding: 0.25rem;
 }
 
-#training-mode {
-  padding: 30px;
-  background-color: lightseagreen;
-}
-
 #placeholder {
   display: flex;
   position: fixed;
@@ -75,7 +70,7 @@ body {
   margin: 20px;
   border-radius: 10px;
   padding: 50px;
-  background-image: linear-gradient(to bottom right, red, #ff8484);
+  background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
   font-size: x-large;
   align-items: center;
 }
@@ -211,6 +206,7 @@ section {
 #column2,
 #column3 {
   flex: 33%;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -297,10 +293,10 @@ th {
 }
 
 tr:nth-child(odd) {
-  background-image: linear-gradient(to bottom, red, #ff8484);
+  background-color: skyblue;
 }
 tr:nth-child(even) {
-  background-image: linear-gradient(to bottom, silver, whitesmoke);
+  background-color: whitesmoke;
 }
 
 iframe {

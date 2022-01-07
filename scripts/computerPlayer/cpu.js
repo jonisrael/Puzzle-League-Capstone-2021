@@ -6,7 +6,7 @@ import {
   INTERACTIVE_TYPES,
   cpu,
   win,
-  randInt
+  randInt,
 } from "../global";
 import { sprite } from "../fileImports";
 import { findHorizontalMatches } from "./findHorizontalMatches";
@@ -32,13 +32,13 @@ const order = [
   [2, 1, 3, 0, 4],
   [3, 2, 4, 1, 0],
   [4, 3, 2, 1, 0],
-  [4, 3, 2, 1, 0]
+  [4, 3, 2, 1, 0],
 ];
 
 // order closest to index, prioritizing edge
 const reverseOrder = [
   [0, 1, 2, 3, 4],
-  [1, 0, 4, 3, 2]
+  [1, 0, 4, 3, 2],
 ];
 
 const direction = [
@@ -47,11 +47,11 @@ const direction = [
   [1, 3, 0, 4, 5], // 2
   [4, 2, 5, 1, 0], // 3
   [5, 3, 2, 1, 0], // 4
-  [4, 3, 2, 1, 0] // 5
+  [4, 3, 2, 1, 0], // 5
 ];
 
 export function cpuAction(input) {
-  if (game.frames < 20) return input;
+  if (game.frames < 60) return input;
   win.mainInfoDisplay.style.color = "green";
   // if (game.frames % 4 < 2) return input;
   let stackMinimum = 4;

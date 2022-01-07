@@ -1,6 +1,6 @@
 import html from "html-literal";
 
-export default st => html`
+export default (st) => html`
   <section id="home-page">
     <div id="container">
       <h2 style="color:white;">Welcome to Puzzle League: Arcade Edition!</h2>
@@ -12,19 +12,17 @@ export default st => html`
       </ul>
       <hr />
       <div id="game-container">
-        <div id="left-column">
+        <div id="column1">
+          <button id="training-mode" class="default-button start-buttons">
+            Training Mode (T)
+          </button>
+        </div>
+        <div id="column2">
           <button id="arcade-button" class="default-button start-buttons">
             Play Arcade! (Enter)
           </button>
-          <button
-            id="training-mode"
-            class="default-button start-buttons"
-            style="display:none"
-          >
-            Play Arcade!<br />WASD Controls<br />(W)
-          </button>
         </div>
-        <div id="right-column">
+        <div id="column3">
           <button
             id="watch-ai-play-button"
             class="default-button start-buttons"

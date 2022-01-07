@@ -1,3 +1,4 @@
+import { debug } from "console";
 import { audio } from "../fileImports";
 import { game, win, announcer, randInt, cpu, music } from "../global";
 
@@ -78,6 +79,7 @@ export function playChainSFX() {
 export function playMusic(file, volume = 1, currentTime = 0) {
   if (win.muteMusic.checked) return;
   game.Music.src = file;
+  if (debug.enabled) console.log("Music track:", game.Music.src);
   game.Music.volume = volume;
   console.log(game.Music.volume);
   game.Music.currentTime = currentTime;
