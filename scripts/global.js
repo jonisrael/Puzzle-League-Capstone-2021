@@ -550,6 +550,15 @@ export function outOfRange(x, y) {
   return x < 0 || x >= grid.COLS || y < 0 || y >= grid.ROWS;
 }
 
+export function vacantBlockBelow(Square) {
+  for (let j = Square.y + 1; j < grid.ROWS - 1; j++) {
+    if (game.board[Square.x][j].color === "vacant") {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function transferProperties(FirstBlock, SecondBlock, type) {
   let FirstKeys = Object.keys(FirstBlock).splice(2);
   let SecondKeys = Object.keys(SecondBlock).splice(2);

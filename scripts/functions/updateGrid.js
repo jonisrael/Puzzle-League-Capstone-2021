@@ -6,7 +6,7 @@ import {
   game,
   grid,
   INTERACTIVE_TYPES,
-  touch
+  touch,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { isBlockAirborne } from "./gravity";

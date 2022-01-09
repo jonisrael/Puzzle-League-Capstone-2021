@@ -1345,7 +1345,8 @@ export function gameLoop() {
           } else {
             game.swapPressed = false;
             touch.moveOrderExists = false; // block has reached target
-            console.log("frame", game.frames, "target reached.");
+            if (debug.enabled)
+              console.log("frame", game.frames, "target reached.");
           }
         }
       }

@@ -101,6 +101,8 @@ export function moveBlockByRelease() {
     }
     touch.arrowList.push(`${i},${touch.selectedBlock.y}`);
   }
+  if (CLEARING_TYPES.includes(game.board[touch.target.x][touch.target.y].type))
+    touch.moveType = "Buffer";
   if (touch.arrowList)
     touch.arrowList.push(`${touch.target.x},${touch.target.y}`);
   // game.cursor.x = touch.mouse.x;

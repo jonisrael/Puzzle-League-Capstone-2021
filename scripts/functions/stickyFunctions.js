@@ -12,6 +12,7 @@ import {
   outOfRange,
   SOLID_TYPES,
   debug,
+  vacantBlockBelow,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { pause } from "./pauseFunctions";
@@ -613,15 +614,6 @@ function chainableBlockPairAbove(Square) {
     }
   }
   return result;
-}
-
-function vacantBlockBelow(Square) {
-  for (let j = Square.y + 1; j < grid.ROWS - 1; j++) {
-    if (game.board[Square.x][j].color === "vacant") {
-      return true;
-    }
-  }
-  return false;
 }
 
 function containsSolidBlockPairOnRow(Square, row) {

@@ -12,7 +12,7 @@ import {
   randInt,
   CLEARING_TYPES,
   blockIsSolid,
-  transferProperties
+  transferProperties,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -21,9 +21,10 @@ import {
   match,
   pair,
   sticky,
-  stickyCheck
+  stickyCheck,
 } from "./stickyFunctions";
 import { pause } from "./pauseFunctions";
+import { isBlockAirborne } from "./gravity";
 
 export function trySwappingBlocks(x, y) {
   if (game.disableSwap || game.frames < 0 || x > grid.COLS - 2 || game.over) {
@@ -116,6 +117,8 @@ export function trySwappingBlocks(x, y) {
     LeftBlock.timer = RightBlock.timer = 5;
     LeftBlock.lightTimer = RightBlock.lightTimer = 0;
     LeftBlock.type = RightBlock.type = blockType.SWAPPING;
+    LeftBlock.airborne = isBlockAirborne(LeftBlock);
+    RightBlock.airborne = isBlockAirborne(RightBlock);
     LeftBlock.swapDirection = 1;
     RightBlock.swapDirection = -1;
     LeftBlock.touched = RightBlock.touched = true;
