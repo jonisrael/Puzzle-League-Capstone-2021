@@ -91,12 +91,13 @@ export function moveBlockByRelease() {
   touch.thereIsABlockCurrentlySelected = false;
 
   let dir = touch.target.x < touch.selectedBlock.x ? -1 : 1;
-
+  touch.moveType = "Move";
   for (let i = touch.selectedBlock.x; i !== touch.target.x; i += dir) {
     if (CLEARING_TYPES.includes(game.board[i][touch.selectedBlock.y].type)) {
-      touch.target.x = i;
-      touch.target.y = touch.selectedBlock.y;
-      break;
+      touch.moveType = "Buffer";
+      // touch.target.x = i;
+      // touch.target.y = touch.selectedBlock.y;
+      // break;
     }
     touch.arrowList.push(`${i},${touch.selectedBlock.y}`);
   }

@@ -119,6 +119,7 @@ export function checkBufferedSwap(x, y) {
 }
 
 export function stickyCheck(x, y) {
+  if (game.board[x][y].airborne) return false;
   if (outOfRange(x, y)) return false;
   if (!blockIsSolid(game.board[x][y])) return false;
   match[0] = [x, y];
@@ -132,6 +133,7 @@ export function stickyCheck(x, y) {
   }
   if ((result = checkIfFallingBlockMatches(SelectedBlock))) {
     console.log(game.frames, `results2:`, result, `${match}`);
+    if (debug.enabled) playAudio(audio.chain9);
     return !!result;
   }
   let [clearLine, lowKey, highKey] = findClearLine(x, y);
@@ -433,19 +435,26 @@ function checkSideMatch(single = false, dir) {
   return false;
 }
 
-function findSolidBlockAbove(x, y) {
-  if (x === -1) return JSON.parse(undefBlock);
+function findSolidBlockAbove(x, y, stopAtClearing = false) {
+  if (outOfRange(x, y)) return JSON.parse(undefBlock);
+
   // checks at and above the defined y height
   for (let j = y; j >= 0; j--) {
     if (blockIsSolid(game.board[x][j])) return game.board[x][j];
+    if (stopAtClearing && CLEARING_TYPES.includes(game.board[x][j])) {
+      return JSON.parse(undefBlock);
+    }
   }
   return JSON.parse(undefBlock);
 }
 
-function findSolidBlockBelow(x, y) {
-  if (x === -1 || y + 1 >= grid.ROWS) return JSON.parse(undefBlock);
+function findSolidBlockBelow(x, y, stopAtClearing = false) {
+  if (outOfRange(x, y)) return JSON.parse(undefBlock);
   for (let j = y + 1; j < grid.ROWS; j++) {
     if (blockIsSolid(game.board[x][j])) return game.board[x][j];
+    if (stopAtClearing && CLEARING_TYPES.includes(game.board[x][j])) {
+      return JSON.parse(undefBlock);
+    }
   }
   return JSON.parse(undefBlock);
 }
@@ -520,7 +529,8 @@ function findClearLine(x, y) {
           (y === grid.ROWS - 1 ||
             !blockVacOrClearing(game.board[x + dir][y + 1])) &&
           x + i * dir >= 0 &&
-          x + i * dir < grid.COLS
+          x + i * dir < grid.COLS &&
+          !vacantBlockBelow(game.board[x + dir][y])
         ) {
           keySquare = [x + i * dir, y]; // key square is directly next to clearing side
           if (CLEARING_TYPES.includes(game.board[x + i * dir][y].type)) {
@@ -547,10 +557,9 @@ function findClearLine(x, y) {
 }
 
 function isSolidPair(Square_1, Square_2) {
-  if (!Square_1 || !Square_2) return false;
-  if (Square_1.x === -1 || Square_2.x === -1) return false;
-
   return (
+    !outOfRange(Square_1.x, Square_1.y) &&
+    !outOfRange(Square_2.x, Square_2.y) &&
     Square_1.color === Square_2.color &&
     blockIsSolid(Square_1) &&
     blockIsSolid(Square_2)
@@ -606,6 +615,15 @@ function chainableBlockPairAbove(Square) {
   return result;
 }
 
+function vacantBlockBelow(Square) {
+  for (let j = Square.y + 1; j < grid.ROWS - 1; j++) {
+    if (game.board[Square.x][j].color === "vacant") {
+      return true;
+    }
+  }
+  return false;
+}
+
 function containsSolidBlockPairOnRow(Square, row) {
   console.log(row);
   if (row < 0 || row >= grid.ROWS) return false;
@@ -659,7 +677,7 @@ function checkIfFallingBlockMatches(MainBlock) {
   if (game.currentChain === 0) return false;
   let x = MainBlock.x;
   let y = MainBlock.y;
-  let [PairBlock, pair] = determinePair(MainBlock);
+  let [PairBlock, pair] = determinePair(MainBlock, "vertical");
   let FirstBlock, SecondBlock, ThirdBlock;
   let checkLeft1 = false;
   let checkLeft2 = false;
@@ -674,54 +692,27 @@ function checkIfFallingBlockMatches(MainBlock) {
   )
     checkAbove = true;
 
-  if (x - 1 >= 0 && game.board[x - 1][y].color === "vacant") {
-    checkLeft1 = true;
-  }
-  if (x - 2 >= 0 && game.board[x - 2][y].color == "vacant" && pair == "left") {
-    checkLeft2 = true;
-  }
-
-  if (x + 1 < grid.COLS && game.board[x + 1][y].color === "vacant") {
-    checkRight1 = true;
-  }
-  if (
-    x + 2 < grid.COLS &&
-    game.board[x + 2][y].color == "vacant" &&
-    pair == "right"
-  ) {
-    checkRight2 = true;
-  }
-
-  if (
-    (x - 1 >= 0 && game.board[x - 1][y].color === "vacant") ||
-    (x - 2 >= 0 && game.board[x - 2][y].color === "vacant")
-  )
-    checkLeft1 = true;
-  if (
-    (x + 1 < grid.COLS && game.board[x + 1][y].color === "vacant") ||
-    (x + 2 < grid.COLS && game.board[x + 2][y].color === "vacant")
-  )
-    checkRight1 = true;
+  // check for match of falling block AND either pair or
 
   if (checkAbove) {
     // Main Block is the first square directly under vacant blocks
-    MainBlock = pair === "A" ? game.board[x][y - 1] : game.board[x][y];
-    for (let j = MainBlock.y - 1; j >= 0; j--) {
+    FirstBlock = pair === "A" ? game.board[x][y - 1] : game.board[x][y];
+    for (let j = FirstBlock.y - 1; j >= 0; j--) {
       if (blockIsSolid(game.board[x][j])) {
-        if (MainBlock.color === game.board[x][j].color) {
+        if (FirstBlock.color === game.board[x][j].color) {
           if (pair) {
             ThirdBlock = game.board[x][j];
             match[2] = [x, j];
-            return "single match above found";
+            return "single match above found vac";
           } else {
             SecondBlock = game.board[x][j];
             for (let k = SecondBlock.y - 1; k >= 0; k--) {
               match[1] = [x, j];
               if (blockIsSolid(game.board[x][k])) {
-                if (MainBlock.color === game.board[x][k].color) {
+                if (FirstBlock.color === game.board[x][k].color) {
                   ThirdBlock = game.board[x][k];
                   match[2] = [x, k];
-                  return "double match above found";
+                  return "double match above found vac";
                 } else break; // solid block but not pair, end search
               }
             }
@@ -729,96 +720,167 @@ function checkIfFallingBlockMatches(MainBlock) {
         } else break; // block is solid but not a pair, so end search
       }
     }
+    match[1] = match[2] = [-1, -1];
   }
 
-  // if (checkLeft1) {
-  //   // Main Block is the first square directly next to vacant blocks
-  //   MainBlock = pair === "left" ? game.board[x - 1][y] : game.board[x][y];
-  //   let PairBlock = findSolidBlockAbove(MainBlock.x - 1, MainBlock.y);
-  //   if (isSolidPair(MainBlock, PairBlock)) {
-  //     FirstBlock = MainBlock;
-  //     if (pair) {
-  //       match[2] = [PairBlock.x, PairBlock.y];
-  //       result = "single block left found";
-  //     } else {
-  //     }
-  //   }
+  // look for horizontal pairs
+  [PairBlock, pair] = determinePair(MainBlock, "horizontal");
 
-  //   for (let j = MainBlock.y - 1; j >= 0; j--) {
-  //     if (blockIsSolid(game.board[MainBlock.x - 1][j])) {
-  //       if (MainBlock.color === game.board[MainBlock.x - 1][j].color) {
-  //         if (pair) {
-  //           match[2] = [MainBlock.x - 1, j];
-  //           return "single block left found";
-  //         } else if (
-  //           MainBlock.x - 2 >= 0 &&
-  //           isSolidPair(MainBlock, game.board[MainBlock.x - 2][j])
-  //         ) {
-  //           match[2] = [MainBlock.x - 2, j];
-  //           return "double block left found";
-  //         } else break; // third block does not match
-  //       } else break; // first solid block is not pair
-  //     }
-  //   }
-  // }
+  if (
+    x - 1 >= 0 &&
+    game.board[x - 1][y].color === "vacant" &&
+    !vacantBlockBelow(game.board[x - 1][y])
+  ) {
+    checkLeft1 = true;
+  }
+  if (
+    x - 2 >= 0 &&
+    game.board[x - 2][y].color == "vacant" &&
+    pair == "L" &&
+    !vacantBlockBelow(game.board[x - 2][y])
+  ) {
+    checkLeft2 = true;
+  }
 
-  // if (checkRight1) {
-  //   // Main Block is the first square directly under vacant blocks
-  //   MainBlock = pair === "right" ? game.board[x + 1][y] : game.board[x][y];
-  //   for (let j = MainBlock.y - 1; j >= 0; j--) {
-  //     if (isSolidPair(MainBlock, game.board[MainBlock.x][j])) {
-  //       if (!pair) {
-  //         match[2] = [MainBlock.x, j];
-  //         return "single block right found";
-  //       } else if (
-  //         MainBlock.x + 2 < grid.COLS &&
-  //         isSolidPair(MainBlock, game.board[MainBlock.x + 2][j])
-  //       ) {
-  //         match[1] = [MainBlock.x, j];
-  //         match[2] = [MainBlock.x + 2, j];
-  //         return "double block right found";
-  //       } else break;
-  //     }
-  //     if (CLEARING_TYPES.includes(game.board[x][j])) break;
-  //   }
-  // }
+  if (
+    x + 1 < grid.COLS &&
+    game.board[x + 1][y].color === "vacant" &&
+    !vacantBlockBelow(game.board[x + 1][y])
+  ) {
+    checkRight1 = true;
+  }
+  if (
+    x + 2 < grid.COLS &&
+    game.board[x + 2][y].color == "vacant" &&
+    pair == "R" &&
+    !vacantBlockBelow(game.board[x + 2][y])
+  ) {
+    checkRight2 = true;
+  }
+
+  if (
+    debug.enabled &&
+    (checkLeft1 || checkLeft2 || checkRight1 || checkRight2 || checkAbove)
+  ) {
+    playAudio(audio.announcerInvincible);
+    console.log(
+      `L1: ${checkLeft1}, L2: ${checkLeft2}, R1: ${checkRight1}, R2: ${checkRight2}, Abv: ${checkAbove}, Pair: ${pair}`
+    );
+  }
+
+  if (checkLeft1) {
+    FirstBlock = game.board[x][y];
+    SecondBlock = findSolidBlockAbove(x - 1, y);
+    if (isSolidPair(FirstBlock, SecondBlock)) {
+      if (pair) {
+        match[1] = [SecondBlock.x, SecondBlock.y];
+        ThirdBlock = game.board[x + 1][y];
+        match[2] = [ThirdBlock.x, ThirdBlock.y];
+        return "single match L1, pair block R1 vac";
+      } else {
+        match[1] = [SecondBlock.x, SecondBlock.y];
+        ThirdBlock = findSolidBlockAbove(x - 2, y);
+        if (isSolidPair(FirstBlock, ThirdBlock)) {
+          match[2] = [ThirdBlock.x, ThirdBlock.y];
+          return "double match L1 L2 vac";
+        }
+      }
+      // no three match has been found. Moving on.
+    }
+    match[1] = match[2] = [-1, -1];
+  }
+  if (checkLeft2) {
+    // it has already been determined that pair is on left.
+    FirstBlock = game.board[x][y];
+    SecondBlock = game.board[x - 1][y];
+    match[1] = [x - 1, y];
+    ThirdBlock = findSolidBlockAbove(x - 2, y - 1);
+    if (isSolidPair(FirstBlock, ThirdBlock)) {
+      match[2] = [x - 2, ThirdBlock.y];
+      return "single match L2, pair block L1, vac";
+    }
+    match[1] = match[2] = [-1, -1];
+  }
+
+  if (checkRight1) {
+    FirstBlock = game.board[x][y];
+    SecondBlock = findSolidBlockAbove(x + 1, y);
+    if (isSolidPair(FirstBlock, SecondBlock)) {
+      if (pair) {
+        match[1] = [SecondBlock.x, SecondBlock.y];
+        ThirdBlock = game.board[x - 1][y];
+        match[2] = [ThirdBlock.x, ThirdBlock.y];
+        return "single match R1, pair block L1, vac";
+      } else {
+        match[1] = [SecondBlock.x, SecondBlock.y];
+        ThirdBlock = findSolidBlockAbove(x + 2, y);
+        if (isSolidPair(FirstBlock, ThirdBlock)) {
+          match[2] = [ThirdBlock.x, ThirdBlock.y];
+          return "double match R1 R2 vac";
+        }
+      }
+      // no three match has been found. Moving on.
+    }
+    match[1] = match[2] = [-1, -1];
+  }
+
+  if (checkRight2) {
+    // it has already been determined that a pair is on right.
+    FirstBlock = game.board[x][y];
+    SecondBlock = game.board[x + 1][y];
+    match[1] = [x + 1, y];
+    ThirdBlock = findSolidBlockAbove(x + 2, y);
+    if (isSolidPair(FirstBlock, ThirdBlock)) {
+      match[2] = [x + 2, ThirdBlock.y];
+      return "single match R2, pair block R1, vac";
+    }
+    match[1] = match[2] = [-1, -1];
+  }
+  // no vacant matches found
   return false;
 }
 
-function determinePair(Square) {
+function determinePair(Square, type) {
   console.log(Square);
   let x = Square.x,
     y = Square.y;
   let PairBlock;
-  if (y - 1 >= 0 && isSolidPair(Square, (PairBlock = game.board[x][y - 1]))) {
-    match[1] = [x, PairBlock.y];
-    return [PairBlock, "A"];
+  let pair = "";
+  if (type === "vertical") {
+    if (y - 1 >= 0 && isSolidPair(Square, (PairBlock = game.board[x][y - 1]))) {
+      match[1] = [x, PairBlock.y];
+      return [PairBlock, "A"];
+    }
+
+    if (
+      y + 1 < grid.ROWS &&
+      isSolidPair(Square, (PairBlock = game.board[x][y + 1])) &&
+      !vacantBlockBelow(PairBlock)
+    ) {
+      match[1] = [x, PairBlock.y];
+      return [PairBlock, "B"];
+    }
+  } else {
+    if (
+      x - 1 >= 0 &&
+      !game.board[x - 1][y].airborne &&
+      isSolidPair(Square, (PairBlock = game.board[x - 1][y])) &&
+      !vacantBlockBelow(PairBlock)
+    ) {
+      match[1] = [x, PairBlock.y];
+      return [PairBlock, "L"];
+    }
+    if (
+      x + 1 < grid.COLS &&
+      !game.board[x + 1][y].airborne &&
+      isSolidPair(Square, (PairBlock = game.board[x + 1][y])) &&
+      !vacantBlockBelow(PairBlock)
+    ) {
+      match[1] = [x, PairBlock.y];
+      return [PairBlock, "R"];
+    }
   }
 
-  if (
-    y + 1 < grid.ROWS &&
-    isSolidPair(Square, (PairBlock = game.board[x][y + 1]))
-  ) {
-    match[1] = [x, PairBlock.y];
-    return [PairBlock, "B"];
-  }
-
-  if (
-    x - 1 >= 0 &&
-    !game.board[x - 1][y].airborne &&
-    isSolidPair(Square, (PairBlock = game.board[x - 1][y]))
-  ) {
-    match[1] = [x, PairBlock.y];
-    return [PairBlock, "L"];
-  }
-  if (
-    x + 1 < grid.COLS &&
-    !game.board[x + 1][y].airborne &&
-    isSolidPair(Square, (PairBlock = game.board[x + 1][y]))
-  ) {
-    match[1] = [x, PairBlock.y];
-    return [PairBlock, "R"];
-  }
   return [JSON.parse(undefBlock), ""];
 }
 

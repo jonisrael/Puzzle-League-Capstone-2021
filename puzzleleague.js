@@ -213,11 +213,7 @@ class Block {
       return;
     }
     let fileName = "";
-    let move = CLEARING_TYPES.includes(
-      game.board[touch.target.x][touch.target.y].type
-    )
-      ? "Buffer"
-      : "Move";
+    let move = touch.moveType;
     let coordinates = `${this.x},${this.y}`;
     if (touch.moveOrderExists) {
       let dir = touch.target.x < touch.mouseStart.x ? "Left" : "Right";
