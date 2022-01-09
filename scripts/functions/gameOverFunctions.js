@@ -82,7 +82,7 @@ export function isGameOver() {
 
       return false;
     }
-    if (game.frames < 7200) game.Music.volume = 0;
+    game.Music.volume = 0;
     endGame();
     game.rise = 0;
     return true;

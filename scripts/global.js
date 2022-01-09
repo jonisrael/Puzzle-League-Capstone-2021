@@ -158,8 +158,7 @@ export const grid = {
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
-  // speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
-  speedValues: [59, 48, 24, 12, 10, 6, 4, 2, 2, 2, 1],
+  speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
   clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
   blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
   scoreMultValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
@@ -208,8 +207,8 @@ export const win = {
 };
 
 export const music = [
-  // audio.popcornMusic,
-  audio.popcornExtendedMusic,
+  audio.popcornMusic,
+  // audio.popcornExtendedMusic,
   audio.ryuMusic,
   audio.lipMusic,
   audio.physicsMusic,
@@ -604,3 +603,13 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
 //   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
 //   controlsDefaultMessage: "",
 // };
+
+// 3 minute preset
+// speedValues: [59, 48, 24, 12, 10, 6, 4, 2, 2, 2, 1],
+// clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
+// blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
+// scoreMultValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
+// faceValues: [80, 40, 34, 28, 26, 20, 16, 12, 12, 8, 8],
+// popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
+// stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12],
+// controlsDefaultMessage: ""

@@ -14,6 +14,7 @@ import {
   newGame,
   leaderboard,
   cpu,
+  touch,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
@@ -63,6 +64,9 @@ export function startGame(selectedGameSpeed, version = 1) {
   win.scoreDisplay.innerHTML = "00000";
   win.levelDisplay.innerHTML = "1";
   win.multiplierDisplay.innerHTML = "1.00x";
+  touch.thereIsABlockCurrentlySelected = false;
+  touch.moveOrderExists = false;
+  touch.arrowList.length = 0;
   game.board = generateOpeningBoard(version);
   // Set up game loop
   leaderboard.canPost = true;

@@ -718,7 +718,7 @@ export function checkTime() {
       game.message = game.defaultMessage;
 
       break;
-    case 10200:
+    case 6600:
       game.messagePriority = "10 seconds before overtime!";
       playAnnouncer(
         announcer.hurryUpDialogue,
@@ -726,34 +726,34 @@ export function checkTime() {
         "hurryUp"
       );
       break;
-    case 10260:
+    case 6700:
       game.messagePriority = "";
       break;
-    case 10500:
+    case 6900:
       game.messagePriority = "5 seconds before overtime...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer5, 0.2, true);
       break;
-    case 10560:
+    case 6960:
       game.messagePriority = "4 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer4, 0.2, true);
       break;
-    case 10620:
+    case 7020:
       game.messagePriority = "3 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
-    case 10680:
+    case 7080:
       game.messagePriority = "2 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
       break;
-    case 10740:
+    case 7140:
       game.messagePriority = "1 second before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
-    case 10800:
+    case 7200:
       game.messagePriority = "Overtime, I hope you're ready...";
       game.defaultMessage = game.message;
       playAnnouncer(
@@ -1163,7 +1163,7 @@ export function gameLoop() {
         cnt = 0; // game loop counter
         if (game.mode !== "training") {
           game.defaultMessage = `Level ${game.level} | 0:${padInteger(
-            30 - (game.seconds % 20),
+            20 - (game.seconds % 20),
             2
           )} remaining`;
         }
@@ -1193,7 +1193,7 @@ export function gameLoop() {
       }
 
       if (
-        game.frames % 1800 == 0 &&
+        game.frames % 1200 == 0 &&
         game.mode !== "training" &&
         game.level < preset.speedValues.length &&
         game.level > 0 &&
@@ -1202,11 +1202,11 @@ export function gameLoop() {
       ) {
         // Speed the stack up every 20 seconds
 
-        if (game.frames >= 1800) {
+        if (game.frames >= 1200) {
           game.message = `Level ${game.level + 1}, game speed has increased...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          if (game.frames !== 10800 && game.frames !== 16200)
+          if (game.frames !== 7200 && game.frames !== 10800)
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
