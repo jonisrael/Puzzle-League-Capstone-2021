@@ -202,10 +202,12 @@ export function trySwappingBlocks(x, y) {
         // );
       } catch (error) {
         playAudio(audio.selectionFailed);
-        debug.enabled = true;
-        debug.show = true;
-        pause("Pause -- Check Console For Error");
+        // debug.enabled = true;
+        // debug.show = true;
         console.error(error, error.stack);
+        if (debug.enabled) {
+          pause("Pause -- Check Console For Error");
+        }
       }
 
       if (
@@ -229,13 +231,13 @@ export function trySwappingBlocks(x, y) {
       !CLEARING_TYPES.includes(RightBlock.type)
     ) {
       // stop trying to swap since illegal swap has been made
-      console.log(
-        "frame",
-        game.frames,
-        "stopping swap due to illegal move",
-        LeftBlock,
-        RightBlock
-      );
+      // console.log(
+      //   "frame",
+      //   game.frames,
+      //   "stopping swap due to illegal move",
+      //   LeftBlock,
+      //   RightBlock
+      // );
       touch.moveOrderExists = false;
       game.swapPressed = false;
     }

@@ -1077,8 +1077,8 @@ export function gameLoop() {
     document.getElementById("header").style.display = "block";
     document.getElementById("nav-bar").style.display = "flex";
     document.getElementById("footer").style.display = "block";
-    if (document.getElementById("pause-button"))
-      document.getElementById("pause-button").style.display = "none";
+    // if (document.getElementById("pause-button"))
+    //   document.getElementById("pause-button").style.display = "none";
   }
   if (!win.running || win.view !== "Home") {
     closeGame(game.over);
