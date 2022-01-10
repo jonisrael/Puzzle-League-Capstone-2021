@@ -14,6 +14,8 @@ export function pause(lostFocus = false, message = "Pause") {
     game.board[game.cursor.x][game.cursor.y],
     "touch",
     touch,
+    "win",
+    win,
     game.cursor_type === "defaultCursor"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : ""

@@ -7,7 +7,7 @@ import {
   debug,
   touch,
   transferProperties,
-  CLEARING_TYPES
+  CLEARING_TYPES,
 } from "../global";
 
 import { checkMatch } from "./matchAndScoreFunctions";
@@ -159,7 +159,7 @@ export function isBlockAirborne(Square) {
   for (let j = r + 1; j < grid.ROWS; j++) {
     if (game.board[c][j].color === "vacant") {
       for (let k = j - 1; k >= 0; k--) {
-        if (CLEARING_TYPES.includes(game.board[c][k])) break;
+        if (CLEARING_TYPES.includes(game.board[c][k].type)) break;
         if (game.board[c][k].color !== "vacant")
           game.board[c][k].airborne = true;
       }

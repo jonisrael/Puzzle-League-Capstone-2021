@@ -12,26 +12,26 @@ import {
 } from "../global";
 import { playAudio } from "./audioFunctions";
 
-let undefBlock =
+let game.undefBlock =
   '{"name": "undefinedBlock", "x": -1, "y": -1, "color": "vacant", "type": "normal"}';
 
 export const SelectedBlock = {
-  Actual: JSON.parse(undefBlock),
-  Above: JSON.parse(undefBlock),
-  Below: JSON.parse(undefBlock),
-  OnLeft: JSON.parse(undefBlock),
-  OnRight: JSON.parse(undefBlock),
+  Actual: JSON.parse(game.undefBlock),
+  Above: JSON.parse(game.undefBlock),
+  Below: JSON.parse(game.undefBlock),
+  OnLeft: JSON.parse(game.undefBlock),
+  OnRight: JSON.parse(game.undefBlock),
   pairsWith: ""
 };
 
 export const KeySquare = {
-  Actual: JSON.parse(undefBlock),
-  Above: { 1: JSON.parse(undefBlock), 2: JSON.parse(undefBlock) },
-  Below: { 1: JSON.parse(undefBlock), 2: JSON.parse(undefBlock) },
-  OnLeft: { 1: JSON.parse(undefBlock), 2: JSON.parse(undefBlock) },
-  OnRight: { 1: JSON.parse(undefBlock), 2: JSON.parse(undefBlock) },
-  EarliestAbove: JSON.parse(undefBlock),
-  EarliestBelow: JSON.parse(undefBlock)
+  Actual: JSON.parse(game.undefBlock),
+  Above: { 1: JSON.parse(game.undefBlock), 2: JSON.parse(game.undefBlock) },
+  Below: { 1: JSON.parse(game.undefBlock), 2: JSON.parse(game.undefBlock) },
+  OnLeft: { 1: JSON.parse(game.undefBlock), 2: JSON.parse(game.undefBlock) },
+  OnRight: { 1: JSON.parse(game.undefBlock), 2: JSON.parse(game.undefBlock) },
+  EarliestAbove: JSON.parse(game.undefBlock),
+  EarliestBelow: JSON.parse(game.undefBlock)
 };
 
 export let pair = [[], [], []];
@@ -43,13 +43,13 @@ export function stickyCheck(x, y) {
   pair[2] = [-1, -1];
   SelectedBlock.Actual = game.board[x][y];
   SelectedBlock.Above =
-    y - 1 >= 0 ? game.board[x][y - 1] : JSON.parse(undefBlock);
+    y - 1 >= 0 ? game.board[x][y - 1] : JSON.parse(game.undefBlock);
   SelectedBlock.Below =
-    y + 1 < grid.ROWS ? game.board[x][y + 1] : JSON.parse(undefBlock);
+    y + 1 < grid.ROWS ? game.board[x][y + 1] : JSON.parse(game.undefBlock);
   SelectedBlock.OnLeft =
-    x - 1 >= 0 ? game.board[x - 1][y] : JSON.parse(undefBlock);
+    x - 1 >= 0 ? game.board[x - 1][y] : JSON.parse(game.undefBlock);
   SelectedBlock.OnRight =
-    x + 1 < grid.COLS ? game.board[x + 1][y] : JSON.parse(undefBlock);
+    x + 1 < grid.COLS ? game.board[x + 1][y] : JSON.parse(game.undefBlock);
   let result;
 
   console.log(game.frames, "color pair is", SelectedBlock.Actual.color);
@@ -204,23 +204,23 @@ function updateKeySquareObject(keyX, keyY) {
   if (outOfRange(keyX, keyY)) return;
   KeySquare.Actual = game.board[keyX][keyY];
   KeySquare.Above[1] =
-    keyY - 1 >= 0 ? findBlock(keyX, keyY - 1) : JSON.parse(undefBlock);
+    keyY - 1 >= 0 ? findBlock(keyX, keyY - 1) : JSON.parse(game.undefBlock);
   KeySquare.Above[2] =
     KeySquare.Above[1].y - 1 >= 0
       ? findBlock(keyX, KeySquare.Above[1].y - 1)
-      : JSON.parse(undefBlock);
+      : JSON.parse(game.undefBlock);
   KeySquare.Below[1] =
-    keyY + 1 < 12 ? game.board[keyX][keyY + 1] : JSON.parse(undefBlock);
+    keyY + 1 < 12 ? game.board[keyX][keyY + 1] : JSON.parse(game.undefBlock);
   KeySquare.Below[2] =
-    keyY + 2 < 12 ? game.board[keyX][keyY + 2] : JSON.parse(undefBlock);
+    keyY + 2 < 12 ? game.board[keyX][keyY + 2] : JSON.parse(game.undefBlock);
   KeySquare.OnLeft[1] =
-    keyX - 1 >= 0 ? findBlock(keyX - 1, keyY) : JSON.parse(undefBlock);
+    keyX - 1 >= 0 ? findBlock(keyX - 1, keyY) : JSON.parse(game.undefBlock);
   KeySquare.OnLeft[2] =
-    keyX - 2 >= 0 ? findBlock(keyX - 2, keyY) : JSON.parse(undefBlock);
+    keyX - 2 >= 0 ? findBlock(keyX - 2, keyY) : JSON.parse(game.undefBlock);
   KeySquare.OnRight[1] =
-    keyX + 1 < 6 ? findBlock(keyX + 1, keyY) : JSON.parse(undefBlock);
+    keyX + 1 < 6 ? findBlock(keyX + 1, keyY) : JSON.parse(game.undefBlock);
   KeySquare.OnRight[2] =
-    keyX + 2 < 6 ? findBlock(keyX + 2, keyY) : JSON.parse(undefBlock);
+    keyX + 2 < 6 ? findBlock(keyX + 2, keyY) : JSON.parse(game.undefBlock);
   if (!outOfRange(keyX, keyY)) {
     touch.keySquare.x = keyX;
     touch.keySquare.y = keyY;
@@ -229,8 +229,8 @@ function updateKeySquareObject(keyX, keyY) {
 
 function findBlock(x, y) {
   // searches for an airborne block
-  if (y === 0) return JSON.parse(undefBlock);
-  if (x < 0 || x >= grid.COLS) return JSON.parse(undefBlock);
+  if (y === 0) return JSON.parse(game.undefBlock);
+  if (x < 0 || x >= grid.COLS) return JSON.parse(game.undefBlock);
   if (blockIsSolid(game.board[x][y])) return game.board[x][y];
   let firstVacantFound = false;
   for (let j = y - 1; j >= 0; j--) {
@@ -241,7 +241,7 @@ function findBlock(x, y) {
       return game.board[x][y]; //
     if (game.board[x][j].color === "vacant") firstVacantFound = true;
   }
-  return JSON.parse(undefBlock); // all blocks above are vacant, so return original vacant block
+  return JSON.parse(game.undefBlock); // all blocks above are vacant, so return original vacant block
 }
 
 function findKeySquareBelow(x, y) {

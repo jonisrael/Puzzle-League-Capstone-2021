@@ -14,26 +14,26 @@
 // } from "../global";
 // import { playAudio } from "./audioFunctions";
 
-// let undefBlockString =
+// let game.undefBlockString =
 // '{"name": "undefinedBlock", "x": -1, "y": -1, "color": "vacant", "type": "normal"}';
 
-// let undefBlock = JSON.parse(undefBlockString);
+// let game.undefBlock = JSON.parse(game.undefBlockString);
 
 // export const KeySquare = {
-//   Main: undefBlock,
-//   Highest: undefBlock,
-//   Lowest: undefBlock,
-//   SpecialBlock: undefBlock
+//   Main: game.undefBlock,
+//   Highest: game.undefBlock,
+//   Lowest: game.undefBlock,
+//   SpecialBlock: game.undefBlock
 // };
 
-// export const MatchBlocks = [undefBlock, undefBlock, undefBlock];
+// export const MatchBlocks = [game.undefBlock, game.undefBlock, game.undefBlock];
 
 // export function sticky(x,y) {
 //   let result = "";
 // }
 
 // function checkLine(x,y) {
-//   let ResultingSquare = undefBlock
+//   let ResultingSquare = game.undefBlock
 //   for (let j=y-1; j >= 0; j--) {
 //     let NextSquare = game.board[x][j];
 //     if (NextSquare.availForPrimaryChain || NextSquare.availForSecondaryChain) {
@@ -41,14 +41,14 @@
 //       break;
 //     }
 //   }
-//   if (ResultingSquare !== undefBlock) {
+//   if (ResultingSquare !== game.undefBlock) {
 //     KeySquare.Lowest = ResultingSquare;
 
 //   }
 // }
 
 // function checkChainableBlockAbove(x,y) {
-//   let ResultingSquare = undefBlock;
+//   let ResultingSquare = game.undefBlock;
 //   for (let j=y-1; j >= 0; j--) {
 //     let NextSquare = game.board[x][j];
 //     if (NextSquare.availForPrimaryChain || NextSquare.availForSecondaryChain && !NextSquare.touched) {
@@ -61,7 +61,7 @@
 // }
 
 // function findFirstNonVacantBlock(x,y, dir) {
-//   let ResultingSquare = undefBlock;
+//   let ResultingSquare = game.undefBlock;
 //   for (let j=y + dir; j>=0 && j<grid.ROWS; j += dir) {
 //     if (game.board[c][j].color !== "vacant") {
 //       ResultingSquare = game.board[c][j].type
@@ -72,7 +72,7 @@
 // }
 
 // function checkChainableBlockBelow(x,y) {
-//   let ResultingSquare = undefBlock;
+//   let ResultingSquare = game.undefBlock;
 //   for (let j=y-1; j >= 0; j--) {
 //     let NextSquare = game.board[x][j];
 //     if (NextSquare.availForPrimaryChain || NextSquare.availForSecondaryChain) {
@@ -100,13 +100,13 @@
 //   console.log(game.frames, PairBlock, pair);
 //   let FirstBlock, SecondBlock, ThirdBlock;
 //   let result = "";
-//   KeySquare.First = KeySquare.Second = KeySquare.Third = JSON.parse(undefBlock);
+//   KeySquare.First = KeySquare.Second = KeySquare.Third = JSON.parse(game.undefBlock);
 
 //   // check above
 //   while (true) {
 //     if (pair === "B") [FirstBlock, SecondBlock] = [MainBlock, PairBlock];
 //     else if (pair === "A") [FirstBlock, SecondBlock] = [PairBlock, MainBlock];
-//     else [FirstBlock, SecondBlock] = [MainBlock, JSON.parse(undefBlock)];
+//     else [FirstBlock, SecondBlock] = [MainBlock, JSON.parse(game.undefBlock)];
 
 //     KeySquare.pair = pair;
 //     if (pair) {
@@ -152,7 +152,7 @@
 //   //       [FirstBlock, SecondBlock] = [MainBlock, PairBlock];
 //   //     else if ((pair === "L" && dir === 1) || (pair === "R" && dir === -1))
 //   //       [FirstBlock, SecondBlock] = [PairBlock, MainBlock];
-//   //     else [FirstBlock, SecondBlock] = [MainBlock, undefBlock];
+//   //     else [FirstBlock, SecondBlock] = [MainBlock, game.undefBlock];
 
 //   //     if (pair) {
 //   //       let [x, y] = [SecondBlock.x, SecondBlock.y];

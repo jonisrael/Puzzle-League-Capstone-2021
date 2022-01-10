@@ -715,6 +715,7 @@ export function checkTime() {
 
       break;
     case 6600:
+      if (game.mode === "training") break;
       game.messagePriority = "10 seconds before overtime!";
       playAnnouncer(
         announcer.hurryUpDialogue,
@@ -723,33 +724,40 @@ export function checkTime() {
       );
       break;
     case 6700:
+      if (game.mode === "training") break;
       game.messagePriority = "";
       break;
     case 6900:
+      if (game.mode === "training") break;
       game.messagePriority = "5 seconds before overtime...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer5, 0.2, true);
       break;
     case 6960:
+      if (game.mode === "training") break;
       game.messagePriority = "4 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer4, 0.2, true);
       break;
     case 7020:
+      if (game.mode === "training") break;
       game.messagePriority = "3 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
     case 7080:
+      if (game.mode === "training") break;
       game.messagePriority = "2 seconds before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
       break;
     case 7140:
+      if (game.mode === "training") break;
       game.messagePriority = "1 second before overtime...";
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
     case 7200:
+      if (game.mode === "training") break;
       game.messagePriority = "Overtime, I hope you're ready...";
       game.defaultMessage = game.message;
       playAnnouncer(
@@ -759,6 +767,7 @@ export function checkTime() {
       );
       break;
     case 7320:
+      if (game.mode === "training") break;
       game.messagePriority = "";
   }
 }
@@ -956,13 +965,7 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
           // ,
-          console.log(
-            touch,
-            TouchOrders[0].KeySquare,
-            match,
-            loadedAudios,
-            essentialAudios
-          );
+          console.log(touch, TouchOrders[0].KeySquare, match);
         if (event.keyCode === 89) {
           // y
           console.log(game, debug);
