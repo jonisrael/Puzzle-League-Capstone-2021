@@ -229,11 +229,10 @@ export const touch = {
   },
   mouseStart: { x: 2, y: 6 },
   selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
+  target: { x: 2, y: 6 }, // swap until target is reached
   moveOrderExists: false,
   moveOrderList: [],
   arrowList: [],
-  target: { x: 2, y: 6 }, // swap until target is reached
-  keySquare: { x: 2, y: 6 },
   swapOrderPrepared: false,
   doubleClickCounter: 0,
   doubleClickTimer: 0,

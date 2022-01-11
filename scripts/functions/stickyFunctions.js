@@ -27,12 +27,12 @@ import { pause } from "./pauseFunctions";
 // };
 const undefBlock =
   '{"name": "undefinedBlock", "x": -1, "y": -1, "color": "vacant", "type": "normal"}';
-export let SelectedBlock = JSON.parse(undefBlock);
-// export let TouchOrders[0] = JSON.parse(undefBlock);
+// export let SelectedBlock = JSON.parse(undefBlock);
+// export let blockOrders = JSON.parse(undefBlock);
 
 export const TouchOrder = {
   active: false,
-  target: [-1, -1],
+  target: { x: -1, y: -1 },
   Main: JSON.parse(undefBlock),
   KeySquare: {
     Highest: JSON.parse(undefBlock),
@@ -49,18 +49,6 @@ export const TouchOrder = {
   pair: "",
   solidGroundArray: [],
 };
-
-export let TouchOrders = [];
-for (let i = 0; i < 4; i++) {
-  TouchOrders[i] = JSON.parse(JSON.stringify(TouchOrder));
-}
-// console.log(TouchOrders);
-// export const orders = [
-//   JSON.parse(JSON.stringify(TouchOrders[0])),
-//   JSON.parse(JSON.stringify(TouchOrders[0])),
-//   JSON.parse(JSON.stringify(TouchOrders[0])),
-//   JSON.parse(JSON.stringify(TouchOrders[0]))
-// ];
 
 export let match = [[], [], []];
 
@@ -125,12 +113,13 @@ export function stickyCheck(x, y) {
   match[1] = [-1, -1];
   match[2] = [-1, -1];
 
-  SelectedBlock = game.board[x][y];
+  let MovingBlock = game.board[x][y];
+  let blockOrders = MovingBlock.swapOrders;
 
   if ((result = checkBufferedSwap(x, y))) {
     return !!result;
   }
-  if ((result = checkIfFallingBlockMatches(SelectedBlock))) {
+  if ((result = checkIfFallingBlockMatches(MovingBlock))) {
     console.log(game.frames, `results2:`, result, `${match}`);
     if (debug.enabled) playAudio(audio.chain9);
     return !!result;
@@ -139,9 +128,9 @@ export function stickyCheck(x, y) {
   // console.log("clear line info:", clearLine, lowKey, highKey);
   let dir;
   if (!clearLine) return false;
-  TouchOrders[0].KeySquare.Lowest = game.board[lowKey[0]][lowKey[1]];
+  blockOrders.KeySquare.Lowest = game.board[lowKey[0]][lowKey[1]];
   if (highKey[1] - 1 < 0) return false;
-  TouchOrders[0].KeySquare.Highest = game.board[highKey[0]][highKey[1]];
+  blockOrders.KeySquare.Highest = game.board[highKey[0]][highKey[1]];
 
   let result = "";
   let MainBlock;
@@ -150,48 +139,48 @@ export function stickyCheck(x, y) {
   switch (clearLine[0]) {
     case "a":
       if (
-        isSolidPair(SelectedBlock, game.board[x][y - 1]) &&
-        (0 === 0 || containsSolidBlockPairOnRow(SelectedBlock, highKey[1] - 1))
+        isSolidPair(MovingBlock, game.board[x][y - 1]) &&
+        (0 === 0 || containsSolidBlockPairOnRow(MovingBlock, highKey[1] - 1))
       ) {
         match[1] = [x, y - 1];
         // result = "TPair Main |A|";
-        result = checkAboveMatch(true);
+        result = checkAboveMatch(true, MovingBlock);
       } else if (
-        isSolidPair(SelectedBlock, game.board[x][y + 1]) &&
-        (0 === 0 || containsSolidBlockPairOnRow(SelectedBlock, highKey[1] - 1))
+        isSolidPair(MovingBlock, game.board[x][y + 1]) &&
+        (0 === 0 || containsSolidBlockPairOnRow(MovingBlock, highKey[1] - 1))
       ) {
         match[1] = [x, y + 1];
         // result = "Main BPair |A|";
-        result = checkAboveMatch(true);
+        result = checkAboveMatch(true, MovingBlock);
       } else {
-        result = checkAboveMatch(false);
+        result = checkAboveMatch(false, MovingBlock);
       }
       if (debug.enabled && result) playAudio(audio.announcer1);
       break;
     case "s":
       dir = clearLine === "sideL" ? -1 : 1;
       MainBlock = Math.abs(
-        TouchOrders[0].KeySquare.Lowest.x - SelectedBlock.x === dir
+        blockOrders.KeySquare.Lowest.x - MovingBlock.x === dir
       )
-        ? game.board[SelectedBlock.x][SelectedBlock.y]
-        : game.board[SelectedBlock.x + dir][SelectedBlock.y];
-      if (MainBlock.x !== SelectedBlock.x) {
-        if (!isSolidPair(MainBlock, SelectedBlock)) break;
+        ? game.board[MovingBlock.x][MovingBlock.y]
+        : game.board[MovingBlock.x + dir][MovingBlock.y];
+      if (MainBlock.x !== MovingBlock.x) {
+        if (!isSolidPair(MainBlock, MovingBlock)) break;
         match[0] = [MainBlock.x, MainBlock.y];
       }
       console.log("right here");
       if (
         MainBlock.x - dir >= 0 &&
         MainBlock.x - dir < grid.COLS &&
-        isSolidPair(SelectedBlock, game.board[MainBlock.x - dir][y])
+        isSolidPair(MovingBlock, game.board[MainBlock.x - dir][y])
       ) {
         console.log("continuing");
         // pair is left, but clear line is right
         match[1] = [MainBlock.x - dir, y];
-        result = checkSideMatch(true, dir);
+        result = checkSideMatch(true, dir, blockOrders);
       } else {
         // pair is right, but clear line is left
-        result = checkSideMatch(false, dir);
+        result = checkSideMatch(false, dir, blockOrders);
       }
       if (debug.enabled && result) playAudio(audio.announcer2);
       break;
@@ -199,7 +188,7 @@ export function stickyCheck(x, y) {
       MainBlock = game.board[x][y];
       if (y > grid.ROWS - 2) break; // must be at minimum third row from bottom
       if (debug.enabled) playAudio(audio.announcerGo);
-      result = checkBelowMatch(MainBlock);
+      result = checkBelowMatch(MainBlock, blockOrders);
       break;
   }
   console.log(game.frames, `results1:`, result, `${match}`);
@@ -211,10 +200,10 @@ export function stickyCheck(x, y) {
   return !!result; // send true if not falsy value
 }
 
-function checkBelowMatch(FirstBlock) {
+function checkBelowMatch(FirstBlock, blockOrders) {
   let [x, y] = [FirstBlock.x, FirstBlock.y];
-  let lowKeyX = TouchOrders[0].KeySquare.Lowest.x;
-  let lowKeyY = TouchOrders[0].KeySquare.Lowest.y;
+  let lowKeyX = blockOrders.KeySquare.Lowest.x;
+  let lowKeyY = blockOrders.KeySquare.Lowest.y;
   let result = "";
   let ThirdBlock;
 
@@ -227,7 +216,7 @@ function checkBelowMatch(FirstBlock) {
       ThirdBlock = findSolidBlockBelow(x, y + 2);
       if (isSolidPair(FirstBlock, ThirdBlock)) {
         match[2] = [ThirdBlock.x, ThirdBlock.y];
-        TouchOrders[0].pair = pair;
+        blockOrders.pair = pair;
         return "Main + BPair |B| Bot1";
       }
     }
@@ -236,7 +225,7 @@ function checkBelowMatch(FirstBlock) {
     ThirdBlock = findSolidBlockBelow(lowKeyX, lowKeyY);
     if (isSolidPair(FirstBlock, ThirdBlock)) {
       match[2] = [ThirdBlock.x, ThirdBlock.y];
-      TouchOrders[0].pair = pair;
+      blockOrders.pair = pair;
       return "TPair + Main |B| Bot1";
     }
   }
@@ -252,7 +241,7 @@ function checkBelowMatch(FirstBlock) {
       console.log(ThirdBlock);
       if (isSolidPair(FirstBlock, ThirdBlock)) {
         match[2] = [ThirdBlock.x, ThirdBlock.y];
-        TouchOrders[0].pair = pair;
+        blockOrders.pair = pair;
         return pair == "L" ? "LPair + Main |B| Lef1" : "Main + RPair |B| Rgt1";
       }
     }
@@ -261,15 +250,15 @@ function checkBelowMatch(FirstBlock) {
       ThirdBlock = game.board[x - 1 * dir][lowKeyY];
       if (isSolidPair(FirstBlock, ThirdBlock)) {
         match[2] = [ThirdBlock.x, ThirdBlock.y];
-        TouchOrders[0].pair = pair;
+        blockOrders.pair = pair;
         return pair == "L" ? "LPair + Main |B| Rgt1" : "Main + RPair |B| Lef1";
       }
     }
   }
 
-  TouchOrders[0].pair = pair; // pair is empty
+  blockOrders.pair = pair; // pair is empty
 
-  // do tasks that involve no pairs. lowkey is very important
+  // do tasks that involve no pairs. lowKey var is very important
 
   // do vertical one. Second block must be at minimum on second row
   if (lowKeyY < grid.ROWS - 2) {
@@ -327,159 +316,30 @@ function checkBelowMatch(FirstBlock) {
       return "Main |B| Lef1 Lef2";
     }
   }
-
-  // let SolidBlockBelow_1 = findSolidBlockBelow(x, y);
-  // let SolidBlockBelow_2;
-
-  // if (pair === "BPair" || pair === "TPair") {
-  //   if (isSolidPair(FirstBlock, SolidBlockBelow_1)) {
-  //     match[2] = [x, SolidBlockBelow_1.y];
-  //     result =
-  //       pair === "BPair" ? "Main + BPair |B| Bot" : "TPair + Main |B| Bot";
-  //   }
-  //   // if a solid block exists between main block, no need to check any more cases.
-  //   else if (pair === "BPair") return false;
-  // }
-
-  // TouchOrders[0].solidGroundArray = checkSolidGround(
-  //   TouchOrders[0].KeySquare.Lowest.x,
-  //   TouchOrders[0].KeySquare.Lowest.y
-  // );
-  // if (!TouchOrders[0].solidGroundArray) return false;
-  // console.log(
-  //   game.frames,
-  //   "Solid ground array:",
-  //   TouchOrders[0].solidGroundArray
-  // );
-  // ThirdBlock;
-
-  // while (true) {
-  //   if (pair === "LPair" && TouchOrders[0].solidGroundArray.includes(-2)) {
-  //     // playAudio(audio.announcer1);
-  //     ThirdBlock = findSolidBlockAbove(
-  //       x - 2,
-  //       TouchOrders[0].KeySquare.Lowest.y
-  //     );
-  //     if (isSolidPair(FirstBlock, ThirdBlock)) {
-  //       match[2] = [x - 2, ThirdBlock.y];
-  //       result = "LPair + Main |B| Lef2";
-  //       break;
-  //     }
-  //   }
-  //   if (pair === "LPair" && TouchOrders[0].solidGroundArray.includes(1)) {
-  //     // playAudio(audio.announcer2);
-  //     ThirdBlock = findSolidBlockAbove(
-  //       x + 1,
-  //       TouchOrders[0].KeySquare.Lowest.y
-  //     );
-  //     if (isSolidPair(FirstBlock, ThirdBlock)) {
-  //       match[2] = [x + 1, ThirdBlock.y];
-  //       result = "LPair + Main |B| Rgt1";
-  //       break;
-  //     }
-  //   }
-  //   if (pair === "RPair" && TouchOrders[0].solidGroundArray.includes(-1)) {
-  //     // playAudio(audio.announcer3);
-  //     ThirdBlock = findSolidBlockAbove(
-  //       x - 1,
-  //       TouchOrders[0].KeySquare.Lowest.y
-  //     );
-  //     if (isSolidPair(FirstBlock, ThirdBlock)) {
-  //       match[2] = [x - 1, ThirdBlock.y];
-  //       result = "Main + RPair |B| Lef1";
-  //       break;
-  //     }
-  //   }
-  //   if (pair === "RPair" && TouchOrders[0].solidGroundArray.includes(2)) {
-  //     // playAudio(audio.announcer4);
-  //     ThirdBlock = findSolidBlockAbove(
-  //       x + 2,
-  //       TouchOrders[0].KeySquare.Lowest.y
-  //     );
-  //     if (isSolidPair(FirstBlock, ThirdBlock)) {
-  //       match[2] = [x + 2, ThirdBlock.y];
-  //       result = "Main + RPair |B| Rgt2";
-  //       break;
-  //     }
-  //   }
-
-  //   // Now check no pair versions
-  //   let SecondBlock, ThirdBlock;
-
-  //   // First check below
-  //   if (TouchOrders[0].KeySquare.Lowest.y + 1 < grid.ROWS) {
-  //     SecondBlock = game.board[x][TouchOrders[0].KeySquare.Lowest.y + 1];
-  //     if (isSolidPair(FirstBlock, SecondBlock)) {
-  //       match[1] = [SecondBlock.x, SecondBlock.y];
-  //       ThirdBlock = findSolidBlockBelow(SecondBlock.x, SecondBlock.y);
-  //       if (ThirdBlock.x !== -1 && isSolidPair(FirstBlock, ThirdBlock)) {
-  //         match[2] = [ThirdBlock.x, ThirdBlock.y];
-  //         result = "Main |B| Bel1 Bel2";
-  //         // playAudio(audio.announcer1);
-  //         break;
-  //       }
-  //     }
-  //   }
-
-  //   // then check left and right 2
-  //   let [leftIsSolidPair, rightIsSolidPair] = [false, false];
-  //   for (let dir = -1; dir < 2; dir += 2) {
-  //     console.log("for loop dir:", dir);
-  //     if (TouchOrders[0].solidGroundArray.includes(dir)) {
-  //       SecondBlock = game.board[x + dir][TouchOrders[0].KeySquare.Lowest.y];
-  //       if (SecondBlock.x !== -1 && isSolidPair(FirstBlock, SecondBlock)) {
-  //         match[1] = [SecondBlock.x, SecondBlock.y];
-  //         dir === -1 ? (leftIsSolidPair = true) : (rightIsSolidPair = true);
-  //         if (TouchOrders[0].solidGroundArray.includes(2 * dir)) {
-  //           ThirdBlock =
-  //             game.board[x + 2 * dir][TouchOrders[0].KeySquare.Lowest.y];
-  //           if (ThirdBlock.x !== -1 && isSolidPair(FirstBlock, ThirdBlock)) {
-  //             match[2] = [ThirdBlock.x, ThirdBlock.y];
-  //             result = `Main |B| ${dir === -1 ? "Lef1 + Lef2" : "Rgt1 + Rgt2"}`;
-  //             // playAudio(audio.announcer2);
-  //             break;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   console.log(leftIsSolidPair, rightIsSolidPair);
-  //   // then check left 1 right 1
-  //   if (leftIsSolidPair && rightIsSolidPair) {
-  //     SecondBlock = game.board[x - 1][TouchOrders[0].KeySquare.Lowest.y];
-  //     match[1] = [SecondBlock.x, SecondBlock.y];
-  //     ThirdBlock = game.board[x + 1][TouchOrders[0].KeySquare.Lowest.y];
-  //     match[2] = [ThirdBlock.x, ThirdBlock.y];
-  //     // playAudio(audio.announcer3);
-  //     result = "Main |B| Lef1 + Rgt1";
-  //     break;
-  //   }
-  //   break;
-  // }
   return result;
 }
 
-function checkAboveMatch(single = false) {
+function checkAboveMatch(single = false, MovingBlock) {
+  let blockOrders = MovingBlock.swapOrders;
   let [keyX, keyY] = [
-    TouchOrders[0].KeySquare.Highest.x,
-    TouchOrders[0].KeySquare.Highest.y,
+    blockOrders.KeySquare.Highest.x,
+    blockOrders.KeySquare.Highest.y,
   ];
   let AboveBlock_1 = findSolidBlockAbove(keyX, keyY);
   if (!AboveBlock_1) return false;
   if (
-    isSolidPair(SelectedBlock, AboveBlock_1) ||
-    chainableBlockPairAbove(SelectedBlock)
+    isSolidPair(MovingBlock, AboveBlock_1) ||
+    chainableBlockPairAbove(MovingBlock)
   ) {
     if (single) {
       match[2] = [AboveBlock_1.x, AboveBlock_1.y];
       // cancel sticky if a three is already ready to chain
       if (
-        SelectedBlock.color ===
-        game.board[SelectedBlock.x][SelectedBlock.y - 1].color
+        MovingBlock.color === game.board[MovingBlock.x][MovingBlock.y - 1].color
       ) {
         if (
           isSolidPair(
-            SelectedBlock,
+            MovingBlock,
             game.board[AboveBlock_1.x][AboveBlock_1.y - 1]
           )
         ) {
@@ -490,7 +350,7 @@ function checkAboveMatch(single = false) {
     }
     match[1] = [AboveBlock_1.x, AboveBlock_1.y];
     let AboveBlock_2 = findSolidBlockAbove(AboveBlock_1.x, AboveBlock_1.y - 1);
-    if (isSolidPair(SelectedBlock, AboveBlock_2)) {
+    if (isSolidPair(MovingBlock, AboveBlock_2)) {
       match[2] = [AboveBlock_2.x, AboveBlock_2.y];
       return "Single |A| Abv1 Abv2";
     }
@@ -498,20 +358,21 @@ function checkAboveMatch(single = false) {
   return false;
 }
 
-function checkSideMatch(single = false, dir) {
+function checkSideMatch(single = false, dir, MovingBlock) {
+  let blockOrders = MovingBlock.swapOrders;
   let [highKeyX, highKeyY] = [
-    TouchOrders[0].KeySquare.Highest.x,
-    TouchOrders[0].KeySquare.Highest.y,
+    blockOrders.KeySquare.Highest.x,
+    blockOrders.KeySquare.Highest.y,
   ];
   let [lowKeyX, lowKeyY] = [
-    TouchOrders[0].KeySquare.Lowest.x,
-    TouchOrders[0].KeySquare.Lowest.y,
+    blockOrders.KeySquare.Lowest.x,
+    blockOrders.KeySquare.Lowest.y,
   ];
   let MainBlock = Math.abs(
-    TouchOrders[0].KeySquare.Lowest.x - SelectedBlock.x === dir
+    blockOrders.KeySquare.Lowest.x - MovingBlock.x === dir
   )
-    ? game.board[SelectedBlock.x][SelectedBlock.y]
-    : game.board[SelectedBlock.x + dir][SelectedBlock.y];
+    ? game.board[MovingBlock.x][MovingBlock.y]
+    : game.board[MovingBlock.x + dir][MovingBlock.y];
   // make sure that the lowest key square is on same level as selected block
   if (MainBlock.y !== lowKeyY) return false;
   if (highKeyX < 0 || highKeyX >= grid.COLS) return false;
@@ -524,8 +385,8 @@ function checkSideMatch(single = false, dir) {
     if (single) {
       match[2] = [SideBlock_1.x, SideBlock_1.y];
       // If swapping with same block and already paired, cancel redundant sticky
-      // if (MainBlock.x === SelectedBlock.x) return false;
-      // if (MainBlock.x !== SelectedBlock.x && MainBlock.swapDirection === -dir)
+      // if (MainBlock.x === MovingBlock.x) return false;
+      // if (MainBlock.x !== MovingBlock.x && MainBlock.swapDirection === -dir)
       //   return false;
       let s = dir === -1 ? "L" : "R";
       let t = dir === -1 ? "R" : "L";
@@ -581,7 +442,7 @@ function findClearLine(x, y) {
     let useOriginalSquare = game.board[x][y].color === "vacant";
     for (let j = y - 1; j >= 0; j--) {
       if (blockIsSolid(game.board[x][j])) {
-        if (SelectedBlock.color !== game.board[x][j].color) break;
+        if (game.board[x][y].color !== game.board[x][j].color) break;
       }
       if (CLEARING_TYPES.includes(game.board[x][j].type)) {
         keySquare = useOriginalSquare ? [x, y] : [x, j];
@@ -683,7 +544,7 @@ function isSolidPair(Square_1, Square_2) {
   );
 }
 
-function checkPairWithFirstNonVacantBlock(Square) {
+function checkPairWithFirstNonVacantBlock(Square, blockOrders) {
   if (!Square) return JSON.parse(undefBlock);
   let [x, y] = [Square.x, Square.y];
   if (y !== grid.ROWS - 1) {
@@ -691,7 +552,7 @@ function checkPairWithFirstNonVacantBlock(Square) {
       if (game.board[x][j].color !== "vacant") {
         if (
           !isSolidPair(Square, game.board[x][j]) ||
-          j >= TouchOrders[0].KeySquare.Highest.y
+          j >= blockOrders.KeySquare.Highest.y
         ) {
           break;
         } else {

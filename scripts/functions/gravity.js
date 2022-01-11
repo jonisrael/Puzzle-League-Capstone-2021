@@ -13,7 +13,6 @@ import {
 import { checkMatch } from "./matchAndScoreFunctions";
 import { updateGrid } from "./updateGrid";
 import { isChainActive } from "../../puzzleleague";
-import { SelectedBlock } from "./stickyFunctions";
 
 export function doGravity(gameSpeed) {
   let possibleLandedLocations = [];
@@ -57,12 +56,12 @@ export function doGravity(gameSpeed) {
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
           if (
-            touch.moveOrderExists &&
-            SelectedBlock.x === c &&
-            SelectedBlock.y === r
+            game.cursor_type !== "defaultCursor" &&
+            game.cursor.x === c &&
+            game.cursor.y === r
           ) {
             game.cursor.y += 1;
-            touch.target.y += 1;
+            // touch.target.y += 1;
           }
           transferProperties(game.board[c][r], game.board[c][r + 1], "to");
           game.board[c][r + 1].airborne = true;

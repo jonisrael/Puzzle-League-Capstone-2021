@@ -79,12 +79,7 @@ import {
   lastIndex,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
-import {
-  TouchOrder,
-  TouchOrders,
-  match,
-  SelectedBlock,
-} from "./scripts/functions/stickyFunctions";
+import { TouchOrder, match } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 // import {
 //   analyzeBoard,
@@ -183,11 +178,11 @@ class Block {
   // drawGridLines() {
   //   let filename = "grid_line";
   //   if (this.y === 0) filename = "grid_line_red";
-  //   if (this.x === TouchOrders[0].KeySquare.First.x && this.y === TouchOrders[0].KeySquare.First.y)
+  //   if (this.x === this.swapOrders.KeySquare.First.x && this.y === this.swapOrders.KeySquare.First.y)
   //     filename = "light_up";
-  //   if (this.x === TouchOrders[0].KeySquare.Second.x && this.y === TouchOrders[0].KeySquare.Second.y)
+  //   if (this.x === this.swapOrders.KeySquare.Second.x && this.y === this.swapOrders.KeySquare.Second.y)
   //     filename = "light_up";
-  //   if (this.x === TouchOrders[0].KeySquare.Third.x && this.y === TouchOrders[0].KeySquare.Third.y)
+  //   if (this.x === this.swapOrders.KeySquare.Third.x && this.y === this.swapOrders.KeySquare.Third.y)
   //     filename = "light_up";
 
   //   win.ctx.drawImage(
@@ -207,16 +202,20 @@ class Block {
   }
 
   drawArrows() {
-    if (touch.target.x === -1 || touch.target.y === -1) {
-      [touch.target.x, touch.target.y] = [game.cursor.x, game.cursor.y];
+    if (this.swapOrders.target.x === -1 || this.swapOrders.target.y === -1) {
+      [this.swapOrders.target.x, this.swapOrders.target.y] = [
+        game.cursor.x,
+        game.cursor.y,
+      ];
       touch.arrowList.length = 0;
       return;
     }
     let fileName = "";
-    let move = touch.moveType;
+    let move = this.swapOrders.moveType;
     let coordinates = `${this.x},${this.y}`;
     if (touch.moveOrderExists) {
-      let dir = touch.target.x < touch.mouseStart.x ? "Left" : "Right";
+      let dir =
+        this.swapOrders.target.x < touch.mouseStart.x ? "Left" : "Right";
       if (touch.arrowList[0] === coordinates)
         fileName = `arrow${dir}${move}Start`;
       else if (touch.arrowList[touch.arrowList.length - 1] === coordinates)
@@ -291,9 +290,9 @@ class Block {
 
     if (game.cursor_type !== "defaultCursor") {
       if (
-        this.x === touch.target.x &&
-        this.y === touch.target.y &&
-        touch.moveOrderExists
+        this.swapOrders.active &&
+        this.x === this.swapOrders.target.x &&
+        this.y === this.swapOrders.target.y
       ) {
         win.ctx.drawImage(
           loadedSprites["debugRed"],
@@ -316,8 +315,8 @@ class Block {
 
       if (
         game.currentChain > 0 &&
-        this.x === TouchOrders[0].KeySquare.Highest.x &&
-        this.y === TouchOrders[0].KeySquare.Highest.y
+        this.x === this.swapOrders.KeySquare.Highest.x &&
+        this.y === this.swapOrders.KeySquare.Highest.y
       ) {
         win.ctx.drawImage(
           loadedSprites["debugGreen"],
@@ -328,8 +327,8 @@ class Block {
 
       if (
         game.currentChain > 0 &&
-        this.x === TouchOrders[0].KeySquare.Lowest.x &&
-        this.y === TouchOrders[0].KeySquare.Lowest.y
+        this.x === this.swapOrders.KeySquare.Lowest.x &&
+        this.y === this.swapOrders.KeySquare.Lowest.y
       ) {
         win.ctx.drawImage(
           loadedSprites["debugMagenta"],
@@ -494,7 +493,7 @@ export function drawGrid() {
               touch.moveOrderExists = false;
             if (!touch.moveOrderExists && touch.arrowList.length)
               touch.arrowList = [];
-            Square.drawArrows();
+            // Square.drawArrows();
           }
         }
       }
@@ -618,8 +617,8 @@ export function createNewRow() {
 
   if (touch.enabled) {
     touch.mouse.y -= 1;
-    touch.selectedBlock.y -= 1;
-    touch.target.y -= 1;
+    // touch.selectedBlock.y -= 1;
+    // touch.target.y -= 1;
   }
 
   for (let c = 0; c < grid.COLS; c++) {
@@ -965,7 +964,7 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
           // ,
-          console.log(touch, TouchOrders[0].KeySquare, match);
+          console.log(touch, this.swapOrders.KeySquare, match);
         if (event.keyCode === 89) {
           // y
           console.log(game, debug);
@@ -1006,24 +1005,6 @@ function KEYBOARD_CONTROL(event) {
         }
 
         // Debug codes
-      } else if (event.keyCode == 67 && debug.freeze == 1) {
-        // c
-        updateGrid(true);
-      } else if (event.keyCode == 84) {
-        // t
-        debug.slowdown = (debug.slowdown + 1) % 2;
-        if (debug.slowdown) {
-          console.log("slowdown mode enabled");
-          console.log(
-            "In slowdown mode, block clear, block gravity, and block stall timers are set to 2 seconds."
-          );
-          game.boardRiseSpeed = preset.speedValues[0];
-          game.blockStallTime = 120;
-          game.blockClearTime = 120;
-        } else {
-          console.log("slowdown mode disabled");
-          updateLevelEvents(game.level);
-        }
       } else if (event.keyCode == 79) {
         // o
         debug.show = (debug.show + 1) % 2;
@@ -1249,7 +1230,7 @@ export function gameLoop() {
       // game.pauseStack = areAllBlocksGrounded();
       doGravity(perf.gameSpeed); // may need to run twice
       checkMatch();
-      updateGrid();
+      updateGrid(game.swapPressed ? [[game.cursor.x, game.cursor.y]] : []);
       isChainActive();
 
       if (!game.boardRiseSpeed)
@@ -1321,35 +1302,6 @@ export function gameLoop() {
             if (game.rise == 0) game.rise = 2;
             game.currentlyQuickRaising = true;
             game.raiseDelay = 0;
-          }
-        }
-      }
-
-      if (game.swapPressed) {
-        if (!touch.enabled || !touch.moveOrderExists) {
-          game.swapPressed = false;
-          trySwappingBlocks(game.cursor.x, game.cursor.y);
-        } else {
-          // for (let order in touch.moveOrderList) {
-          //   let [c, r] = [order[0], order[1]];
-          //   if (game.board[c][r].x < game.board[c][r].target.x) {
-          //     trySwappingBlocks(c, r);
-          //   } else if (game.board[c][r].x > game.board[c][r].target.x) {
-          //     trySwappingBlocks(c - 1, r);
-          //   } else {
-          //     game.board[c][r].swapOrders.active = false;
-          //   }
-          // }
-          // game.swapPressed = false;
-          if (touch.selectedBlock.x < touch.target.x) {
-            trySwappingBlocks(touch.selectedBlock.x, touch.selectedBlock.y);
-          } else if (touch.selectedBlock.x > touch.target.x) {
-            trySwappingBlocks(touch.selectedBlock.x - 1, touch.selectedBlock.y);
-          } else {
-            game.swapPressed = false;
-            touch.moveOrderExists = false; // block has reached target
-            if (debug.enabled)
-              console.log("frame", game.frames, "target reached.");
           }
         }
       }

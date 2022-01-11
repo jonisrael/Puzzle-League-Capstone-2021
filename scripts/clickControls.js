@@ -1,5 +1,4 @@
 import { action } from "./controls";
-import { SelectedBlock } from "./functions/stickyFunctions";
 import {
   blockIsSolid,
   CLEARING_TYPES,
@@ -74,37 +73,41 @@ export function selectBlock() {
   }
 }
 
-export function moveBlockByRelease() {
+export function moveBlockByRelease(x, y) {
+  let blockOrders = game.board[x][y].swapOrders;
   if (cpu.enabled) return;
-  if (
-    touch.mouse.y <= touch.selectedBlock.y + 20 &&
-    touch.mouse.y >= touch.selectedBlock.y - 20 &&
-    (touch.mouse.x !== touch.selectedBlock.x ||
-      touch.mouse.y !== touch.selectedBlock.y)
-  ) {
-    touch.target.x = touch.mouse.x; // move to x--coordinate
-    touch.target.y = touch.selectedBlock.y; // remains on same row
+  console.log(x, y, touch.mouse.x, touch.mouse.y);
+  blockOrders.target.x = touch.mouse.x; // move to x--coordinate
+  blockOrders.target.y = y; // remains on same row
+  if (touch.mouse.x !== x) {
+    blockOrders.active = true;
     touch.moveOrderExists = true;
-    game.swapPressed = true;
-    if (game.currentChain === 0) debug.updateGameState = true;
+    // game.swapPressed = true;
   }
+
+  if (game.currentChain === 0) debug.updateGameState = true;
+
   touch.thereIsABlockCurrentlySelected = false;
 
-  let dir = touch.target.x < touch.selectedBlock.x ? -1 : 1;
-  touch.moveType = "Move";
-  for (let i = touch.selectedBlock.x; i !== touch.target.x; i += dir) {
-    if (CLEARING_TYPES.includes(game.board[i][touch.selectedBlock.y].type)) {
-      touch.moveType = "Buffer";
-      // touch.target.x = i;
-      // touch.target.y = touch.selectedBlock.y;
+  let dir = blockOrders.target.x < x ? -1 : 1;
+  blockOrders.moveType = "Move";
+  for (let i = x; i !== blockOrders.target.x; i += dir) {
+    if (CLEARING_TYPES.includes(game.board[i][y].type)) {
+      blockOrders.moveType = "Buffer";
+      // blockOrders.target.x = i;
+      // blockOrders.target.y = touch.selectedBlock.y;
       // break;
     }
     touch.arrowList.push(`${i},${touch.selectedBlock.y}`);
   }
-  if (CLEARING_TYPES.includes(game.board[touch.target.x][touch.target.y].type))
-    touch.moveType = "Buffer";
+  if (
+    CLEARING_TYPES.includes(
+      game.board[blockOrders.target.x][blockOrders.target.y].type
+    )
+  )
+    blockOrders.moveType = "Buffer";
   if (touch.arrowList)
-    touch.arrowList.push(`${touch.target.x},${touch.target.y}`);
+    touch.arrowList.push(`${blockOrders.target.x},${blockOrders.target.y}`);
   // game.cursor.x = touch.mouse.x;
   // game.cursor.y = touch.mouse.y;
 }
@@ -157,8 +160,8 @@ function doMouseUp(e) {
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
   updateMousePosition(win.canvas, e);
-  if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists)
-    moveBlockByRelease();
+  if (touch.thereIsABlockCurrentlySelected)
+    moveBlockByRelease(touch.selectedBlock.x, touch.selectedBlock.y);
 }
 
 export function createClickListeners() {
@@ -206,7 +209,7 @@ export function createClickListeners() {
 //     game.cursor.y = touch.mouse.y;
 //     return; // changed cursor, but no swap done.
 //   }
-//   touch.target.x = touch.mouse.x; // move based on x coordinate
-//   touch.target.y = touch.selectedBlock.y; // moved based on the row of the block
+//   blockOrders.target.x = touch.mouse.x; // move based on x coordinate
+//   blockOrders.target.y = touch.selectedBlock.y; // moved based on the row of the block
 //   touch.moveOrderExists = true; // now, do continuous swapping function.
 // }

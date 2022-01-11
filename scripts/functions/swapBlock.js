@@ -104,11 +104,13 @@ export function trySwappingBlocks(x, y) {
       debug.pastGameState = JSON.parse(JSON.stringify(game));
       debug.updateGameState = false;
     }
-    if (touch.enabled && touch.moveOrderExists) {
-      touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
-      game.cursor.x = touch.selectedBlock.x;
-      game.cursor.y = touch.selectedBlock.y;
-      if (touch.arrowList.length) touch.arrowList.shift();
+    if (
+      touch.enabled &&
+      touch.moveOrderExists &&
+      game.cursor.type !== "defaultCursor" &&
+      touch.arrowList.length
+    ) {
+      touch.arrowList.shift();
     }
     cpu.swapSuccess = true;
     playAudio(audio.select);
@@ -124,6 +126,16 @@ export function trySwappingBlocks(x, y) {
     LeftBlock.touched = RightBlock.touched = true;
     LeftBlock.availForPrimaryChain = RightBlock.availForPrimaryChain = false;
     LeftBlock.availForSecondaryChain = RightBlock.availForSecondaryChain = false;
+    if (game.cursor_type !== "defaultCursor" && game.cursor.y === LeftBlock.y) {
+      if (game.cursor.x === LeftBlock.x && LeftBlock.swapDirection === 1) {
+        game.cursor.x = RightBlock.x;
+      } else if (
+        game.cursor.x == RightBlock.x &&
+        RightBlock.swapDirection == -1
+      ) {
+        game.cursor.x = LeftBlock.x;
+      }
+    }
 
     // if (y < 11) {
     //   //Check to see if block is about to fall
@@ -192,10 +204,7 @@ export function trySwappingBlocks(x, y) {
 
     if (touch.moveOrderExists) {
       try {
-        touch.moveOrderExists = !stickyCheck(
-          touch.selectedBlock.x,
-          touch.selectedBlock.y
-        );
+        touch.moveOrderExists = !stickyCheck(x, y);
         // touch.moveOrderExists = !sticky(
         //   touch.selectedBlock.x,
         //   touch.selectedBlock.y
@@ -239,6 +248,7 @@ export function trySwappingBlocks(x, y) {
       //   RightBlock
       // );
       touch.moveOrderExists = false;
+      LeftBlock.swapOrders.active = RightBlock.swapOrders.active = false;
       game.swapPressed = false;
     }
     win.mainInfoDisplay.style.color = "purple";

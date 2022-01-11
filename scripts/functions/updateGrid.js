@@ -12,7 +12,7 @@ import { playAudio } from "./audioFunctions";
 import { isBlockAirborne } from "./gravity";
 import { trySwappingBlocks } from "./swapBlock";
 
-export function updateGrid(frameAdvance = false) {
+export function updateGrid(doSwap = []) {
   game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
   game.boardIsClearing = false;
   game.boardHasAirborneBlock = false;
@@ -33,7 +33,9 @@ export function updateGrid(frameAdvance = false) {
       if (Square.airborne) {
         game.boardHasAirborneBlock = true;
       }
-      if (Square.type === "swapping") game.boardHasSwappingBlock = true;
+      if (Square.type === "swapping") {
+        game.boardHasSwappingBlock = true;
+      }
       if (Square.swapOrders.active) {
         touch.moveOrderExists = true;
         if (touch.disableAllMoveOrders) Square.swapOrders.active = false;
@@ -106,6 +108,16 @@ export function updateGrid(frameAdvance = false) {
 
       if (Square.type === "stalling" && Square.timer === 0) {
         Square.type = "normal";
+      }
+
+      if (Square.swapOrders.active) {
+        if (Square.x < Square.swapOrders.target.x) {
+          doSwap.push([Square.x, Square.y]);
+        } else if (Square.x > Square.swapOrders.target.x) {
+          doSwap.push([Square.x - 1, Square.y]);
+        } else {
+          Square.swapOrders.active = false;
+        }
       }
 
       if (Square.type === "swapping" && Square.timer === 0) {
@@ -195,4 +207,15 @@ export function updateGrid(frameAdvance = false) {
     } // end x
   } // end y
   touch.disableAllMoveOrders = false;
+
+  if (doSwap.length) {
+    game.swapPressed = false;
+    console.log(doSwap);
+    doSwap.forEach((coord) => {
+      console.log(coord);
+      trySwappingBlocks(coord[0], coord[1]);
+    });
+  } else {
+    touch.moveOrderExists = false;
+  }
 }
