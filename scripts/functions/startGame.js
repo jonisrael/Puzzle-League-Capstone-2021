@@ -175,7 +175,7 @@ function createHeadsUpDisplay() {
   win.timeHeader.style.color = "black";
   win.levelHeader.innerHTML = "LEVEL";
   win.levelHeader.style.color = "black";
-  win.multiplierHeader.innerHTML = "SCORE MULTIPLIER";
+  win.multiplierHeader.innerHTML = "MULTIPLIER";
   win.multiplierHeader.style.color = "black";
 
   // append HUD elements

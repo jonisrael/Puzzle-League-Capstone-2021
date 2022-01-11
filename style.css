@@ -57,7 +57,7 @@ body {
 
 #main-info {
   color: #ff8484;
-  font-size: xx-large;
+  font-size: x-large;
 }
 
 .app-message-display {
@@ -69,7 +69,7 @@ body {
 .default-button {
   margin: 20px;
   border-radius: 10px;
-  padding: 50px;
+  padding: 30px;
   background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
   font-size: x-large;
   align-items: center;
@@ -126,15 +126,17 @@ section {
     padding-left: 30px; */
 }
 
-/* #top-section {
-    justify-content: center;
-} */
+#top-section {
+  width: 90%;
+  margin: 0 auto;
+}
 
 #game-info {
   /* display: table-row; */
   display: inline;
   align-items: center;
   margin: 0 auto;
+  /* max-width: 80%; */
 }
 
 #accept-game-controls {
@@ -145,7 +147,7 @@ section {
 #game-info td {
   font-size: small;
   padding: 0.2rem;
-  width: 80px;
+  /* width: 10%; */
 }
 
 #leaderboard-page {
@@ -155,6 +157,7 @@ section {
 #game-container,
 #options-menu {
   display: flex;
+  /* min-height: 100%; */
 }
 
 #app-container {
@@ -175,7 +178,7 @@ section {
 }
 
 #fps-display {
-  font-size: 0.6em;
+  font-size: 0rem;
   text-align: left;
   padding-top: 2px;
 }
@@ -210,10 +213,15 @@ section {
   justify-content: center;
 }
 
+/* #column1,
+#column3 {
+  display: none !important;
+} */
+
 #column1,
 #yes-option {
   display: flex;
-  padding-left: 3rem;
+  /* padding-left: 3rem; */
   margin: auto 0;
   justify-content: center;
 }
@@ -270,11 +278,12 @@ header {
 }
 
 #best-scores-table {
+  /* display: none; */
   max-width: 75%;
   margin: 0 auto;
-  padding-left: 1em;
+  /* padding-left: 1em;
   padding-right: 1em;
-  padding-top: 1em;
+  padding-top: 1em; */
 }
 
 table {
@@ -316,21 +325,8 @@ canvas {
   align-items: center;
   margin: 0 auto;
   border: 20px solid burlywood;
-  /* min-width: 100%; */
-  /* @media screen and (max-width: 600px) {
-        min-width: 70%;
-        min-height: 50%;
-        max-height: 90%;
-        max-width: 85%;
-    } */
-}
-
-#high-score-display {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  /* min-width: 120%; */
+  /* min-height: 100%; */
 }
 
 p {

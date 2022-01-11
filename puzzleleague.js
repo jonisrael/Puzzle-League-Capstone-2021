@@ -795,9 +795,11 @@ function KEYBOARD_CONTROL(event) {
       document.getElementById("patch-notes-overlay").remove();
       win.patchNotesShown = true;
     }
-  } else if (document.getElementById("arcade-button")) {
+  }
+  if (document.getElementById("arcade-button")) {
     if ((event.keyCode == 32 || event.keyCode == 13) && win.patchNotesShown) {
       // space or enter
+
       document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
       document.getElementById("watch-ai-play-button").remove();
@@ -834,6 +836,7 @@ function KEYBOARD_CONTROL(event) {
   }
   if (game.paused) {
     if (event.keyCode === 70 && debug.enabled) {
+      // f
       debug.advanceOneFrame = true;
       unpause();
     }
@@ -982,51 +985,52 @@ function KEYBOARD_CONTROL(event) {
               );
             }
           }
-        }
-        if (event.keyCode === 66) {
-          // b
-          cpu.enabled = (cpu.enabled + 1) % 2;
-          cpu.control = (cpu.control + 1) % 2;
-          console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
-          if (cpu.enabled === 0) cpu.control = 0;
-        }
-        if (event.keyCode == 75) {
-          // k
-          game.finalTime = (game.frames / 60).toFixed(1);
-          game.frames = 0;
-          game.over = true;
-          for (let c = 0; c < grid.COLS; c++) {
-            for (let r = 0; r < grid.ROWS; r++) {
-              game.board[c][r].type = blockType.LANDING;
-              game.board[c][r].timer = -2;
-            }
+        } else if (event.keyCode == 79) {
+          // o
+          console.log(debug.show);
+          debug.show = (debug.show + 1) % 2;
+          if (event.keyCode === 66) {
+            // b
+            cpu.enabled = (cpu.enabled + 1) % 2;
+            cpu.control = (cpu.control + 1) % 2;
+            console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
+            if (cpu.enabled === 0) cpu.control = 0;
           }
-          gameOverBoard();
-          drawGrid();
-        }
+          if (event.keyCode == 75) {
+            // k
+            game.finalTime = (game.frames / 60).toFixed(1);
+            game.frames = 0;
+            game.over = true;
+            for (let c = 0; c < grid.COLS; c++) {
+              for (let r = 0; r < grid.ROWS; r++) {
+                game.board[c][r].type = blockType.LANDING;
+                game.board[c][r].timer = -2;
+              }
+            }
+            gameOverBoard();
+            drawGrid();
+          }
 
-        // Debug codes
-      } else if (event.keyCode == 67 && debug.freeze == 1) {
-        // c
-        updateGrid(true);
-      } else if (event.keyCode == 84) {
-        // t
-        debug.slowdown = (debug.slowdown + 1) % 2;
-        if (debug.slowdown) {
-          console.log("slowdown mode enabled");
-          console.log(
-            "In slowdown mode, block clear, block gravity, and block stall timers are set to 2 seconds."
-          );
-          game.boardRiseSpeed = preset.speedValues[0];
-          game.blockStallTime = 120;
-          game.blockClearTime = 120;
-        } else {
-          console.log("slowdown mode disabled");
-          updateLevelEvents(game.level);
+          // Debug codes
+        } else if (event.keyCode == 67 && debug.freeze == 1) {
+          // c
+          updateGrid(true);
+        } else if (event.keyCode == 84) {
+          // t
+          debug.slowdown = (debug.slowdown + 1) % 2;
+          if (debug.slowdown) {
+            console.log("slowdown mode enabled");
+            console.log(
+              "In slowdown mode, block clear, block gravity, and block stall timers are set to 2 seconds."
+            );
+            game.boardRiseSpeed = preset.speedValues[0];
+            game.blockStallTime = 120;
+            game.blockClearTime = 120;
+          } else {
+            console.log("slowdown mode disabled");
+            updateLevelEvents(game.level);
+          }
         }
-      } else if (event.keyCode == 79) {
-        // o
-        debug.show = (debug.show + 1) % 2;
       } else if (event.keyCode == 16) {
         // LShift to empty game.board
         for (let i = 0; i < grid.COLS; i++) {
@@ -1068,7 +1072,7 @@ let cnt;
 let pastSeconds = 0;
 export function gameLoop() {
   cnt++;
-  if (win.running && !game.paused && !debug.enabled) {
+  if (win.running && !game.paused && !debug.show) {
     document.getElementById("header").style.display = "none";
     document.getElementById("nav-bar").style.display = "none";
     document.getElementById("footer").style.display = "none";
@@ -1432,8 +1436,9 @@ export function gameLoop() {
       win.scoreDisplay.innerHTML = scoreString;
       win.multiplierDisplay.innerHTML = `${game.scoreMultiplier.toFixed(2)}x`;
 
-      if (debug.advanceOneFrame) win.fpsDisplay.innerHTML = "";
-      else
+      if (debug.advanceOneFrame) {
+        win.fpsDisplay.innerHTML = "";
+      } else
         win.fpsDisplay.innerHTML = `${perf.fps} fps${
           leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
         }`;
