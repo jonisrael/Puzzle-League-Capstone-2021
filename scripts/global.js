@@ -38,7 +38,7 @@ export const announcer = {
   ],
   bestChainDialogue: [
     audio.announcerUnbelievable,
-    audio.announcerDecisiveStrength,
+    // audio.announcerDecisiveStrength,
     audio.announcerNoDoubt,
     // audio.announcerMakeNoMistake,
   ],

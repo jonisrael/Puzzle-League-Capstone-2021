@@ -79,22 +79,27 @@ export function playAudio(file, volume = 0.2, announcerBypass = false) {
 
 export function playChainSFX(chain) {
   if (win.muteSFX.checked) return;
-  let Sound = objectOfAudios[`chain${chain}`];
+  let Sound = objectOfAudios[audio[`chain${chain}`]];
+  console.log(Sound);
   if (chain == 1) {
     return;
   }
   if (chain < 9) {
-    Sound.src = audio[`chain${chain}`];
+    Sound = objectOfAudios[audio[`chain${chain}`]];
   } else {
-    Sound.src = audio.chain9;
+    Sound = objectOfAudios[audio[`chain9`]];
   }
   Sound.volume = 0.05;
-  if (Sound.readyState > 0) {
-    Sound.play();
-  } else if (audio.chain2.readyState == 4) {
-    audio.chain2.play();
-  } else {
-    console.log("failed to play any chain sound effect");
+  try {
+    if (Sound.readyState > 0) {
+      Sound.play();
+    } else if (objectOfAudios.chain2.readyState > 1) {
+      audio.chain2.play();
+    } else {
+      console.log("failed to play any chain sound effect");
+    }
+  } catch (e) {
+    console.error("chain sfx playback failed", e, e.stack);
   }
 }
 
