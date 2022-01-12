@@ -439,8 +439,8 @@ export function loadAudios(numOfEssentialAudioFiles) {
   }
 }
 
+// currently 32 essential game audio
 loadAudios(32);
-console.log(objectOfAudios);
 
 for (let i = 1; i <= 5; i++) {
   if (localStorage.getItem(`bestScore${i}`) == null) {

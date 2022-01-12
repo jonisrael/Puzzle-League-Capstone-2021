@@ -59,7 +59,6 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
 export function playAudio(file, volume = 0.2, announcerBypass = false) {
   // if sfx is muted but announcer is not, play sound anyway since announcer is not muted
   if (win.muteSFX.checked && !announcerBypass) return;
-  console.log(objectOfAudios[file], file);
   let Sound = objectOfAudios[file];
   try {
     Sound.volume = volume;
@@ -78,14 +77,14 @@ export function playAudio(file, volume = 0.2, announcerBypass = false) {
   }
 }
 
-export function playChainSFX() {
+export function playChainSFX(chain) {
   if (win.muteSFX.checked) return;
-  let Sound = new Audio();
-  if (game.currentChain == 1) {
+  let Sound = objectOfAudios[`chain${chain}`];
+  if (chain == 1) {
     return;
   }
-  if (game.currentChain < 9) {
-    Sound.src = audio[`chain${game.currentChain}`];
+  if (chain < 9) {
+    Sound.src = audio[`chain${chain}`];
   } else {
     Sound.src = audio.chain9;
   }
@@ -104,7 +103,6 @@ export function playMusic(file, volume = 1, currentTime = 0) {
   game.Music.src = file;
   if (debug.enabled) console.log("Music track:", game.Music.src);
   game.Music.volume = volume;
-  console.log(game.Music.volume);
   game.Music.currentTime = currentTime;
   game.Music.play();
   // if (game.Music.onended) {

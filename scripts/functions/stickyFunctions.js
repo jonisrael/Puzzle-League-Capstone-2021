@@ -66,10 +66,8 @@ export let match = [[], [], []];
 
 export function ThreeBlocksMatch() {
   for (let i = 0; i < match[0].length; i++) {
-    console.log("match fired");
     if (match[i][0] === -1) return false;
     for (let j = i + 1; j < match.length; j++) {
-      console.log("compare", i, "to", j);
       if (JSON.stringify(match[i]) === JSON.stringify(match[j])) {
         return false;
       }
@@ -131,7 +129,6 @@ export function stickyCheck(x, y) {
     return !!result;
   }
   if ((result = checkIfFallingBlockMatches(SelectedBlock))) {
-    console.log(game.frames, `results2:`, result, `${match}`);
     if (debug.enabled) playAudio(audio.chain9);
     return !!result;
   }
@@ -179,13 +176,11 @@ export function stickyCheck(x, y) {
         if (!isSolidPair(MainBlock, SelectedBlock)) break;
         match[0] = [MainBlock.x, MainBlock.y];
       }
-      console.log("right here");
       if (
         MainBlock.x - dir >= 0 &&
         MainBlock.x - dir < grid.COLS &&
         isSolidPair(SelectedBlock, game.board[MainBlock.x - dir][y])
       ) {
-        console.log("continuing");
         // pair is left, but clear line is right
         match[1] = [MainBlock.x - dir, y];
         result = checkSideMatch(true, dir);
@@ -202,10 +197,9 @@ export function stickyCheck(x, y) {
       result = checkBelowMatch(MainBlock);
       break;
   }
-  console.log(game.frames, `results1:`, result, `${match}`);
   if (match[2][0] !== -1 && match[1][0] !== -1 && !ThreeBlocksMatch()) {
-    console.log("fake match detected:", match);
-    if (debug.enabled) pause("Fake match detected, check console");
+    if (debug.enabled) console.log("fake match detected:", match);
+    // if (debug.enabled) pause("Fake match detected, check console");
     result = false;
   }
   return !!result; // send true if not falsy value
@@ -219,7 +213,6 @@ function checkBelowMatch(FirstBlock) {
   let ThirdBlock;
 
   let [SecondBlock, pair] = determinePair(FirstBlock, "vertical");
-  console.log(SecondBlock, pair);
   // do vertical pair cases
   if (pair === "B") {
     match[1] = [SecondBlock.x, SecondBlock.y];
@@ -246,10 +239,8 @@ function checkBelowMatch(FirstBlock) {
   if (pair) {
     match[1] = [SecondBlock.x, SecondBlock.y];
     let dir = pair == "L" ? -1 : 1;
-    console.log(pair, dir);
     if (x + 2 * dir >= 0 && x + 2 * dir < grid.ROWS) {
       ThirdBlock = game.board[x + 2 * dir][lowKeyY];
-      console.log(ThirdBlock);
       if (isSolidPair(FirstBlock, ThirdBlock)) {
         match[2] = [ThirdBlock.x, ThirdBlock.y];
         TouchOrders[0].pair = pair;
@@ -286,9 +277,6 @@ function checkBelowMatch(FirstBlock) {
 
   // now do horizontal, which has 3 cases.
   let solidGroundArray = checkSolidGround(lowKeyX, lowKeyY);
-  if (debug.enabled) {
-    console.log(solidGroundArray);
-  }
   if (solidGroundArray.includes(-1) && solidGroundArray.includes(1)) {
     SecondBlock = game.board[lowKeyX - 1][lowKeyY];
     ThirdBlock = game.board[lowKeyX + 1][lowKeyY];

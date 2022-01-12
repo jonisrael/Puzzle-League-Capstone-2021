@@ -7,7 +7,7 @@ import {
   win,
   debug,
   leaderboard,
-  cpu
+  cpu,
 } from "../global";
 
 export let bestScores = [
@@ -15,9 +15,8 @@ export let bestScores = [
   parseInt(localStorage.getItem("bestScore2")),
   parseInt(localStorage.getItem("bestScore3")),
   parseInt(localStorage.getItem("bestScore4")),
-  parseInt(localStorage.getItem("bestScore5"))
+  parseInt(localStorage.getItem("bestScore5")),
 ];
-console.log(bestScores);
 
 export function getBestScores(clearScores) {
   if (clearScores) localStorage.clear();
@@ -31,7 +30,6 @@ export function getBestScores(clearScores) {
 getBestScores(false);
 
 export function updateBestScores(score) {
-  console.log(score);
   let rank = 6;
   let confirmUpdate = true;
   if (score > bestScores[0]) rank = 1;
@@ -51,10 +49,8 @@ export function updateBestScores(score) {
     }
     if (confirmUpdate) {
       if (leaderboard.canPost && rank < 6) {
-        console.log("updating high scores...");
         bestScores.splice(rank - 1, 0, score);
         bestScores.pop();
-        console.log(bestScores);
         localStorage.setItem("bestScore1", bestScores[0]);
         localStorage.setItem("bestScore2", bestScores[1]);
         localStorage.setItem("bestScore3", bestScores[2]);
@@ -65,7 +61,7 @@ export function updateBestScores(score) {
           parseInt(localStorage.getItem("bestScore2")),
           parseInt(localStorage.getItem("bestScore3")),
           parseInt(localStorage.getItem("bestScore4")),
-          parseInt(localStorage.getItem("bestScore5"))
+          parseInt(localStorage.getItem("bestScore5")),
         ];
       }
     }

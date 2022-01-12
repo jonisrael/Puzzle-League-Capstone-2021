@@ -859,7 +859,7 @@ function KEYBOARD_CONTROL(event) {
       // m
       playAudio(audio.select);
       win.running = false;
-      console.log(state.Home.view);
+      // console.log(state.Home.view);
       // console.log(router);
       render(state.Home);
       // router.navigate("/Home");
@@ -919,26 +919,7 @@ function KEYBOARD_CONTROL(event) {
         leaderboard.reason = "debug";
         perf.unrankedReason = "debug mode was activated.";
         win.fpsDisplay.style.color = "black";
-        // game.boardRiseSpeed = preset.speedValues[0];
-        // game.blockClearTime = preset.clearValues[0];
-        // game.blockStallTime = preset.stallValues[0];
         console.log("debug ON -- Score Posting Disabled");
-        console.log(`Game Frame: ${game.frames}`);
-        console.log(`-`);
-        console.log(`Debug Controls:`);
-        console.log("M -- Raise Game Level");
-        console.log("N -- Lower Game Level");
-        console.log("P -- Freeze/Unfreeze Block Event Delay Timers");
-        console.log("F -- Advance All Block Event Delay Timers by 1 frame");
-        console.log("T -- Enable/Disable Block Timer Slowdown");
-        console.log("O -- Enable/Disable Chainable Block Visuals (Default ON)");
-        console.log("K -- Kill Game");
-        console.log("Shift -- Empty Game Board");
-        console.log(game);
-
-        console.log("-");
-        console.log("Chainable Block Info Guide:");
-        console.log("Brown/White/Pink -- Chain = 0/1/2+");
       } else {
         updateLevelEvents(game.level);
         console.log("debug OFF");
@@ -976,13 +957,7 @@ function KEYBOARD_CONTROL(event) {
         if (event.keyCode === 188)
           // ,
 
-          console.log(
-            touch,
-            TouchOrders[0].KeySquare,
-            match,
-            loadedAudios,
-            objectOfAudios
-          );
+          console.log(touch, TouchOrders[0].KeySquare, match, objectOfAudios);
         if (event.keyCode === 89) {
           // y
           console.log(game, debug);
@@ -1001,7 +976,7 @@ function KEYBOARD_CONTROL(event) {
           }
         } else if (event.keyCode == 79) {
           // o
-          console.log(debug.show);
+          console.log("Show debug info number:", debug.show);
           debug.show = (debug.show + 1) % 2;
           if (event.keyCode === 66) {
             // b
@@ -1029,21 +1004,6 @@ function KEYBOARD_CONTROL(event) {
         } else if (event.keyCode == 67 && debug.freeze == 1) {
           // c
           updateGrid(true);
-        } else if (event.keyCode == 84) {
-          // t
-          debug.slowdown = (debug.slowdown + 1) % 2;
-          if (debug.slowdown) {
-            console.log("slowdown mode enabled");
-            console.log(
-              "In slowdown mode, block clear, block gravity, and block stall timers are set to 2 seconds."
-            );
-            game.boardRiseSpeed = preset.speedValues[0];
-            game.blockStallTime = 120;
-            game.blockClearTime = 120;
-          } else {
-            console.log("slowdown mode disabled");
-            updateLevelEvents(game.level);
-          }
         }
       } else if (event.keyCode == 16) {
         // LShift to empty game.board
@@ -1378,8 +1338,8 @@ export function gameLoop() {
           } else {
             game.swapPressed = false;
             touch.moveOrderExists = false; // block has reached target
-            if (debug.enabled)
-              console.log("frame", game.frames, "target reached.");
+            // if (debug.enabled)
+            //   console.log("frame", game.frames, "target reached.");
           }
         }
       }

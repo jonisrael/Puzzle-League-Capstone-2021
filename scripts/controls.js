@@ -15,7 +15,7 @@ export const action = {
   right: 0,
   swap: 0,
   raise: 0,
-  pause: 0
+  pause: 0,
 };
 
 export const holdTime = JSON.parse(JSON.stringify(action));
@@ -49,7 +49,7 @@ export const defaultControls = {
     down: [40], //ArrowDown
     right: [39], //ArrowRight
     swap: [83, 88], // s, x
-    raise: [82, 90] // r, z
+    raise: [82, 90], // r, z
   },
   gamepad: {
     up: [12], // D-Pad Up
@@ -58,9 +58,9 @@ export const defaultControls = {
     right: [15], // D-Pad Right
     swap: [0, 1], // B, A
     raise: [5, 7], // L, R
-    pause: [8, 9] //+, -
+    pause: [8, 9], //+, -
   },
-  timeCreated: Date.now()
+  timeCreated: Date.now(),
 };
 
 export const savedControls =
@@ -72,7 +72,7 @@ checkIfControlsExist(savedControls);
 export function setNewControls(keyboardLayout, swapInputs, raiseInputs) {
   return {
     keyboard: getNewKeyboardControls(keyboardLayout),
-    gamepad: getNewGamePadControls(swapInputs, raiseInputs)
+    gamepad: getNewGamePadControls(swapInputs, raiseInputs),
   };
 }
 
@@ -84,7 +84,7 @@ export function getNewKeyboardControls(formInput) {
     down: [40], //ArrowDown
     right: [39], //ArrowRight
     swap: [83, 88], // s, x
-    raise: [82, 90] // r, z
+    raise: [82, 90], // r, z
   };
   if (formInput.selectedIndex === 1) {
     keyboard.swap = [83, 90]; // s, z
@@ -116,7 +116,7 @@ export function getNewGamePadControls(swapInputs, raiseInputs) {
     right: [15], // D-Pad Right
     swap: [0, 1],
     raise: [5, 7],
-    pause: [8]
+    pause: [8],
   };
   for (let i = 0; i < swapInputs.length; i++) {
     if (swapInputs[i].selected) gameController.swap.push(i);
@@ -136,7 +136,7 @@ export function checkIfControlsExist(controls) {
       down: [40], //ArrowDown
       right: [39], //ArrowRight
       swap: [83, 88], // x,s
-      raise: [82, 90] // z, r
+      raise: [82, 90], // z, r
     },
     gamepad: {
       up: [12], // D-Pad Up
@@ -145,13 +145,11 @@ export function checkIfControlsExist(controls) {
       right: [15], // D-Pad Right
       swap: [0, 1], // B, A
       raise: [4, 5], // L, R
-      pause: [8, 9] // +, -
+      pause: [8, 9], // +, -
     },
-    timeCreated: Date.now()
+    timeCreated: Date.now(),
   };
   if (localStorage.getItem("controls")) {
-    console.log("controls are already set.", controlsObject);
-    console.log(!controlsObject.timeCreated);
     // patch to fix broken controls 11/9/2021
     try {
       if (
@@ -282,7 +280,7 @@ function playerInput() {
     right: false,
     swap: false,
     raise: false,
-    pause: false
+    pause: false,
   };
   if (win.gamepadPort !== false) {
     try {
@@ -339,7 +337,7 @@ function playerInput() {
   action.raise ? (holdTime.raise += perf.gameSpeed) : (holdTime.raise = 0);
   action.pause ? (holdTime.pause += perf.gameSpeed) : (holdTime.pause = 0);
 
-  Object.keys(action).forEach(btn => (action[btn] = false));
+  Object.keys(action).forEach((btn) => (action[btn] = false));
   return input;
 }
 
