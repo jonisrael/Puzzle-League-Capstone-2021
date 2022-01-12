@@ -42,7 +42,7 @@ export function render(st) {
   // console.log("patch notes shown:", localStorage.getItem("patchNotesShown"));
   if (st.view === "Home" && !localStorage.getItem("patchNotesShown")) {
     // win.patchNotesShown = true;
-    showPatchNotes();
+    // showPatchNotes();
     localStorage.setItem("patchNotesShown", "true");
   }
   addEventListeners(st);

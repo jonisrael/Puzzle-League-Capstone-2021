@@ -80,7 +80,6 @@ export function playAudio(file, volume = 0.2, announcerBypass = false) {
 export function playChainSFX(chain) {
   if (win.muteSFX.checked) return;
   let Sound = objectOfAudios[audio[`chain${chain}`]];
-  console.log(Sound);
   if (chain == 1) {
     return;
   }
