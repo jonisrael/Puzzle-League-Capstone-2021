@@ -19,7 +19,7 @@ import {
 import html from "html-literal";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
-import { audio, audioList, loadedAudios } from "../fileImports";
+import { audio, loadedAudios } from "../fileImports";
 import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
 import {
   Cursor,

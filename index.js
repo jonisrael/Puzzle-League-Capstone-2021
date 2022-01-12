@@ -9,9 +9,9 @@ import {
   win,
   api,
   game,
-  loadAllAudios,
+  loadAudios,
   loadedAudios,
-  leaderboard
+  leaderboard,
 } from "./scripts/global";
 import { defaultControls, savedControls } from "./scripts/controls";
 import { startGame } from "./scripts/functions/startGame";
@@ -21,7 +21,7 @@ import { showPatchNotes } from "./scripts/functions/showPatchNotes";
 import {
   getNewKeyboardControls,
   getNewGamePadControls,
-  setNewControls
+  setNewControls,
 } from "./scripts/controls";
 dotenv.config();
 
@@ -50,8 +50,8 @@ export function render(st) {
 
 function addEventListeners(st) {
   // add event listeners to Nav items for navigation
-  document.querySelectorAll("nav a").forEach(navLink =>
-    navLink.addEventListener("click", event => {
+  document.querySelectorAll("nav a").forEach((navLink) =>
+    navLink.addEventListener("click", (event) => {
       event.preventDefault();
       // Failsafe: If already on home page, do not reload it upon clicking it.
       win.running = false;
@@ -80,7 +80,7 @@ function addEventListeners(st) {
   win.muteMusic = document.getElementById("mute-music");
   win.muteSFX = document.getElementById("mute-sfx");
   if (st.view === "Leaderboard") {
-    document.querySelectorAll(".refresh").forEach(item => {
+    document.querySelectorAll(".refresh").forEach((item) => {
       item.addEventListener("click", () => {
         item.innerHTML = "Fetching...";
         getLeaderboardData(true);
@@ -162,18 +162,18 @@ function addEventListeners(st) {
         document.getElementById("watch-ai-play-button").remove();
         startGame(1);
       });
-    document.addEventListener("click", () => {
-      if (loadedAudios.length == 0) {
-        console.log("user has clicked the document, loading audios.");
-        loadAllAudios(true);
-      }
-    });
-    document.addEventListener("keydown", () => {
-      if (loadedAudios.length == 0) {
-        console.log("user has pressed a key, loading audios.");
-        loadAllAudios(true);
-      }
-    });
+    // document.addEventListener("click", () => {
+    //   if (loadedAudios.length == 0) {
+    //     console.log("user has clicked the document, loading audios.");
+    //     loadAudios(true);
+    //   }
+    // });
+    // document.addEventListener("keydown", () => {
+    //   if (loadedAudios.length == 0) {
+    //     console.log("user has pressed a key, loading audios.");
+    //     loadAudios(true);
+    //   }
+    // });
     win.muteAnnouncer.checked =
       eval(localStorage.getItem("mute-announcer")) || false;
     win.muteMusic.checked = eval(localStorage.getItem("mute-music")) || false;
@@ -205,12 +205,12 @@ export function getWorldTimeAPI() {
   let dateTimeString = "";
   axios
     .get("https://worldtimeapi.org/api/ip")
-    .then(response => {
+    .then((response) => {
       dateTimeString = response.data.datetime;
       console.log("Fetch Successful!");
       api.data = extractTimeFromAPI(dateTimeString);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("Fetching Worldtime failed", error);
       leaderboard.reason = "no-worldtime";
       return error;
@@ -220,10 +220,10 @@ export function getWorldTimeAPI() {
 export function deleteEntry(_id) {
   axios
     .delete(`${process.env.API}/games/${_id}`) // process.env.API accesses API
-    .then(response => {
+    .then((response) => {
       console.log(`Deletion Successful.`);
     })
-    .catch(error => {
+    .catch((error) => {
       leaderboard.reason = "no-leaderboard";
       displayMessage(`Deletion Failed. ${error}`);
       console.log("Deletion Failed.", error);
@@ -238,11 +238,11 @@ export function updateEntry(newData, indexToReplace) {
       `${process.env.API}/games/${leaderboard.data[indexToReplace]._id}`,
       newData
     ) // process.env.API accesses API
-    .then(response => {
+    .then((response) => {
       console.log(`Update Successful. Setting username to ${newData.name}`);
       localStorage.setItem("username", newData.name);
     })
-    .catch(error => {
+    .catch((error) => {
       leaderboard.reason = "no-leaderboard";
       displayMessage(
         `Failed to Update Leaderboard at Rank ${indexToReplace + 1}. ${error}`
@@ -255,10 +255,10 @@ export function sendData(requestData) {
   console.log("Posting data...");
   axios
     .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
-    .then(response => {
+    .then((response) => {
       console.log("Posted!");
     })
-    .catch(error => {
+    .catch((error) => {
       leaderboard.reason = "no-leaderboard";
       displayMessage(`Failed to Post Data. ${error}`);
       console.log("Failed to Post", error);
@@ -268,7 +268,7 @@ export function sendData(requestData) {
 export function getLeaderboardData(populate = false) {
   axios
     .get("https://puzzle-league-blitz.herokuapp.com/games")
-    .then(response => {
+    .then((response) => {
       leaderboard.data = response.data.sort((a, b) =>
         parseInt(a.score) < parseInt(b.score) ? 1 : -1
       );
@@ -287,7 +287,7 @@ export function getLeaderboardData(populate = false) {
         }
       }
     })
-    .catch(error => {
+    .catch((error) => {
       leaderboard.reason = "no-leaderboard";
       console.log("Failed to fetch Leaderboard Data from home page:", error);
       displayMessage(
@@ -296,7 +296,7 @@ export function getLeaderboardData(populate = false) {
     });
 }
 
-export function displayMessage(theMessage, error = true) {
+export function displayMessage(theMessage, error = true, scroll = true) {
   if (document.getElementById("app-message"))
     document.getElementById("app-message").remove();
   let appMessageDisplay = document.createElement("div");
@@ -353,14 +353,14 @@ router.hooks({
           "color:black; font-size:large; text-align: center; padding: 10px;";
         axios
           .get("https://puzzle-league-blitz.herokuapp.com/games")
-          .then(response => {
+          .then((response) => {
             leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
             state[page].markup = populateLeaderboard();
             done();
           })
-          .catch(error => {
+          .catch((error) => {
             leaderboard.reason = "no-leaderboard";
             console.log("Failed to fetch Leaderboard Data:", error);
             render(state.Home);
@@ -373,12 +373,12 @@ router.hooks({
       default:
         done();
     }
-  }
+  },
 });
 
 router
   .on({
     "/": () => render(state.Home),
-    ":page": params => render(state[capitalize(params.page)])
+    ":page": (params) => render(state[capitalize(params.page)]),
   })
   .resolve();

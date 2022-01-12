@@ -1,4 +1,4 @@
-import { audio, audioList, sprite } from "./fileImports";
+import { audio, audioKeys, audioList, sprite } from "./fileImports";
 import { checkIfControlsExist, setNewControls } from "./controls";
 
 // checkIfControlsExist(savedControls);
@@ -172,6 +172,7 @@ let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 
 export const win = {
+  pageOpenedAt: Date.now(),
   patchNotesShown: false,
   gamepadPort: false,
   view: "Home",
@@ -403,37 +404,42 @@ export const leaderboard = {
 export let updateGameState = false;
 
 export const loadedAudios = [];
+export const objectOfAudios = {};
 export const essentialAudios = [];
 
 export let audioLoadedPercentage = 0;
 
 // Preload all audios, then play them at zero volume.
-export function checkIfEssentialAudioLoaded() {
-  for (let audioObj of essentialAudios) {
-    if (audioObj.currentTime >= audioObj.duration) {
-      essentialAudios.splice(essentialAudios.indexOf(audioObj));
+export function checkIfAudioLoaded(lengthDesired) {
+  let preloadedAudios = 0;
+  for (let audioObj of loadedAudios) {
+    if (audioObj.readyState == 4) {
+      preloadedAudios++;
       audioLoadedPercentage = Math.floor(
-        (100 * (16 - essentialAudios.length)) / 16
+        (100 * preloadedAudios) / lengthDesired
       );
     }
   }
-  if (essentialAudios.length === 0) {
+  if (audioLoadedPercentage === 100) {
     return true;
   }
   return false;
 }
 
-export function loadAllAudios(essential) {
-  let [indexStart, indexEnd] = essential ? [0, 16] : [16, audioList.length];
+export function loadAudios(essentialOnly) {
+  let [indexStart, indexEnd] = essentialOnly ? [0, 16] : [16, audioKeys.length];
+  // let [indexStart, indexEnd] = [0, audioList.length];
   for (let i = indexStart; i < indexEnd; i++) {
     let sfx = new Audio();
     sfx.src = audioList[i];
-    sfx.volume = 0;
-    sfx.play();
-    loadedAudios[i] = sfx;
-    if (essential) essentialAudios[i] = sfx;
+    sfx.preload = "auto";
+    loadedAudios.push(sfx);
+    if (essentialOnly) essentialAudios.push(sfx);
+    objectOfAudios[audioKeys[i]] = sfx;
   }
 }
+
+loadAudios({ essentialOnly: true });
 
 for (let i = 1; i <= 5; i++) {
   if (localStorage.getItem(`bestScore${i}`) == null) {

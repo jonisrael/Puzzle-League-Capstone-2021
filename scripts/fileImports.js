@@ -525,6 +525,8 @@ const audio = {
 
 const imageKeys = Object.keys(sprite);
 const imageList = Object.values(sprite);
+export const audioKeys = Object.keys(audio);
+export const audioList = Object.values(audio);
 
 // Load all images
 let loadedSprites = {};
@@ -534,8 +536,7 @@ for (let i = 0; i < imageKeys.length; i++) {
   loadedSprites[imageKeys[i]] = img;
 }
 
-const audioList = Object.values(audio); // used to preload audios upon first game launch
-export { sprite, audio, loadedSprites, audioList };
+export { sprite, audio, loadedSprites };
 
 /* Fun note for programmer: EXPORTING the loaded Images here
 are what allow the program to preload the images for use, even

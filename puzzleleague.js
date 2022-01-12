@@ -9,7 +9,13 @@
 import html from "html-literal";
 import { displayMessage, render, router } from "./index";
 import * as state from "./store";
-import { sprite, audio, audioList, loadedSprites } from "./scripts/fileImports";
+import {
+  sprite,
+  audio,
+  loadedSprites,
+  audioKeys,
+  audioSrcs,
+} from "./scripts/fileImports";
 import {
   legalMatch,
   checkMatch,
@@ -72,11 +78,12 @@ import {
   blockIsSolid,
   blockVacOrClearing,
   transferProperties,
-  checkIfEssentialAudioLoaded,
-  loadAllAudios,
+  checkIfAudioLoaded,
+  loadAudios,
   audioLoadedPercentage,
-  essentialAudios,
   lastIndex,
+  objectOfAudios,
+  essentialAudios,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -968,7 +975,14 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
           // ,
-          console.log(touch, TouchOrders[0].KeySquare, match);
+
+          console.log(
+            touch,
+            TouchOrders[0].KeySquare,
+            match,
+            loadedAudios,
+            objectOfAudios
+          );
         if (event.keyCode === 89) {
           // y
           console.log(game, debug);
@@ -1109,9 +1123,19 @@ export function gameLoop() {
     }
 
     if (!win.audioLoaded) {
-      win.audioLoaded = checkIfEssentialAudioLoaded();
+      win.audioLoaded = checkIfAudioLoaded(essentialAudios.length);
       win.mainInfoDisplay.innerHTML = `Loading -- ${audioLoadedPercentage}%`;
-      if (win.audioLoaded) loadAllAudios(false);
+      if (win.audioLoaded) {
+        loadAudios({ essential: false });
+        win.audioLoaded = "essential";
+      }
+    }
+
+    if (win.audioLoaded === "essential") {
+      if (checkIfAudioLoaded(loadedAudios.length)) {
+        win.audioLoaded = "complete";
+        console.log(`All audio loaded, time since game start is ${runtime} ms`);
+      }
     }
 
     if (game.paused) {
