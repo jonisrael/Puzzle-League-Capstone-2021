@@ -83,7 +83,7 @@ import {
   audioLoadedPercentage,
   lastIndex,
   objectOfAudios,
-  essentialAudios,
+  essentialLoadedAudios,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -1123,16 +1123,18 @@ export function gameLoop() {
     }
 
     if (!win.audioLoaded) {
-      win.audioLoaded = checkIfAudioLoaded(essentialAudios.length);
+      win.audioLoaded = checkIfAudioLoaded(essentialLoadedAudios);
       win.mainInfoDisplay.innerHTML = `Loading -- ${audioLoadedPercentage}%`;
       if (win.audioLoaded) {
-        loadAudios({ essential: false });
+        console.log(
+          `Essential audio loaded, time since game start is ${runtime} ms`
+        );
         win.audioLoaded = "essential";
       }
     }
 
     if (win.audioLoaded === "essential") {
-      if (checkIfAudioLoaded(loadedAudios.length)) {
+      if (checkIfAudioLoaded(loadedAudios)) {
         win.audioLoaded = "complete";
         console.log(`All audio loaded, time since game start is ${runtime} ms`);
       }

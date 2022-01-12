@@ -405,18 +405,19 @@ export let updateGameState = false;
 
 export const loadedAudios = [];
 export const objectOfAudios = {};
-export const essentialAudios = [];
+export const essentialLoadedAudios = [];
 
 export let audioLoadedPercentage = 0;
 
 // Preload all audios, then play them at zero volume.
-export function checkIfAudioLoaded(lengthDesired) {
+export function checkIfAudioLoaded(audioFileList) {
   let preloadedAudios = 0;
-  for (let audioObj of loadedAudios) {
-    if (audioObj.readyState == 4) {
+  for (let i in loadedAudios) {
+    let audioObj = loadedAudios[i];
+    if (audioObj.readyState == 4 && i < audioFileList.length) {
       preloadedAudios++;
       audioLoadedPercentage = Math.floor(
-        (100 * preloadedAudios) / lengthDesired
+        (100 * preloadedAudios) / audioFileList.length
       );
     }
   }
@@ -426,20 +427,20 @@ export function checkIfAudioLoaded(lengthDesired) {
   return false;
 }
 
-export function loadAudios(essentialOnly) {
-  let [indexStart, indexEnd] = essentialOnly ? [0, 16] : [16, audioKeys.length];
+export function loadAudios(numOfEssentialAudioFiles) {
   // let [indexStart, indexEnd] = [0, audioList.length];
-  for (let i = indexStart; i < indexEnd; i++) {
+  for (let i in audioList) {
     let sfx = new Audio();
     sfx.src = audioList[i];
     sfx.preload = "auto";
     loadedAudios.push(sfx);
-    if (essentialOnly) essentialAudios.push(sfx);
-    objectOfAudios[audioKeys[i]] = sfx;
+    if (i < numOfEssentialAudioFiles) essentialLoadedAudios.push(sfx);
+    objectOfAudios[audioList[i]] = sfx;
   }
 }
 
-loadAudios({ essentialOnly: true });
+loadAudios(32);
+console.log(objectOfAudios);
 
 for (let i = 1; i <= 5; i++) {
   if (localStorage.getItem(`bestScore${i}`) == null) {

@@ -1,6 +1,15 @@
 import { debug } from "console";
-import { audio } from "../fileImports";
-import { game, win, announcer, randInt, cpu, music } from "../global";
+import { audio, audioList } from "../fileImports";
+import {
+  game,
+  win,
+  announcer,
+  randInt,
+  cpu,
+  music,
+  objectOfAudios,
+  loadedAudios,
+} from "../global";
 
 export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
   if (win.muteAnnouncer.checked) return;
@@ -50,12 +59,20 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
 export function playAudio(file, volume = 0.2, announcerBypass = false) {
   // if sfx is muted but announcer is not, play sound anyway since announcer is not muted
   if (win.muteSFX.checked && !announcerBypass) return;
-  let Sound = new Audio();
+  console.log(objectOfAudios[file], file);
+  let Sound = objectOfAudios[file];
   try {
     Sound.volume = volume;
     Sound.currentTime = 0;
-    Sound.src = file;
-    Sound.play();
+    if (Sound.readyState > 0) Sound.play();
+    else
+      console.log(
+        Sound.src,
+        "was not loaded in time, skipping sound byte. State:",
+        Sound.readyState,
+        "index location",
+        audioList.indexOf(Sound.src)
+      );
   } catch (error) {
     console.log(`Audio play failed. File: ${file}`);
   }
@@ -73,7 +90,13 @@ export function playChainSFX() {
     Sound.src = audio.chain9;
   }
   Sound.volume = 0.05;
-  Sound.play();
+  if (Sound.readyState > 0) {
+    Sound.play();
+  } else if (audio.chain2.readyState == 4) {
+    audio.chain2.play();
+  } else {
+    console.log("failed to play any chain sound effect");
+  }
 }
 
 export function playMusic(file, volume = 1, currentTime = 0) {

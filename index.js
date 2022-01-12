@@ -273,7 +273,6 @@ export function getLeaderboardData(populate = false) {
         parseInt(a.score) < parseInt(b.score) ? 1 : -1
       );
       console.log("Got Leaderboard!");
-      console.log(leaderboard.data);
       if (populate) {
         state["Leaderboard"].markup = populateLeaderboard();
         render(state.Leaderboard);
