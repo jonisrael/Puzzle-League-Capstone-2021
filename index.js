@@ -295,7 +295,7 @@ export function getLeaderboardData(populate = false) {
     });
 }
 
-export function displayMessage(theMessage, error = true, scroll = true) {
+export function displayMessage(msg, err = true, scroll = true, timeout = 5000) {
   if (document.getElementById("app-message"))
     document.getElementById("app-message").remove();
   let appMessageDisplay = document.createElement("div");
@@ -304,14 +304,16 @@ export function displayMessage(theMessage, error = true, scroll = true) {
   document.getElementById("root").prepend(appMessageDisplay);
   let appMessage = document.createElement("h1");
   appMessage.className = "app-message-display";
-  appMessage.innerHTML = `<br /><u>${theMessage}</u><br><br><hr>`;
+  appMessage.innerHTML = `<u>${msg}</u>`;
   appMessageDisplay.append(appMessage);
-  appMessage.style.color = error ? "#FF5555" : "#55FF55";
+  appMessage.style.color = err ? "#FF5555" : "#55FF55";
   setTimeout(() => {
     if (appMessageDisplay) appMessageDisplay.remove();
     else console.log("message is not there");
-  }, 5000);
-  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, timeout);
+  if (scroll) {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }
 }
 
 export function checkPreselectedControls(controls) {

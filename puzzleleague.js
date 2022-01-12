@@ -1055,8 +1055,8 @@ export function gameLoop() {
     document.getElementById("header").style.display = "block";
     document.getElementById("nav-bar").style.display = "flex";
     document.getElementById("footer").style.display = "block";
-    // if (document.getElementById("pause-button"))
-    //   document.getElementById("pause-button").style.display = "none";
+    if (!debug.enabled && document.getElementById("pause-button"))
+      document.getElementById("pause-button").style.display = "none";
   }
   if (!win.running || win.view !== "Home") {
     closeGame(game.over);
@@ -1086,17 +1086,25 @@ export function gameLoop() {
       win.audioLoaded = checkIfAudioLoaded(essentialLoadedAudios);
       win.mainInfoDisplay.innerHTML = `Loading -- ${audioLoadedPercentage}%`;
       if (win.audioLoaded) {
-        console.log(
-          `Essential audio loaded, time since game start is ${runtime} ms`
-        );
+        console.log(`Essential audio loaded in ${runtime} ms`);
         win.audioLoaded = "essential";
+        displayMessage(`Essential audio loaded in ${runtime} ms`, 0, 0, 21000);
       }
     }
 
-    if (win.audioLoaded === "essential") {
+    if (win.audioLoaded === "essential" || win.audioLoaded === "waiting") {
       if (checkIfAudioLoaded(loadedAudios)) {
+        console.log(`All audio loaded in ${runtime} ms`);
         win.audioLoaded = "complete";
-        console.log(`All audio loaded, time since game start is ${runtime} ms`);
+        displayMessage(`All audio loaded in ${runtime} ms`, 0, 0, 3000);
+      } else if (win.audioLoaded !== "waiting" && runtime > 20000) {
+        win.audioLoaded = "waiting";
+        displayMessage(
+          "Some audio is still loading. Sound may not play accurately.",
+          true,
+          false,
+          5000
+        );
       }
     }
 
