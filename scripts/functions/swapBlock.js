@@ -16,13 +16,7 @@ import {
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
-import {
-  TouchOrders,
-  match,
-  pair,
-  sticky,
-  stickyCheck,
-} from "./stickyFunctions";
+import { TouchOrders, match, pair, stickyCheck } from "./stickyFunctions";
 import { pause } from "./pauseFunctions";
 import { isBlockAirborne } from "./gravity";
 
@@ -100,9 +94,9 @@ export function trySwappingBlocks(x, y) {
   }
 
   if (legalSwap) {
-    if (debug.updateGameState) {
+    if (game.currentChain == 0) {
       debug.pastGameState = JSON.parse(JSON.stringify(game));
-      debug.updateGameState = false;
+      // debug.updateGameState = false;
     }
     if (touch.enabled && touch.moveOrderExists) {
       touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;

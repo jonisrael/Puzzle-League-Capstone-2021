@@ -90,10 +90,14 @@ import {
   TouchOrder,
   TouchOrders,
   match,
-  SelectedBlock,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
+import {
+  createTutorialBoard,
+  runTutorialScript,
+  tutorialBoard,
+} from "./scripts/tutorial/tutorialScript";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -731,13 +735,13 @@ function KEYBOARD_CONTROL(event) {
     }
     if (event.keyCode == 67) unpause(); // c
 
-    if (event.keyCode == 82) {
+    if (event.keyCode == 82 && !debug.enabled) {
       // r
       playAudio(audio.select);
       win.running = false;
       win.restartGame = true;
     }
-    if (event.keyCode == 77) {
+    if (event.keyCode == 77 && !debug.enabled) {
       // m
       playAudio(audio.select);
       win.running = false;
@@ -840,7 +844,20 @@ function KEYBOARD_CONTROL(event) {
           // ,
 
           console.log(touch, TouchOrders[0].KeySquare, match, objectOfAudios);
-        if (event.keyCode === 89) {
+        if (event.keyCode === 73) {
+          // i   starts the tutorial
+          // playMusic(audio.trainingMusic, 0.2);
+          game.board = [];
+          game.board = createTutorialBoard(tutorialBoard);
+          game.tutorialRunning = true;
+          debug.enabled = false;
+          debug.show = false;
+          game.frames = 0;
+          updateLevelEvents(3);
+          game.boardRiseSpeed = 1000;
+          cpu.enabled = true;
+          [game.cursor.x, game.cursor.y] = [2, 6];
+        } else if (event.keyCode === 89) {
           // y
           console.log(game, debug);
           game.seconds = pastSeconds;
@@ -881,18 +898,13 @@ function KEYBOARD_CONTROL(event) {
             gameOverBoard();
             drawGrid();
           }
-
-          // Debug codes
-        } else if (event.keyCode == 67 && debug.freeze == 1) {
-          // c
-          updateGrid(true);
-        }
-      } else if (event.keyCode == 16) {
-        // LShift to empty game.board
-        for (let i = 0; i < grid.COLS; i++) {
-          for (let j = 0; j < grid.ROWS; j++) {
-            game.board[i][j].color = blockColor.VACANT;
-            game.board[i][j].type = blockType.NORMAL;
+        } else if (event.keyCode == 16) {
+          // LShift to empty game.board
+          for (let i = 0; i < grid.COLS; i++) {
+            for (let j = 0; j < grid.ROWS; j++) {
+              game.board[i][j].color = blockColor.VACANT;
+              game.board[i][j].type = blockType.NORMAL;
+            }
           }
         }
       }
@@ -901,6 +913,7 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function updateLevelEvents(level) {
+  game.level = level;
   if (game.level > preset.speedValues.length - 1) {
     game.level--;
     return;
@@ -965,13 +978,14 @@ export function gameLoop() {
     }
 
     if (!win.audioLoaded) {
-      win.audioLoaded = checkIfAudioLoaded(essentialLoadedAudios);
-      win.mainInfoDisplay.innerHTML = `Loading -- ${audioLoadedPercentage}%`;
-      if (win.audioLoaded) {
-        console.log(`Essential audio loaded in ${runtime} ms`);
-        win.audioLoaded = "essential";
-        displayMessage(`Essential audio loaded in ${runtime} ms`, 0, 0, 21000);
-      }
+      win.audioLoaded = "complete";
+      // win.audioLoaded = checkIfAudioLoaded(essentialLoadedAudios);
+      // win.mainInfoDisplay.innerHTML = `Loading -- ${audioLoadedPercentage}%`;
+      // if (win.audioLoaded) {
+      //   console.log(`Essential audio loaded in ${runtime} ms`);
+      //   win.audioLoaded = "essential";
+      //   displayMessage(`Essential audio loaded in ${runtime} ms`, 0, 0, 21000);
+      // }
     }
 
     if (win.audioLoaded === "essential" || win.audioLoaded === "waiting") {
@@ -1262,16 +1276,44 @@ export function gameLoop() {
       let secondsString = "";
       let scoreString = "";
       let multiplierString = "";
-      if (game.minutes < 10) {
-        minutesString = `0${game.minutes}`;
+      if (game.mode === "training") {
+        if (game.minutes < 10) {
+          minutesString = `0${game.minutes}`;
+        } else {
+          minutesString = `${game.minutes}`;
+        }
+        if (game.seconds < 10) {
+          secondsString = `0${game.seconds}`;
+        } else {
+          secondsString = `${game.seconds}`;
+        }
       } else {
-        minutesString = `${game.minutes}`;
+        if (game.seconds === 0) {
+          minutesString = `0${2 - game.minutes}`;
+        } else if (game.minutes < 2) {
+          minutesString = `0${1 - game.minutes}`;
+        } else if (game.minutes < 10) {
+          minutesString = `0${2 - game.minutes}`;
+        } else {
+          minutesString = `${2 - game.minutes}`;
+        }
+        if (game.minutes < 2) {
+          if (game.seconds === 0) {
+            secondsString = "00";
+          } else if (game.seconds > 50) {
+            secondsString = `0${60 - game.seconds}`;
+          } else {
+            secondsString = `${60 - game.seconds}`;
+          }
+        } else {
+          if (game.seconds < 10) {
+            secondsString = `0${game.seconds}`;
+          } else {
+            secondsString = `${game.seconds}`;
+          }
+        }
       }
-      if (game.seconds < 10) {
-        secondsString = `0${game.seconds}`;
-      } else {
-        secondsString = `${game.seconds}`;
-      }
+
       game.timeString = `${minutesString}:${secondsString}`;
 
       if (game.score < 10) {

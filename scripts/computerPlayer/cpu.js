@@ -12,6 +12,7 @@ import { sprite } from "../fileImports";
 import { findHorizontalMatches } from "./findHorizontalMatches";
 import { findVerticalMatches } from "./findVerticalMatches";
 import { flattenStack } from "./flattenStack";
+import { runTutorialScript } from "../tutorial/tutorialScript";
 
 // hole check order, prioritizing center
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
@@ -51,7 +52,25 @@ const direction = [
 ];
 
 export function cpuAction(input) {
+  if (game.tutorialRunning) {
+    if (game.frames <= 1100) {
+      runTutorialScript(input, game.frames);
+    } else if (game.frames >= 1400) {
+      if (game.frames < 1410) console.log(game.frames, "returning to center");
+      if (game.frames % 10 === 0) {
+        cpuMoveToTarget(input, 2, 8, false);
+      }
+      if (game.cursor.x == 2 && game.cursor.y == 8) {
+        console.log(game.frames, "tutorial complete");
+        cpu.enabled = false;
+        game.tutorialRunning = false;
+      }
+      return input;
+    }
+  }
+
   if (game.frames < 60) return input;
+  if (cpu.control && game.frames % 8 !== 0) return input;
   win.mainInfoDisplay.style.color = "green";
   // if (game.frames % 4 < 2) return input;
   let stackMinimum = 4;
@@ -66,11 +85,11 @@ export function cpuAction(input) {
   // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
   //   coordinates = flattenStack();
 
-  if (cpu.randomInputCounter > 0 && game.frames > 0) {
+  if (cpu.randomInputCounter > 0 && !game.tutorialRunning) {
     return randomAction(input);
   }
 
-  stackMinimum = game.boardRiseSpeed < 4 ? 4 : 11;
+  stackMinimum = game.boardRiseSpeed < 4 ? 4 : 5;
 
   if (!coordinates) {
     if (stackSize >= stackMinimum || game.currentChain > 0) {
@@ -132,11 +151,7 @@ export function cpuAction(input) {
   }
 
   if (cpu.control) {
-    if (game.cursor.y < targetY) input.down = true;
-    else if (game.cursor.y > targetY) input.up = true;
-    else if (game.cursor.x > targetX) input.left = true;
-    else if (game.cursor.x < targetX) input.right = true;
-    else if (swapAtTarget && !game.disableSwap) input.swap = true; // reached target
+    cpuMoveToTarget(input, targetX, targetY, swapAtTarget);
   }
 
   cpu.targetX = targetX;
@@ -193,6 +208,14 @@ export function cpuAction(input) {
 
   return input;
 } // end cpuAction
+
+function cpuMoveToTarget(input, targetX, targetY, swapAtTarget) {
+  if (game.cursor.y < targetY) input.down = true;
+  else if (game.cursor.y > targetY) input.up = true;
+  else if (game.cursor.x > targetX) input.left = true;
+  else if (game.cursor.x < targetX) input.right = true;
+  else if (swapAtTarget && !game.disableSwap) input.swap = true; // reached target
+}
 
 function randomAction(input) {
   win.mainInfoDisplay.style.color = "black";

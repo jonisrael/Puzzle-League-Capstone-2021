@@ -170,6 +170,7 @@ import SURGE_SONG from ".././assets/Audio/Music/Overtime Themes/surge.mp3";
 
 import RESULTS_SONG from ".././assets/Audio/Music/Results/results.mp3";
 import RESULTS_2_SONG from ".././assets/Audio/Music/Results/results2.mp3";
+import TRAINING_SONG from ".././assets/Audio/Music/Themes/training.mp3";
 
 // Import Audio
 import ANN_5 from ".././assets/Audio/Announcer/5.mp3";
@@ -508,6 +509,7 @@ const audio = {
   announcerDeservePraise: ANN_DESERVE_PRAISE,
   announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES,
   popcornMusic: POPCORN_SONG,
+  trainingMusic: TRAINING_SONG,
   popcornExtendedMusic: POPCORN_SONG_EXTENDED,
   scatmanMusic: SCATMAN_SONG,
   rashidMusic: RASHID_SONG,

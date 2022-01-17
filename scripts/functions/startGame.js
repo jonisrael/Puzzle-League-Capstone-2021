@@ -31,6 +31,7 @@ import { pause, unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 import { action } from "../controls";
 import { createClickListeners } from "../clickControls";
+import { createTutorialBoard, tutorialBoard } from "../tutorial/tutorialScript";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed, version = 1) {
@@ -67,7 +68,10 @@ export function startGame(selectedGameSpeed, version = 1) {
   touch.thereIsABlockCurrentlySelected = false;
   touch.moveOrderExists = false;
   touch.arrowList.length = 0;
+  game.tutorialRunning = false;
+  // game.board = createTutorialBoard(tutorialBoard);
   game.board = generateOpeningBoard(version);
+
   // Set up game loop
   leaderboard.canPost = true;
   debug.enabled = false;
@@ -510,26 +514,4 @@ function setUpTrainingMode(column3) {
     game.level--;
     updateLevelEvents(game.level);
   });
-}
-
-export function createTutorialBoard(squareColors) {
-  let block;
-  for (let c = 0; c < grid.COLS; c++) {
-    game.board.push([]);
-    for (let r = 0; r < grid.ROWS + 2; r++) {
-      block = newBlock(c, r);
-      game.board[c].push(block);
-      if (r > grid.ROWS - 1) {
-        game.board[c][r].color = PIECES[randInt(PIECES.length)];
-        game.board[c][r].type = blockType.DARK;
-      }
-      block.draw();
-    }
-
-    for (let coordStr of Object.keys(squareColors)) {
-      let c = JSON.parse(coordStr)[0];
-      let r = JSON.parse(coordStr)[1];
-      game.board[c][r].color = squareColors[coordStr];
-    }
-  }
 }

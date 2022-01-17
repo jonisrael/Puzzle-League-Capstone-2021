@@ -98,8 +98,8 @@ export const blockColor = {
   CYAN: "cyan",
   GREEN: "green",
   PURPLE: "purple",
-  BLUE: "blue",
   YELLOW: "yellow",
+  BLUE: "blue",
   VACANT: "vacant",
 };
 
@@ -158,7 +158,7 @@ export const grid = {
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
-  speedValues: [59, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
+  speedValues: [120, 48, 34, 20, 12, 8, 6, 2, 2, 2, 1],
   clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 28, 20, 16],
   blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 16, 12, 8],
   scoreMultValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
@@ -209,6 +209,7 @@ export const win = {
 
 export const music = [
   audio.popcornMusic,
+  audio.trainingMusic,
   // audio.popcornExtendedMusic,
   audio.ryuMusic,
   audio.lipMusic,
@@ -315,6 +316,7 @@ export let game = {
   boardHasAirborneBlock: false,
   boardHasSwappingBlock: false,
   VacantBlock: {},
+  tutorialRunning: false,
 };
 
 export const lastIndex = {

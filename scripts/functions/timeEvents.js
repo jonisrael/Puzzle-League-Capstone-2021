@@ -43,7 +43,7 @@ export function checkTime(beforeOvertime) {
       break;
     case -60:
       if (game.mode === "training") break;
-      game.Music.volume = 0;
+      game.Music.pause();
       if (win.restartGame) {
         document
           .getElementById("home-page")
@@ -65,7 +65,7 @@ export function checkTime(beforeOvertime) {
 
       break;
     case 60:
-      if (!debug.enabled)
+      if (!debug.enabled && !game.tutorialRunning)
         playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
       game.messagePriority = "";
       game.defaultMessage = "X to swap Z to lift the stack!";

@@ -86,7 +86,6 @@ export function moveBlockByRelease() {
     touch.target.y = touch.selectedBlock.y; // remains on same row
     touch.moveOrderExists = true;
     game.swapPressed = true;
-    if (game.currentChain === 0) debug.updateGameState = true;
   }
   touch.thereIsABlockCurrentlySelected = false;
 

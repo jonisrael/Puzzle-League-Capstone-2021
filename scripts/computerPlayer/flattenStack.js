@@ -4,7 +4,7 @@ import {
   PIECES,
   INTERACTIVE_TYPES,
   cpu,
-  blockColor
+  blockColor,
 } from "../global";
 
 import { ableToSwap } from "./cpu";
@@ -17,10 +17,11 @@ const order = [
   [2, 1, 3, 0, 4],
   [3, 2, 4, 1, 0],
   [4, 3, 2, 1, 0],
-  [4, 3, 2, 1, 0]
+  [4, 3, 2, 1, 0],
 ];
 
 export function flattenStack() {
+  if (game.tutorialRunning) return false;
   try {
     game.messagePriority = "Flattening the stack.";
     if (game.highestRow === 11) return false;
