@@ -1,5 +1,6 @@
 import { action } from "./controls";
 import { SelectedBlock } from "./functions/stickyFunctions";
+import { trySwappingBlocks } from "./functions/swapBlock";
 import {
   blockIsSolid,
   CLEARING_TYPES,
@@ -56,6 +57,7 @@ export function selectBlock() {
   let x = touch.mouse.x;
   let y = touch.mouse.y;
   let SquareClicked = game.board[x][y];
+  // check if close range swap should happen
 
   // check if block is legally selectable
   if (
@@ -135,6 +137,9 @@ function doMouseDown(e) {
     if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
     touch.doubleClickCounter++;
   }
+  console.log("game cursor", game.cursor, "mouse", touch.mouse);
+  touch.lastCursorPos.x = game.cursor.x;
+  touch.lastCursorPos.y = game.cursor.y;
   game.cursor.x = touch.mouse.x;
   game.cursor.y = touch.mouse.y;
 
@@ -157,7 +162,18 @@ function doMouseUp(e) {
   touch.mouse.clicked = false;
   updateMousePosition(win.canvas, e);
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists)
-    moveBlockByRelease();
+    if (
+      touch.lastCursorPos.y == game.cursor.y &&
+      Math.abs(game.cursor.x - touch.lastCursorPos.x) == 1
+    ) {
+      if (game.cursor.x - touch.lastCursorPos.x == 1) {
+        trySwappingBlocks(touch.lastCursorPos.x, touch.lastCursorPos.y);
+      } else if (game.cursor.x - touch.lastCursorPos.x == -1) {
+        trySwappingBlocks(game.cursor.x, game.cursor.y);
+      }
+    } else {
+      moveBlockByRelease();
+    }
 }
 
 export function createClickListeners() {

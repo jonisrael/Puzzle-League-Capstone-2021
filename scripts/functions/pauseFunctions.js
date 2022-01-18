@@ -1,4 +1,4 @@
-import { game, win, perf, debug, touch } from "../global";
+import { game, win, perf, debug, touch, helpPlayer, cpu } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 import { action } from "../controls";
@@ -14,6 +14,10 @@ export function pause(lostFocus = false, message = "Pause") {
     game.board[game.cursor.x][game.cursor.y],
     "touch",
     touch,
+    "cpu",
+    cpu,
+    "helpPlayer",
+    helpPlayer,
     "win",
     win,
     "debug",

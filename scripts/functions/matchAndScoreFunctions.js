@@ -12,6 +12,7 @@ import {
   preset,
   randInt,
   cpu,
+  helpPlayer,
 } from "../global";
 
 import { playChainSFX, playAudio } from "./audioFunctions";
@@ -151,6 +152,8 @@ export function checkMatch() {
     // now determine chain
     if (legalMatch(clearLocations)) {
       game.boardRiseRestarter = 0; // restart failsafe timer
+      if (helpPlayer.timer > 180) helpPlayer.timer = 300;
+      else helpPlayer.timer = 180;
       game.addToPrimaryChain = false;
       for (let i = 0; i < blocksCleared - 1; i++) {
         clearLocationsString += `[${clearLocations[i]}], `;

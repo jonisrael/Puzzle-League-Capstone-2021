@@ -5,7 +5,7 @@ import {
   INTERACTIVE_TYPES,
   cpu,
   blockColor,
-  blockType
+  blockType,
 } from "../global";
 
 import { sprite } from "../fileImports";
@@ -54,6 +54,7 @@ function startHorizontalSwapping(matchLocations) {
         if (checkForObstacle(centerX, rightX, y)) return false;
         else {
           cpu.targetColor = sprite.debugGreen;
+          cpu.matchList = matchLocations;
           return ableToSwap(centerX, y, true);
         }
       }
@@ -61,6 +62,7 @@ function startHorizontalSwapping(matchLocations) {
         if (checkForObstacle(leftX, centerX, y)) return false;
         else {
           cpu.targetColor = sprite.debugGreen;
+          cpu.matchList = matchLocations;
           return ableToSwap(leftX, y, true);
         }
       }

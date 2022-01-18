@@ -51,7 +51,7 @@ const direction = [
   [4, 3, 2, 1, 0], // 5
 ];
 
-export function cpuAction(input) {
+export function cpuAction(input, helpPlayer = false) {
   if (game.tutorialRunning) {
     if (game.frames <= 1100) {
       runTutorialScript(input, game.frames);
@@ -69,7 +69,8 @@ export function cpuAction(input) {
     }
   }
 
-  if (game.frames < 60) return input;
+  if (game.frames < 30) return input;
+  if (game.boardHasSwappingBlock) return input;
   if (cpu.control && game.frames % 8 !== 0) return input;
   win.mainInfoDisplay.style.color = "green";
   // if (game.frames % 4 < 2) return input;
@@ -85,7 +86,7 @@ export function cpuAction(input) {
   // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
   //   coordinates = flattenStack();
 
-  if (cpu.randomInputCounter > 0 && !game.tutorialRunning) {
+  if (!helpPlayer && cpu.randomInputCounter > 0 && !game.tutorialRunning) {
     return randomAction(input);
   }
 
@@ -107,6 +108,8 @@ export function cpuAction(input) {
       }
     }
   }
+
+  if (helpPlayer) return cpu.matchList;
 
   // If no matches detected, look for ways to flatten the stack.
   if (!coordinates) {

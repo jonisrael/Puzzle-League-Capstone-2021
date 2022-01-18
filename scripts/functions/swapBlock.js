@@ -20,7 +20,7 @@ import { TouchOrders, match, pair, stickyCheck } from "./stickyFunctions";
 import { pause } from "./pauseFunctions";
 import { isBlockAirborne } from "./gravity";
 
-export function trySwappingBlocks(x, y) {
+export function trySwappingBlocks(x, y, clickSwap = false) {
   if (game.disableSwap || game.frames < 0 || x > grid.COLS - 2 || game.over) {
     return;
   }
@@ -28,13 +28,14 @@ export function trySwappingBlocks(x, y) {
   const LeftBlock = game.board[x][y];
   const RightBlock = game.board[x + 1][y];
   let legalSwap = true;
+  let legalSwapFailReason = "";
 
   // Make sure both blocks aren't blockColor.VACANT
   if (
     LeftBlock.color == blockColor.VACANT &&
     RightBlock.color == blockColor.VACANT
   ) {
-    legalSwap = false;
+    legalSwapFailReason = "both blocks vacant";
     // game.message = "Swap Failed: Both Squares Empty";
     // game.messageChangeDelay = 60;
   }
@@ -44,7 +45,7 @@ export function trySwappingBlocks(x, y) {
     !INTERACTIVE_TYPES.includes(LeftBlock.type) ||
     !INTERACTIVE_TYPES.includes(RightBlock.type)
   ) {
-    legalSwap = false;
+    legalSwapFailReason = "a block is not interactive";
     // game.message = "Swap Failed: Clearing Block";
     // game.messageChangeDelay = 60;
   }
@@ -62,7 +63,7 @@ export function trySwappingBlocks(x, y) {
           INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
           game.board[x + 1][j].color === blockColor.VACANT)
       ) {
-        legalSwap = false;
+        legalSwapFailReason = "a block is airborne";
         // game.message = "Swap Failed: Airborne Block";
         // game.messageChangeDelay = 90;
         break;
@@ -79,19 +80,22 @@ export function trySwappingBlocks(x, y) {
         game.board[x + 1][y - 1].color != blockColor.VACANT &&
         RightBlock.color == blockColor.VACANT)
     ) {
-      legalSwap = false;
+      legalSwapFailReason = "block below an airborne stalling block";
       // game.message = "Swap Failed: Below an Airborne Block";
       // game.messageChangeDelay = 90;
     }
   }
-  if (touch.enabled && touch.mouse.clicked) {
-    legalSwap = false;
+  if (touch.enabled && touch.mouse.clicked && !clickSwap) {
+    legalSwapFailReason = "same block clicked";
     touch.moveOrderExists = false;
     touch.disableAllMoveOrders = true;
     touch.thereIsABlockCurrentlySelected = false;
     touch.arrowList.length = 0;
     touch.moveOrderList.length = 0;
   }
+
+  legalSwap = !legalSwapFailReason;
+  if (!legalSwap) console.log(game.frames, "swap fail:", legalSwapFailReason);
 
   if (legalSwap) {
     if (game.currentChain == 0) {

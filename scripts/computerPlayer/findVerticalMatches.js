@@ -1,4 +1,11 @@
-import { game, grid, PIECES, INTERACTIVE_TYPES, cpu } from "../global";
+import {
+  game,
+  grid,
+  PIECES,
+  INTERACTIVE_TYPES,
+  cpu,
+  helpPlayer,
+} from "../global";
 import { ableToSwap } from "./cpu";
 import { sprite } from "../fileImports";
 import { checkForObstacle } from "./findHorizontalMatches";
@@ -31,7 +38,11 @@ export function findVerticalMatches(middleRowIndex, dir) {
         }
       }
       if (matchLocations.length > 2) {
+        if (!cpu.control && helpPlayer.timer == 0) {
+          lookForLargerMatch(matchLocations, desiredColor, start, end);
+        }
         // console.log(desiredColor, cpu.matchList);
+
         cpu.targetColor = sprite.debugRed;
         return startVerticalSwapping(matchLocations);
       }
@@ -84,5 +95,25 @@ function startVerticalSwapping(matchLocations) {
     // console.log(error, error.stack);
     // console.log("Parameters || matchLocations:", matchLocations);
     return false;
+  }
+}
+
+function lookForLargerMatch(matchLocations, desiredColor, start, end) {
+  let lowestY = matchLocations[matchLocations.length - 1][1];
+  let highestY = matchLocations[0][1];
+  for (let r = lowestY - 1; r <= highestY + 1; r += 4) {
+    let c = start;
+    while (c !== end) {
+      if (r - 1 < 0 || r + 1 >= grid.ROWS) break;
+      if (
+        game.board[c][r].color === desiredColor &&
+        INTERACTIVE_TYPES.includes(game.board[c][r].type)
+      ) {
+        matchLocations.push([c, r]);
+        cpu.matchList.push(`${[c, r]}`);
+        break; // go look at next row
+      }
+      start < end ? c++ : c--;
+    }
   }
 }

@@ -1,3 +1,5 @@
+import { cpuAction } from "../computerPlayer/cpu";
+import { findVerticalMatches } from "../computerPlayer/findVerticalMatches";
 import { audio } from "../fileImports";
 import {
   blockVacOrClearing,
@@ -5,6 +7,7 @@ import {
   debug,
   game,
   grid,
+  helpPlayer,
   INTERACTIVE_TYPES,
   touch,
 } from "../global";

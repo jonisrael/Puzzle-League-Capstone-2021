@@ -239,6 +239,7 @@ export const touch = {
   swapOrderPrepared: false,
   doubleClickCounter: 0,
   doubleClickTimer: 0,
+  lastCursorPos: { x: 2, y: 6 },
 };
 
 export const overtimeMusic = [
@@ -317,6 +318,15 @@ export let game = {
   boardHasSwappingBlock: false,
   VacantBlock: {},
   tutorialRunning: false,
+};
+
+export const helpPlayer = {
+  timer: 300,
+  blockHint: [
+    [-1, -1],
+    [-1, -1],
+    [-1, -1],
+  ],
 };
 
 export const lastIndex = {

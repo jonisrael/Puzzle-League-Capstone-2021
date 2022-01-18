@@ -15,6 +15,7 @@ import {
   leaderboard,
   cpu,
   touch,
+  helpPlayer,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
@@ -57,6 +58,7 @@ export function startGame(selectedGameSpeed, version = 1) {
   // console.log(game);
   resetGameVariables();
   if (game.mode === "training") game.frames = -76;
+  helpPlayer.timer = 300;
   cpu.enabled = cpu.control = game.mode === "cpu-play";
   cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";

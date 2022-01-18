@@ -84,6 +84,7 @@ import {
   lastIndex,
   objectOfAudios,
   essentialLoadedAudios,
+  helpPlayer,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -177,7 +178,7 @@ class Block {
   drawGridLines() {
     let filename = "grid_line";
     if (this.y === 0) filename = "grid_line_red";
-    else if (this.lightTimer > 0) {
+    else if (this.lightTimer != 0) {
       // filename = "light_up";
       if (this.x === match[0][0] && this.y === match[0][1])
         filename = "light_up";
@@ -216,6 +217,15 @@ class Block {
       grid.SQ * this.x + xOffset * this.swapDirection,
       grid.SQ * this.y - game.rise
     );
+  }
+
+  drawHint() {
+    if (!game.disableSwap && (game.frames % 60 < 30 || cpu.enabled))
+      win.ctx.drawImage(
+        loadedSprites["light_up"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
   }
 
   drawArrows() {
@@ -463,6 +473,22 @@ export function newBlock(c, r) {
   return block;
 }
 
+export function checkIfHelpPlayer() {
+  if (
+    game.score < 1000 &&
+    game.frames > 0 &&
+    game.frames < 7200 &&
+    helpPlayer.timer > 0 &&
+    !game.disableSwap &&
+    game.currentChain == 0 &&
+    !game.tutorialRunning
+  ) {
+    helpPlayer.timer--;
+  } else if (helpPlayer.timer == 0) {
+    cpuAction({}, true);
+  }
+}
+
 export function drawGrid() {
   let blocksAreSwapping = false; // to be placed on top of drawn grid
   for (let x = 0; x < grid.COLS; x++) {
@@ -473,6 +499,13 @@ export function drawGrid() {
 
       if (game.cursor_type !== "defaultCursor") {
         Square.drawGridLines();
+      }
+
+      if (
+        (helpPlayer.timer == 0 || cpu.enabled) &&
+        cpu.matchList.includes([x, y].join())
+      ) {
+        Square.drawHint();
       }
     }
   }
@@ -549,7 +582,10 @@ export function isChainActive() {
 }
 
 export function endChain(potentialSecondarySuccessor) {
+  if (game.currentChain == 0) return;
   game.lastChain = game.currentChain;
+  if (helpPlayer.timer > 180) helpPlayer.timer = 300;
+  else helpPlayer.timer = 180;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
     playAnnouncer(
@@ -1146,6 +1182,8 @@ export function gameLoop() {
       updateGrid();
       isChainActive();
 
+      checkIfHelpPlayer();
+
       if (!game.boardRiseSpeed)
         game.boardRiseSpeed = preset.speedValues[game.level];
 
@@ -1293,9 +1331,9 @@ export function gameLoop() {
         } else if (game.minutes < 2) {
           minutesString = `0${1 - game.minutes}`;
         } else if (game.minutes < 10) {
-          minutesString = `0${2 - game.minutes}`;
+          minutesString = `0${game.minutes - 2}`;
         } else {
-          minutesString = `${2 - game.minutes}`;
+          minutesString = `${game.minutes - 2}`;
         }
         if (game.minutes < 2) {
           if (game.seconds === 0) {

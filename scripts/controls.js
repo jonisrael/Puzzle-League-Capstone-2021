@@ -178,6 +178,7 @@ export function checkIfControlsExist(controls) {
 }
 
 export function playerAction(input) {
+  if (game.tutorialRunning) return input;
   // let inputsActive = Object.keys(action).filter(key => action[key] === true);
   // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
