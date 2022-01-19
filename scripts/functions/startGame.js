@@ -32,7 +32,13 @@ import { pause, unpause } from "./pauseFunctions";
 import { bestScores } from "./updateBestScores";
 import { action } from "../controls";
 import { createClickListeners } from "../clickControls";
-import { createTutorialBoard, tutorialBoard } from "../tutorial/tutorialScript";
+import {
+  createTutorialBoard,
+  loadTutorialState,
+  startTutorial,
+  tutorial,
+  tutorialBoard,
+} from "../tutorial/tutorialScript";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed, version = 1) {
@@ -71,8 +77,13 @@ export function startGame(selectedGameSpeed, version = 1) {
   touch.moveOrderExists = false;
   touch.arrowList.length = 0;
   game.tutorialRunning = false;
+  if (!win.tutorialPlayedOnce) {
+    win.tutorialPlayedOnce = true;
+    startTutorial();
+  } else {
+    game.board = generateOpeningBoard(version);
+  }
   // game.board = createTutorialBoard(tutorialBoard);
-  game.board = generateOpeningBoard(version);
 
   // Set up game loop
   leaderboard.canPost = true;
@@ -281,7 +292,7 @@ function createHeadsUpDisplay() {
   pauseButton.innerHTML = "Pause";
   appContainer.append(pauseButton);
   pauseButton.addEventListener("click", (event) => {
-    pause();
+    game.tutorialRunning ? loadTutorialState(tutorial.state + 1) : pause();
   });
 
   createClickListeners();
@@ -303,6 +314,7 @@ export function resetGameVariables() {
   game.blockStallTime = preset.stallValues[game.level];
   game.raiseDelay = 0;
   game.frames = -186;
+  game.cursor.visible = true;
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;

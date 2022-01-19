@@ -24,6 +24,7 @@ import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
+  resetGameVariables,
 } from "./scripts/functions/startGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import {
@@ -96,7 +97,10 @@ import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
 import {
   createTutorialBoard,
+  loadTutorialState,
   runTutorialScript,
+  startTutorial,
+  tutorial,
   tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 // import {
@@ -311,7 +315,7 @@ class Block {
       );
     }
 
-    if (game.cursor_type !== "defaultCursor") {
+    if (game.cursor_type[0] !== "d") {
       if (
         this.x === touch.target.x &&
         this.y === touch.target.y &&
@@ -497,12 +501,12 @@ export function drawGrid() {
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
 
-      if (game.cursor_type !== "defaultCursor") {
+      if (game.cursor_type[0] !== "d") {
         Square.drawGridLines();
       }
 
       if (
-        (helpPlayer.timer == 0 || cpu.enabled) &&
+        (helpPlayer.timer == 0 || (cpu.enabled && !game.tutorialRunning)) &&
         cpu.matchList.includes([x, y].join())
       ) {
         Square.drawHint();
@@ -529,12 +533,12 @@ export function drawGrid() {
     }
   }
 
-  if (game.cursor_type !== "defaultCursor") {
+  if (game.cursor_type[0] !== "d") {
     try {
       for (let x = 0; x < grid.COLS; x++) {
         for (let y = 0; y < grid.ROWS + 1; y++) {
           let Square = game.board[x][y];
-          if (game.cursor_type !== "defaultCursor") {
+          if (game.cursor_type[0] !== "d") {
             if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
               touch.moveOrderExists = false;
             if (!touch.moveOrderExists && touch.arrowList.length)
@@ -549,7 +553,7 @@ export function drawGrid() {
   }
 
   if (!game.over) {
-    if (game.cursor_type !== "defaultCursor") {
+    if (game.cursor_type[0] !== "d") {
       if (touch.moveOrderExists) game.cursor_type = "movingCursor";
       else if (blockIsSolid(game.board[game.cursor.x][game.cursor.y])) {
         game.cursor_type = touch.mouse.clicked
@@ -561,7 +565,7 @@ export function drawGrid() {
           : "illegalCursorUp";
       }
     }
-    game.cursor.draw();
+    if (game.cursor.visible) game.cursor.draw();
   }
 }
 
@@ -584,8 +588,8 @@ export function isChainActive() {
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
   game.lastChain = game.currentChain;
-  if (helpPlayer.timer > 180) helpPlayer.timer = 300;
-  else helpPlayer.timer = 180;
+  if (helpPlayer.timer > 300) helpPlayer.timer = 480;
+  else helpPlayer.timer = 300;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
     playAnnouncer(
@@ -788,7 +792,7 @@ function KEYBOARD_CONTROL(event) {
     }
   }
   // Game Controls
-  if (win.running && !game.over) {
+  if (win.running && (!game.over || game.tutorialRunning)) {
     if (game.mode !== "cpu-play" || debug.enabled) {
       if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
       if (savedControls.keyboard.down.includes(event.keyCode)) {
@@ -858,7 +862,7 @@ function KEYBOARD_CONTROL(event) {
         if (0 === 0 || game.level + 1 < preset.speedValues.length) {
           game.level++;
           updateLevelEvents(game.level);
-          if (game.level === 7) {
+          if (game.level === 7 && !game.tutorialRunning) {
             playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
           }
         }
@@ -882,17 +886,9 @@ function KEYBOARD_CONTROL(event) {
           console.log(touch, TouchOrders[0].KeySquare, match, objectOfAudios);
         if (event.keyCode === 73) {
           // i   starts the tutorial
-          // playMusic(audio.trainingMusic, 0.2);
-          game.board = [];
-          game.board = createTutorialBoard(tutorialBoard);
-          game.tutorialRunning = true;
+          startTutorial();
           debug.enabled = false;
           debug.show = false;
-          game.frames = 0;
-          updateLevelEvents(3);
-          game.boardRiseSpeed = 1000;
-          cpu.enabled = true;
-          [game.cursor.x, game.cursor.y] = [2, 6];
         } else if (event.keyCode === 89) {
           // y
           console.log(game, debug);
@@ -1048,7 +1044,17 @@ export function gameLoop() {
 
     // Big Game Loop
     if (!game.paused && win.audioLoaded) {
-      game.frames += 1 * perf.gameSpeed;
+      game.frames++;
+      if (
+        game.tutorialRunning &&
+        tutorial.state == tutorial.cursor.length - 1 &&
+        game.frames % 60 == 0 &&
+        game.frames < 9600 &&
+        !game.over
+      ) {
+        game.frames += 1140;
+        game.seconds += 19;
+      }
       game.boardRiseRestarter += 1 * perf.gameSpeed; // Failsafe to restart stack rise
       // if (touch.down) {
       // }
@@ -1069,8 +1075,16 @@ export function gameLoop() {
             leaderboard.reason[0] === "n" ||
             (api.data !== undefined && leaderboard.data.length > 0) ||
             game.frames === 600
-          )
+          ) {
             win.running = false;
+          }
+        }
+        if (game.frames > 150 && game.tutorialRunning) {
+          tutorial.state = tutorial.board.length - 1;
+          resetGameVariables();
+          game.tutorialRunning = true;
+          game.over = false;
+          loadTutorialState(tutorial.state);
         }
       }
 
@@ -1135,7 +1149,12 @@ export function gameLoop() {
           game.message = `Level ${game.level + 1}, game speed has increased...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          if (game.frames !== 7200 && game.frames !== 10800)
+          if (
+            (!game.tutorialRunning ||
+              (game.tutorialRunning && game.frames % 2400 == 0)) &&
+            game.frames !== 7200 &&
+            game.frames !== 10800
+          )
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
@@ -1152,7 +1171,7 @@ export function gameLoop() {
 
         if (game.level + 1 < preset.speedValues.length && game.frames > 0) {
           game.level++;
-          if (game.level === 7) {
+          if (game.level === 7 && !game.tutorialRunning) {
             playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
           }
           updateLevelEvents(game.level);
@@ -1415,6 +1434,10 @@ export function gameLoop() {
       if (!document.hasFocus() && !debug.enabled && !cpu.enabled) {
         pause(true);
       }
+
+      document.getElementById("pause-button").innerHTML = game.tutorialRunning
+        ? `Next ${tutorial.state + 1}/${tutorial.board.length}`
+        : "Pause";
 
       if (debug.enabled) {
         win.controlsDisplay.innerHTML = html`

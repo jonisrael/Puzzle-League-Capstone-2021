@@ -208,10 +208,7 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
         }
       }
 
-      if (
-        (game.cursor_type !== "defaultCursor" || 0 == 0) &&
-        !touch.moveOrderExists
-      ) {
+      if ((game.cursor_type[0] !== "d" || 0 == 0) && !touch.moveOrderExists) {
         playAudio(audio.smartMatch);
         game.board[match[0][0]][match[0][1]].lightTimer = 65;
         game.board[match[1][0]][match[1][1]].lightTimer = 65;

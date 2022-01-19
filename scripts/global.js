@@ -174,6 +174,7 @@ let gameMusic = new Audio();
 export const win = {
   pageOpenedAt: Date.now(),
   patchNotesShown: false,
+  tutorialPlayedOnce: false,
   gamepadPort: false,
   view: "Home",
   viewChanged: false,
@@ -256,7 +257,7 @@ export let game = {
   // use let instead of export const to revert to resetGameVar
   mode: "arcade",
   controller: null,
-  cursor: null,
+  cursor: { x: 2, y: 6, visible: true },
   cursor_type: "defaultCursor",
   rise: 0,
   board: [],
@@ -381,6 +382,7 @@ export const debug = {
 export const cpu = {
   enabled: 0,
   control: 0,
+  cursorSpeedDivisor: 1,
   showInfo: 0,
   up: false,
   down: false,

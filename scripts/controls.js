@@ -7,6 +7,7 @@ import { trySwappingBlocks } from "./functions/swapBlock";
 import { displayMessage } from "..";
 import { render } from "..";
 import * as state from "../store";
+import { loadTutorialState, tutorial } from "./tutorial/tutorialScript";
 
 export const action = {
   up: 0,
@@ -178,15 +179,41 @@ export function checkIfControlsExist(controls) {
 }
 
 export function playerAction(input) {
+  input.byCPU = false;
+  if (game.tutorialRunning) {
+    if (Object.values(action).includes(true)) {
+      input = tutorialBreakInputs(input);
+      Object.keys(action).forEach((btn) => (action[btn] = false));
+    } else {
+      // check gamepad inputs
+      input = playerInput(input);
+    }
+    // Object.keys(action).forEach((btn) => (action[btn] = false));
+    if (Object.values(input).includes(true) && !input.pause) {
+      return input;
+    }
+  }
+
+  if (!game.mode == "cpu-play") {
+    if (game.tutorialRunning && Object.values(input).includes(true)) {
+      input = tutorialBreakInputs(input);
+      Object.keys(action).forEach((btn) => (action[btn] = false));
+      return input;
+    }
+  }
   // let inputsActive = Object.keys(action).filter(key => action[key] === true);
   // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
-    if (Object.values(input).includes(true) && !input.raise) {
+    if (!game.tutorialRunning && !input.raise) {
       cpu.control = 0;
       console.log("player input detected, cpu control off.");
     }
     try {
-      if (!game.paused) input = cpuAction(input);
+      if (!game.paused) {
+        input = cpuAction(input);
+        // console.log(game.frames, Object.values(input));
+        input.byCPU = Object.values(input).includes(true);
+      }
     } catch (error) {
       if (!debug.enabled)
         displayMessage(
@@ -203,9 +230,8 @@ export function playerAction(input) {
       debug.enabled = 1;
       pause(false, "aiCrash");
     }
-  } else if (!cpu.enabled) {
-    input = playerInput();
   }
+
   if (debug.advanceOneFrame) {
     pause();
     debug.advanceOneFrame = false;
@@ -213,50 +239,53 @@ export function playerAction(input) {
 
   // first input checker, "else if" is required for priority, so case does not work.
   let cursorMoved = false;
-  if (input.up) {
-    action.up = false;
-    if (game.cursor.y > 1 || (game.cursor.y === 1 && game.rise === 0)) {
-      game.cursor.y -= 1;
-      cursorMoved = true;
-    }
-  } else if (input.down) {
-    action.down = false;
-    if (game.cursor.y < grid.ROWS - 1) {
-      game.cursor.y += 1;
-      cursorMoved = true;
-    }
-  } else if (input.left) {
-    action.left = false;
-    if (game.cursor.x > 0) {
-      game.cursor.x -= 1;
-      cursorMoved = true;
-    }
-  } else if (input.right) {
-    action.right = false;
-    if (game.cursor.x < grid.COLS - 2) {
-      game.cursor.x += 1;
-      cursorMoved = true;
-    }
-  } else if (input.swap && !game.over) {
-    action.swap = false;
-    game.cursor_type = "defaultCursor";
-    if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
-    game.swapPressed = true;
-    win.cvs.scrollIntoView({ block: "nearest" });
-  }
+  if (!game.tutorialRunning || (game.tutorialRunning && input.byCPU)) {
+    if (input.up) {
+      action.up = false;
+      if (game.cursor.y > 1 || (game.cursor.y === 1 && game.rise === 0)) {
+        game.cursor.y -= 1;
+        cursorMoved = true;
+      }
+    } else if (input.down) {
+      action.down = false;
+      if (game.cursor.y < grid.ROWS - 1) {
+        game.cursor.y += 1;
+        cursorMoved = true;
+      }
+    } else if (input.left) {
+      action.left = false;
+      if (game.cursor.x > 0) {
+        game.cursor.x -= 1;
+        cursorMoved = true;
+      }
+    } else if (input.right) {
+      action.right = false;
+      if (game.cursor.x < grid.COLS - 2) {
+        game.cursor.x += 1;
+        cursorMoved = true;
+      }
+    } else if (input.swap && !game.over) {
+      action.swap = false;
 
-  if (cursorMoved) {
-    game.cursor_type = "defaultCursor";
-    if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
-    win.cvs.scrollIntoView({ block: "nearest" });
-    if (!cpu.enabled || game.tutorialRunning) playAudio(audio.moveCursor);
-  }
+      game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
+      if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
+      game.swapPressed = true;
+      win.cvs.scrollIntoView({ block: "nearest" });
+    }
 
-  // second input checker
-  if (input.raise) {
-    action.raise = false;
-    game.raisePressed = true;
-    win.cvs.scrollIntoView({ block: "nearest" });
+    if (cursorMoved) {
+      game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
+      if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
+      win.cvs.scrollIntoView({ block: "nearest" });
+      if (!cpu.enabled || game.tutorialRunning) playAudio(audio.moveCursor);
+    }
+
+    // second input checker
+    if (input.raise) {
+      action.raise = false;
+      game.raisePressed = true;
+      win.cvs.scrollIntoView({ block: "nearest" });
+    }
   }
 
   // check pause
@@ -265,6 +294,8 @@ export function playerAction(input) {
     game.paused ? unpause() : pause();
   }
 
+  // Object.keys(action).forEach((btn) => (action[btn] = false));
+
   // NOT REMOVED
   // reset all keys
   // Object.keys(action).forEach(key => {
@@ -272,16 +303,7 @@ export function playerAction(input) {
   // });
 }
 
-function playerInput() {
-  let input = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
-    swap: false,
-    raise: false,
-    pause: false,
-  };
+function playerInput(input) {
   if (win.gamepadPort !== false) {
     try {
       pollGamepadInputs(navigator.getGamepads()[win.gamepadPort]);
@@ -337,7 +359,10 @@ function playerInput() {
   action.raise ? (holdTime.raise += perf.gameSpeed) : (holdTime.raise = 0);
   action.pause ? (holdTime.pause += perf.gameSpeed) : (holdTime.pause = 0);
 
-  Object.keys(action).forEach((btn) => (action[btn] = false));
+  // Object.keys(action).forEach((btn) => (action[btn] = false));
+  if (game.tutorialRunning && action.swap && holdTime.swap > 1) {
+    input.swap = false;
+  }
   return input;
 }
 
@@ -371,4 +396,28 @@ function pollGamepadInputs(gamepad) {
   else if (leftStickY > 0.2 || rightStickY > 0.2) action.down = true;
   else if (leftStickX < -0.2 || rightStickX < -0.2) action.left = true;
   else if (leftStickX > 0.2 || rightStickX > 0.2) action.right = true;
+}
+
+function tutorialBreakInputs(input) {
+  if (input.swap) {
+    console.log(tutorial.state);
+    if (tutorial.state == tutorial.board.length - 1) {
+      game.tutorialRunning = false;
+      win.running = false;
+      win.restartGame = true;
+    }
+    tutorial.state += 1;
+    console.log("swap was pressed", game.frames, input.swap);
+    console.log("state is now", tutorial.state, input);
+    game.frames = 0;
+    loadTutorialState(tutorial.state, game.frames);
+  } else if (input.raise) {
+    console.log("raise was pressed", input);
+    tutorial.state = tutorial.board.length - 1;
+    game.tutorialRunning = false;
+    win.running = false;
+    win.restartGame = true;
+  }
+  Object.keys(action).forEach((btn) => (action[btn] = false));
+  return input;
 }

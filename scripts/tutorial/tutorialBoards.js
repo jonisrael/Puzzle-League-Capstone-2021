@@ -2,83 +2,90 @@ import { blockType, cpu, game, PIECES, randInt } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack } from "../functions/startGame";
 import { tutorialBoard, tutorialInputs } from "./tutorialScript";
-m;
 const COLS = 6;
 const ROWS = 12;
 
-export const tutorialBoards = [
-  [
-    [0, ROWS - 1, "cyan"],
-    [0, ROWS - 2, "cyan"],
-    [0, ROWS - 3, "red"],
-    [0, ROWS - 4, "green"],
-    [0, ROWS - 5, "red"],
+const openingBoard = [
+  [0, ROWS - 1, "cyan"],
+  [0, ROWS - 2, "cyan"],
+  [0, ROWS - 3, "red"],
+  [0, ROWS - 4, "green"],
+  [0, ROWS - 5, "red"],
 
-    [1, ROWS - 1, "yellow"],
-    [1, ROWS - 2, "purple"],
-    [1, ROWS - 3, "purple"],
+  [1, ROWS - 1, "yellow"],
+  [1, ROWS - 2, "purple"],
+  [1, ROWS - 3, "purple"],
 
-    [2, ROWS - 1, "purple"],
-    [2, ROWS - 2, "green"],
-    [2, ROWS - 3, "red"],
-    [2, ROWS - 4, "cyan"],
-    [2, ROWS - 5, "cyan"],
-    [2, ROWS - 6, "yellow"],
+  [2, ROWS - 1, "purple"],
+  [2, ROWS - 2, "green"],
+  [2, ROWS - 3, "red"],
+  [2, ROWS - 4, "cyan"],
+  [2, ROWS - 5, "cyan"],
+  [2, ROWS - 6, "yellow"],
 
-    [3, ROWS - 1, "purple"],
-    [3, ROWS - 2, "green"],
-    [3, ROWS - 3, "red"],
-    [3, ROWS - 4, "purple"],
+  [3, ROWS - 1, "purple"],
+  [3, ROWS - 2, "green"],
+  [3, ROWS - 3, "red"],
+  [3, ROWS - 4, "purple"],
 
-    [4, ROWS - 1, "yellow"],
-  ],
-
-  [
-    [0, ROWS - 1, "cyan"],
-    [0, ROWS - 2, "cyan"],
-    [0, ROWS - 3, "red"],
-    [0, ROWS - 4, "green"],
-    [0, ROWS - 5, "red"],
-
-    [2, ROWS - 1, "yellow"],
-    [2, ROWS - 2, "green"],
-    [2, ROWS - 3, "red"],
-    [2, ROWS - 4, "cyan"],
-    [2, ROWS - 5, "cyan"],
-    [2, ROWS - 6, "yellow"],
-
-    [3, ROWS - 1, "purple"],
-    [3, ROWS - 2, "green"],
-    [3, ROWS - 3, "red"],
-    [3, ROWS - 4, "purple"],
-
-    [4, ROWS - 1, "yellow"],
-  ],
-
-  [
-    [0, ROWS - 1, "cyan"],
-    [0, ROWS - 2, "cyan"],
-    [0, ROWS - 3, "red"],
-    [0, ROWS - 4, "green"],
-    [0, ROWS - 5, "red"],
-
-    [2, ROWS - 1, "yellow"],
-    [2, ROWS - 2, "green"],
-    [2, ROWS - 3, "red"],
-    [2, ROWS - 4, "cyan"],
-    [2, ROWS - 5, "cyan"],
-    [2, ROWS - 6, "yellow"],
-
-    [3, ROWS - 1, "purple"],
-    [3, ROWS - 2, "green"],
-    [3, ROWS - 3, "red"],
-    [3, ROWS - 4, "purple"],
-
-    [4, ROWS - 1, "yellow"],
-  ],
+  [4, ROWS - 1, "yellow"],
+  [4, ROWS - 2, "purple"],
 ];
 
-const tutorialInputs = [
+export const tutorialBoards = [
+  openingBoard,
+  openingBoard,
+  [
+    [0, ROWS - 1, "cyan"],
+    [0, ROWS - 2, "cyan"],
+    [0, ROWS - 3, "red"],
+    [0, ROWS - 4, "green"],
+    [0, ROWS - 5, "red"],
+
+    [2, ROWS - 1, "yellow"],
+    [2, ROWS - 2, "green"],
+    [2, ROWS - 3, "red"],
+    [2, ROWS - 4, "cyan"],
+    [2, ROWS - 5, "cyan"],
+    [2, ROWS - 6, "yellow"],
+
+    [3, ROWS - 1, "purple"],
+    [3, ROWS - 2, "green"],
+    [3, ROWS - 3, "red"],
+    [3, ROWS - 4, "purple"],
+
+    [4, ROWS - 1, "yellow"],
+    [4, ROWS - 2, "purple"],
+  ],
+
+  [
+    [0, ROWS - 1, "cyan"],
+    [0, ROWS - 2, "cyan"],
+    [0, ROWS - 3, "red"],
+    [1, ROWS - 1, "green"],
+    [1, ROWS - 2, "red"],
+
+    [2, ROWS - 1, "yellow"],
+    [2, ROWS - 2, "green"],
+    [2, ROWS - 3, "red"],
+    [2, ROWS - 4, "cyan"],
+    [2, ROWS - 5, "cyan"],
+    [2, ROWS - 6, "yellow"],
+
+    [3, ROWS - 1, "purple"],
+    [3, ROWS - 2, "green"],
+    [3, ROWS - 3, "red"],
+    [3, ROWS - 4, "purple"],
+
+    [4, ROWS - 1, "yellow"],
+    [4, ROWS - 2, "purple"],
+  ],
+
+  [[0, ROWS - 1, "red"]],
+  [[0, ROWS - 1, "red"]],
+];
+
+const tasdfutorialInputs = [
   {
     100: "down",
     115: "down",
@@ -126,7 +133,7 @@ const tutorialInputs = [
   },
 ];
 
-const tutorialInputs = {
+const tuttorialInputs = {
   100: "down",
   115: "down",
   130: "left",

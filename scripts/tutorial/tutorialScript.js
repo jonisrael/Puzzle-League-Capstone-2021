@@ -1,6 +1,10 @@
-import { blockType, cpu, game, PIECES, randInt } from "../global";
+import { blockType, cpu, game, PIECES, randInt, win } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
-import { fixNextDarkStack } from "../functions/startGame";
+import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
+import { tutorialBoards } from "./tutorialBoards";
+import { tutorialMessages } from "./tutorialMessages";
+import { tutorialInputs } from "./tutorialInputs";
+import { audio } from "../fileImports";
 
 // ROWS
 const COLS = 6;
@@ -8,148 +12,85 @@ const ROWS = 12;
 // export const tutorialBoards = [];
 // export const tutorialInputs = [];
 
-export const tutorialBoard = [
-  [0, ROWS - 1, "cyan"],
-  [0, ROWS - 2, "cyan"],
-  [0, ROWS - 3, "red"],
-  [0, ROWS - 4, "green"],
-  [0, ROWS - 5, "red"],
-
-  [1, ROWS - 1, "yellow"],
-  [1, ROWS - 2, "purple"],
-  [1, ROWS - 3, "purple"],
-
-  [2, ROWS - 1, "purple"],
-  [2, ROWS - 2, "green"],
-  [2, ROWS - 3, "red"],
-  [2, ROWS - 4, "cyan"],
-  [2, ROWS - 5, "cyan"],
-  [2, ROWS - 6, "yellow"],
-
-  [3, ROWS - 1, "purple"],
-  [3, ROWS - 2, "green"],
-  [3, ROWS - 3, "red"],
-  [3, ROWS - 4, "purple"],
-
-  [4, ROWS - 1, "yellow"],
+const tutorialCursors = [
+  [-2, -6],
+  [2, 6],
+  [1, ROWS - 1],
+  [0, ROWS - 4],
+  [2, ROWS - 2],
+  [2, ROWS - 2],
 ];
 
-const tutorialInputsPart1 = {
-  100: "down",
-  115: "down",
-  130: "left",
-  145: "down",
-  160: "down",
-  175: "down",
-  190: "swap", // wait 120 frames for clear
+export const tutorial = {
+  board: tutorialBoards,
+  inputs: tutorialInputs,
+  message: tutorialMessages,
+  cursor: tutorialCursors,
+  state: 0,
 };
 
-const tutorialInputsDiff = [
-  {
-    100: "down",
-    115: "down",
-    130: "left",
-    145: "down",
-    160: "down",
-    175: "down",
-    190: "swap", // wait 120 frames for clear
-  },
-  {
-    340: "left",
-    350: "up",
-    360: "up",
-    370: "up",
-    380: "swap", // failed clear 1
-    425: "swap", // failed clear 2
-  },
-  {
-    470: "down", // may set the level to 0 here for chain
-    490: "swap", // clear1
-    520: "down",
-    530: "swap", // aligning block
-    540: "right",
-    550: "swap", // aligning block
-    560: "down",
-    570: "left",
-    580: "swap",
-    590: "right",
-    600: "swap",
-    660: "right",
-    675: "right",
-    690: "swap",
-    780: "left",
-    790: "up",
-    800: "swap",
-  },
-  {
-    960: "down",
-    990: "raise",
-    1020: "raise",
-    1040: "raise",
-    1060: "raise",
-    1080: "raise",
-    1100: "raise",
-  },
-];
+console.log(tutorial);
 
-const tutorialInputs = {
-  100: "down",
-  115: "down",
-  130: "left",
-  145: "down",
-  160: "down",
-  175: "down",
-  190: "swap", // wait 120 frames for clear
+export function loadTutorialState(state, frame = 0) {
+  game.frames = game.score = game.minutes = game.seconds = 0;
 
-  340: "left",
-  350: "up",
-  360: "up",
-  370: "up",
-  380: "swap", // failed clear 1
-  425: "swap", // failed clear 2
+  tutorial.state = state;
+  if (state == tutorial.board.length) {
+    tutorial.state = tutorial.board.length - 1;
+    game.tutorialRunning = false;
+    win.running = false;
+    win.restartGame = true;
+    return;
+  }
 
-  470: "down", // may set the level to 0 here for chain
-  490: "swap", // clear1
-  520: "down",
-  530: "swap", // aligning block
-  540: "right",
-  550: "swap", // aligning block
-  560: "down",
-  570: "left",
-  580: "swap",
-  590: "right",
-  600: "swap",
-  660: "right",
-  675: "right",
-  690: "swap",
-  780: "left",
-  790: "up",
-  800: "swap",
+  if (state == tutorial.board.length - 1) {
+    updateLevelEvents(1);
+    game.board = generateOpeningBoard();
+  } else {
+    game.cursor.visible = state !== 0;
+    [game.cursor.x, game.cursor.y] = tutorialCursors[state];
+    createTutorialBoard(tutorial.board[state]);
+  }
+}
 
-  960: "down",
-  990: "raise",
-  1020: "raise",
-  1040: "raise",
-  1060: "raise",
-  1080: "raise",
-  1100: "raise",
-};
-
-export function runTutorialScript(input, frame) {
-  let thisFrameInput = tutorialInputs[frame];
+export function runTutorialScript(input, frame, state) {
+  let thisFrameInput = tutorial.inputs[state][frame];
+  // console.log(
+  //   frame,
+  //   Object.keys(tutorial.inputs[state]).pop(),
+  //   frame == Object.keys(tutorial.inputs[state]).pop()
+  // );
   if (thisFrameInput !== undefined) {
     input[thisFrameInput] = true;
   }
-  if (frame == Object.keys(tutorialInputs).pop()) {
-    updateLevelEvents(1);
+  if (frame == Object.keys(tutorial.inputs[state]).pop()) {
+    // updateLevelEvents(1);
     console.log(game.frames, "script complete");
-    cpu.control = true;
+    loadTutorialState(state);
+    // cpu.control = true;
   }
   return input;
 }
 
+export function startTutorial() {
+  game.board = [];
+  tutorial.state = game.frames = 0;
+  // game.board = createTutorialBoard(tutorial.board[tutorial.state]);
+  game.Music.src = audio.trainingMusic;
+  game.Music.play();
+  game.tutorialRunning = true;
+  updateLevelEvents(3);
+  game.boardRiseSpeed = 1000;
+  cpu.enabled = true;
+  cpu.control = true;
+  [game.cursor.x, game.cursor.y] = [2, 6];
+  loadTutorialState(tutorial.state, game.frames);
+}
+
 export function createTutorialBoard(colorLocations) {
   let block;
+  console.log(game.frames, "creating tutorial board,", tutorial.state);
+  game.board.length = 0;
   for (let c = 0; c < COLS; c++) {
     game.board.push([]);
     for (let r = 0; r < ROWS + 2; r++) {
@@ -167,6 +108,19 @@ export function createTutorialBoard(colorLocations) {
         });
       }
       block.draw();
+    }
+  }
+  for (let x = 0; x < COLS; x++) {
+    // Initial Dark Stacks
+    game.board[x][12].color = PIECES[randInt(PIECES.length)];
+    game.board[x][13].color = PIECES[randInt(PIECES.length)];
+    if (x > 0) {
+      while (game.board[x][12].color == game.board[x - 1][12].color) {
+        game.board[x][12].color = PIECES[randInt(PIECES.length)];
+      }
+      while (game.board[x][13].color == game.board[x - 1][13].color) {
+        game.board[x][13].color = PIECES[randInt(PIECES.length)];
+      }
     }
   }
   fixNextDarkStack();

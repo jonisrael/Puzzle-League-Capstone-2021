@@ -94,7 +94,9 @@ export function gameOverBoard() {
   // don't continue function if all pieces are already switched to blockType.DEAD type
   if (game.board[5][11].type == blockType.DEAD) return;
   if (game.frames == 2) {
-    getLeaderboardData();
+    if (!game.tutorialRunning) {
+      getLeaderboardData();
+    }
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
     game.messagePriority = "Game Over!";
     game.message = "Game Over!";

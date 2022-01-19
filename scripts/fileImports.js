@@ -1,5 +1,9 @@
 // Import Image Sprites
 import CURSOR from ".././assets/Sprites/cursors/default_cursor.png";
+import CURSOR_ORANGE from ".././assets/Sprites/cursors/default_cursor_orange.png";
+import CURSOR_PINK from ".././assets/Sprites/cursors/default_cursor_pink.png";
+import CURSOR_DARK_GREY from ".././assets/Sprites/cursors/default_cursor_grey.png";
+import CURSOR_LIGHT_GREY from ".././assets/Sprites/cursors/default_cursor_light_grey.png";
 import LEGAL_SELECTION_CURSOR from ".././assets/Sprites/cursors/selected_cursor.png";
 import ILLEGAL_SELECTION_CURSOR from ".././assets/Sprites/cursors/invalid_selection_cursor.png";
 import SELECTABLE_CURSOR from ".././assets/Sprites/cursors/selectable_cursor.png";
@@ -267,6 +271,10 @@ import TOPOUT from ".././assets/Audio/topout.mp3";
 // Images
 const sprite = {
   defaultCursor: CURSOR,
+  defaultCursorOrange: CURSOR_ORANGE,
+  defaultCursorPink: CURSOR_PINK,
+  defaultCursorDarkGrey: CURSOR_DARK_GREY,
+  defaultCursorLightGrey: CURSOR_LIGHT_GREY,
   legalCursorDown: LEGAL_SELECTION_CURSOR,
   illegalCursorDown: ILLEGAL_SELECTION_CURSOR,
   legalCursorUp: SELECTABLE_CURSOR,

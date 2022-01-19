@@ -2,6 +2,7 @@ import { game, win, perf, debug, touch, helpPlayer, cpu } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 import { action } from "../controls";
+import { tutorial } from "../tutorial/tutorialScript";
 
 export function pause(lostFocus = false, message = "Pause") {
   document.getElementById("fps-display").style.display = "none";
@@ -22,7 +23,9 @@ export function pause(lostFocus = false, message = "Pause") {
     win,
     "debug",
     debug,
-    game.cursor_type === "defaultCursor"
+    "tutorial",
+    tutorial,
+    game.cursor_type[0] === "d"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : ""
   );

@@ -12,7 +12,12 @@ import { sprite } from "../fileImports";
 import { findHorizontalMatches } from "./findHorizontalMatches";
 import { findVerticalMatches } from "./findVerticalMatches";
 import { flattenStack } from "./flattenStack";
-import { runTutorialScript } from "../tutorial/tutorialScript";
+import {
+  loadTutorialState,
+  runTutorialScript,
+  tutorial,
+} from "../tutorial/tutorialScript";
+import { updateLevelEvents } from "../../puzzleleague";
 
 // hole check order, prioritizing center
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
@@ -53,25 +58,50 @@ const direction = [
 
 export function cpuAction(input, helpPlayer = false) {
   if (game.tutorialRunning) {
-    if (game.frames <= 1100) {
-      runTutorialScript(input, game.frames);
-    } else if (game.frames >= 1400) {
-      if (game.frames < 1410) console.log(game.frames, "returning to center");
-      if (game.frames % 10 === 0) {
-        cpuMoveToTarget(input, 2, 8, false);
+    let tutorialScript = Object.keys(tutorial.inputs[tutorial.state]);
+    // console.log(
+    //   game.frames,
+    //   tutorialScript,
+    //   game.frames <= tutorialScript[tutorialScript.length - 1]
+    // );
+
+    if (game.frames <= tutorialScript[tutorialScript.length - 1]) {
+      runTutorialScript(input, game.frames, tutorial.state);
+      if (tutorial.state == tutorial.board.length - 2) {
+        if (game.frames > 200) {
+          updateLevelEvents(3);
+          cpu.control = 1;
+          cpu.cursorSpeedDivisor = 6;
+        } else {
+          return input;
+        }
+      } else if (tutorial.state == tutorial.board.length - 1) {
+        cpu.control = 1;
+        cpu.cursorSpeedDivisor = 12;
+      } else {
+        return input;
       }
-      if (game.cursor.x == 2 && game.cursor.y == 8) {
-        console.log(game.frames, "tutorial complete");
-        cpu.enabled = false;
-        game.tutorialRunning = false;
-      }
+    } else {
+      loadTutorialState(tutorial.state);
       return input;
     }
   }
+  //  else if (game.frames >= 1400) {
+  //   if (game.frames < 1410) console.log(game.frames, "returning to center");
+  //   if (game.frames % 10 === 0) {
+  //     cpuMoveToTarget(input, 2, 8, false);
+  //   }
+  //   if (game.cursor.x == 2 && game.cursor.y == 8) {
+  //     console.log(game.frames, "tutorial complete");
+  //     cpu.enabled = false;
+  //     game.tutorialRunning = false;
+  //   }
+  //   return input;
+  // }
 
   if (game.frames < 30) return input;
   if (game.boardHasSwappingBlock) return input;
-  if (cpu.control && game.frames % 8 !== 0) return input;
+  if (cpu.control && game.frames % cpu.cursorSpeedDivisor !== 0) return input;
   win.mainInfoDisplay.style.color = "green";
   // if (game.frames % 4 < 2) return input;
   let stackMinimum = 4;
@@ -86,7 +116,7 @@ export function cpuAction(input, helpPlayer = false) {
   // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
   //   coordinates = flattenStack();
 
-  if (!helpPlayer && cpu.randomInputCounter > 0 && !game.tutorialRunning) {
+  if (!helpPlayer && cpu.randomInputCounter > 0) {
     return randomAction(input);
   }
 
