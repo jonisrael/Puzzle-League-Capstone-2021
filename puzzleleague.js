@@ -1112,9 +1112,8 @@ export function gameLoop() {
           )} remaining`;
         }
         // overtime bonuses
-        if ()
         if (!cpu.enabled && game.minutes == 3) {
-          game.score += game.frames
+          game.score += game.frames;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
           );
