@@ -161,19 +161,22 @@ function doMouseUp(e) {
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
   updateMousePosition(win.canvas, e);
-  if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists)
-    if (
-      touch.lastCursorPos.y == game.cursor.y &&
-      Math.abs(game.cursor.x - touch.lastCursorPos.x) == 1
-    ) {
-      if (game.cursor.x - touch.lastCursorPos.x == 1) {
-        trySwappingBlocks(touch.lastCursorPos.x, touch.lastCursorPos.y);
-      } else if (game.cursor.x - touch.lastCursorPos.x == -1) {
-        trySwappingBlocks(game.cursor.x, game.cursor.y);
-      }
-    } else {
-      moveBlockByRelease();
-    }
+  if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
+    moveBlockByRelease();
+  }
+
+  // if (
+  //   touch.lastCursorPos.y == game.cursor.y &&
+  //   Math.abs(game.cursor.x - touch.lastCursorPos.x) == 1
+  // ) {
+  //   if (game.cursor.x - touch.lastCursorPos.x == 1) {
+  //     trySwappingBlocks(touch.lastCursorPos.x, touch.lastCursorPos.y);
+  //   } else if (game.cursor.x - touch.lastCursorPos.x == -1) {
+  //     trySwappingBlocks(game.cursor.x, game.cursor.y);
+  //   }
+  // } else {
+  //   moveBlockByRelease();
+  // }
 }
 
 export function createClickListeners() {
