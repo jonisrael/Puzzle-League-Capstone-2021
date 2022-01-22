@@ -95,7 +95,8 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
   }
 
   legalSwap = !legalSwapFailReason;
-  if (!legalSwap) console.log(game.frames, "swap fail:", legalSwapFailReason);
+  // if (!legalSwap && debug.enabled)
+  //   console.log(game.frames, "swap fail:", legalSwapFailReason);
 
   if (legalSwap) {
     if (game.currentChain == 0) {

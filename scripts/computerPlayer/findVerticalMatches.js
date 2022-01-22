@@ -5,6 +5,8 @@ import {
   INTERACTIVE_TYPES,
   cpu,
   helpPlayer,
+  detectInfiniteLoop,
+  win,
 } from "../global";
 import { ableToSwap } from "./cpu";
 import { sprite } from "../fileImports";
@@ -25,7 +27,10 @@ export function findVerticalMatches(middleRowIndex, dir) {
       cpu.matchList = [];
       for (let r = middleRowIndex + 1; r >= middleRowIndex - 1; r--) {
         let c = start;
+        win.loopCounter = 0;
         while (c !== end) {
+          win.loopCounter++;
+          if (detectInfiniteLoop("findVerticalMatches", win.loopCounter)) break;
           if (
             game.board[c][r].color === desiredColor &&
             INTERACTIVE_TYPES.includes(game.board[c][r].type)
@@ -35,7 +40,7 @@ export function findVerticalMatches(middleRowIndex, dir) {
             break; // go look at next row
           }
           start < end ? c++ : c--;
-        }
+        } // end while
       }
       if (matchLocations.length > 2) {
         if (!cpu.control && helpPlayer.timer == 0) {
@@ -103,7 +108,10 @@ function lookForLargerMatch(matchLocations, desiredColor, start, end) {
   let highestY = matchLocations[0][1];
   for (let r = lowestY - 1; r <= highestY + 1; r += 4) {
     let c = start;
+    win.loopCounter = 0;
     while (c !== end) {
+      win.loopCounter++;
+      if (detectInfiniteLoop("fixNextDarkStack", win.loopCounter)) break;
       if (r - 1 < 0 || r + 1 >= grid.ROWS) break;
       if (
         game.board[c][r].color === desiredColor &&
@@ -114,6 +122,6 @@ function lookForLargerMatch(matchLocations, desiredColor, start, end) {
         break; // go look at next row
       }
       start < end ? c++ : c--;
-    }
+    } // end while
   }
 }

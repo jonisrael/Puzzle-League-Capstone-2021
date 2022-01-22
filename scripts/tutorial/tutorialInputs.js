@@ -3,6 +3,9 @@ export const tutorialInputs = [
     6000: "",
   },
   {
+    600: "",
+  },
+  {
     70: "down",
     85: "down",
     100: "left",
@@ -57,6 +60,6 @@ export const tutorialInputs = [
     510: "",
   },
   {
-    30000: "",
+    9000: "",
   },
 ];

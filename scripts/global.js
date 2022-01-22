@@ -1,5 +1,7 @@
 import { audio, audioKeys, audioList, sprite } from "./fileImports";
 import { checkIfControlsExist, setNewControls } from "./controls";
+import { displayMessage } from "..";
+import { pause } from "./functions/pauseFunctions";
 
 // checkIfControlsExist(savedControls);
 
@@ -206,11 +208,12 @@ export const win = {
   muteMusic: document.getElementById("mute-music"),
   muteSFX: document.getElementById("mute-sfx"),
   audioLoaded: false,
+  loopCounter: 0,
 };
 
 export const music = [
   audio.popcornMusic,
-  audio.trainingMusic,
+  // audio.trainingMusic,
   // audio.popcornExtendedMusic,
   audio.ryuMusic,
   audio.lipMusic,
@@ -257,8 +260,9 @@ export let game = {
   // use let instead of export const to revert to resetGameVar
   mode: "arcade",
   controller: null,
-  cursor: { x: 2, y: 6, visible: true },
+  cursor: { x: 2, y: 6 },
   cursor_type: "defaultCursor",
+  humanCanPlay: true,
   rise: 0,
   board: [],
   mute: 0,
@@ -483,7 +487,10 @@ export function randInt(
   // if (debug.enabled) console.log(max, firstElementSkewed, ignoreIndex, title);
   let done = false;
   let randomIndexSelected = -2;
+  win.loopCounter = 0;
   while (!done) {
+    win.loopCounter++;
+    if (detectInfiniteLoop("fixNextDarkStack", win.loopCounter)) break;
     done = true;
     randomIndexSelected = Math.floor(max * Math.random());
     if (ignoreIndex === randomIndexSelected) {
@@ -494,7 +501,8 @@ export function randInt(
       if (debug.enabled) console.log("first element reselected by skew");
       randomIndexSelected = 0;
     }
-  }
+  } // end while
+
   if (title) lastIndex[title] = randomIndexSelected;
   // if (debug.enabled && title === "music")
   //   console.log("random music ind selected: ", randomIndexSelected);
@@ -569,6 +577,18 @@ export function findStallingOrFallingBlockAbove(x, y) {
 
 export function outOfRange(x, y) {
   return x < 0 || x >= grid.COLS || y < 0 || y >= grid.ROWS;
+}
+
+export function detectInfiniteLoop(functionName, loopCounter) {
+  if (loopCounter > 1000) {
+    displayMessage(`Infinite loop in ${functionName} detected. Closing Game.`);
+    console.log(`Infinite loop in ${functionName} detected`);
+    debug.enabled = true;
+    pause();
+    win.running = false;
+    return true;
+  }
+  return false;
 }
 
 export function vacantBlockBelow(Square) {

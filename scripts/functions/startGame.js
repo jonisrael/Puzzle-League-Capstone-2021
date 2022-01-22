@@ -16,12 +16,19 @@ import {
   cpu,
   touch,
   helpPlayer,
+  detectInfiniteLoop,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
 import { audio, loadedAudios } from "../fileImports";
-import { getLeaderboardData, getWorldTimeAPI, render } from "../../index";
+import {
+  displayMessage,
+  getLeaderboardData,
+  getLeaderbogardData,
+  getWorldTimeAPI,
+  render,
+} from "../../index";
 import {
   Cursor,
   gameLoop,
@@ -35,6 +42,7 @@ import { createClickListeners } from "../clickControls";
 import {
   createTutorialBoard,
   loadTutorialState,
+  nextDialogue,
   startTutorial,
   tutorial,
   tutorialBoard,
@@ -64,8 +72,9 @@ export function startGame(selectedGameSpeed, version = 1) {
   // console.log(game);
   resetGameVariables();
   if (game.mode === "training") game.frames = -76;
-  helpPlayer.timer = 300;
+  helpPlayer.timer = 600;
   cpu.enabled = cpu.control = game.mode === "cpu-play";
+  game.humanCanPlay = game.mode !== "cpu-play";
   cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay();
@@ -77,11 +86,13 @@ export function startGame(selectedGameSpeed, version = 1) {
   touch.moveOrderExists = false;
   touch.arrowList.length = 0;
   game.tutorialRunning = false;
-  if (!win.tutorialPlayedOnce) {
+  document.getElementById("game-info").style.display = "inline";
+  if (!win.tutorialPlayedOnce && game.mode == "arcade") {
     win.tutorialPlayedOnce = true;
-    startTutorial();
+    game.board = generateOpeningBoard(40, 7);
+    // startTutorial();
   } else {
-    game.board = generateOpeningBoard(version);
+    game.board = generateOpeningBoard(40, 7);
   }
   // game.board = createTutorialBoard(tutorialBoard);
 
@@ -96,9 +107,10 @@ export function startGame(selectedGameSpeed, version = 1) {
   perf.sumOfPauseTimes = 0;
   perf.diffFromRealTime = 0;
   win.version = version;
-  if (version === 1) {
-    requestAnimationFrame(gameLoop);
-  }
+  requestAnimationFrame(gameLoop);
+  // if (version === 1) {
+  //   requestAnimationFrame(gameLoop);
+  // }
 }
 
 function createHeadsUpDisplay() {
@@ -292,7 +304,7 @@ function createHeadsUpDisplay() {
   pauseButton.innerHTML = "Pause";
   appContainer.append(pauseButton);
   pauseButton.addEventListener("click", (event) => {
-    game.tutorialRunning ? loadTutorialState(tutorial.state + 1) : pause();
+    game.tutorialRunning ? nextDialogue(tutorial.msgIndex) : pause();
   });
 
   createClickListeners();
@@ -302,6 +314,7 @@ export function resetGameVariables() {
   game.rise = 0;
   game.panicIndex = 1;
   game.board = [];
+  game.humanCanPlay = true;
   game.mute = 0;
   game.volume = 1;
   game.level = 1;
@@ -314,7 +327,6 @@ export function resetGameVariables() {
   game.blockStallTime = preset.stallValues[game.level];
   game.raiseDelay = 0;
   game.frames = -186;
-  game.cursor.visible = true;
   game.seconds = 0;
   game.minutes = 0;
   game.score = 0;
@@ -343,67 +355,75 @@ export function resetGameVariables() {
   game.log = [];
 }
 
-export function fixNextDarkStack() {
+export function fixNextDarkStack(board) {
+  console.log(board);
   let aboveAdjacent = true;
   let leftRightAdjacent = true;
   let tempPIECES = PIECES.slice();
+  win.loopCounter = 0;
   while (aboveAdjacent || leftRightAdjacent) {
+    win.loopCounter++;
+    if (detectInfiniteLoop("fixNextDarkStack", win.loopCounter)) break;
     aboveAdjacent = leftRightAdjacent = false;
     for (let c = 0; c < grid.COLS; c++) {
       tempPIECES = PIECES.slice();
-      tempPIECES.splice(tempPIECES.indexOf(game.board[c][12].color), 1);
-      if (game.board[c][13].color == game.board[c][12].color) {
+      tempPIECES.splice(tempPIECES.indexOf(board[c][12].color), 1);
+      if (board[c][13].color == board[c][12].color) {
         aboveAdjacent = true;
       }
       if (c == 0) {
-        if (game.board[c][13].color == game.board[c + 1][13].color) {
+        if (board[c][13].color == board[c + 1][13].color) {
           leftRightAdjacent = true;
         }
       } else if (c > 0 && c < 5) {
         if (
-          game.board[c - 1][13].color == game.board[c][13].color &&
-          game.board[c][13].color == game.board[c + 1][13].color
+          board[c - 1][13].color == board[c][13].color &&
+          board[c][13].color == board[c + 1][13].color
         ) {
           leftRightAdjacent = true;
         }
       } else if (c == 5) {
-        if (game.board[c - 1][13].color == game.board[c][13].color) {
+        if (board[c - 1][13].color == board[c][13].color) {
           leftRightAdjacent = true;
         }
       }
 
       if (aboveAdjacent || leftRightAdjacent) {
-        game.board[c][13].color = PIECES[randInt(PIECES.length)];
+        board[c][13].color = PIECES[randInt(PIECES.length)];
       }
-    }
-  }
+    } // end for loop
+  } // end while loop
+  return board;
 }
 
-export function generateOpeningBoard(version = 1) {
+export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
   game.cursor.x = 2;
   game.cursor.y = 6;
   let block;
+  let board = [];
   for (let c = 0; c < grid.COLS; c++) {
-    game.board.push([]);
+    board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
-      if (version === 1) block = newBlock(c, r);
-      game.board[c].push(block);
+      block = newBlock(c, r);
+      board[c].push(block);
       if (r >= grid.ROWS) {
-        game.board[c][r].color = PIECES[randInt(PIECES.length)];
-        game.board[c][r].type = blockType.DARK;
+        board[c][r].color = PIECES[randInt(PIECES.length)];
+        board[c][r].type = blockType.DARK;
       }
-      if (version === 1) block.draw();
       block.draw();
     }
   }
 
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < blockNumber; i++) {
     // Generate 42 random blocks on bottom 6 grid.ROWS.
+    win.loopCounter = 0;
     while (true) {
+      win.loopCounter++;
+      if (detectInfiniteLoop("generateOpeningBoard1", win.loopCounter)) break;
       let x = randInt(grid.COLS);
-      let y = randInt(7);
-      if (game.board[x][y].color === blockColor.VACANT) {
-        game.board[x][y].color = PIECES[randInt(PIECES.length)];
+      let y = randInt(stackSize);
+      if (board[x][y].color === blockColor.VACANT) {
+        board[x][y].color = PIECES[randInt(PIECES.length)];
         break;
       }
     }
@@ -413,72 +433,85 @@ export function generateOpeningBoard(version = 1) {
     // Drop all blocks to bottom
     let currentBlocks = []; // Temporary
     for (let r = grid.ROWS - 1; r >= 0; r--) {
-      if (game.board[c][r].color != blockColor.VACANT) {
-        currentBlocks.unshift(game.board[c][r].color);
+      if (board[c][r].color != blockColor.VACANT) {
+        currentBlocks.unshift(board[c][r].color);
       }
     }
+    win.loopCounter = 0;
     while (currentBlocks.length < 12) {
+      win.loopCounter++;
+      if (detectInfiniteLoop("generateOpeningBoard2", win.loopCounter)) break;
       currentBlocks.unshift(blockColor.VACANT);
     }
 
     for (let r = 0; r < currentBlocks.length; r++) {
-      game.board[c][r].color = currentBlocks[r];
+      board[c][r].color = currentBlocks[r];
     }
   }
 
   for (let x = 0; x < grid.COLS; x++) {
     // Correct Duplicates so blocks of same color cannot be adjacent
     for (let y = 0; y < grid.ROWS; y++) {
-      if (game.board[x][y].color != blockColor.VACANT) {
+      if (board[x][y].color != blockColor.VACANT) {
         let topBlock = blockColor.VACANT;
         let rightBlock = blockColor.VACANT;
         let bottomBlock = blockColor.VACANT;
         let leftBlock = blockColor.VACANT;
         if (y != 0) {
-          topBlock = game.board[x][y - 1].color;
+          topBlock = board[x][y - 1].color;
         }
         if (x != 5) {
-          rightBlock = game.board[x + 1][y].color;
+          rightBlock = board[x + 1][y].color;
         }
         if (y != 11) {
-          bottomBlock = game.board[x][y + 1].color;
+          bottomBlock = board[x][y + 1].color;
         }
         if (x != 0) {
-          leftBlock = game.board[x - 1][y].color;
+          leftBlock = board[x - 1][y].color;
         }
 
+        win.loopCounter = 0;
         while (true) {
+          win.loopCounter++;
+          if (detectInfiniteLoop("generateOpeningBoard2", win.loopCounter))
+            break;
           if (
-            game.board[x][y].color != topBlock &&
-            game.board[x][y].color != rightBlock &&
-            game.board[x][y].color != bottomBlock &&
-            game.board[x][y].color != leftBlock
+            board[x][y].color != topBlock &&
+            board[x][y].color != rightBlock &&
+            board[x][y].color != bottomBlock &&
+            board[x][y].color != leftBlock
           ) {
-            // console.log(`Color of ${x}, ${y}:`, game.board[x][y].color);
+            // console.log(`Color of ${x}, ${y}:`, board[x][y].color);
             break;
           }
-          game.board[x][y].color = PIECES[randInt(PIECES.length)];
+          board[x][y].color = PIECES[randInt(PIECES.length)];
         }
       }
-      game.board[x][y].draw();
+      board[x][y].draw();
     }
   }
 
   for (let x = 0; x < grid.COLS; x++) {
     // Initial Dark Stacks
-    game.board[x][12].color = PIECES[randInt(PIECES.length)];
-    game.board[x][13].color = PIECES[randInt(PIECES.length)];
+    board[x][12].color = PIECES[randInt(PIECES.length)];
+    board[x][13].color = PIECES[randInt(PIECES.length)];
+    win.loopCounter = 0;
     if (x > 0) {
-      while (game.board[x][12].color == game.board[x - 1][12].color) {
-        game.board[x][12].color = PIECES[randInt(PIECES.length)];
+      while (board[x][12].color == board[x - 1][12].color) {
+        win.loopCounter++;
+        if (detectInfiniteLoop("generateOpeningBoard3", win.loopCounter)) break;
+        board[x][12].color = PIECES[randInt(PIECES.length)];
       }
-      while (game.board[x][13].color == game.board[x - 1][13].color) {
-        game.board[x][13].color = PIECES[randInt(PIECES.length)];
+      win.loopCounter = 0;
+      while (board[x][13].color == board[x - 1][13].color) {
+        win.loopCounter++;
+        if (detectInfiniteLoop("generateOpeningBoard3", win.loopCounter)) break;
+        board[x][13].color = PIECES[randInt(PIECES.length)];
       }
     }
   }
-  fixNextDarkStack();
-  return game.board;
+  board = fixNextDarkStack(board);
+  return board;
 }
 
 function setUpBestScoreDisplay(column3) {

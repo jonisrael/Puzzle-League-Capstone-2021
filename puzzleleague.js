@@ -86,6 +86,7 @@ import {
   objectOfAudios,
   essentialLoadedAudios,
   helpPlayer,
+  detectInfiniteLoop,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -103,6 +104,7 @@ import {
   tutorial,
   tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
+import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -472,14 +474,14 @@ class Block {
 
 game.VacantBlock = new Block(-2, -2);
 
-export function newBlock(c, r) {
+export function newBlock(c, r, vacant = false) {
   let block = new Block(c, r);
   return block;
 }
 
 export function checkIfHelpPlayer() {
   if (
-    game.score < 1000 &&
+    game.score < 300 &&
     game.frames > 0 &&
     game.frames < 7200 &&
     helpPlayer.timer > 0 &&
@@ -565,7 +567,7 @@ export function drawGrid() {
           : "illegalCursorUp";
       }
     }
-    if (game.cursor.visible) game.cursor.draw();
+    game.cursor.draw();
   }
 }
 
@@ -588,8 +590,7 @@ export function isChainActive() {
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
   game.lastChain = game.currentChain;
-  if (helpPlayer.timer > 300) helpPlayer.timer = 480;
-  else helpPlayer.timer = 300;
+  helpPlayer.timer = 600;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
     playAnnouncer(
@@ -684,7 +685,7 @@ export function createNewRow() {
     game.board[c][12].color = game.board[c][13].color;
     game.board[c][13].color = PIECES[randInt(PIECES.length)];
   }
-  fixNextDarkStack();
+  game.board = fixNextDarkStack(game.board);
 
   if (game.highestRow === 3 && game.level > 3 && game.mode !== "training") {
     playAnnouncer(
@@ -1055,7 +1056,7 @@ export function gameLoop() {
         game.frames += 1140;
         game.seconds += 19;
       }
-      game.boardRiseRestarter += 1 * perf.gameSpeed; // Failsafe to restart stack rise
+      if (!game.tutorialRunning) game.boardRiseRestarter++; // Failsafe to restart stack rise
       // if (touch.down) {
       // }
 
@@ -1084,7 +1085,7 @@ export function gameLoop() {
           resetGameVariables();
           game.tutorialRunning = true;
           game.over = false;
-          loadTutorialState(tutorial.state);
+          loadTutorialState(tutorial.state, tutorial.msgIndex);
         }
       }
 
@@ -1111,8 +1112,9 @@ export function gameLoop() {
           )} remaining`;
         }
         // overtime bonuses
+        if ()
         if (!cpu.enabled && game.minutes == 3) {
-          game.score += game.seconds;
+          game.score += game.frames
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
           );
@@ -1206,7 +1208,7 @@ export function gameLoop() {
       if (!game.boardRiseSpeed)
         game.boardRiseSpeed = preset.speedValues[game.level];
 
-      if (game.frames % game.boardRiseSpeed == 0) {
+      if (game.frames % game.boardRiseSpeed == 0 && game.boardRiseSpeed > 0) {
         if (game.boardRiseRestarter >= 300) {
           game.boardRiseRestarter = 0;
           console.log(game.frames, "board rise timeout, restarting it");
@@ -1422,13 +1424,18 @@ export function gameLoop() {
           perf.sumOfPauseTimes} seconds`;
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
-      if (game.messageChangeDelay > 0) {
-        game.messageChangeDelay -= 1 * perf.gameSpeed;
+      if (game.tutorialRunning) {
+        win.mainInfoDisplay.innerHTML =
+          tutorialMessages[tutorial.state][tutorial.msgIndex];
+      } else {
+        if (game.messageChangeDelay > 0) {
+          game.messageChangeDelay -= 1 * perf.gameSpeed;
+        }
+        if (game.messageChangeDelay == 0) {
+          game.message = game.defaultMessage;
+        }
+        if (game.messagePriority) game.message = game.messagePriority;
       }
-      if (game.messageChangeDelay == 0) {
-        game.message = game.defaultMessage;
-      }
-      if (game.messagePriority) game.message = game.messagePriority;
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled && !cpu.enabled) {

@@ -25,9 +25,12 @@ export function closeGame(gameFinished) {
   win.running = false;
   console.log("game finished:", gameFinished);
   if (!gameFinished) game.Music.volume = 0;
-  win.cvs = null;
-  win.ctx = null;
-  win.canvas.remove();
+  if (win.loopCounter > 999) {
+    win.cvs = null;
+    win.ctx = null;
+    win.canvas.remove();
+  }
+
   // if (document.getElementById("home-page")) {
   //   document.getElementById("home-page").onmousedown = true;
   //   document.getElementById("home-page").onselectstart = true;

@@ -1,9 +1,11 @@
 import { blockType, cpu, game, PIECES, randInt } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
-import { fixNextDarkStack } from "../functions/startGame";
+import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
 import { tutorialBoard, tutorialInputs } from "./tutorialScript";
 const COLS = 6;
 const ROWS = 12;
+
+// const smallBoard = generateOpeningBoard(24, 4);
 
 const openingBoard = [
   [0, ROWS - 1, "cyan"],
@@ -33,7 +35,8 @@ const openingBoard = [
 ];
 
 export const tutorialBoards = [
-  openingBoard,
+  [],
+  // smallBoard,
   openingBoard,
   [
     [0, ROWS - 1, "cyan"],

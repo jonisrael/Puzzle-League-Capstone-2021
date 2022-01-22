@@ -9,6 +9,7 @@ import {
   music,
   objectOfAudios,
   loadedAudios,
+  detectInfiniteLoop,
 } from "../global";
 
 export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
@@ -16,10 +17,14 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
 
   let selection = randInt(arr.length);
   // console.log("selection", selection, "lastPicked", lastPicked);
+  win.loopCounter = 0;
   while (selection === lastPicked) {
+    win.loopCounter++;
+    if (detectInfiniteLoop("playAnnouncer", win.loopCounter)) break;
     // console.log("need to reselect");
     selection = randInt(arr.length);
   }
+
   // console.log(arr.length);
   // console.log(selection, lastPicked);
   playAudio(arr[selection], volume, true);
@@ -53,7 +58,7 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
       break;
     default:
       console.log("Announcer Playback failed");
-  }
+  } // end while
 }
 
 export function playAudio(file, volume = 0.2, announcerBypass = false) {

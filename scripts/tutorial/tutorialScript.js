@@ -1,4 +1,12 @@
-import { blockType, cpu, game, PIECES, randInt, win } from "../global";
+import {
+  blockType,
+  cpu,
+  detectInfiniteLoop,
+  game,
+  PIECES,
+  randInt,
+  win,
+} from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
 import { tutorialBoards } from "./tutorialBoards";
@@ -13,7 +21,8 @@ const ROWS = 12;
 // export const tutorialInputs = [];
 
 const tutorialCursors = [
-  [-2, -6],
+  [2, 6],
+  [2, 6],
   [2, 6],
   [1, ROWS - 1],
   [0, ROWS - 4],
@@ -24,20 +33,46 @@ const tutorialCursors = [
 export const tutorial = {
   board: tutorialBoards,
   inputs: tutorialInputs,
-  message: tutorialMessages,
+  msgIndex: 0,
   cursor: tutorialCursors,
   state: 0,
 };
 
 console.log(tutorial);
 
-export function loadTutorialState(state, frame = 0) {
+export function nextDialogue(index) {
+  console.log(
+    "index",
+    tutorial.msgIndex,
+    "state",
+    tutorial.state,
+    "indexes",
+    tutorialMessages[tutorial.state].length,
+    "states",
+    tutorialMessages.length
+  );
+  if (index < tutorialMessages[tutorial.state].length - 1) {
+    console.log("go to next text box");
+    tutorial.msgIndex++;
+  } else {
+    console.log("new state");
+    tutorial.state++;
+    tutorial.msgIndex = 0;
+    loadTutorialState(tutorial.state, tutorial.msgIndex);
+  }
+}
+
+export function loadTutorialState(state, index = 0) {
   game.frames = game.score = game.minutes = game.seconds = 0;
 
   tutorial.state = state;
+  tutorial.msgIndex = index;
   if (state == tutorial.board.length) {
     tutorial.state = tutorial.board.length - 1;
+    console.log("tutorial complete");
     game.tutorialRunning = false;
+    game.humanCanPlay = true;
+    document.getElementById("game-info").style.display = "inline";
     win.running = false;
     win.restartGame = true;
     return;
@@ -46,10 +81,13 @@ export function loadTutorialState(state, frame = 0) {
   if (state == tutorial.board.length - 1) {
     updateLevelEvents(1);
     game.board = generateOpeningBoard();
+  } else if (state == 1) {
+    game.boardRiseSpeed = -2;
+    generateOpeningBoard(24, 4);
   } else {
-    game.cursor.visible = state !== 0;
+    game.boardRiseSpeed = -2;
     [game.cursor.x, game.cursor.y] = tutorialCursors[state];
-    createTutorialBoard(tutorial.board[state]);
+    game.board = createTutorialBoard(tutorial.board[state]);
   }
 }
 
@@ -66,7 +104,7 @@ export function runTutorialScript(input, frame, state) {
   if (frame == Object.keys(tutorial.inputs[state]).pop()) {
     // updateLevelEvents(1);
     console.log(game.frames, "script complete");
-    loadTutorialState(state);
+    loadTutorialState(state, tutorial.msgIndex);
     // cpu.control = true;
   }
   return input;
@@ -74,36 +112,39 @@ export function runTutorialScript(input, frame, state) {
 
 export function startTutorial() {
   game.board = [];
-  tutorial.state = game.frames = 0;
+  tutorial.state = game.frames = tutorial.msgIndex = 0;
   // game.board = createTutorialBoard(tutorial.board[tutorial.state]);
   game.Music.src = audio.trainingMusic;
   game.Music.play();
   game.tutorialRunning = true;
+  game.humanCanPlay = false;
   updateLevelEvents(3);
-  game.boardRiseSpeed = 1000;
+  game.boardRiseSpeed = -2;
   cpu.enabled = true;
   cpu.control = true;
   [game.cursor.x, game.cursor.y] = [2, 6];
-  loadTutorialState(tutorial.state, game.frames);
+  document.getElementById("game-info").style.display = "none";
+  document.getElementById("main-info").style = "font-size: 2rem;";
+  loadTutorialState(tutorial.state, tutorial.msgIndex);
 }
 
 export function createTutorialBoard(colorLocations) {
   let block;
-  console.log(game.frames, "creating tutorial board,", tutorial.state);
-  game.board.length = 0;
+  let board = [];
+  board.length = 0;
   for (let c = 0; c < COLS; c++) {
-    game.board.push([]);
+    board.push([]);
     for (let r = 0; r < ROWS + 2; r++) {
       block = newBlock(c, r);
-      game.board[c].push(block);
+      board[c].push(block);
       if (r > ROWS - 1) {
-        game.board[c][r].color = PIECES[randInt(PIECES.length)];
-        game.board[c][r].type = blockType.DARK;
+        board[c][r].color = PIECES[randInt(PIECES.length)];
+        board[c][r].type = blockType.DARK;
       } else {
         colorLocations.forEach((arr) => {
           let [locX, locY, definedColor] = arr;
           if (c == locX && r == locY) {
-            game.board[c][r].color = definedColor;
+            board[c][r].color = definedColor;
           }
         });
       }
@@ -112,17 +153,23 @@ export function createTutorialBoard(colorLocations) {
   }
   for (let x = 0; x < COLS; x++) {
     // Initial Dark Stacks
-    game.board[x][12].color = PIECES[randInt(PIECES.length)];
-    game.board[x][13].color = PIECES[randInt(PIECES.length)];
+    board[x][12].color = PIECES[randInt(PIECES.length)];
+    board[x][13].color = PIECES[randInt(PIECES.length)];
     if (x > 0) {
-      while (game.board[x][12].color == game.board[x - 1][12].color) {
-        game.board[x][12].color = PIECES[randInt(PIECES.length)];
+      win.loopCounter = 0;
+      while (board[x][12].color == board[x - 1][12].color) {
+        win.loopCounter++;
+        if (detectInfiniteLoop("createTutorialBoard1", win.loopCounter)) break;
+        board[x][12].color = PIECES[randInt(PIECES.length)];
       }
-      while (game.board[x][13].color == game.board[x - 1][13].color) {
-        game.board[x][13].color = PIECES[randInt(PIECES.length)];
+      win.loopCounter = 0;
+      while (board[x][13].color == board[x - 1][13].color) {
+        win.loopCounter++;
+        if (detectInfiniteLoop("createTutorialBoard2", win.loopCounter)) break;
+        board[x][13].color = PIECES[randInt(PIECES.length)];
       }
     }
   }
-  fixNextDarkStack();
-  return game.board;
+  board = fixNextDarkStack(board);
+  return board;
 }

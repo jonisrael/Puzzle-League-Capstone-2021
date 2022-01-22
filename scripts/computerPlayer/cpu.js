@@ -13,7 +13,7 @@ import { findHorizontalMatches } from "./findHorizontalMatches";
 import { findVerticalMatches } from "./findVerticalMatches";
 import { flattenStack } from "./flattenStack";
 import {
-  loadTutorialState,
+  nextDialogue,
   runTutorialScript,
   tutorial,
 } from "../tutorial/tutorialScript";
@@ -78,11 +78,15 @@ export function cpuAction(input, helpPlayer = false) {
       } else if (tutorial.state == tutorial.board.length - 1) {
         cpu.control = 1;
         cpu.cursorSpeedDivisor = 12;
+      } else if (tutorial.state == 1) {
+        cpu.control = 1;
+        cpu.cursorSpeedDivisor = 12;
       } else {
+        cpu.control = 0;
         return input;
       }
     } else {
-      loadTutorialState(tutorial.state);
+      nextDialogue(tutorial.msgIndex);
       return input;
     }
   }
@@ -95,6 +99,7 @@ export function cpuAction(input, helpPlayer = false) {
   //     console.log(game.frames, "tutorial complete");
   //     cpu.enabled = false;
   //     game.tutorialRunning = false;
+  //     document.getElementById("game-info").style.display = "inline";
   //   }
   //   return input;
   // }

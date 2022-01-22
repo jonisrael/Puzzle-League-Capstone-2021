@@ -7,7 +7,8 @@ import { trySwappingBlocks } from "./functions/swapBlock";
 import { displayMessage } from "..";
 import { render } from "..";
 import * as state from "../store";
-import { loadTutorialState, tutorial } from "./tutorial/tutorialScript";
+import { nextDialogue, tutorial } from "./tutorial/tutorialScript";
+import { tutorialMessages } from "./tutorial/tutorialMessages";
 
 export const action = {
   up: 0,
@@ -184,7 +185,7 @@ export function playerAction(input) {
     if (Object.values(action).includes(true)) {
       input = tutorialBreakInputs(input);
       Object.keys(action).forEach((btn) => (action[btn] = false));
-    } else {
+    } else if (win.gamepadPort !== false) {
       // check gamepad inputs
       input = playerInput(input);
     }
@@ -194,17 +195,18 @@ export function playerAction(input) {
     }
   }
 
-  if (!game.mode == "cpu-play") {
-    if (game.tutorialRunning && Object.values(input).includes(true)) {
-      input = tutorialBreakInputs(input);
-      Object.keys(action).forEach((btn) => (action[btn] = false));
-      return input;
-    }
+  if (win.gamepadPort !== false) {
+    input = playerInput(input);
   }
+
+  if (!game.humanCanPlay && !debug.enabled) {
+    Object.keys(action).forEach((btn) => (action[btn] = false));
+  }
+
   // let inputsActive = Object.keys(action).filter(key => action[key] === true);
   // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
-    if (!game.tutorialRunning && !input.raise) {
+    if (Object.values(input).includes(true) && !input.byCPU) {
       cpu.control = 0;
       console.log("player input detected, cpu control off.");
     }
@@ -401,20 +403,21 @@ function pollGamepadInputs(gamepad) {
 function tutorialBreakInputs(input) {
   if (input.swap) {
     console.log(tutorial.state);
-    if (tutorial.state == tutorial.board.length - 1) {
+    if (
+      tutorial.state == tutorial.board.length - 1 &&
+      tutorial.msgIndex == tutorialMessages.length - 1
+    ) {
       game.tutorialRunning = false;
-      win.running = false;
+      document.getElementById("game-info").style.display = "inline";
       win.restartGame = true;
     }
-    tutorial.state += 1;
-    console.log("swap was pressed", game.frames, input.swap);
+    nextDialogue(tutorial.msgIndex);
     console.log("state is now", tutorial.state, input);
-    game.frames = 0;
-    loadTutorialState(tutorial.state, game.frames);
   } else if (input.raise) {
     console.log("raise was pressed", input);
     tutorial.state = tutorial.board.length - 1;
     game.tutorialRunning = false;
+    document.getElementById("game-info").style.display = "inline";
     win.running = false;
     win.restartGame = true;
   }

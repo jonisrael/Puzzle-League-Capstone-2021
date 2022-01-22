@@ -27,7 +27,7 @@ export default (st) => html`
             id="watch-ai-play-button"
             class="default-button start-buttons"
           >
-            Watch the AI Play! (B)
+            See My AI Play! (B)
           </button>
         </div>
       </div>

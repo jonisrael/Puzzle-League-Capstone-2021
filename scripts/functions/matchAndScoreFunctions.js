@@ -13,6 +13,7 @@ import {
   randInt,
   cpu,
   helpPlayer,
+  detectInfiniteLoop,
 } from "../global";
 
 import { playChainSFX, playAudio } from "./audioFunctions";
@@ -54,7 +55,10 @@ export function checkMatch() {
   let clearLocations = [];
   let clearLocationsString = "";
   let add1ToChain = false;
+  win.loopCounter = 0;
   while (!done && !checkAgain) {
+    win.loopCounter++;
+    if (detectInfiniteLoop("fixNextDarkStack", win.loopCounter)) break;
     done = true;
     checkAgain = false;
     for (let c = 0; c < grid.COLS; c++) {
@@ -152,8 +156,7 @@ export function checkMatch() {
     // now determine chain
     if (legalMatch(clearLocations)) {
       game.boardRiseRestarter = 0; // restart failsafe timer
-      if (helpPlayer.timer > 180) helpPlayer.timer = 300;
-      else helpPlayer.timer = 180;
+      helpPlayer.timer = 600;
       game.addToPrimaryChain = false;
       for (let i = 0; i < blocksCleared - 1; i++) {
         clearLocationsString += `[${clearLocations[i]}], `;
@@ -247,7 +250,7 @@ export function checkMatch() {
     } else {
       done = true; // Needs to end if confirm clear fails
     }
-  }
+  } // end while
 }
 
 function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
