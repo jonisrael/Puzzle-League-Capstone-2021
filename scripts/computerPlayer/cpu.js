@@ -144,7 +144,9 @@ export function cpuAction(input, helpPlayer = false) {
     }
   }
 
-  if (helpPlayer) return cpu.matchList;
+  if (helpPlayer) {
+    return cpu.matchList;
+  }
 
   // If no matches detected, look for ways to flatten the stack.
   if (!coordinates) {

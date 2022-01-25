@@ -36,7 +36,6 @@ export function findVerticalMatches(middleRowIndex, dir) {
             INTERACTIVE_TYPES.includes(game.board[c][r].type)
           ) {
             matchLocations.push([c, r]);
-            cpu.matchList.push(`${[c, r]}`);
             break; // go look at next row
           }
           start < end ? c++ : c--;
@@ -47,8 +46,11 @@ export function findVerticalMatches(middleRowIndex, dir) {
           lookForLargerMatch(matchLocations, desiredColor, start, end);
         }
         // console.log(desiredColor, cpu.matchList);
-
         cpu.targetColor = sprite.debugRed;
+        matchLocations.forEach((coord) => {
+          cpu.matchList.push(coord);
+          cpu.matchStrings.push(`${coord}`);
+        });
         return startVerticalSwapping(matchLocations);
       }
     }
@@ -118,7 +120,6 @@ function lookForLargerMatch(matchLocations, desiredColor, start, end) {
         INTERACTIVE_TYPES.includes(game.board[c][r].type)
       ) {
         matchLocations.push([c, r]);
-        cpu.matchList.push(`${[c, r]}`);
         break; // go look at next row
       }
       start < end ? c++ : c--;

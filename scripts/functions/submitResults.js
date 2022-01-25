@@ -7,7 +7,7 @@ import {
   router,
   sendData,
   updateEntry,
-  getWorldTimeAPI
+  getWorldTimeAPI,
 } from "../../index";
 import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
@@ -92,11 +92,11 @@ export function afterGame() {
   div2.appendChild(deleteScores);
   deleteScores.innerHTML = "Delete Personal Best Scores";
 
-  restartGame.addEventListener("click", event => {
+  restartGame.addEventListener("click", (event) => {
     startGame(perf.gameSpeed);
   });
 
-  deleteScores.addEventListener("click", event => {
+  deleteScores.addEventListener("click", (event) => {
     if (confirm("Are you sure you want to erase your best scores?")) {
       getBestScores(true);
     }
@@ -151,7 +151,7 @@ export function submitResults() {
   submitForm.className = "default-button";
   form.appendChild(submitForm);
 
-  document.querySelector("form").addEventListener("submit", event => {
+  document.querySelector("form").addEventListener("submit", (event) => {
     event.preventDefault();
     let indexToReplace = validateForm(nameInput.value, finalScore);
     console.log("index", indexToReplace);
@@ -169,7 +169,7 @@ export function submitResults() {
         hour: api.data.hour,
         minute: api.data.minute,
         meridian: api.data.meridian,
-        gameLog: game.log
+        gameLog: game.log,
       };
       updateEntry(newData, indexToReplace);
       leaderboard.userPostedName = nameInput.value;
@@ -212,6 +212,6 @@ export function extractTimeFromAPI(dateTimeString) {
     year: yearStr,
     hour: hourStr,
     minute: minStr,
-    meridian: meridian
+    meridian: meridian,
   };
 }

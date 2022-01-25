@@ -38,7 +38,7 @@ export function legalMatch(clearLocations) {
   for (let i = 0; i < blocksCleared; i++) {
     let c = clearLocations[i][0];
     let r = clearLocations[i][1];
-    for (let j = 11; j > r; j--) {
+    for (let j = grid.ROWS - 1; j > r; j--) {
       if (game.board[c][j].color == blockColor.VACANT) {
         return false; // If the block is falling, no match occurs.
       }
@@ -79,19 +79,19 @@ export function checkMatch() {
           clearLocations.push([c, r + 1]);
           // Check for four, five, and six clear
           if (
-            r < 10 &&
+            r < grid.ROWS - 2 &&
             Square.color == game.board[c][r + 2].color &&
             squareIsMatchable(c, r + 2)
           ) {
             clearLocations.push([c, r + 2]);
             if (
-              r < 9 &&
+              r < grid.ROWS - 3 &&
               Square.color == game.board[c][r + 3].color &&
               squareIsMatchable(c, r + 3)
             ) {
               clearLocations.push([c, r + 3]);
               if (
-                r < 8 &&
+                r < grid.ROWS - 3 &&
                 Square.color == game.board[c][r + 4].color &&
                 squareIsMatchable(c, r + 4)
               ) {
@@ -121,19 +121,19 @@ export function checkMatch() {
           clearLocations.push([c, r]);
           clearLocations.push([c + 1, r]);
           if (
-            c < 4 &&
+            c < grid.COLS - 2 &&
             Square.color == game.board[c + 2][r].color &&
             squareIsMatchable(c + 2, r)
           ) {
             clearLocations.push([c + 2, r]);
             if (
-              c < 3 &&
+              c < grid.COLS - 3 &&
               Square.color == game.board[c + 3][r].color &&
               squareIsMatchable(c + 3, r)
             ) {
               clearLocations.push([c + 3, r]);
               if (
-                c < 2 &&
+                c < grid.COLS - 4 &&
                 Square.color == game.board[c + 4][r].color &&
                 squareIsMatchable(c + 4, r)
               ) {
@@ -156,7 +156,10 @@ export function checkMatch() {
     // now determine chain
     if (legalMatch(clearLocations)) {
       game.boardRiseRestarter = 0; // restart failsafe timer
-      helpPlayer.timer = 600;
+      helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
+      // helpPlayer.timer < 120
+      //   ? (helpPlayer.timer = 120)
+      //   : (helpPlayer.timer = 600);
       game.addToPrimaryChain = false;
       for (let i = 0; i < blocksCleared - 1; i++) {
         clearLocationsString += `[${clearLocations[i]}], `;

@@ -8,6 +8,7 @@ import {
   touch,
   transferProperties,
   CLEARING_TYPES,
+  helpPlayer,
 } from "../global";
 
 import { checkMatch } from "./matchAndScoreFunctions";
@@ -20,10 +21,10 @@ export function doGravity(gameSpeed) {
 
   for (let c = 0; c < grid.COLS; c++) {
     if (
-      game.board[c][11].type == blockType.LANDING &&
-      game.board[c][11].timer == 0
+      game.board[c][grid.ROWS - 1].type == blockType.LANDING &&
+      game.board[c][grid.ROWS - 1].timer == 0
     ) {
-      game.board[c][11].type = blockType.NORMAL;
+      game.board[c][grid.ROWS - 1].type = blockType.NORMAL;
       game.boardRiseDisabled = false;
     }
 
@@ -65,6 +66,7 @@ export function doGravity(gameSpeed) {
             touch.target.y += 1;
           }
           transferProperties(game.board[c][r], game.board[c][r + 1], "to");
+          helpPlayer.done = false;
           game.board[c][r + 1].airborne = true;
           possibleLandedLocations.push([c, r + 1]);
 

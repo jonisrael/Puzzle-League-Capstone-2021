@@ -153,20 +153,22 @@ export function createTutorialBoard(colorLocations) {
   }
   for (let x = 0; x < COLS; x++) {
     // Initial Dark Stacks
-    board[x][12].color = PIECES[randInt(PIECES.length)];
-    board[x][13].color = PIECES[randInt(PIECES.length)];
+    board[x][grid.ROWS].color = PIECES[randInt(PIECES.length)];
+    board[x][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
     if (x > 0) {
       win.loopCounter = 0;
-      while (board[x][12].color == board[x - 1][12].color) {
+      while (board[x][grid.ROWS].color == board[x - 1][grid.ROWS].color) {
         win.loopCounter++;
         if (detectInfiniteLoop("createTutorialBoard1", win.loopCounter)) break;
-        board[x][12].color = PIECES[randInt(PIECES.length)];
+        board[x][grid.ROWS].color = PIECES[randInt(PIECES.length)];
       }
       win.loopCounter = 0;
-      while (board[x][13].color == board[x - 1][13].color) {
+      while (
+        board[x][grid.ROWS + 1].color == board[x - 1][grid.ROWS + 1].color
+      ) {
         win.loopCounter++;
         if (detectInfiniteLoop("createTutorialBoard2", win.loopCounter)) break;
-        board[x][13].color = PIECES[randInt(PIECES.length)];
+        board[x][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
       }
     }
   }

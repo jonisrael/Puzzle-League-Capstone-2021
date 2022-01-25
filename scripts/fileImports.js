@@ -11,6 +11,9 @@ import MOVING_CURSOR from ".././assets/Sprites/cursors/selectable_cursor_pink.pn
 import UNSELECTABLE_CURSOR from ".././assets/Sprites/cursors/unselectable_cursor.png";
 import GRID_LINE from ".././assets/Sprites/grid_line.png";
 import GRID_LINE_RED from ".././assets/Sprites/grid_line_red.png";
+import ROW_LIGHT_LEFT from ".././assets/Sprites/row_light_left.png";
+import ROW_LIGHT_MID from ".././assets/Sprites/row_light_mid.png";
+import ROW_LIGHT_RIGHT from ".././assets/Sprites/row_light_right.png";
 import LIGHT from ".././assets/Sprites/lightThick.png";
 import PINK_LIGHT from ".././assets/Sprites/pinkLight.png";
 import ORANGE_LIGHT from ".././assets/Sprites/orangeLight.png";
@@ -282,6 +285,9 @@ const sprite = {
   movingCursor: MOVING_CURSOR,
   grid_line: GRID_LINE,
   grid_line_red: GRID_LINE_RED,
+  rowLightLeft: ROW_LIGHT_LEFT,
+  rowLightMid: ROW_LIGHT_MID,
+  rowLightRight: ROW_LIGHT_RIGHT,
   light_up: LIGHT,
   light_pink: PINK_LIGHT,
   light_orange: ORANGE_LIGHT,

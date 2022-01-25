@@ -95,7 +95,7 @@ export function isGameOver() {
 
 export function gameOverBoard() {
   // don't continue function if all pieces are already switched to blockType.DEAD type
-  if (game.board[5][11].type == blockType.DEAD) return;
+  if (game.board[grid.COLS - 1][grid.ROWS - 1].type == blockType.DEAD) return;
   if (game.frames == 2) {
     if (!game.tutorialRunning) {
       getLeaderboardData();

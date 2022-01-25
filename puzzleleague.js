@@ -87,6 +87,7 @@ import {
   essentialLoadedAudios,
   helpPlayer,
   detectInfiniteLoop,
+  debugSquares,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -192,6 +193,10 @@ class Block {
         filename = "light_up";
       if (this.x === match[2][0] && this.y === match[2][1])
         filename = "light_up";
+    } else if (this.y === game.cursor.y) {
+      filename = "rowLight";
+      filename +=
+        this.x === 0 ? "Left" : this.x === grid.COLS - 1 ? "Right" : "Mid";
     }
     win.ctx.drawImage(
       loadedSprites[filename],
@@ -387,7 +392,7 @@ class Block {
         grid.SQ * this.y - game.rise
       );
     }
-    if (cpu.matchList.includes([this.x, this.y].join())) {
+    if (cpu.matchStrings.includes([this.x, this.y].join())) {
       win.ctx.drawImage(
         loadedSprites["debugBlue"],
         grid.SQ * this.x,
@@ -481,7 +486,7 @@ export function newBlock(c, r, vacant = false) {
 
 export function checkIfHelpPlayer() {
   if (
-    game.score < 300 &&
+    game.score < 500 &&
     game.frames > 0 &&
     game.frames < 7200 &&
     helpPlayer.timer > 0 &&
@@ -490,15 +495,25 @@ export function checkIfHelpPlayer() {
     !game.tutorialRunning
   ) {
     helpPlayer.timer--;
-  } else if (helpPlayer.timer == 0) {
-    cpuAction({}, true);
+  } else if (helpPlayer.timer === 0) {
+    if (!helpPlayer.done) {
+      console.log("enabling hint");
+      cpu.matchList.length = 0;
+      cpu.matchStrings.length = 0;
+      cpuAction({}, true);
+      if (cpu.matchList.length > 0) {
+        helpPlayer.done = true;
+      }
+    } else if (helpPlayer.done && game.currentChain > 0) {
+      helpPlayer.done = false;
+    }
   }
 }
 
 export function drawGrid() {
   let blocksAreSwapping = false; // to be placed on top of drawn grid
   for (let x = 0; x < grid.COLS; x++) {
-    for (let y = 0; y < grid.ROWS + 1; y++) {
+    for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
@@ -509,7 +524,7 @@ export function drawGrid() {
 
       if (
         (helpPlayer.timer == 0 || (cpu.enabled && !game.tutorialRunning)) &&
-        cpu.matchList.includes([x, y].join())
+        cpu.matchStrings.includes([x, y].join())
       ) {
         Square.drawHint();
       }
@@ -590,7 +605,11 @@ export function isChainActive() {
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
   game.lastChain = game.currentChain;
-  helpPlayer.timer = 600;
+  helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
+  // helpPlayer.timer < 120 ? (helpPlayer.timer = 120) : (helpPlayer.timer = 600);
+  helpPlayer.done = false;
+  cpu.matchList.length = 0;
+  cpu.matchStrings.length = 0;
   if (game.currentChain > 8) {
     playAudio(audio.fanfare5, 0.25);
     playAnnouncer(
@@ -656,13 +675,13 @@ export function endChain(potentialSecondarySuccessor) {
   }
 }
 
-export function createNewRow() {
+export function createNewRow(board) {
   if (game.pauseStack || game.highestRow < 1) {
-    return false;
+    return board;
   }
 
   if (game.boardRiseDisabled || debug.freeze == 1) {
-    return false;
+    return board;
   }
 
   if (game.cursor.y > 1) {
@@ -678,14 +697,14 @@ export function createNewRow() {
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 1; r < grid.ROWS; r++) {
       // Raise all grid.ROWS, then delete bottom grid.ROWS.
-      transferProperties(game.board[c][r], game.board[c][r - 1], "to");
-      // game.board[c][r - 1].color = game.board[c][r].color;
+      transferProperties(board[c][r], board[c][r - 1], "to");
+      // board[c][r - 1].color = board[c][r].color;
     }
-    game.board[c][11].color = game.board[c][12].color;
-    game.board[c][12].color = game.board[c][13].color;
-    game.board[c][13].color = PIECES[randInt(PIECES.length)];
+    board[c][grid.ROWS - 1].color = board[c][grid.ROWS].color;
+    board[c][grid.ROWS].color = board[c][grid.ROWS + 1].color;
+    board[c][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
   }
-  game.board = fixNextDarkStack(game.board);
+  board = fixNextDarkStack(board);
 
   if (game.highestRow === 3 && game.level > 3 && game.mode !== "training") {
     playAnnouncer(
@@ -699,7 +718,7 @@ export function createNewRow() {
     game.score += Math.floor(game.scoreMultiplier * 10);
   }
 
-  return true;
+  return board;
 }
 
 // function checkBoardStates(c, r) {
@@ -842,6 +861,7 @@ function KEYBOARD_CONTROL(event) {
           );
         }
         debug.show = 1;
+        helpPlayer.timer = 10;
         leaderboard.canPost = false;
         leaderboard.reason = "debug";
         perf.unrankedReason = "debug mode was activated.";
@@ -910,27 +930,26 @@ function KEYBOARD_CONTROL(event) {
           // o
           console.log("Show debug info number:", debug.show);
           debug.show = (debug.show + 1) % 2;
-          if (event.keyCode === 66) {
-            // b
-            cpu.enabled = (cpu.enabled + 1) % 2;
-            cpu.control = (cpu.control + 1) % 2;
-            console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
-            if (cpu.enabled === 0) cpu.control = 0;
-          }
-          if (event.keyCode == 75) {
-            // k
-            game.finalTime = (game.frames / 60).toFixed(1);
-            game.frames = 0;
-            game.over = true;
-            for (let c = 0; c < grid.COLS; c++) {
-              for (let r = 0; r < grid.ROWS; r++) {
-                game.board[c][r].type = blockType.LANDING;
-                game.board[c][r].timer = -2;
-              }
+        } else if (event.keyCode === 66) {
+          // b
+          cpu.enabled = (cpu.enabled + 1) % 2;
+          cpu.control = (cpu.control + 1) % 2;
+          console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
+          if (cpu.enabled === 0) cpu.control = 0;
+        }
+        if (event.keyCode == 75) {
+          // k
+          game.finalTime = (game.frames / 60).toFixed(1);
+          game.frames = 0;
+          game.over = true;
+          for (let c = 0; c < grid.COLS; c++) {
+            for (let r = 0; r < grid.ROWS; r++) {
+              game.board[c][r].type = blockType.LANDING;
+              game.board[c][r].timer = -2;
             }
-            gameOverBoard();
-            drawGrid();
           }
+          gameOverBoard();
+          drawGrid();
         } else if (event.keyCode == 16) {
           // LShift to empty game.board
           for (let i = 0; i < grid.COLS; i++) {
@@ -1244,7 +1263,7 @@ export function gameLoop() {
           game.frames > 0 &&
           game.highestRow > 0
         ) {
-          createNewRow();
+          game.board = createNewRow(game.board);
           game.readyForNewRow = false;
         }
       }

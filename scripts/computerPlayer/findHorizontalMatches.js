@@ -28,6 +28,10 @@ export function findHorizontalMatches(r) {
         }
       }
       if (matchLocations.length > 2) {
+        matchLocations.forEach((coord) => {
+          cpu.matchList.push(coord);
+          cpu.matchStrings.push(`${coord}`);
+        });
         // begin swap sequence
         return startHorizontalSwapping(matchLocations);
       }
@@ -54,7 +58,6 @@ function startHorizontalSwapping(matchLocations) {
         if (checkForObstacle(centerX, rightX, y)) return false;
         else {
           cpu.targetColor = sprite.debugGreen;
-          cpu.matchList = matchLocations;
           return ableToSwap(centerX, y, true);
         }
       }
@@ -62,7 +65,6 @@ function startHorizontalSwapping(matchLocations) {
         if (checkForObstacle(leftX, centerX, y)) return false;
         else {
           cpu.targetColor = sprite.debugGreen;
-          cpu.matchList = matchLocations;
           return ableToSwap(leftX, y, true);
         }
       }

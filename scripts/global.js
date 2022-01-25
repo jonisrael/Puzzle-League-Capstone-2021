@@ -124,7 +124,7 @@ export const PIECES = [
   blockColor.PURPLE,
   blockColor.RED,
   blockColor.YELLOW,
-  blockColor.BLUE,
+  // blockColor.BLUE,
 ];
 
 export const INTERACTIVE_TYPES = [
@@ -327,11 +327,7 @@ export let game = {
 
 export const helpPlayer = {
   timer: 300,
-  blockHint: [
-    [-1, -1],
-    [-1, -1],
-    [-1, -1],
-  ],
+  done: false,
 };
 
 export const lastIndex = {
@@ -404,6 +400,7 @@ export const cpu = {
   userChangedSpeed: 0,
   holeDetectedAt: [0, 0],
   matchList: [],
+  matchStrings: [],
   transferToRight: 0,
   randomInputCounter: 0,
   prevSwapX: 0,
@@ -490,7 +487,7 @@ export function randInt(
   win.loopCounter = 0;
   while (!done) {
     win.loopCounter++;
-    if (detectInfiniteLoop("fixNextDarkStack", win.loopCounter)) break;
+    if (detectInfiniteLoop("randInt", win.loopCounter)) break;
     done = true;
     randomIndexSelected = Math.floor(max * Math.random());
     if (ignoreIndex === randomIndexSelected) {
@@ -580,7 +577,7 @@ export function outOfRange(x, y) {
 }
 
 export function detectInfiniteLoop(functionName, loopCounter) {
-  if (loopCounter > 1000) {
+  if (loopCounter > 2000) {
     displayMessage(`Infinite loop in ${functionName} detected. Closing Game.`);
     console.log(`Infinite loop in ${functionName} detected`);
     debug.enabled = true;
@@ -612,34 +609,48 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
     FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
   }
 
-  // // Transfer everything except x and y coordinates
-  // let tempProperties = [
-  //   FirstBlock.color,
-  //   FirstBlock.type,
-  //   FirstBlock.timer,
-  //   FirstBlock.touched,
-  //   FirstBlock.availForPrimaryChain,
-  //   FirstBlock.availForSecondaryChain
-  // ];
-  // FirstBlock.color = SecondBlock.color;
-  // SecondBlock.color = tempProperties[0];
-
-  // FirstBlock.type = SecondBlock.type;
-  // SecondBlock.type = tempProperties[1];
-
-  // FirstBlock.timer = SecondBlock.timer;
-  // SecondBlock.timer = tempProperties[2];
-
-  // FirstBlock.touched = SecondBlock.touched;
-  // SecondBlock.touched = tempProperties[3];
-
-  // FirstBlock.availForPrimaryChain = SecondBlock.availForPrimaryChain;
-  // SecondBlock.availForPrimaryChain = tempProperties[4];
-
-  // FirstBlock.availForSecondaryChain =
-  //   SecondBlock.availForSecondaryChain;
-  // SecondBlock.availForPrimaryChain = tempProperties[5];
+  if (helpPlayer.timer === 0) {
+    cpu.matchStrings.length = 0;
+    for (let i = 0; i < cpu.matchList.length; i++) {
+      cpu.matchStrings.push(`${cpu.matchList[i]}`);
+      let [xHint, yHint] = cpu.matchList[i];
+      if (FirstBlock.x === xHint && FirstBlock.y === yHint) {
+        cpu.matchList[i] = [SecondBlock.x, SecondBlock.y];
+        cpu.matchStrings[i] = `${cpu.matchList[i]}`;
+      } else if (SecondBlock.x === xHint && FirstBlock.y === yHint) {
+        cpu.matchList[i] = [FirstBlock.x, FirstBlock.y];
+        cpu.matchStrings[i] = `${cpu.matchList[i]}`;
+      }
+    }
+  }
 }
+// // Transfer everything except x and y coordinates
+// let tempProperties = [
+//   FirstBlock.color,
+//   FirstBlock.type,
+//   FirstBlock.timer,
+//   FirstBlock.touched,
+//   FirstBlock.availForPrimaryChain,
+//   FirstBlock.availForSecondaryChain
+// ];
+// FirstBlock.color = SecondBlock.color;
+// SecondBlock.color = tempProperties[0];
+
+// FirstBlock.type = SecondBlock.type;
+// SecondBlock.type = tempProperties[1];
+
+// FirstBlock.timer = SecondBlock.timer;
+// SecondBlock.timer = tempProperties[2];
+
+// FirstBlock.touched = SecondBlock.touched;
+// SecondBlock.touched = tempProperties[3];
+
+// FirstBlock.availForPrimaryChain = SecondBlock.availForPrimaryChain;
+// SecondBlock.availForPrimaryChain = tempProperties[4];
+
+// FirstBlock.availForSecondaryChain =
+//   SecondBlock.availForSecondaryChain;
+// SecondBlock.availForPrimaryChain = tempPropertiesgrid.COLS-1;
 
 // 2 minute preset
 // export const preset = {
