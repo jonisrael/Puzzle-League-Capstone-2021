@@ -259,7 +259,7 @@ function createHeadsUpDisplay() {
   win.canvas = document.createElement(`canvas`);
   win.canvas.setAttribute("id", "canvas");
   win.canvas.setAttribute("width", `${grid.COLS * grid.SQ}`);
-  win.canvas.setAttribute("height", `${(grid.ROWS + 2) * grid.SQ}`);
+  win.canvas.setAttribute("height", `${grid.ROWS * grid.SQ}`);
   column2.appendChild(win.canvas);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
