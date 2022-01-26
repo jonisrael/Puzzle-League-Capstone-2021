@@ -1,5 +1,5 @@
 import * as views from "./views";
-
-export default st => `
-  ${views[st.view](st)}
+import html from "html-literal";
+export default (st) => html`
+  <div id="main">${views[st.view](st)}</div>
 `;

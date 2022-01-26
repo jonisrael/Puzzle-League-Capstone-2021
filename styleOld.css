@@ -22,16 +22,17 @@ body {
   background-color: lightgrey;
   text-align: center;
   padding: 2rem;
-  border-radius: 1rem;
+  border-radius: 10px;
   max-height: 90%;
   max-width: 75%;
   overflow: auto;
 }
 
 #root {
-  margin: 2.5vh auto;
-  width: 90vw;
-  padding-top: 1rem;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 
 #patch-notes-block label {
@@ -54,14 +55,9 @@ body {
   padding: 10px;
 }
 
-#main {
-  min-height: 92vh;
-}
-
 #main-info {
   color: #ff8484;
-  font-size: 1.2rem;
-  padding: 0;
+  font-size: x-large;
 }
 
 .app-message-display {
@@ -70,11 +66,31 @@ body {
   border-radius: 3px;
 }
 
+.default-button {
+  margin: 20px;
+  border-radius: 10px;
+  padding: 30px;
+  background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
+  font-size: x-large;
+  align-items: center;
+}
+
 .refresh {
   margin-left: 75%;
   padding: 0.5rem;
   justify-content: flex-end;
   background-color: turquoise;
+}
+
+.default-button:hover {
+  border-radius: 10px;
+  background-color: #ff8484;
+  font-size: x-large;
+}
+
+#resume-button {
+  text-align: center;
+  padding: 10px;
 }
 
 #player-name {
@@ -88,34 +104,20 @@ body {
 }
 
 section {
-  background-image: linear-gradient(
-    0.5turn,
-    rgb(175, 175, 175),
-    silver,
-    rgb(175, 175, 175)
-  );
-  border-radius: 1rem;
-  /* padding: 5px; */
-  /* margin: 0 auto; */
-  /* margin-top: 5vh; */
-  /* margin-bottom: 5vh; */
-  /* margin-left: auto; */
-  /* margin-right: auto; */
+  background-color: silver;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #page-body {
   position: relative;
-  background-image: linear-gradient(
-    0.25turn,
-    rgb(65, 65, 65),
-    grey,
-    rgb(65, 65, 65)
-  );
-  /* height: 90%; */
-  margin: 1vh 1vw;
-  /* max-width: 95vw; */
-  /* top: 5%; */
-  /* max-height: 95vh; */
+  background-color: grey;
+  /* width: 95%; */
   /* margin: 0; */
   /* top: 50%;
     left: 50%; */
@@ -125,19 +127,15 @@ section {
 }
 
 #top-section {
-  display: none;
   width: 90%;
   margin: 0 auto;
 }
 
 #game-info {
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* display: none; */
-  display: table-row;
-  /* padding: 1rem; */
-  /* align-items: center; */
-  /* margin: 0 auto; */
+  /* display: table-row; */
+  display: inline;
+  align-items: center;
+  margin: 0 auto;
   /* max-width: 80%; */
 }
 
@@ -147,7 +145,9 @@ section {
 
 #game-info th,
 #game-info td {
-  font-size: 0.8rem;
+  font-size: small;
+  padding: 0.2rem;
+  /* width: 10%; */
 }
 
 #leaderboard-page {
@@ -157,24 +157,14 @@ section {
 #game-container,
 #options-menu {
   display: flex;
-  min-height: 100%;
+  /* min-height: 100%; */
 }
 
 #app-container {
-  /* position: absolute; */
-  /* top: 50%; */
-  /* left: 50%; */
-  /* -ms-transform: translateY(10%);
-  transform: translateY(10%); */
-  /* top: 25%; */
-  /* left: 33%; */
+  display: flex;
   flex-direction: column;
   /* padding: 10px; */
-  height: 90vh;
-  margin: 2vh auto;
-  /* margin: 0 auto; */
-  /* height: 95vh; */
-  /* max-height: 95%; */
+  margin: 0 auto;
   /* overflow: hidden; */
   /* min-width: 90%;
     min-height: 90%; */
@@ -188,11 +178,9 @@ section {
 }
 
 #fps-display {
-  margin: 0;
-  font-size: 0.5rem;
+  font-size: 0rem;
   text-align: left;
-  padding: 0.5rem 0 0.2rem 0;
-  /* padding-top: 0.5rem; */
+  padding-top: 2px;
 }
 
 #left-column,
@@ -203,83 +191,55 @@ section {
   justify-content: center;
 }
 
-#start-options {
-  display: flex;
-  flex-direction: column;
+#pause-button {
+  display: block;
   margin: 0 auto;
-  padding: 0;
-  /* max-width: 60vw; */
-}
-
-.default-button {
-  margin: 2rem;
-  outline: black solid 0.1rem;
-  border-radius: 1rem;
-  padding: 3rem;
-  background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
-  font-size: 2rem;
   align-items: center;
-}
-
-.default-button:hover {
-  border-radius: 1rem;
-  outline: rgb(65, 65, 65) solid 0.2rem;
-  background-image: #ff8484;
-  background-image: linear-gradient(to bottom right, teal, turquoise);
-  /* font-size: x-large; */
 }
 
 .pause-buttons {
-  display: flex;
-  /* display: none; */
   flex: 33%;
-  padding: 1rem;
-  height: 10vw;
-  width: 30vw;
-  margin: 2vw auto;
+  padding: 10px;
+  max-height: 70px;
+
   justify-content: center;
 }
 
-.start-buttons {
-  min-width: 50vw;
-  padding: 0.5rem;
-  margin: 1rem auto;
-  /* max-width: 40rem; */
-}
-
-#pause-button {
-  /* display: block; */
-  /* flex: 33%; */
-  max-height: 1rem;
-  /* max-width: 33vw; */
-  width: 70%;
-  /* min-width: 100px; */
-  padding: 1.5rem;
-  /* height: 10%; */
-  font-size: 1.5rem;
-  margin: 2rem auto;
-  /* padding: 1rem 1rem; */
-  align-items: center;
-}
-
-#arcade-button {
-  background-image: linear-gradient(to bottom right, gold, yellow);
-}
-
-.column1,
-.column2,
-.column3 {
-  flex: 32%;
-  padding: 0.5rem 1rem;
+#column1,
+#column2,
+#column3 {
+  flex: 33%;
   flex-direction: column;
   justify-content: center;
 }
 
-/* .column1, */
-/* .column3 { */
-/* min-width: 100%; */
-/* display: none !important; */
-/* } */
+/* #column1,
+#column3 {
+  display: none !important;
+} */
+
+#column1,
+#yes-option {
+  display: flex;
+  /* padding-left: 3rem; */
+  margin: auto 0;
+  justify-content: center;
+}
+
+#column2 {
+  display: flex;
+  justify-content: center;
+  padding: 1em;
+  flex-direction: column;
+}
+
+#column3,
+#no-option {
+  display: flex;
+  padding-right: 2rem;
+  margin: auto 0;
+  top: 50%;
+}
 
 form label {
   font-size: large;
@@ -290,12 +250,10 @@ label {
 }
 
 header {
-  background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
-  padding: 1rem;
+  background-color: grey;
   text-align: center;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
+  top: 0;
+  display: block;
 }
 
 #home-page {
@@ -321,8 +279,8 @@ header {
 
 #best-scores-table {
   /* display: none; */
+  max-width: 75%;
   margin: 0 auto;
-  padding: 2rem;
   /* padding-left: 1em;
   padding-right: 1em;
   padding-top: 1em; */
@@ -336,11 +294,11 @@ table {
 
 td,
 th {
-  border: 0.15rem solid black;
+  border: 2px solid black;
   font-family: arial, sans-serif;
   font-size: large;
   text-align: center;
-  padding: 0.5rem;
+  padding: 8px;
 }
 
 tr:nth-child(odd) {
@@ -362,19 +320,19 @@ iframe {
 
 canvas {
   display: flex;
+  /* position: sticky;p */
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  border: 1.2rem solid burlywood;
-  /* min-width: 100%; */
-  min-height: 80vh;
+  border: 20px solid burlywood;
+  /* min-width: 120%; */
+  /* min-height: 100%; */
 }
 
 p {
-  text-indent: 3rem;
-  font-size: 1.5rem;
-  line-height: 1.5;
-  padding: 1rem;
+  text-indent: 50px;
+  font-size: large;
+  line-height: 1.2;
 }
 
 #bugs-page li {
@@ -387,18 +345,15 @@ p {
 h1 {
   color: red;
   text-align: center;
-  padding: 1rem;
 }
 
 h2 {
   color: red;
   text-align: center;
-  padding: 1rem;
 }
 
 h3 {
   color: #ff8484;
-  padding: 1rem;
 }
 
 #controls {
@@ -429,11 +384,11 @@ select {
   color: red;
 }
 
-/* @media screen and (max-width: 600px) {
+@media screen and (max-width: 600px) {
   .hidden-mobile {
     display: none;
   }
-} */
+}
 
 #left-hud-elements {
   background-color: whitesmoke;
@@ -462,7 +417,7 @@ select {
 #right-hud-elements li {
   text-align: center;
   color: red;
-  /* padding-right: 1rem; */
+  padding-right: 1rem;
 }
 
 #nav-message {
@@ -470,6 +425,7 @@ select {
 }
 
 #vl {
+  border-left: 1px solid red;
   padding: 10px;
   height: 200px;
 }
@@ -489,20 +445,19 @@ footer {
 }
 
 #nav-bar {
-  /* display: flex; */
+  font-size: 1vw;
+  display: flex;
   list-style-type: none;
-  /* border-radius: 1rem; */
-  /* flex-direction: column; */
+  flex-direction: column;
   top: 0;
   align-items: center;
 }
 
 #nav-bar ul {
-  font-size: 100%;
+  font-size: x-large;
   list-style-type: none;
   margin: 0 auto;
-  border-radius: 1rem;
-  padding: 0.2rem;
+  padding: 5px;
   overflow: hidden;
   background-color: #333;
 }
@@ -515,7 +470,7 @@ footer {
   display: block;
   color: white;
   text-align: center;
-  padding: 1rem 1rem;
+  padding: 14px 16px;
   text-decoration: none;
 }
 

@@ -86,7 +86,7 @@ export function startGame(selectedGameSpeed, version = 1) {
   touch.moveOrderExists = false;
   touch.arrowList.length = 0;
   game.tutorialRunning = false;
-  document.getElementById("game-info").style.display = "inline";
+  // document.getElementById("game-info").style.display = "inline";
   game.board = generateOpeningBoard(25, 5);
   // if (!win.tutorialPlayedOnce && game.mode == "arcade") {
   //   win.tutorialPlayedOnce = true;
@@ -192,22 +192,22 @@ function createHeadsUpDisplay() {
   appContainer.appendChild(gameContainer);
 
   let column1 = document.createElement("div");
-  column1.setAttribute("id", "column1");
+  column1.setAttribute("class", "column1");
   gameContainer.append(column1);
   let column2 = document.createElement("div");
-  column2.setAttribute("id", "column2");
+  column2.setAttribute("class", "column2");
   gameContainer.append(column2);
   let column3 = document.createElement("div");
-  column3.setAttribute("id", "column3");
+  column3.setAttribute("class", "column3");
   gameContainer.append(column3);
 
   win.scoreHeader.innerHTML = "SCORE";
   win.scoreHeader.style.color = "black";
-  win.timeHeader.innerHTML = "TIME";
+  win.timeHeader.innerHTML = "TME";
   win.timeHeader.style.color = "black";
-  win.levelHeader.innerHTML = "LEVEL";
+  win.levelHeader.innerHTML = "LVL";
   win.levelHeader.style.color = "black";
-  win.multiplierHeader.innerHTML = "MULTIPLIER";
+  win.multiplierHeader.innerHTML = "MULT";
   win.multiplierHeader.style.color = "black";
 
   // append HUD elements
@@ -247,15 +247,11 @@ function createHeadsUpDisplay() {
   controls.innerHTML = preset.controlsDefaultMessage;
   win.controlsDisplay = controls;
 
-  column3.appendChild(controls);
-  // setUpQuickStatDisplay(column1);
-  if (game.mode === "arcade") {
-    setUpBestScoreDisplay(column3);
-  } else if (game.mode === "training") {
-    setUpTrainingMode(column3);
-  }
+  column1.appendChild(controls);
 
   // Make Canvas, then append it to home page
+  // document.getElementById("page-body").style.maxWidth = "none";
+  // document.getElementById("page-body").style.maxHeight = "95vh";
   win.canvas = document.createElement(`canvas`);
   win.canvas.setAttribute("id", "canvas");
   win.canvas.setAttribute("width", `${grid.COLS * grid.SQ}`);
@@ -263,7 +259,7 @@ function createHeadsUpDisplay() {
   column2.appendChild(win.canvas);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
-  column3.appendChild(win.highScoreDisplay);
+  column1.appendChild(win.highScoreDisplay);
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
 
@@ -305,10 +301,23 @@ function createHeadsUpDisplay() {
   pauseButton.setAttribute("id", "pause-button");
   pauseButton.className = "pause-buttons default-button";
   pauseButton.innerHTML = "Pause";
-  appContainer.append(pauseButton);
+  column1.append(pauseButton);
   pauseButton.addEventListener("click", (event) => {
-    game.tutorialRunning ? nextDialogue(tutorial.msgIndex) : pause();
+    game.tutorialRunning
+      ? nextDialogue(tutorial.msgIndex)
+      : game.paused
+      ? unpause()
+      : pause();
   });
+
+  column1.append(win.gameInfoTable);
+
+  // setUpQuickStatDisplay(column1);
+  if (game.mode === "arcade") {
+    setUpBestScoreDisplay(column1);
+  } else if (game.mode === "training") {
+    setUpTrainingMode(column1);
+  }
 
   createClickListeners();
 }
@@ -586,7 +595,7 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
   return board;
 }
 
-function setUpBestScoreDisplay(column3) {
+function setUpBestScoreDisplay(column) {
   let bestScoresDisplay = document.createElement("table");
   bestScoresDisplay.setAttribute("id", "best-scores-table");
   let bestScoresString = `
@@ -609,7 +618,7 @@ function setUpBestScoreDisplay(column3) {
   }
   bestScoresString += `</table>`;
   bestScoresDisplay.innerHTML = bestScoresString;
-  if (game.mode === "arcade") column3.appendChild(bestScoresDisplay);
+  if (game.mode === "arcade") column.appendChild(bestScoresDisplay);
 }
 
 function setUpTrainingMode(column3) {

@@ -5,7 +5,7 @@ import { action } from "../controls";
 import { tutorial } from "../tutorial/tutorialScript";
 
 export function pause(lostFocus = false, message = "Pause") {
-  document.getElementById("fps-display").style.display = "none";
+  // document.getElementById("fps-display").style.display = "none";
   game.paused = true;
 
   console.log(
@@ -51,13 +51,15 @@ export function pause(lostFocus = false, message = "Pause") {
   else win.mainInfoDisplay.innerHTML = message;
   // game.Music.volume *= 0.25;
   game.Music.pause();
-  if (debug.enabled) return; // keep board showing in debug mode
-  win.mainInfoDisplay.style.color = "black";
-  win.cvs.style.display = "none";
-  document.getElementById("fps-display").style.display = "none";
-  document.getElementById("resume-button").style.display = "flex";
-  document.getElementById("restart-button").style.display = "flex";
-  document.getElementById("menu-button").style.display = "flex";
+  if (!debug.enabled) {
+    // still show board during debug mode
+    win.mainInfoDisplay.style.color = "black";
+    win.cvs.style.display = "none";
+    // document.getElementById("fps-display").style.display = "none";
+    document.getElementById("resume-button").style.display = "flex";
+    document.getElementById("restart-button").style.display = "flex";
+    document.getElementById("menu-button").style.display = "flex";
+  }
 }
 
 export function unpause() {
@@ -67,10 +69,10 @@ export function unpause() {
   perf.thisPauseTime = 0;
   perf.sumOfPauseTimes += pauseTime;
   win.mainInfoDisplay.innerHTML = game.message;
-  win.cvs.style.display = "flex";
+  win.cvs.style.display = "block";
   if (game.frames >= 0) game.Music.play();
   // game.Music.volume *= 4;
-  document.getElementById("fps-display").style.display = "flex";
+  // document.getElementById("fps-display").style.display = "flex";
   document.getElementById("resume-button").style.display = "none";
   document.getElementById("restart-button").style.display = "none";
   document.getElementById("menu-button").style.display = "none";

@@ -11,25 +11,16 @@ export default (st) => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul>
       <hr />
-      <div id="game-container">
-        <div id="column1">
-          <button id="training-mode" class="default-button start-buttons">
-            Training Mode (T)
-          </button>
-        </div>
-        <div id="column2">
-          <button id="arcade-button" class="default-button start-buttons">
-            Play Arcade! (Enter)
-          </button>
-        </div>
-        <div id="column3">
-          <button
-            id="watch-ai-play-button"
-            class="default-button start-buttons"
-          >
-            See My AI Play! (B)
-          </button>
-        </div>
+      <div id="start-options">
+        <button id="arcade-button" class="default-button start-buttons">
+          Play Arcade! (Enter)
+        </button>
+        <button id="training-mode" class="default-button start-buttons">
+          Training Mode (T)
+        </button>
+        <button id="watch-ai-play-button" class="default-button start-buttons">
+          See My AI Play! (B)
+        </button>
       </div>
       <hr />
       <h1>How to play</h1>

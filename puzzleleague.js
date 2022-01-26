@@ -606,7 +606,6 @@ export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
   game.lastChain = game.currentChain;
   helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
-  // helpPlayer.timer < 120 ? (helpPlayer.timer = 120) : (helpPlayer.timer = 600);
   helpPlayer.done = false;
   cpu.matchList.length = 0;
   cpu.matchStrings.length = 0;
@@ -738,6 +737,15 @@ window.addEventListener(
     }
   },
   false
+);
+
+// prevent app scroll
+document.addEventListener(
+  "wheel",
+  function(e) {
+    if (win.running) e.preventDefault();
+  },
+  { passive: false }
 );
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
@@ -997,15 +1005,17 @@ export function gameLoop() {
     document.getElementById("header").style.display = "none";
     document.getElementById("nav-bar").style.display = "none";
     document.getElementById("footer").style.display = "none";
-    document.getElementById("pause-button").style.display = "block";
+    // document.getElementById("pause-button").style.display = "flex";
   } else {
-    document.getElementById("header").style.display = "block";
-    document.getElementById("nav-bar").style.display = "flex";
-    document.getElementById("footer").style.display = "block";
-    if (!debug.enabled && document.getElementById("pause-button"))
-      document.getElementById("pause-button").style.display = "none";
+    // document.getElementById("header").style.display = "flex";
+    // document.getElementById("nav-bar").style.display = "flex";
+    // document.getElementById("footer").style.display = "flex";
+    // if (!debug.enabled && document.getElementById("pause-button"))
+    //   document.getElementById("pause-button").style.display = "none";
   }
   if (!win.running || win.view !== "Home") {
+    // document.getElementById("page-body").style.maxHeight = "none";
+    // document.getElementById("page-body").style.maxWidth = "95vh";
     closeGame(game.over);
     if (win.restartGame) {
       startGame(perf.gameSpeed);
@@ -1431,12 +1441,9 @@ export function gameLoop() {
       win.scoreDisplay.innerHTML = scoreString;
       win.multiplierDisplay.innerHTML = `${game.scoreMultiplier.toFixed(2)}x`;
 
-      if (debug.advanceOneFrame) {
-        win.fpsDisplay.innerHTML = "";
-      } else
-        win.fpsDisplay.innerHTML = `${perf.fps} fps${
-          leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
-        }`;
+      win.fpsDisplay.innerHTML = `${perf.fps} fps${
+        leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
+      }`;
       if (game.over) {
         win.fpsDisplay.innerHTML = `Real Game Clock Time: ${perf.realTime -
           perf.sumOfPauseTimes} seconds`;

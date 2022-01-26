@@ -1,0 +1,41 @@
+* {
+  display: flex;
+}
+
+header {
+  background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
+  text-align: center;
+  top: 0;
+  display: block;
+}
+
+footer {
+  color: purple;
+  text-align: center;
+  padding: 10px;
+  display: block;
+}
+
+canvas {
+  /* position: sticky;p */
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  border: 20px solid burlywood;
+  /* height: 100vh; */
+  /* min-width: 120%; */
+  /* min-height: 100%; */
+}
+#game-container {
+  height: 70vh;
+}
+
+#main-info {
+  font-size: 1rem;
+}
+#top-section,
+#pause-button,
+#main-info,
+#fps-display {
+  display: none;
+}
