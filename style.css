@@ -1,3 +1,7 @@
+* {
+  outline: 0.1vh dashed white;
+}
+
 body {
   background-image: url("./assets/Images/backgroundPallete.png");
   /* text-align: center; */
@@ -126,7 +130,6 @@ section {
 
 #top-section {
   display: none;
-  width: 90%;
   margin: 0 auto;
 }
 
@@ -135,6 +138,7 @@ section {
   /* flex-direction: column; */
   /* display: none; */
   display: table-row;
+  margin: 0 auto;
   /* padding: 1rem; */
   /* align-items: center; */
   /* margin: 0 auto; */
@@ -157,7 +161,7 @@ section {
 #game-container,
 #options-menu {
   display: flex;
-  min-height: 100%;
+  min-height: 90%;
 }
 
 #app-container {
@@ -233,7 +237,7 @@ section {
   display: flex;
   /* display: none; */
   flex: 33%;
-  padding: 1rem;
+  padding: 5vh;
   height: 10vw;
   width: 30vw;
   margin: 2vw auto;
@@ -275,11 +279,15 @@ section {
   justify-content: center;
 }
 
-/* .column1, */
-/* .column3 { */
-/* min-width: 100%; */
-/* display: none !important; */
-/* } */
+.column1,
+.column3 {
+  width: 20%;
+  /* min-width: 100%; */
+  /* display: none !important; */
+}
+.column2 {
+  width: 60%;
+}
 
 form label {
   font-size: large;
@@ -361,13 +369,13 @@ iframe {
 }
 
 canvas {
-  display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
   border: 1.2rem solid burlywood;
-  /* min-width: 100%; */
   min-height: 80vh;
+  /* min-width: 100%; */
+  /* min-height: 80vh; */
 }
 
 p {
@@ -410,7 +418,7 @@ h3 {
 
 select {
   display: flex;
-  padding: 1px;
+  padding: 3rem;
   overflow: auto;
 }
 
@@ -420,7 +428,7 @@ select {
 
 #home-page h3 {
   text-align: left;
-  text-indent: 50px;
+  text-indent: 3rem;
 }
 
 #left-hud-elements h2 {
@@ -522,4 +530,62 @@ footer {
 /* Change the link color to #111 (red) on hover */
 #nav-bar li a:hover {
   background-color: #111;
+}
+
+/* Now define features of mobile screen. */
+@media only screen and (max-width: 900px) {
+  * {
+    /* outline: 0.1vh dashed red; */
+    outline: 0;
+  }
+
+  canvas {
+    min-height: 0%;
+    height: 70vh;
+    margin-top: 3vh;
+    border-width: 0.5rem;
+  }
+
+  #game-container {
+    flex-direction: column;
+  }
+
+  .pause-buttons {
+    margin: 3vh auto;
+    max-height: 15vh;
+    width: 70vw;
+  }
+
+  #best-scores-table {
+    display: none;
+  }
+
+  #top-section {
+    display: flex;
+  }
+
+  #game-info {
+    padding: 0 2vw 0 2vw;
+  }
+
+  #game-info th,
+  #game-info td {
+    font-size: 1.5vh;
+    padding: 0.5vh 4vw 0.5vh 4vw;
+  }
+
+  #pause-button {
+    /* display: block; */
+    /* flex: 33%; */
+    max-height: 4vh;
+    max-width: 20vw;
+    /* max-width: 33vw; */
+    /* min-width: 100px; */
+    /* height: 10%; */
+    font-size: 2vh;
+    margin: 1vw auto;
+    padding: 1vh;
+    /* padding: 1rem 1rem; */
+    align-items: center;
+  }
 }

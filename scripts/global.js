@@ -176,6 +176,7 @@ let gameMusic = new Audio();
 export const win = {
   pageOpenedAt: Date.now(),
   patchNotesShown: false,
+  focused: true,
   tutorialPlayedOnce: false,
   gamepadPort: false,
   view: "Home",
@@ -192,6 +193,7 @@ export const win = {
   statDisplay: null,
   scoreHeader: null,
   scoreDisplay: null,
+  topSection: null,
   multiplierHeader: null,
   multiplierDisplay: null,
   chainDisplay: null,
@@ -361,12 +363,14 @@ export const perf = {
   realTime: 0,
   gameStartTime: 0,
   pauseStartTime: 0,
+  pauseTimeout: 0,
   sumOfPauseTimes: 0,
   fpsInterval: 1000 / 60,
   then: 0,
   now: 0,
   delta: 0,
   diffFromRealTime: 0,
+  lostFocusTimeStamp: 0,
 };
 
 export const debug = {

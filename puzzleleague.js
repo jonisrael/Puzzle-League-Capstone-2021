@@ -497,7 +497,6 @@ export function checkIfHelpPlayer() {
     helpPlayer.timer--;
   } else if (helpPlayer.timer === 0) {
     if (!helpPlayer.done) {
-      console.log("enabling hint");
       cpu.matchList.length = 0;
       cpu.matchStrings.length = 0;
       cpuAction({}, true);
@@ -743,7 +742,7 @@ window.addEventListener(
 document.addEventListener(
   "wheel",
   function(e) {
-    if (win.running) e.preventDefault();
+    if (win.running && !debug.enabled) e.preventDefault();
   },
   { passive: false }
 );
@@ -1070,6 +1069,19 @@ export function gameLoop() {
       playerAction(action);
       if (debug.enabled)
         win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
+      if (!document.hasFocus() && !debug.enabled) {
+        if (win.focused) {
+          perf.lostFocusTimeStamp = Date.now();
+          win.focused = false;
+        } else {
+          if (Date.now() - perf.lostFocusTimeStamp >= 600000) {
+            win.running = false;
+            render(state.Home);
+          }
+        }
+      } else {
+        win.focused = true;
+      }
     }
 
     // Big Game Loop
@@ -1142,7 +1154,7 @@ export function gameLoop() {
         }
         // overtime bonuses
         if (!cpu.enabled && game.minutes == 3) {
-          game.score += game.frames;
+          game.score += game.seconds;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
           );
@@ -1465,6 +1477,10 @@ export function gameLoop() {
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
       if (!document.hasFocus() && !debug.enabled && !cpu.enabled) {
         pause(true);
+        win.focused = false;
+        perf.lostFocusTimeStamp = Date.now();
+      } else {
+        win.focused = true;
       }
 
       document.getElementById("pause-button").innerHTML = game.tutorialRunning
