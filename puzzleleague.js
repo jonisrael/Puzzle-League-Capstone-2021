@@ -645,10 +645,10 @@ export function endChain(potentialSecondarySuccessor) {
     );
   }
   if (game.currentChain > 1) {
-    game.message = `${game.currentChain}x chain added ${game.chainScoreAdded} to your score.`;
+    game.message = `${game.currentChain}x chain added ${game.chainScoreAdded} score.`;
     game.messageChangeDelay = 90;
   } else if (game.currentChain == 1) {
-    game.message = `Combo added ${game.chainScoreAdded} to your score.`;
+    game.message = `Combo added ${game.chainScoreAdded} to score.`;
   }
   if (game.currentChain > game.largestChain) {
     game.largestChain = game.currentChain;
@@ -739,13 +739,13 @@ window.addEventListener(
 );
 
 // prevent app scroll
-document.addEventListener(
-  "wheel",
-  function(e) {
-    if (win.running && !debug.enabled) e.preventDefault();
-  },
-  { passive: false }
-);
+// document.addEventListener(
+//   "wheel",
+//   function(e) {
+//     if (win.running && !debug.enabled) e.preventDefault();
+//   },
+//   { passive: false }
+// );
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
@@ -1188,7 +1188,7 @@ export function gameLoop() {
         // Speed the stack up every 20 seconds
 
         if (game.frames >= 1200) {
-          game.message = `Level ${game.level + 1}, game speed has increased...`;
+          game.message = `Level ${game.level + 1}, game speed increases...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
           if (

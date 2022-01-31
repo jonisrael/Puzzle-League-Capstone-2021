@@ -35,7 +35,7 @@ body {
 #root {
   margin: 2.5vh auto;
   width: 90vw;
-  padding-top: 1rem;
+  padding-top: 1vh;
 }
 
 #patch-notes-block label {
@@ -64,7 +64,7 @@ body {
 
 #main-info {
   color: #ff8484;
-  font-size: 1.2rem;
+  font-size: 2rem;
   padding: 0;
 }
 
@@ -174,8 +174,8 @@ section {
   /* left: 33%; */
   flex-direction: column;
   /* padding: 10px; */
-  height: 90vh;
-  margin: 2vh auto;
+  height: 95vh;
+  margin: 1vh auto;
   /* margin: 0 auto; */
   /* height: 95vh; */
   /* max-height: 95%; */
@@ -194,6 +194,7 @@ section {
 #fps-display {
   margin: 0;
   font-size: 0.5rem;
+  text-indent: 5vw;
   text-align: left;
   padding: 0.5rem 0 0.2rem 0;
   /* padding-top: 0.5rem; */
@@ -373,6 +374,7 @@ canvas {
   align-items: center;
   margin: 0 auto;
   border: 1.2rem solid burlywood;
+  border-radius: 1rem;
   min-height: 80vh;
   /* min-width: 100%; */
   /* min-height: 80vh; */
@@ -541,8 +543,8 @@ footer {
 
   canvas {
     min-height: 0%;
-    height: 70vh;
-    margin-top: 3vh;
+    height: 80vh;
+    margin-top: 2vh;
     border-width: 0.5rem;
   }
 
@@ -560,18 +562,31 @@ footer {
     display: none;
   }
 
+  #fps-display {
+    font-size: 0.8vh;
+  }
+
   #top-section {
     display: flex;
+  }
+
+  #main-info {
+    font-size: 2.5vh;
+    overflow: clip;
   }
 
   #game-info {
     padding: 0 2vw 0 2vw;
   }
 
+  #root {
+    padding-top: 0.25vh;
+  }
+
   #game-info th,
   #game-info td {
-    font-size: 1.5vh;
-    padding: 0.5vh 4vw 0.5vh 4vw;
+    font-size: 1.2vh;
+    padding: 0.3vh 3vw 0.3vh 3vw;
   }
 
   #pause-button {
@@ -587,5 +602,23 @@ footer {
     padding: 1vh;
     /* padding: 1rem 1rem; */
     align-items: center;
+  }
+}
+
+@media only screen and (max-width: 390px) {
+  canvas {
+    height: 75vh;
+  }
+}
+
+@media only screen and (max-width: 365px) {
+  canvas {
+    height: 70vh;
+  }
+}
+
+@media only screen and (max-width: 340px) {
+  canvas {
+    height: 65vh;
   }
 }
