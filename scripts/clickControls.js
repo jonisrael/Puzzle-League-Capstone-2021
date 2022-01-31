@@ -20,8 +20,9 @@ export function updateMousePosition(canvas, e) {
   let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
   const rect = canvas.getBoundingClientRect();
   const ratio = win.canvas.width / win.canvas.clientWidth;
-  const pixelX = ratio * (clientX - rect.left - 20);
-  const pixelY = ratio * (clientY - rect.top - 20 + game.rise);
+  // 10px is currently the border size of the canvas.
+  const pixelX = ratio * (clientX - rect.left - 10);
+  const pixelY = ratio * (clientY - rect.top - 10 + game.rise);
   let x = Math.floor(pixelX / grid.SQ);
   let y = Math.floor(pixelY / grid.SQ);
   // Accept position only if inside game grid

@@ -373,7 +373,7 @@ canvas {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  border: 1.2rem solid burlywood;
+  border: 10px solid burlywood;
   border-radius: 1rem;
   min-height: 80vh;
   /* min-width: 100%; */
@@ -545,7 +545,6 @@ footer {
     min-height: 0%;
     height: 80vh;
     margin-top: 2vh;
-    border-width: 0.5rem;
   }
 
   #game-container {
