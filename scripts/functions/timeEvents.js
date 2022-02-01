@@ -11,7 +11,7 @@ import {
 import { playAnnouncer, playAudio, playMusic } from "./audioFunctions";
 
 export function checkTime(beforeOvertime) {
-  let eventFrames = beforeOvertime ? game.frames : game.frames - 3600;
+  let eventFrames = beforeOvertime ? game.frames : game.frames - 7200;
   win.muteMusic.checked && game.frames > 60
     ? (game.Music.volume = 0)
     : (game.Music.volume = 0.2);
@@ -56,7 +56,6 @@ export function checkTime(beforeOvertime) {
         if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
         game.messagePriority = "1...";
       }
-
       win.restartGame = false;
       break;
     case 0:
@@ -65,7 +64,7 @@ export function checkTime(beforeOvertime) {
 
       break;
     case 60:
-      if (!debug.enabled && !game.tutorialRunning)
+      if (!debug.enabled && !game.tutorialRunning && beforeOvertime)
         playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
       game.messagePriority = "";
       game.defaultMessage = "X to swap Z to lift the stack!";

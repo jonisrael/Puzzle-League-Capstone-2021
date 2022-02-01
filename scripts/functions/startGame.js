@@ -88,7 +88,7 @@ export function startGame(selectedGameSpeed, version = 1) {
   touch.arrowList.length = 0;
   game.tutorialRunning = false;
   // document.getElementById("game-info").style.display = "inline";
-  game.board = generateOpeningBoard(40, 8);
+  game.board = generateOpeningBoard(40, 7);
   // if (!win.tutorialPlayedOnce && game.mode == "arcade") {
   //   win.tutorialPlayedOnce = true;
   //   // game.board = generateOpeningBoard(40, 7);

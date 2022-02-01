@@ -367,13 +367,15 @@ iframe {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+  color: hsl(0, 100%, 50%);
+  color: hsl(30, 100%, 50%);
 }
 
 canvas {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  border: 10px solid burlywood;
+  border: 10px solid hsl(34, 100%, 70%);
   border-radius: 1rem;
   min-height: 80vh;
   /* min-width: 100%; */

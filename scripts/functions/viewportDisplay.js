@@ -2,7 +2,17 @@ import { render } from "../..";
 import { updateLevelEvents } from "../../puzzleleague";
 import * as state from "../../store";
 import { createClickListeners } from "../clickControls";
-import { bestScores, game, grid, preset, win } from "../global";
+import {
+  bestScores,
+  cpu,
+  debug,
+  game,
+  grid,
+  leaderboard,
+  perf,
+  preset,
+  win,
+} from "../global";
 import { nextDialogue, tutorial } from "../tutorial/tutorialScript";
 import { pause, unpause } from "./pauseFunctions";
 
@@ -446,6 +456,30 @@ function createMobileDisplay() {
       : game.paused
       ? unpause()
       : pause();
+  });
+
+  document.getElementById("game-info").addEventListener("click", (event) => {
+    debug.clickCounter++;
+    if (debug.clickCounter === 5) {
+      debug.enabled = 1;
+      debug.show = 1;
+      // helpPlayer.timer = 10;
+      leaderboard.canPost = false;
+      leaderboard.reason = "debug";
+      perf.unrankedReason = "debug mode was activated.";
+      win.fpsDisplay.style.color = "black";
+      console.log("debug ON -- Score Posting Disabled");
+    } else if (debug.clickCounter === 8) {
+      debug.show = 0;
+    } else if (debug.clickCounter === 10) {
+      debug.enabled = 0;
+      debug.clickCounter = 0;
+      updateLevelEvents(game.level);
+      console.log("debug OFF");
+      debug.slowdown = 0;
+      debug.freeze = 0;
+      if (game.mode === "cpu-play") cpu.enabled = cpu.control = true;
+    }
   });
 
   // column1.append(win.gameInfoTable);

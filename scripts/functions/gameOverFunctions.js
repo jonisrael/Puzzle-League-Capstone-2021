@@ -12,6 +12,7 @@ import {
   resultsMusic,
   randInt,
   perf,
+  helpPlayer,
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -59,8 +60,20 @@ export function isGameOver() {
     game.raiseDelay === 0
   ) {
     // if debug, do not game over.
-    if (debug.enabled || game.mode === "training") {
-      game.score = game.frames = game.minutes = game.seconds = 0;
+    if (debug.enabled || game.mode === "training" || game.score < 200) {
+      game.score = game.frames = game.minutes = game.seconds = game.currentChain = 0;
+      if (game.mode === "arcade" && !debug.enabled) {
+        win.restartGame = true;
+        game.Music.pause();
+        game.frames = -66;
+        game.rise = 0;
+        game.totalClears = 0;
+        helpPlayer.done = false;
+        helpPlayer.timer = 0;
+        game.cursor.x = Math.floor(grid.COLS / 2 - 1);
+        game.cursor.y = Math.floor(grid.ROWS / 2);
+      }
+
       game.raiseDelay = 60;
       game.cursor.y += 8;
       playAudio(audio.topout);
@@ -68,7 +81,7 @@ export function isGameOver() {
       game.log.length = 0;
       if (game.cursor.y >= grid.ROWS) game.cursor.y = 6;
       for (let x = 0; x < grid.COLS; x++) {
-        for (let y = grid.ROWS - 1; y > 5; y--) {
+        for (let y = grid.ROWS - 1; y > 4; y--) {
           game.board[x][y].color = blockColor.VACANT;
           game.board[x][y].type = blockType.NORMAL;
         }

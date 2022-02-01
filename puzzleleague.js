@@ -719,6 +719,21 @@ export function createNewRow(board) {
   return board;
 }
 
+function overtimeBorderColor(level) {
+  let [hue, cnst] = level < 7 ? [30, 20] : [0, 0];
+  let mult =
+    level < 7 ? 2 : level < 9 ? 3 : level < 11 ? 4 : level < 13 ? 5 : 6;
+  // let mult = game.minutes < 3 ? 1 : 2;
+  return `hsl(${hue}, ${cnst + 50 + 40 * Math.cos(mult * game.frames)}%, ${30 +
+    20 * Math.cos(mult * game.frames)}%)`;
+
+  // let decidedValue;
+  // if (value < 5) decidedValue = 10 - 2 * value;
+  // else if (value < 10) decidedValue = 2 * value - 10;
+  // else decidedValue = 10;
+  // return `hsl(0, ${10 + 8 * decidedValue}%, ${10 + 4 * decidedValue}%)`;
+}
+
 // function checkBoardStates(c, r) {
 //   if (game.board[c][r])
 // }
@@ -868,7 +883,7 @@ function KEYBOARD_CONTROL(event) {
           );
         }
         debug.show = 1;
-        helpPlayer.timer = 10;
+        // helpPlayer.timer = 10;
         leaderboard.canPost = false;
         leaderboard.reason = "debug";
         perf.unrankedReason = "debug mode was activated.";
@@ -885,7 +900,7 @@ function KEYBOARD_CONTROL(event) {
     }
 
     if (debug.enabled || game.mode === "training") {
-      if (event.keyCode == 77 || event.keycode === 187) {
+      if (event.keyCode === 77) {
         //m
         if (0 === 0 || game.level + 1 < preset.speedValues.length) {
           game.level++;
@@ -894,7 +909,7 @@ function KEYBOARD_CONTROL(event) {
             playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
           }
         }
-      } else if (event.keyCode == 78 || event.keycode === 189) {
+      } else if (event.keyCode === 78) {
         //n
         if (game.level - 1 > -1) {
           game.level--;
@@ -904,6 +919,22 @@ function KEYBOARD_CONTROL(event) {
               music[randInt(music.length, true, lastIndex.music, "music")]
             );
           }
+        }
+      } else if (event.keyCode === 187) {
+        // +
+        game.frames += 60;
+        game.seconds++;
+        if (game.seconds > 60) {
+          game.minutes++;
+          game.seconds -= 60;
+        }
+      } else if (event.keyCode === 189) {
+        // -
+        game.frames -= 60;
+        game.seconds--;
+        if (game.seconds < 0) {
+          game.minutes--;
+          game.seconds += 60;
         }
       }
 
@@ -981,18 +1012,18 @@ export function updateLevelEvents(level) {
     game.level++;
     return;
   }
-  if (level > 10) {
-    game.boardRiseSpeed = 10 - level;
-    level = 10;
+  if (level > preset.speedValues.length - 1) {
+    game.boardRiseSpeed = preset.speedValues.length - 1 - level;
+    level = preset.speedValues.length - 1;
   } else game.boardRiseSpeed = preset.speedValues[level];
-  game.scoreMultiplier = preset.scoreMultValues[level];
+  game.scoreMultiplier = preset.multValues[level];
   game.blockClearTime = preset.clearValues[level];
   game.blockBlinkTime = preset.blinkValues[level];
   game.blockInitialFaceTime = preset.faceValues[level];
   game.blockStallTime = preset.stallValues[level];
   game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex =
-    game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 10 ? 3 : 5;
+    game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 13 ? 3 : 5;
 }
 
 // GAME HERE
@@ -1005,13 +1036,14 @@ export function gameLoop() {
     document.getElementById("nav-bar").style.display = "none";
     document.getElementById("footer").style.display = "none";
     // document.getElementById("pause-button").style.display = "flex";
-  } else {
-    // document.getElementById("header").style.display = "flex";
-    // document.getElementById("nav-bar").style.display = "flex";
-    // document.getElementById("footer").style.display = "flex";
-    // if (!debug.enabled && document.getElementById("pause-button"))
-    //   document.getElementById("pause-button").style.display = "none";
   }
+  // else {
+  // document.getElementById("header").style.display = "flex";
+  // document.getElementById("nav-bar").style.display = "flex";
+  // document.getElementById("footer").style.display = "flex";
+  // if (!debug.enabled && document.getElementById("pause-button"))
+  //   document.getElementById("pause-button").style.display = "none";
+  // }
   if (!win.running || win.view !== "Home") {
     // document.getElementById("page-body").style.maxHeight = "none";
     // document.getElementById("page-body").style.maxWidth = "95vh";
@@ -1121,7 +1153,7 @@ export function gameLoop() {
             win.running = false;
           }
         }
-        if (game.frames > 150 && game.tutorialRunning) {
+        if (game.tutorialRunning && game.frames > 150) {
           tutorial.state = tutorial.board.length - 1;
           resetGameVariables();
           game.tutorialRunning = true;
@@ -1134,6 +1166,12 @@ export function gameLoop() {
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
         game.seconds++;
+        if (game.frames < 7200 && game.seconds % 5 === 0) {
+          if (!debug.enabled) debug.clickCounter = 0;
+          let colorRatio = (120 - 60 * game.minutes - game.seconds) / 1.2;
+          win.canvas.style.borderColor = `hsl(34, ${20 +
+            0.8 * colorRatio}%, ${20 + 0.5 * colorRatio}%)`;
+        }
         if (debug.enabled && game.seconds % 5 === 1) {
           pastSeconds = game.seconds;
         }
@@ -1153,18 +1191,12 @@ export function gameLoop() {
           )} remaining`;
         }
         // overtime bonuses
-        if (!cpu.enabled && game.minutes == 3) {
-          game.score += game.seconds;
+        if (!cpu.enabled && game.minutes > 2) {
+          game.score += game.minutes < 4 ? 25 : 100;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
           );
           console.log(game.log[game.log.length - 1]);
-        } else if (game.minutes > 3) {
-          game.score += 60;
-          game.log.push(
-            `Time: ${game.timeString}, Overtime Bonus +60, Total: ${game.score}`
-          );
-          console.log("Game Log Size:", game.log.length);
         }
 
         if (debug.enabled === 1) {
@@ -1195,7 +1227,8 @@ export function gameLoop() {
             (!game.tutorialRunning ||
               (game.tutorialRunning && game.frames % 2400 == 0)) &&
             game.frames !== 7200 &&
-            game.frames !== 10800
+            game.frames !== 14400 &&
+            (game.frames <= 7200 || game.frames % 2400 === 0)
           )
             playAnnouncer(
               announcer.timeTransitionDialogue,
@@ -1249,9 +1282,11 @@ export function gameLoop() {
         game.boardRiseSpeed = preset.speedValues[game.level];
 
       if (game.frames % game.boardRiseSpeed == 0 && game.boardRiseSpeed > 0) {
-        if (game.boardRiseRestarter >= 300) {
+        if (
+          game.boardRiseRestarter >= 240 ||
+          (game.boardRiseRestarter >= 120 && game.frames >= 7200)
+        ) {
           game.boardRiseRestarter = 0;
-          console.log(game.frames, "board rise timeout, restarting it");
           game.boardRiseDisabled = false;
           game.pauseStack = false;
         }
@@ -1348,6 +1383,25 @@ export function gameLoop() {
       }
 
       if (game.frames > 0 && game.frames % 60 == 0 && !game.over) {
+        if (helpPlayer.done && cpu.matchList.length) {
+          let colorToMatch =
+            game.board[cpu.matchList[0][0]][cpu.matchList[0][1]].color;
+          if (colorToMatch === "vacant") {
+            helpPlayer.done = false;
+            console.log("color detected as vacant, redo cpuMatch");
+          }
+          cpu.matchList.forEach((coord) => {
+            let [x, y] = coord;
+            if (game.board[x][y].color !== colorToMatch) {
+              helpPlayer.done = false;
+              console.log("colors are not matching, redo cpuMatch");
+            }
+          });
+          if (!helpPlayer.done) {
+            cpu.matchList.length = cpu.matchStrings.length = 0;
+            console.log("needed to correct cpuMatch");
+          }
+        }
         perf.diffFromRealTime = Math.abs(
           perf.realTime - perf.sumOfPauseTimes - game.frames / 60
         );
@@ -1434,7 +1488,20 @@ export function gameLoop() {
       } else {
         multiplierString = `${game.scoreMultiplier}x`;
       }
+
+      // `hsl(0, ${50 +
+      //   40 * Math.cos(2 * Math.pi * percentOfSecond)}%, ${30 +
+      //   20 * Math.cos(2 * Math.pi * percentOfSecond)}%)`
+      if (game.level >= 6 && game.frames % 6 === 0 && !game.over)
+        if (game.level > 6 || game.frames > 6600) {
+          win.canvas.style.borderColor = overtimeBorderColor(game.level);
+        }
+
+      if (game.over) win.canvas.style.borderColor = "red";
       if (debug.enabled == 1) {
+        // ${45 + 25 * Math.sin(game.frames)}
+        // 60 + 40 * Math.sin(game.frames)
+
         win.statDisplay.innerHTML = `Speed/Clear/Stall <br/> ${game.boardRiseSpeed}/${game.blockClearTime}/${game.blockStallTime}`;
       } else {
         win.statDisplay.innerHTML = ``;
