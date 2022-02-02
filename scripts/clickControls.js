@@ -138,7 +138,6 @@ function doMouseDown(e) {
     if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
     touch.doubleClickCounter++;
   }
-  console.log("game cursor", game.cursor, "mouse", touch.mouse);
   touch.lastCursorPos.x = game.cursor.x;
   touch.lastCursorPos.y = game.cursor.y;
   game.cursor.x = touch.mouse.x;

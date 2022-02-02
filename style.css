@@ -343,6 +343,11 @@ table {
   justify-content: center;
 }
 
+#os,
+#browser {
+  color: red;
+}
+
 td,
 th {
   border: 0.15rem solid black;
@@ -487,7 +492,7 @@ select {
 }
 
 footer {
-  color: purple;
+  color: white;
   text-align: center;
   padding: 10px;
   display: block;

@@ -2,6 +2,7 @@ import { audio, audioKeys, audioList, sprite } from "./fileImports";
 import { checkIfControlsExist, setNewControls } from "./controls";
 import { displayMessage } from "..";
 import { pause } from "./functions/pauseFunctions";
+import { determineOSAndBrowser } from "./functions/determineOSBrowser";
 
 // checkIfControlsExist(savedControls);
 
@@ -179,7 +180,6 @@ export const preset = {
   multValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3, 3.25, 3.25, 3.5, 3.5, 4],
   controlsDefaultMessage: "",
 };
-console.log(preset);
 
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
@@ -223,7 +223,11 @@ export const win = {
   muteSFX: document.getElementById("mute-sfx"),
   audioLoaded: false,
   loopCounter: 0,
+  browser: "Unknown",
+  os: "Unknown",
 };
+
+determineOSAndBrowser(navigator.userAgent);
 
 export const music = [
   audio.popcornMusic,
@@ -641,6 +645,7 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
     }
   }
 }
+
 // // Transfer everything except x and y coordinates
 // let tempProperties = [
 //   FirstBlock.color,

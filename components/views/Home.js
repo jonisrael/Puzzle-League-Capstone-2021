@@ -88,6 +88,7 @@ export default (st) => html`
         that the in-game timer is six or more seconds behind real time,
         <strong>your score cannot be ranked.</strong>
       </p>
+      <hr />
     </div>
   </section>
 `;

@@ -14,23 +14,23 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs,
+  audioSrcs
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch,
+  checkMatch
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables,
+  resetGameVariables
 } from "./scripts/functions/startGame";
 import { trySwappingBlocks } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne,
+  isBlockAirborne
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
@@ -39,19 +39,19 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction,
+  playerAction
 } from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic,
+  playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard,
+  gameOverBoard
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -87,13 +87,13 @@ import {
   essentialLoadedAudios,
   helpPlayer,
   detectInfiniteLoop,
-  debugSquares,
+  debugSquares
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match,
+  match
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
@@ -103,7 +103,7 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard,
+  tutorialBoard
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 // import {
@@ -720,7 +720,8 @@ export function createNewRow(board) {
 }
 
 function overtimeBorderColor(level) {
-  let [hue, cnst] = level < 7 ? [30, 20] : [0, 0];
+  let [hue, cnst] =
+    level < 7 || (level === 12 && game.frames > 13800) ? [30, 20] : [0, 0];
   let mult =
     level < 7 ? 2 : level < 9 ? 3 : level < 11 ? 4 : level < 13 ? 5 : 6;
   // let mult = game.minutes < 3 ? 1 : 2;
@@ -959,7 +960,7 @@ function KEYBOARD_CONTROL(event) {
           for (let x = 0; x < grid.COLS; x++) {
             for (let y = 0; y < grid.ROWS + 2; y++) {
               Object.keys(game.board[x][y]).forEach(
-                (key) =>
+                key =>
                   (game.board[x][y][key] = debug.pastGameState.board[x][y][key])
               );
             }
@@ -1390,7 +1391,7 @@ export function gameLoop() {
             helpPlayer.done = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach((coord) => {
+          cpu.matchList.forEach(coord => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.done = false;
