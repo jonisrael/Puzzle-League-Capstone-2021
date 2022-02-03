@@ -32,6 +32,9 @@ export function closeGame(gameFinished) {
     win.ctx = null;
     win.canvas.remove();
   }
+  document.getElementById("header").style.display = "block";
+  document.getElementById("nav-bar").style.display = "block";
+  document.getElementById("footer").style.display = "block";
 
   // if (document.getElementById("home-page")) {
   //   document.getElementById("home-page").onmousedown = true;
@@ -43,9 +46,8 @@ export function closeGame(gameFinished) {
     //   win.restartGame = true;
     //   return;
     // }
-    location.reload();
     sound.Music[1].pause();
-    sound.Music[1] = playMusic(resultsMusic[randInt(resultsMusic.length)]);
+    playMusic(resultsMusic[randInt(resultsMusic.length)]);
     sound.Music[0] = sound.Music[1].src;
     afterGame();
   }

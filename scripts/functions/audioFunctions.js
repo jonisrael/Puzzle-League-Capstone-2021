@@ -20,53 +20,57 @@ export function playAnnouncer(
   volume = 0.2,
   playbackImportant = true
 ) {
-  if (win.muteAnnouncer.checked) return;
+  try {
+    if (win.muteAnnouncer.checked) return;
 
-  let selection = randInt(arr.length);
-  // console.log("selection", selection, "lastPicked", lastPicked);
-  win.loopCounter = 0;
-  while (selection === lastPicked) {
-    win.loopCounter++;
-    if (detectInfiniteLoop("playAnnouncer", win.loopCounter)) break;
-    // console.log("need to reselect");
-    selection = randInt(arr.length);
+    let selection = randInt(arr.length);
+    // console.log("selection", selection, "lastPicked", lastPicked);
+    win.loopCounter = 0;
+    while (selection === lastPicked) {
+      win.loopCounter++;
+      if (detectInfiniteLoop("playAnnouncer", win.loopCounter)) break;
+      // console.log("need to reselect");
+      selection = randInt(arr.length);
+    }
+
+    // console.log(arr.length);
+    // console.log(selection, lastPicked);
+    playAudio(arr[selection], volume, true, playbackImportant);
+    switch (arrType) {
+      case "opening":
+        announcer.openingIndexLastPicked = selection;
+        break;
+      case "smallChain":
+        announcer.smallChainIndexLastPicked = selection;
+        break;
+      case "mediumChain":
+        announcer.mediumChainIndexLastPicked = selection;
+        break;
+      case "largeChain":
+        announcer.largeChainIndexLastPicked = selection;
+        break;
+      case "timeTransition":
+        announcer.timeTransitionIndexLastPicked = selection;
+        break;
+      case "hurryUp":
+        announcer.hurryUpIndexLastPicked = selection;
+        break;
+      case "panic":
+        announcer.panicIndexLastPicked = selection;
+        break;
+      case "overtime":
+        announcer.overtimeIndexLastPicked = selection;
+        break;
+      case "endgame":
+        announcer.endgameIndexLastPicked = selection;
+        break;
+      case "combo":
+        announcer.comboIndexLastPicked = selection;
+        break;
+    } // end switch
+  } catch (error) {
+    console.error("Announcer playback failed", error, error.stack);
   }
-
-  // console.log(arr.length);
-  // console.log(selection, lastPicked);
-  playAudio(arr[selection], volume, true, playbackImportant);
-  switch (arrType) {
-    case "opening":
-      announcer.openingIndexLastPicked = selection;
-      break;
-    case "smallChain":
-      announcer.smallChainIndexLastPicked = selection;
-      break;
-    case "mediumChain":
-      announcer.mediumChainIndexLastPicked = selection;
-      break;
-    case "largeChain":
-      announcer.largeChainIndexLastPicked = selection;
-      break;
-    case "timeTransition":
-      announcer.timeTransitionIndexLastPicked = selection;
-      break;
-    case "hurryUp":
-      announcer.hurryUpIndexLastPicked = selection;
-      break;
-    case "panic":
-      announcer.panicIndexLastPicked = selection;
-      break;
-    case "overtime":
-      announcer.overtimeIndexLastPicked = selection;
-      break;
-    case "endgame":
-      announcer.endgameIndexLastPicked = selection;
-      break;
-    case "combo":
-      announcer.comboIndexLastPicked = selection;
-      break;
-  } // end switch
 }
 
 export function playAudio(
@@ -94,20 +98,20 @@ export function playAudio(
   //   });
   //   console.log(JSON.stringify(soundsCurrentlyPlaying, null, "\n"), sound);
   // }
-  if (win.muteSFX.checked && !announcerBypass) return;
-  if (announcerBypass) {
-    if (!sound.AnnVoice[1].paused) {
-      if (!playbackImportant) return;
-      sound.AnnVoice[1].pause();
-    }
-    sound.AnnVoice[0] = file;
-    sound.AnnVoice[1] = objectOfAudios[file];
-  } else {
-    sound.SFX0[0] = file;
-    sound.SFX0[1] = objectOfAudios[file];
-  }
-  let Sound = objectOfAudios[file];
   try {
+    if (win.muteSFX.checked && !announcerBypass) return;
+    if (announcerBypass) {
+      if (!sound.AnnVoice[1].paused) {
+        if (!playbackImportant) return;
+        sound.AnnVoice[1].pause();
+      }
+      sound.AnnVoice[0] = file;
+      sound.AnnVoice[1] = objectOfAudios[file];
+    } else {
+      sound.SFX0[0] = file;
+      sound.SFX0[1] = objectOfAudios[file];
+    }
+    let Sound = objectOfAudios[file];
     Sound.volume = volume;
     Sound.currentTime = 0;
     if (Sound.readyState > 0) Sound.play();
@@ -121,22 +125,24 @@ export function playAudio(
       );
   } catch (error) {
     console.log(`Audio play failed. File: ${file}`);
+    sound.AnnVoice = ["", new Audio()];
+    sound.SFX0 = ["", new Audio()];
   }
 }
 
 export function playChainSFX(chain) {
-  if (win.muteSFX.checked) return;
-  let Sound = objectOfAudios[audio[`chain${chain}`]];
-  if (chain == 1) {
-    return;
-  }
-  if (chain < 9) {
-    Sound = objectOfAudios[audio[`chain${chain}`]];
-  } else {
-    Sound = objectOfAudios[audio[`chain9`]];
-  }
-  Sound.volume = 0.05;
   try {
+    if (win.muteSFX.checked) return;
+    let Sound = objectOfAudios[audio[`chain${chain}`]];
+    if (chain == 1) {
+      return;
+    }
+    if (chain < 9) {
+      Sound = objectOfAudios[audio[`chain${chain}`]];
+    } else {
+      Sound = objectOfAudios[audio[`chain9`]];
+    }
+    Sound.volume = 0.05;
     if (Sound.readyState > 0) {
       Sound.play();
     } else if (objectOfAudios.chain2.readyState > 1) {
@@ -150,19 +156,33 @@ export function playChainSFX(chain) {
 }
 
 export function playMusic(file, volume = 1, currentTime = 0) {
-  if (win.muteMusic.checked) return;
-  sound.Music[1].pause();
-  sound.Music[0] = file;
-  sound.Music[1] = objectOfAudios[file];
-  console.log(sound, objectOfAudios);
-  if (debug.enabled)
-    console.log("Music track:", sound.Music[0], sound.Music[1]);
-  sound.Music[1].volume = volume;
-  sound.Music[1].currentTime = currentTime;
-  sound.Music[1].play();
-  // if (sound.Music[1].onended) {
-  //   console.log(sound.Music[0], "has ended");
-  //   playMusic(music[randInt(music.length)]);
-  // }
-  // sound.Music[1].loop = loop;
+  try {
+    if (win.muteMusic.checked) return;
+    sound.Music[1].pause();
+    sound.Music[0] = file;
+    sound.Music[1] = objectOfAudios[file];
+    console.log(sound, objectOfAudios);
+    if (debug.enabled)
+      console.log("Music track:", sound.Music[0], sound.Music[1]);
+    sound.Music[1].volume = volume;
+    sound.Music[1].currentTime = currentTime;
+    sound.Music[1].play();
+    // if (sound.Music[1].onended) {
+    //   console.log(sound.Music[0], "has ended");
+    //   playMusic(music[randInt(music.length)]);
+    // }
+    // sound.Music[1].loop = loop;
+  } catch (error) {
+    console.error(
+      "Music playback failed",
+      error,
+      error.stack,
+      "\nparams:",
+      file,
+      volume,
+      currentTime,
+      sound
+    );
+    sound.Music = ["", new Audio()];
+  }
 }
