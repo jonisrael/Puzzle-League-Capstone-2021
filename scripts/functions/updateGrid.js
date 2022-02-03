@@ -10,6 +10,7 @@ import {
   helpPlayer,
   INTERACTIVE_TYPES,
   touch,
+  win,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { isBlockAirborne } from "./gravity";
@@ -29,6 +30,7 @@ export function updateGrid(frameAdvance = false) {
     touch.doubleClickTimer -= 1;
     if (touch.doubleClickTimer === 0) touch.doubleClickCounter = 0;
   }
+  if (!game.tutorialRunning && !game.currentChain) game.boardRiseRestarter++; // Failsafe to restart stack rise
   for (let y = 0; y < grid.ROWS + 2; y++) {
     for (let x = 0; x < grid.COLS; x++) {
       let Square = game.board[x][y];
@@ -141,7 +143,7 @@ export function updateGrid(frameAdvance = false) {
         // console.log(x, y, Square);
         switch (Square.timer) {
           case Square.switchToPoppedFrame + 2:
-            playAudio(audio.blockClear);
+            if (!win.appleProduct) playAudio(audio.blockClear);
             game.scoreUpdate = Math.round(game.scoreMultiplier * 10);
             game.score += game.scoreUpdate;
             break;

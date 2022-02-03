@@ -129,7 +129,7 @@ export function stickyCheck(x, y) {
     return !!result;
   }
   if ((result = checkIfFallingBlockMatches(SelectedBlock))) {
-    if (debug.enabled) playAudio(audio.chain9);
+    // if (debug.enabled) playAudio(audio.chain9);
     return !!result;
   }
   let [clearLine, lowKey, highKey] = findClearLine(x, y);

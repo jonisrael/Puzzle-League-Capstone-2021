@@ -1,8 +1,8 @@
-import { debug } from "console";
 import { audio, audioList } from "../fileImports";
 import {
   game,
   win,
+  debug,
   announcer,
   randInt,
   cpu,
@@ -10,9 +10,16 @@ import {
   objectOfAudios,
   loadedAudios,
   detectInfiniteLoop,
+  sound,
 } from "../global";
 
-export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
+export function playAnnouncer(
+  arr,
+  lastPicked,
+  arrType,
+  volume = 0.2,
+  playbackImportant = true
+) {
   if (win.muteAnnouncer.checked) return;
 
   let selection = randInt(arr.length);
@@ -27,7 +34,7 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
 
   // console.log(arr.length);
   // console.log(selection, lastPicked);
-  playAudio(arr[selection], volume, true);
+  playAudio(arr[selection], volume, true, playbackImportant);
   switch (arrType) {
     case "opening":
       announcer.openingIndexLastPicked = selection;
@@ -56,14 +63,49 @@ export function playAnnouncer(arr, lastPicked, arrType, volume = 0.2) {
     case "endgame":
       announcer.endgameIndexLastPicked = selection;
       break;
-    default:
-      console.log("Announcer Playback failed");
-  } // end while
+    case "combo":
+      announcer.comboIndexLastPicked = selection;
+      break;
+  } // end switch
 }
 
-export function playAudio(file, volume = 0.2, announcerBypass = false) {
+export function playAudio(
+  file,
+  volume = 0.2,
+  announcerBypass = false,
+  playbackImportant = true
+) {
   // if sfx is muted but announcer is not, play sound anyway since announcer is not muted
+  //test
+  // if (debug.enabled) {
+  //   const soundsCurrentlyPlaying = [];
+  //   Object.keys(objectOfAudios).forEach((key) => {
+  //     if (!objectOfAudios[key].paused) {
+  //       soundsCurrentlyPlaying.push(
+  //         JSON.stringify([
+  //           key,
+  //           `${Math.floor(
+  //             (1000 * objectOfAudios[key].currentTime) /
+  //               objectOfAudios[key].duration
+  //           ) / 10}%`,
+  //         ]).replaceAll('"', "'")
+  //       );
+  //     }
+  //   });
+  //   console.log(JSON.stringify(soundsCurrentlyPlaying, null, "\n"), sound);
+  // }
   if (win.muteSFX.checked && !announcerBypass) return;
+  if (announcerBypass) {
+    if (!sound.AnnVoice[1].paused) {
+      if (!playbackImportant) return;
+      sound.AnnVoice[1].pause();
+    }
+    sound.AnnVoice[0] = file;
+    sound.AnnVoice[1] = objectOfAudios[file];
+  } else {
+    sound.SFX0[0] = file;
+    sound.SFX0[1] = objectOfAudios[file];
+  }
   let Sound = objectOfAudios[file];
   try {
     Sound.volume = volume;
@@ -109,14 +151,16 @@ export function playChainSFX(chain) {
 
 export function playMusic(file, volume = 1, currentTime = 0) {
   if (win.muteMusic.checked) return;
-  game.Music.src = file;
-  if (debug.enabled) console.log("Music track:", game.Music.src);
-  game.Music.volume = volume;
-  game.Music.currentTime = currentTime;
-  game.Music.play();
-  // if (game.Music.onended) {
-  //   console.log(game.Music.src, "has ended");
+  sound.Music[1].pause();
+  sound.Music[0] = file;
+  sound.Music[1] = objectOfAudios[file];
+  if (debug.enabled) console.log("Music track:", sound.Music[1].src);
+  sound.Music[1].volume = volume;
+  sound.Music[1].currentTime = currentTime;
+  sound.Music[1].play();
+  // if (sound.Music[1].onended) {
+  //   console.log(sound.Music[0], "has ended");
   //   playMusic(music[randInt(music.length)]);
   // }
-  // game.Music.loop = loop;
+  // sound.Music[1].loop = loop;
 }

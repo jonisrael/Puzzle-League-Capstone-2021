@@ -1,4 +1,13 @@
-import { game, win, perf, debug, touch, helpPlayer, cpu } from "../global";
+import {
+  game,
+  win,
+  perf,
+  debug,
+  touch,
+  helpPlayer,
+  cpu,
+  sound,
+} from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
 import { action } from "../controls";
@@ -9,21 +18,25 @@ export function pause(lostFocus = false, message = "Pause") {
   game.paused = true;
 
   console.log(
-    `FRAME ${game.frames}\n`,
-    "game:",
+    `FRAME ${game.frames}`,
+    "\ngame:",
     game,
     game.board[game.cursor.x][game.cursor.y],
-    "touch",
-    touch,
-    "cpu",
-    cpu,
-    "helpPlayer",
-    helpPlayer,
-    "win",
+    "\nwin",
     win,
-    "debug",
+    "\nsound",
+    sound,
+    "\ntouch",
+    touch,
+    "\ncpu",
+    cpu,
+    "\nhelpPlayer",
+    helpPlayer,
+    "\ndebug",
     debug,
-    "tutorial",
+    "\nperf",
+    perf,
+    "\ntutorial",
     tutorial,
     game.cursor_type[0] === "d"
       ? game.board[game.cursor.x + 1][game.cursor.y]
@@ -43,14 +56,14 @@ export function pause(lostFocus = false, message = "Pause") {
   if (!debug.enabled) playAudio(audio.pause, 0.1);
   if (lostFocus) {
     win.mainInfoDisplay.innerHTML = "Pause -- Clicked Off Tab";
-    // game.Music.pause();
+    // sound.Music[1].pause();
   } else if (message === "aiCrash")
     win.mainInfoDisplay.innerHTML = "Pause -- AI Error";
   else if (debug.enabled && message === "Pause")
     win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
   else win.mainInfoDisplay.innerHTML = message;
-  // game.Music.volume *= 0.25;
-  game.Music.pause();
+  // sound.Music[1].volume *= 0.25;
+  sound.Music[1].pause();
   if (!debug.enabled) {
     // still show board during debug mode
     win.mainInfoDisplay.style.color = "black";
@@ -70,8 +83,8 @@ export function unpause() {
   perf.sumOfPauseTimes += pauseTime;
   win.mainInfoDisplay.innerHTML = game.message;
   win.cvs.style.display = "block";
-  if (game.frames >= 0) game.Music.play();
-  // game.Music.volume *= 4;
+  if (game.frames >= 0) sound.Music[1].play();
+  // sound.Music[1].volume *= 4;
   // document.getElementById("fps-display").style.display = "flex";
   document.getElementById("resume-button").style.display = "none";
   document.getElementById("restart-button").style.display = "none";

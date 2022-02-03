@@ -5,6 +5,7 @@ import {
   game,
   PIECES,
   randInt,
+  sound,
   win,
 } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
@@ -114,8 +115,8 @@ export function startTutorial() {
   game.board = [];
   tutorial.state = game.frames = tutorial.msgIndex = 0;
   // game.board = createTutorialBoard(tutorial.board[tutorial.state]);
-  game.Music.src = audio.trainingMusic;
-  game.Music.play();
+  sound.Music[1].src = audio.trainingMusic;
+  sound.Music[1].play();
   game.tutorialRunning = true;
   game.humanCanPlay = false;
   updateLevelEvents(3);

@@ -279,7 +279,9 @@ export function playerAction(input) {
       game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
       if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
       win.cvs.scrollIntoView({ block: "nearest" });
-      if (!cpu.enabled || game.tutorialRunning) playAudio(audio.moveCursor);
+      if (!win.appleProduct && (!cpu.enabled || game.tutorialRunning)) {
+        playAudio(audio.moveCursor);
+      }
     }
 
     // second input checker

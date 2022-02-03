@@ -16,7 +16,7 @@ import {
   detectInfiniteLoop,
 } from "../global";
 
-import { playChainSFX, playAudio } from "./audioFunctions";
+import { playChainSFX, playAudio, playAnnouncer } from "./audioFunctions";
 
 function squareIsMatchable(c, r) {
   let Square = game.board[c][r];
@@ -196,8 +196,12 @@ export function checkMatch() {
           game.raiseDelay > 0 ||
           (game.highestRow !== 2 && game.level > 6)
         )
-          playAudio(
-            announcer.comboDialogue[randInt(announcer.comboDialogue.length)]
+          playAnnouncer(
+            announcer.comboDialogue,
+            announcer.comboIndexLastPicked,
+            "combo",
+            0.2,
+            false
           );
       }
       updateScore(blocksCleared, game.currentChain);
@@ -225,13 +229,13 @@ export function checkMatch() {
             game.currentChain < 2
           ) {
             // always say hold it in overtime
-            playAudio(hold_it[randInt(hold_it.length)], 0.3);
+            playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
           } else if (
             game.raiseDelay === 0 &&
             game.level < 7 &&
             (game.currentChain > 1 || game.combo > 3)
           ) {
-            playAudio(hold_it[randInt(hold_it.length)], 0.3);
+            playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
           }
         }
         if (game.combo > 3 || game.currentChain > 1) {
@@ -242,6 +246,8 @@ export function checkMatch() {
           if (potentialRaiseDelay > game.raiseDelay)
             game.raiseDelay = potentialRaiseDelay;
           if (game.raiseDelay < 12) game.raiseDelay = 12;
+          if (game.raiseDelay > 180) game.raiseDelay = 180;
+          if (game.level > 6 && game.raiseDelay > 60) game.raiseDelay = 60;
           if (debug.enabled) {
             console.log(
               `New Raise Delay = ${game.raiseDelay} = 6 * (${game.boardRiseSpeed}) + 6 * (${game.currentChain} - 1)))`

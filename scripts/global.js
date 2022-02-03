@@ -83,6 +83,7 @@ export const announcer = {
   largeChainIndexLastPicked: -1,
   bestChainIndexLastPicked: -1,
   timeTransitionIndexLastPicked: -1,
+  comboIndexLastPicked: -1,
   hurryUpIndexLastPicked: -1,
   panicIndexLastPicked: -1,
   overtimeIndexLastPicked: -1,
@@ -183,6 +184,8 @@ export const preset = {
 
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
+let gameAnnVoice = new Audio();
+let gameSFX = [new Audio(), new Audio(), new Audio()];
 
 export const win = {
   pageOpenedAt: Date.now(),
@@ -225,6 +228,7 @@ export const win = {
   loopCounter: 0,
   browser: "Unknown",
   os: "Unknown",
+  appleProduct: false,
 };
 
 determineOSAndBrowser(navigator.userAgent);
@@ -273,6 +277,15 @@ export const overtimeMusic = [
 ];
 
 export const resultsMusic = [audio.results1Music, audio.results2Music];
+
+export let sound = {
+  Music: ["", gameMusic],
+  AnnVoice: ["", gameAnnVoice],
+  SFX0: ["", gameSFX[0]],
+  SFX1: ["", gameSFX[1]],
+  SFX2: ["", gameSFX[2]],
+  SFX3: ["", gameSFX[2]],
+};
 
 export let game = {
   // use let instead of export const to revert to resetGameVar
@@ -329,9 +342,13 @@ export let game = {
   readyForNewRow: false,
   highestRow: 11,
   highestCols: [0, 1, 2, 3, 4, 5],
+  frameMod: {},
   panicIndex: 1,
   panicSpeedDivisor: 1,
   Music: gameMusic,
+  SFX0: gameSFX[0],
+  SFX1: gameSFX[1],
+  SFX2: gameSFX[2],
   data: {},
   log: [],
   panicking: false,
@@ -385,7 +402,7 @@ export const perf = {
   then: 0,
   now: 0,
   delta: 0,
-  diffFromRealTime: 0,
+  realTimeDiff: 0,
   lostFocusTimeStamp: 0,
 };
 
@@ -476,7 +493,8 @@ export function loadAudios(numOfEssentialAudioFiles) {
 }
 
 // currently 32 essential game audio
-loadAudios(32);
+// loadAudios(32)
+loadAudios(audioList.length);
 
 for (let i = 1; i <= 5; i++) {
   if (localStorage.getItem(`bestScore${i}`) == null) {
@@ -525,6 +543,19 @@ export function randInt(
   // if (debug.enabled && title === "music")
   //   console.log("random music ind selected: ", randomIndexSelected);
   return randomIndexSelected;
+}
+
+export function updateFrameMods(frameCount) {
+  game.frameMod[2] = frameCount % 2;
+  game.frameMod[3] = frameCount % 3;
+  game.frameMod[4] = frameCount % 4;
+  game.frameMod[6] = frameCount % 6;
+  game.frameMod[18] = frameCount % 18;
+  game.frameMod[30] = frameCount % 30;
+  game.frameMod[60] = frameCount % 60;
+  game.frameMod[1200] = frameCount % 1200;
+  game.frameMod[2400] = frameCount % 2400;
+  game.frameMod[7200] = frameCount % 7200;
 }
 
 export function padInteger(integer, digits) {

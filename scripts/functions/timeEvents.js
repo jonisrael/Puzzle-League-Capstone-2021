@@ -6,6 +6,7 @@ import {
   lastIndex,
   music,
   randInt,
+  sound,
   win,
 } from "../global";
 import { playAnnouncer, playAudio, playMusic } from "./audioFunctions";
@@ -13,11 +14,11 @@ import { playAnnouncer, playAudio, playMusic } from "./audioFunctions";
 export function checkTime(beforeOvertime) {
   let eventFrames = beforeOvertime ? game.frames : game.frames - 7200;
   win.muteMusic.checked && game.frames > 60
-    ? (game.Music.volume = 0)
-    : (game.Music.volume = 0.2);
+    ? (sound.Music[1].volume = 0)
+    : (sound.Music[1].volume = 0.2);
   switch (eventFrames) {
     case -180:
-      game.Music.pause();
+      sound.Music[1].pause();
       if (win.restartGame) {
         game.frames = -62;
         break;
@@ -43,7 +44,7 @@ export function checkTime(beforeOvertime) {
       break;
     case -60:
       if (game.mode === "training") break;
-      game.Music.pause();
+      sound.Music[1].pause();
       if (win.restartGame) {
         document
           .getElementById("home-page")

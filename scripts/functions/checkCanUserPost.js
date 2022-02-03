@@ -7,14 +7,15 @@ import {
   leaderboard,
   api,
   padInteger,
-  cpu
+  cpu,
+  sound,
 } from "../global";
 import { submitResults, afterGame } from "./submitResults";
 import { playMusic, playAnnouncer } from "./audioFunctions";
 import { displayMessage, getLeaderboardData, getWorldTimeAPI } from "../..";
 
 export function checkCanUserPost() {
-  game.Music.loop = false;
+  sound.Music[1].loop = false;
 
   if (leaderboard.data.length == 0) {
     leaderboard.canPost = false;
@@ -89,7 +90,7 @@ export function checkCanUserPost() {
       retryConnection.setAttribute("id", "retry-connection");
       retryConnection.className = "default-button";
       container.append(retryConnection);
-      retryConnection.addEventListener("click", event => {
+      retryConnection.addEventListener("click", (event) => {
         if (leaderboard.data.length && api.data !== undefined) {
           leaderboard.canPost = true;
           leaderboard.reason === "";

@@ -177,7 +177,7 @@
 //     if (!debug.enabled && game.mode !== "training") {
 //       // if not in debug or training, game is actually over.
 //       game.over = true;
-//       game.Music.volume = 0;
+//       sound.Music[1].volume = 0;
 //       game.finalTime = (game.frames / 60).toFixed(1);
 //       game.frames = 0;
 //       gameOverBoard();
@@ -737,7 +737,7 @@
 //               `gameTime = ${game.frames / 60}, realTime = ${
 //                 perf.realTime
 //               }, pauseTime = ${perf.sumOfPauseTimes}, timeDifference = ${
-//                 perf.diffFromRealTime
+//                 perf.realTimeDiff
 //               }`
 //             );
 //           }

@@ -13,6 +13,7 @@ import {
   randInt,
   perf,
   helpPlayer,
+  sound,
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -25,7 +26,7 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 export function closeGame(gameFinished) {
   win.running = false;
   console.log("game finished:", gameFinished);
-  if (!gameFinished) game.Music.volume = 0;
+  if (!gameFinished) sound.Music[1].volume = 0;
   if (win.loopCounter > 999) {
     win.cvs = null;
     win.ctx = null;
@@ -42,7 +43,8 @@ export function closeGame(gameFinished) {
     //   win.restartGame = true;
     //   return;
     // }
-    game.Music.src = resultsMusic[randInt(resultsMusic.length)];
+    sound.Music[1].src = resultsMusic[randInt(resultsMusic.length)];
+    sound.Music[0] = sound.Music[1].src;
     afterGame();
   }
 }
@@ -64,7 +66,7 @@ export function isGameOver() {
       game.score = game.frames = game.minutes = game.seconds = game.currentChain = 0;
       if (game.mode === "arcade" && !debug.enabled) {
         win.restartGame = true;
-        game.Music.pause();
+        sound.Music[1].pause();
         game.frames = -66;
         game.rise = 0;
         game.totalClears = 0;
@@ -98,7 +100,7 @@ export function isGameOver() {
 
       return false;
     }
-    game.Music.volume = 0;
+    sound.Music[1].volume = 0;
     endGame();
     game.rise = 0;
     return true;

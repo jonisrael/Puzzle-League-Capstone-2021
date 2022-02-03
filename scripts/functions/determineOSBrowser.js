@@ -13,8 +13,11 @@ export function determineOSAndBrowser(uaStr) {
     win.browser = "Opera";
   }
   if (uaStr.indexOf("Win") != -1) win.os = "Windows";
-  if (uaStr.indexOf("Mac") != -1) win.os = "Mac";
-  if (uaStr.indexOf("Linux") != -1) win.os = "Linux";
-  if (uaStr.indexOf("Android") != -1) win.os = "Android";
-  if (uaStr.indexOf("like Mac") != -1) win.os = "iOS";
+  else if (uaStr.indexOf("Mac") != -1) win.os = "Mac";
+  else if (uaStr.indexOf("Linux") != -1) win.os = "Linux";
+  else if (uaStr.indexOf("Android") != -1) win.os = "Android";
+  else if (uaStr.indexOf("like Mac") != -1) win.os = "iOS";
+  else if (uaStr.indexOf("iP") != -1) win.os = "iOS";
+
+  win.notAppleProduct = win.os === "Mac" || win.os === "iOS";
 }

@@ -1,5 +1,5 @@
 import { startGame } from "./startGame";
-import { announcer, game, api, perf, leaderboard } from "../global";
+import { announcer, game, api, perf, leaderboard, sound } from "../global";
 import {
   deleteEntry,
   getLeaderboardData,
@@ -73,9 +73,9 @@ export function afterGame() {
       announcer.endgameIndexLastPicked,
       "endgame"
     );
-    playMusic(game.Music.src, 0.1);
+    playMusic(sound.Music[1].src, 0.1);
   } else {
-    playMusic(game.Music.src, 0.1, 3);
+    playMusic(sound.Music[1].src, 0.1, 3);
   }
 
   let div2 = document.createElement("div");
@@ -176,9 +176,7 @@ export function submitResults() {
       leaderboard.userPostedScore = finalScore;
       router.navigate("/Leaderboard");
       getLeaderboardData(true);
-      game.Music.volume = 0.1;
-      game.Music.loop = false;
-      return;
+      sound.Music[1].loop = false;
     }
   });
 }

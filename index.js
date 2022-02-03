@@ -12,6 +12,7 @@ import {
   loadAudios,
   loadedAudios,
   leaderboard,
+  sound,
 } from "./scripts/global";
 import { defaultControls, savedControls } from "./scripts/controls";
 import { startGame } from "./scripts/functions/startGame";
@@ -57,7 +58,7 @@ function addEventListeners(st) {
       event.preventDefault();
       // Failsafe: If already on home page, do not reload it upon clicking it.
       win.running = false;
-      game.Music.volume = 0;
+      sound.Music[1].volume = 0;
       // If on homepage and game playing, revert to homepage. If game not playing, start game.
       if (st.view === "Home" && state[event.target.title].view === "Home") {
         if (document.getElementById("canvas"))

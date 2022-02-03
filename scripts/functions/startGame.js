@@ -105,12 +105,14 @@ export function startGame(selectedGameSpeed, version = 1) {
   debug.enabled = false;
   debug.show = false;
   perf.gameSpeed = selectedGameSpeed;
+  perf.drawDivisor = 1;
   perf.fpsInterval = (1000 * selectedGameSpeed) / 60;
   perf.then = Date.now();
   perf.gameStartTime = perf.then;
   perf.sumOfPauseTimes = 0;
-  perf.diffFromRealTime = 0;
+  perf.realTimeDiff = 0;
   win.version = version;
+  win.appleProduct = false; // TEMPORARY
   requestAnimationFrame(gameLoop);
   // if (version === 1) {
   //   requestAnimationFrame(gameLoop);
@@ -157,7 +159,6 @@ export function resetGameVariables() {
   game.disableSwap = false;
   game.currentlyQuickRaising = false;
   game.raisePressed = false;
-  // game.Music = gameMusic;
   game.data = {};
   game.log = [];
 }
