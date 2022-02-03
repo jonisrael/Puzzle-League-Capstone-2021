@@ -43,7 +43,9 @@ export function closeGame(gameFinished) {
     //   win.restartGame = true;
     //   return;
     // }
-    sound.Music[1].src = resultsMusic[randInt(resultsMusic.length)];
+    location.reload();
+    sound.Music[1].pause();
+    sound.Music[1] = playMusic(resultsMusic[randInt(resultsMusic.length)]);
     sound.Music[0] = sound.Music[1].src;
     afterGame();
   }
@@ -62,7 +64,7 @@ export function isGameOver() {
     game.raiseDelay === 0
   ) {
     // if debug, do not game over.
-    if (debug.enabled || game.mode === "training" || game.score < 200) {
+    if (debug.enabled || game.mode === "training" || game.score < 100) {
       game.score = game.frames = game.minutes = game.seconds = game.currentChain = 0;
       if (game.mode === "arcade" && !debug.enabled) {
         win.restartGame = true;
@@ -100,7 +102,6 @@ export function isGameOver() {
 
       return false;
     }
-    sound.Music[1].volume = 0;
     endGame();
     game.rise = 0;
     return true;

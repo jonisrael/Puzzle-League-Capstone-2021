@@ -947,7 +947,6 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
           // ,
-
           console.log(touch, TouchOrders[0].KeySquare, match, objectOfAudios);
         if (event.keyCode === 73) {
           // i   starts the tutorial

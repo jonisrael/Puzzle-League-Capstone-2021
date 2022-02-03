@@ -154,7 +154,9 @@ export function playMusic(file, volume = 1, currentTime = 0) {
   sound.Music[1].pause();
   sound.Music[0] = file;
   sound.Music[1] = objectOfAudios[file];
-  if (debug.enabled) console.log("Music track:", sound.Music[1].src);
+  console.log(sound, objectOfAudios);
+  if (debug.enabled)
+    console.log("Music track:", sound.Music[0], sound.Music[1]);
   sound.Music[1].volume = volume;
   sound.Music[1].currentTime = currentTime;
   sound.Music[1].play();
