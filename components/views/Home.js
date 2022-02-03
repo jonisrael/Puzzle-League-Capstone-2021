@@ -15,10 +15,18 @@ export default (st) => html`
         <button id="arcade-button" class="default-button start-buttons">
           Play Arcade! (Enter)
         </button>
-        <button id="training-mode" class="default-button start-buttons">
+        <button
+          id="training-mode"
+          class="default-button start-buttons"
+          style="display:none"
+        >
           Training Mode (T)
         </button>
-        <button id="watch-ai-play-button" class="default-button start-buttons">
+        <button
+          id="watch-ai-play-button"
+          class="default-button start-buttons"
+          style="display:none"
+        >
           See My AI Play! (B)
         </button>
       </div>
