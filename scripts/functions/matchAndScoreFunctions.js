@@ -230,13 +230,14 @@ export function checkMatch() {
           ) {
             // always say hold it in overtime
             playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
-          } else if (
-            game.raiseDelay === 0 &&
-            game.level < 7 &&
-            (game.currentChain > 1 || game.combo > 3)
-          ) {
-            playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
           }
+          // else if (
+          //   game.raiseDelay === 0 &&
+          //   game.level < 7 &&
+          //   (game.currentChain > 1 || game.combo > 3)
+          // ) {
+          //   playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
+          // }
         }
         if (game.combo > 3 || game.currentChain > 1) {
           let potentialRaiseDelay =

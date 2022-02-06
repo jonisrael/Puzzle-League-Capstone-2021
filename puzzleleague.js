@@ -242,32 +242,39 @@ class Block {
   }
 
   drawArrows() {
-    if (touch.target.x === -1 || touch.target.y === -1) {
+    if (
+      (touch.moveOrderExists && touch.target.x === -1) ||
+      touch.target.y === -1
+    ) {
       [touch.target.x, touch.target.y] = [game.cursor.x, game.cursor.y];
+      console.log("true");
       touch.arrowList.length = 0;
       return;
     }
-    let fileName = "";
+    let filename = "";
+    let [x, y] = touch.moveOrderExists
+      ? [touch.target.x, touch.target.y]
+      : [touch.mouse.x, touch.mouse.y];
     let move = touch.moveType;
     let coordinates = `${this.x},${this.y}`;
-    if (touch.moveOrderExists) {
-      let dir = touch.target.x < touch.mouseStart.x ? "Left" : "Right";
-      if (touch.arrowList[0] === coordinates)
-        fileName = `arrow${dir}${move}Start`;
-      else if (touch.arrowList[touch.arrowList.length - 1] === coordinates)
-        fileName = `arrow${dir}${move}End`;
-      else if (touch.arrowList.includes(coordinates))
-        fileName = `arrowMid${move}`;
-      if (fileName) {
-        {
-          win.ctx.drawImage(
-            loadedSprites[fileName],
-            grid.SQ * this.x,
-            grid.SQ * this.y - game.rise
-          );
-        }
+    // if (touch.moveOrderExists)
+
+    let dir = x < touch.mouseStart.x ? "Left" : "Right";
+    if (touch.arrowList[0] === coordinates)
+      filename = `arrow${dir}${move}Start`;
+    else if (touch.arrowList[touch.arrowList.length - 1] === coordinates)
+      filename = `arrow${dir}${move}End`;
+    else if (touch.arrowList.includes(coordinates))
+      filename = `arrowMid${move}`;
+    if (filename) {
+      {
+        win.ctx.drawImage(
+          loadedSprites[filename],
+          grid.SQ * this.x,
+          grid.SQ * this.y - game.rise
+        );
       }
-    } else touch.arrowList.length = 0;
+    }
   }
 
   drawDebugDots() {
@@ -554,15 +561,21 @@ export function drawGrid() {
 
   if (game.cursor_type[0] !== "d") {
     try {
-      for (let x = 0; x < grid.COLS; x++) {
-        for (let y = 0; y < grid.ROWS + 1; y++) {
-          let Square = game.board[x][y];
-          if (game.cursor_type[0] !== "d") {
-            if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
-              touch.moveOrderExists = false;
-            if (!touch.moveOrderExists && touch.arrowList.length)
-              touch.arrowList = [];
-            Square.drawArrows();
+      if (touch.arrowList.length && touch.mouse.x !== game.cursor.x) {
+        touch.arrowList = Array.from(
+          new Set(touch.arrowList.map(JSON.stringify)),
+          JSON.parse
+        );
+        for (let x = 0; x < grid.COLS; x++) {
+          for (let y = 0; y < grid.ROWS + 1; y++) {
+            let Square = game.board[x][y];
+            if (game.cursor_type[0] !== "d") {
+              if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
+                touch.moveOrderExists = false;
+              if (!touch.moveOrderExists && !touch.mouse.clicked)
+                touch.arrowList = [];
+              Square.drawArrows();
+            }
           }
         }
       }

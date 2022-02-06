@@ -126,7 +126,7 @@ export const PIECES = [
   blockColor.PURPLE,
   blockColor.RED,
   blockColor.YELLOW,
-  // blockColor.BLUE,
+  blockColor.BLUE,
 ];
 
 export const INTERACTIVE_TYPES = [
@@ -262,10 +262,13 @@ export const touch = {
   arrowList: [],
   target: { x: 2, y: 6 }, // swap until target is reached
   keySquare: { x: 2, y: 6 },
+  arrowPointer: { x: 2, y: 6 },
   swapOrderPrepared: false,
   doubleClickCounter: 0,
   doubleClickTimer: 0,
   lastCursorPos: { x: 2, y: 6 },
+  lastXMoused: 2,
+  mouseChangedX: false,
 };
 
 export const overtimeMusic = [

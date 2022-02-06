@@ -39,19 +39,19 @@ export function updateMousePosition(canvas, e) {
   return false;
 }
 
-export function moveBlockByDrag(x, y) {
-  if (!touch.enabled || cpu.enabled) return;
-  if (x >= 0 && x < 6 && y > 0 && y < 12) {
-    if (x < game.cursor.x) {
-      game.cursor.x = x;
-      game.swapPressed = true;
-    }
-    if (x > game.cursor.x) {
-      game.cursor.x = x;
-      game.swapPressed = "right";
-    }
-  }
-}
+// export function moveBlockByDrag(x, y) {
+//   if (!touch.enabled || cpu.enabled) return;
+//   if (x >= 0 && x < 6 && y > 0 && y < 12) {
+//     if (x < game.cursor.x) {
+//       game.cursor.x = x;
+//       game.swapPressed = true;
+//     }
+//     if (x > game.cursor.x) {
+//       game.cursor.x = x;
+//       game.swapPressed = "right";
+//     }
+//   }
+// }
 
 export function selectBlock() {
   // there are two functions to be checked before trying to move the block
@@ -77,16 +77,21 @@ export function selectBlock() {
   }
 }
 
+export function showPotentialCommand() {
+  let [x, y] = [touch.mouse.x, touch.mouse.y];
+}
+
 export function moveBlockByRelease() {
   if (cpu.enabled) return;
+  touch.arrowList.length = 0;
+  touch.target.x = touch.mouse.x; // move to x--coordinate
+  touch.target.y = touch.selectedBlock.y; // remains on same row
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
     (touch.mouse.x !== touch.selectedBlock.x ||
       touch.mouse.y !== touch.selectedBlock.y)
   ) {
-    touch.target.x = touch.mouse.x; // move to x--coordinate
-    touch.target.y = touch.selectedBlock.y; // remains on same row
     touch.moveOrderExists = true;
     game.swapPressed = true;
   }
@@ -105,7 +110,7 @@ export function moveBlockByRelease() {
   }
   if (CLEARING_TYPES.includes(game.board[touch.target.x][touch.target.y].type))
     touch.moveType = "Buffer";
-  if (touch.arrowList)
+  if (touch.moveOrderExists)
     touch.arrowList.push(`${touch.target.x},${touch.target.y}`);
   // game.cursor.x = touch.mouse.x;
   // game.cursor.y = touch.mouse.y;
@@ -138,10 +143,10 @@ function doMouseDown(e) {
     if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
     touch.doubleClickCounter++;
   }
-  touch.lastCursorPos.x = game.cursor.x;
-  touch.lastCursorPos.y = game.cursor.y;
   game.cursor.x = touch.mouse.x;
   game.cursor.y = touch.mouse.y;
+  touch.mouseStart.x = touch.mouse.x;
+  touch.mouseStart.y = touch.mouse.y;
 
   if (game.frames >= 0) selectBlock();
 }
@@ -150,10 +155,28 @@ function doMouseMove(e) {
   if (!touch.enabled) return;
   // if (!updateMousePosition(win.canvas, e)) return;
   updateMousePosition(win.canvas, e);
-  if (touch.mouse.clicked && !touch.thereIsABlockCurrentlySelected) {
-    game.cursor.x = touch.mouse.x;
-    game.cursor.y = touch.mouse.y;
-    selectBlock();
+  touch.mouseChangedX = false;
+  if (touch.mouse.clicked) {
+    if (touch.mouse.x !== touch.lastXMoused) {
+      touch.mouseChangedX = true;
+      touch.lastXMoused = touch.mouse.x;
+    }
+    if (!touch.thereIsABlockCurrentlySelected) {
+      game.cursor.x = touch.mouse.x;
+      game.cursor.y = touch.mouse.y;
+      selectBlock();
+    } else if (touch.mouseChangedX && touch.mouse.x !== touch.mouseStart.x) {
+      touch.arrowList.length = 0;
+      if (game.cursor.x === touch.mouse.x) return;
+      let dir = touch.mouse.x < touch.mouseStart.x ? -1 : 1;
+      for (let i = touch.mouseStart.x; i !== touch.mouse.x; i += dir) {
+        touch.arrowList.push(`${i},${touch.selectedBlock.y}`);
+        touch.moveType = "Buffer";
+        if (i === touch.mouse.x - dir) {
+          touch.arrowList.push(`${touch.mouse.x},${touch.selectedBlock.y}`);
+        }
+      }
+    }
   }
 }
 
@@ -164,19 +187,6 @@ function doMouseUp(e) {
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
     moveBlockByRelease();
   }
-
-  // if (
-  //   touch.lastCursorPos.y == game.cursor.y &&
-  //   Math.abs(game.cursor.x - touch.lastCursorPos.x) == 1
-  // ) {
-  //   if (game.cursor.x - touch.lastCursorPos.x == 1) {
-  //     trySwappingBlocks(touch.lastCursorPos.x, touch.lastCursorPos.y);
-  //   } else if (game.cursor.x - touch.lastCursorPos.x == -1) {
-  //     trySwappingBlocks(game.cursor.x, game.cursor.y);
-  //   }
-  // } else {
-  //   moveBlockByRelease();
-  // }
 }
 
 export function createClickListeners() {
