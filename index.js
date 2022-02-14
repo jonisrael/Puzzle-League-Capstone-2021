@@ -145,7 +145,7 @@ function addEventListeners(st) {
       game.mode = "arcade";
       document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
-      document.getElementById("watch-ai-play-button").remove();
+      document.getElementById("ai-plays-button").remove();
       startGame(1);
     });
     document.getElementById("training-mode").addEventListener("click", () => {
@@ -153,18 +153,16 @@ function addEventListeners(st) {
       game.mode = "training";
       document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
-      document.getElementById("watch-ai-play-button").remove();
+      document.getElementById("ai-plays-button").remove();
       startGame(1);
     });
-    document
-      .getElementById("watch-ai-play-button")
-      .addEventListener("click", () => {
-        game.mode = "cpu-play";
-        document.getElementById("arcade-button").remove();
-        document.getElementById("training-mode").remove();
-        document.getElementById("watch-ai-play-button").remove();
-        startGame(1);
-      });
+    document.getElementById("ai-plays-button").addEventListener("click", () => {
+      game.mode = "cpu-play";
+      document.getElementById("arcade-button").remove();
+      document.getElementById("training-mode").remove();
+      document.getElementById("ai-plays-button").remove();
+      startGame(1);
+    });
     // document.addEventListener("click", () => {
     //   if (loadedAudios.length == 0) {
     //     console.log("user has clicked the document, loading audios.");

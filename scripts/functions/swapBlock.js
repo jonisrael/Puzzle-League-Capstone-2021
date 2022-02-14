@@ -13,12 +13,14 @@ import {
   CLEARING_TYPES,
   blockIsSolid,
   transferProperties,
+  saveState,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
 import { TouchOrders, match, pair, stickyCheck } from "./stickyFunctions";
 import { pause } from "./pauseFunctions";
 import { isBlockAirborne } from "./gravity";
+import { updateTrainingButtons } from "./trainingControls";
 
 export function trySwappingBlocks(x, y, clickSwap = false) {
   if (game.disableSwap || game.frames < 0 || x > grid.COLS - 2 || game.over) {
@@ -99,9 +101,11 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
   //   console.log(game.frames, "swap fail:", legalSwapFailReason);
 
   if (legalSwap) {
-    if (game.currentChain == 0) {
-      debug.pastGameState = JSON.parse(JSON.stringify(game));
-      // debug.updateGameState = false;
+    if (game.mode === "training" && !win.mobile) {
+      if (game.currentChain === 0) {
+        saveState.lastSwap = JSON.parse(JSON.stringify(game));
+        updateTrainingButtons();
+      }
     }
     if (touch.enabled && touch.moveOrderExists) {
       touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
@@ -209,6 +213,9 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
         }
       }
 
+      // stickyCheck(game.cursor.x, game.cursor.y);
+      // stickyCheck(game.cursor.x + 1, game.cursor.y);
+
       if ((game.cursor_type[0] !== "d" || 0 == 0) && !touch.moveOrderExists) {
         playAudio(audio.smartMatch);
         game.board[match[0][0]][match[0][1]].lightTimer = 65;
@@ -240,7 +247,7 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
     win.mainInfoDisplay.style.color = "purple";
     cpu.swapSuccess = false;
     // console.log("swap failed at", x, y, game.frames);
-    if (!touch.moveOrderExists) playAudio(audio.selectionFailed);
+    if (!game.cursor_type[0] === "d") playAudio(audio.selectionFailed);
     // else {
     //   playAudio(audio.selectionFailed);
     // }

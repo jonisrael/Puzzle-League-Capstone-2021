@@ -410,7 +410,7 @@ function tutorialBreakInputs(input) {
       tutorial.msgIndex == tutorialMessages.length - 1
     ) {
       game.tutorialRunning = false;
-      document.getElementById("game-info").style.display = "inline";
+      document.getElementById("game-info-table").style.display = "inline";
       win.restartGame = true;
     }
     nextDialogue(tutorial.msgIndex);
@@ -419,7 +419,7 @@ function tutorialBreakInputs(input) {
     console.log("raise was pressed", input);
     tutorial.state = tutorial.board.length - 1;
     game.tutorialRunning = false;
-    document.getElementById("game-info").style.display = "inline";
+    document.getElementById("game-info-table").style.display = "inline";
     win.running = false;
     win.restartGame = true;
   }

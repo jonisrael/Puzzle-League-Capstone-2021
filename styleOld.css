@@ -131,7 +131,7 @@ section {
   margin: 0 auto;
 }
 
-#game-info {
+#game-info-table {
   /* display: table-row; */
   display: inline;
   align-items: center;
@@ -143,8 +143,8 @@ section {
   justify-content: center;
 }
 
-#game-info th,
-#game-info td {
+#game-info-table th,
+#game-info-table td {
   font-size: small;
   padding: 0.2rem;
   /* width: 10%; */

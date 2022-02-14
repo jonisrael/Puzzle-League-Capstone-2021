@@ -228,6 +228,7 @@ export const win = {
   loopCounter: 0,
   browser: "Unknown",
   os: "Unknown",
+  mobile: false,
   appleProduct: false,
 };
 
@@ -316,6 +317,7 @@ export let game = {
   finalTime: 0,
   seconds: 0,
   minutes: 0,
+  pastSeconds: 0,
   timeString: "0:00",
   score: 0,
   scoreUpdate: 0,
@@ -365,6 +367,7 @@ export let game = {
 
 export const helpPlayer = {
   timer: 300,
+  forceHint: 0,
   done: false,
 };
 
@@ -417,7 +420,13 @@ export const debug = {
   show: 0,
   updateGameState: false,
   advanceOneFrame: false,
-  pastGameState: {},
+  saveState: {},
+};
+
+export const saveState = {
+  chainStart: {},
+  lastMatch: {},
+  lastSwap: {},
 };
 
 export const cpu = {

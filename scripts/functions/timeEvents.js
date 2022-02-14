@@ -10,6 +10,7 @@ import {
   win,
 } from "../global";
 import { playAnnouncer, playAudio, playMusic } from "./audioFunctions";
+import { updateTrainingButtons } from "./trainingControls";
 
 export function checkTime(beforeOvertime) {
   let eventFrames = beforeOvertime ? game.frames : game.frames - 7200;
@@ -39,6 +40,7 @@ export function checkTime(beforeOvertime) {
     case -74:
       if (game.mode !== "training") break;
       game.messagePriority = "Training Stage...";
+      updateTrainingButtons();
       if (!win.muteAnnouncer.checked)
         playAudio(audio.announcerTrainingStage, 0.2, true);
       break;

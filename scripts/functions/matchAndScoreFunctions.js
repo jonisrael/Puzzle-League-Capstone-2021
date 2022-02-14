@@ -14,6 +14,7 @@ import {
   cpu,
   helpPlayer,
   detectInfiniteLoop,
+  saveState,
 } from "../global";
 
 import { playChainSFX, playAudio, playAnnouncer } from "./audioFunctions";
@@ -256,6 +257,12 @@ export function checkMatch() {
           }
         }
         // if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
+      } // end if blocksCleared !== 0
+      if (game.mode === "training") {
+        saveState.lastMatch = JSON.parse(JSON.stringify(game));
+        if (game.currentChain === 1) {
+          saveState.chainStart = JSON.parse(JSON.stringify(game));
+        }
       }
     } else {
       done = true; // Needs to end if confirm clear fails

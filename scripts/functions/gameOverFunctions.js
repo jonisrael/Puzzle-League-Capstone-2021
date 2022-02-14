@@ -67,8 +67,9 @@ export function isGameOver() {
   ) {
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training" || game.score < 100) {
-      game.score = game.frames = game.minutes = game.seconds = game.currentChain = 0;
+      game.score = game.currentChain = 0;
       if (game.mode === "arcade" && !debug.enabled) {
+        game.frames = game.minutes = game.seconds;
         win.restartGame = true;
         sound.Music[1].pause();
         game.frames = -66;

@@ -1,13 +1,15 @@
 import { render } from "../..";
-import { updateLevelEvents } from "../../puzzleleague";
+import { checkIfHelpPlayer, updateLevelEvents } from "../../puzzleleague";
 import * as state from "../../store";
 import { createClickListeners } from "../clickControls";
+import { cpuAction } from "../computerPlayer/cpu";
 import {
   bestScores,
   cpu,
   debug,
   game,
   grid,
+  helpPlayer,
   leaderboard,
   perf,
   preset,
@@ -15,6 +17,7 @@ import {
 } from "../global";
 import { nextDialogue, tutorial } from "../tutorial/tutorialScript";
 import { pause, unpause } from "./pauseFunctions";
+import { doTrainingAction, setUpTrainingMode } from "./trainingControls";
 
 export function createHeadsUpDisplay(mobile = false) {
   win.mobile = mobile;
@@ -46,29 +49,6 @@ function setUpBestScoreDisplay(column) {
   bestScoresString += `</table>`;
   bestScoresDisplay.innerHTML = bestScoresString;
   if (game.mode === "arcade") column.appendChild(bestScoresDisplay);
-}
-
-function setUpTrainingMode(column3) {
-  console.log("setting up training mode");
-  let levelUp = document.createElement("button");
-  levelUp.setAttribute("id", "level-up-button");
-  levelUp.className = "default-button level-button";
-  levelUp.innerHTML = "Level + (M)";
-  column3.appendChild(levelUp);
-  let levelDown = document.createElement("button");
-  levelDown.setAttribute("id", "level-up-button");
-  levelDown.className = "default-button level-button";
-  levelDown.innerHTML = "Level - (N)";
-  column3.appendChild(levelDown);
-
-  levelUp.addEventListener("click", () => {
-    game.level++;
-    updateLevelEvents(game.level);
-  });
-  levelDown.addEventListener("click", () => {
-    game.level--;
-    updateLevelEvents(game.level);
-  });
 }
 
 function createDesktopDisplay() {
@@ -117,7 +97,7 @@ function createDesktopDisplay() {
   appContainer.appendChild(topSection);
 
   win.gameInfoTable = document.createElement("table");
-  win.gameInfoTable.setAttribute("id", "game-info");
+  win.gameInfoTable.setAttribute("id", "game-info-table");
   win.gameInfoTable.appendChild(headerRow);
   topSection.appendChild(win.gameInfoTable);
   headerRow.appendChild(win.timeHeader);
@@ -219,38 +199,38 @@ function createDesktopDisplay() {
   win.ctx = win.cvs.getContext("2d");
 
   // Add invisible "Resume play" button, to be visible when game is paused
-  let resumeButton = document.createElement("button");
-  resumeButton.setAttribute("id", "resume-button");
-  resumeButton.className = "default-button pause-buttons";
-  resumeButton.style.display = "none";
-  resumeButton.innerHTML = "<u>C</u>ontinue";
-  column2.appendChild(resumeButton);
-  resumeButton.addEventListener("click", (event) => {
-    unpause();
-  });
+  // let resumeButton = document.createElement("button");
+  // resumeButton.setAttribute("id", "resume-button");
+  // resumeButton.className = "default-button pause-buttons";
+  // resumeButton.style.display = "none";
+  // resumeButton.innerHTML = "<u>C</u>ontinue";
+  // column2.appendChild(resumeButton);
+  // resumeButton.addEventListener("click", (event) => {
+  //   unpause();
+  // });
 
-  // Add invisible "Main Menu" button, to be visible when game is paused
-  let restartButton = document.createElement("button");
-  restartButton.setAttribute("id", "restart-button");
-  restartButton.className = "default-button pause-buttons";
-  restartButton.style.display = "none";
-  restartButton.innerHTML = "<u>R</u>estart";
-  column2.appendChild(restartButton);
-  restartButton.addEventListener("click", (event) => {
-    win.running = false;
-    win.restartGame = true;
-  });
+  // // Add invisible "Main Menu" button, to be visible when game is paused
+  // let restartButton = document.createElement("button");
+  // restartButton.setAttribute("id", "restart-button");
+  // restartButton.className = "default-button pause-buttons";
+  // restartButton.style.display = "none";
+  // restartButton.innerHTML = "<u>R</u>estart";
+  // column2.appendChild(restartButton);
+  // restartButton.addEventListener("click", (event) => {
+  //   win.running = false;
+  //   win.restartGame = true;
+  // });
 
-  let mainMenuButton = document.createElement("button");
-  mainMenuButton.setAttribute("id", "menu-button");
-  mainMenuButton.className = "default-button pause-buttons";
-  mainMenuButton.style.display = "none";
-  mainMenuButton.innerHTML = "<u>M</u>enu";
-  column2.appendChild(mainMenuButton);
-  mainMenuButton.addEventListener("click", (event) => {
-    win.running = false;
-    render(state.Home);
-  });
+  // let mainMenuButton = document.createElement("button");
+  // mainMenuButton.setAttribute("id", "menu-button");
+  // mainMenuButton.className = "default-button pause-buttons";
+  // mainMenuButton.style.display = "none";
+  // mainMenuButton.innerHTML = "<u>M</u>enu";
+  // column2.appendChild(mainMenuButton);
+  // mainMenuButton.addEventListener("click", (event) => {
+  //   win.running = false;
+  //   render(state.Home);
+  // });
 
   let pauseButton = document.createElement("button");
   pauseButton.setAttribute("id", "pause-button");
@@ -271,7 +251,7 @@ function createDesktopDisplay() {
   if (game.mode === "arcade") {
     setUpBestScoreDisplay(column1);
   } else if (game.mode === "training") {
-    setUpTrainingMode(column1);
+    setUpTrainingMode(column3);
   }
 
   createClickListeners();
@@ -324,7 +304,7 @@ function createMobileDisplay() {
   appContainer.appendChild(topSection);
 
   win.gameInfoTable = document.createElement("table");
-  win.gameInfoTable.setAttribute("id", "game-info");
+  win.gameInfoTable.setAttribute("id", "game-info-table");
   win.gameInfoTable.appendChild(headerRow);
   topSection.appendChild(win.gameInfoTable);
   headerRow.appendChild(win.timeHeader);
@@ -411,44 +391,50 @@ function createMobileDisplay() {
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
 
-  // Add invisible "Resume play" button, to be visible when game is paused
-  let resumeButton = document.createElement("button");
-  resumeButton.setAttribute("id", "resume-button");
-  resumeButton.className = "default-button pause-buttons";
-  resumeButton.style.display = "none";
-  resumeButton.innerHTML = "<u>C</u>ontinue";
-  gameContainer.appendChild(resumeButton);
-  resumeButton.addEventListener("click", (event) => {
-    unpause();
-  });
+  // // Add invisible "Resume play" button, to be visible when game is paused
+  // let resumeButton = document.createElement("button");
+  // resumeButton.setAttribute("id", "resume-button");
+  // resumeButton.className = "default-button pause-buttons";
+  // resumeButton.style.display = "none";
+  // resumeButton.innerHTML = "<u>C</u>ontinue";
+  // gameContainer.appendChild(resumeButton);
+  // resumeButton.addEventListener("click", (event) => {
+  //   unpause();
+  // });
 
-  // Add invisible "Main Menu" button, to be visible when game is paused
-  let restartButton = document.createElement("button");
-  restartButton.setAttribute("id", "restart-button");
-  restartButton.className = "default-button pause-buttons";
-  restartButton.style.display = "none";
-  restartButton.innerHTML = "<u>R</u>estart";
-  gameContainer.appendChild(restartButton);
-  restartButton.addEventListener("click", (event) => {
-    win.running = false;
-    win.restartGame = true;
-  });
+  // // Add invisible "Main Menu" button, to be visible when game is paused
+  // let restartButton = document.createElement("button");
+  // restartButton.setAttribute("id", "restart-button");
+  // restartButton.className = "default-button pause-buttons";
+  // restartButton.style.display = "none";
+  // restartButton.innerHTML = "<u>R</u>estart";
+  // gameContainer.appendChild(restartButton);
+  // restartButton.addEventListener("click", (event) => {
+  //   win.running = false;
+  //   win.restartGame = true;
+  // });
 
-  let mainMenuButton = document.createElement("button");
-  mainMenuButton.setAttribute("id", "menu-button");
-  mainMenuButton.className = "default-button pause-buttons";
-  mainMenuButton.style.display = "none";
-  mainMenuButton.innerHTML = "<u>M</u>enu";
-  gameContainer.appendChild(mainMenuButton);
-  mainMenuButton.addEventListener("click", (event) => {
-    win.running = false;
-    render(state.Home);
-  });
+  // let mainMenuButton = document.createElement("button");
+  // mainMenuButton.setAttribute("id", "menu-button");
+  // mainMenuButton.className = "default-button pause-buttons";
+  // mainMenuButton.style.display = "none";
+  // mainMenuButton.innerHTML = "<u>M</u>enu";
+  // gameContainer.appendChild(mainMenuButton);
+  // mainMenuButton.addEventListener("click", (event) => {
+  //   win.running = false;
+  //   render(state.Home);
+  // });
 
   let pauseButton = document.createElement("button");
   pauseButton.setAttribute("id", "pause-button");
-  pauseButton.className = "default-button pause-buttons";
-  pauseButton.innerHTML = "Pause";
+  pauseButton.className = "default-button";
+  if (game.mode === "training") {
+    pauseButton.innerHTML = "Training Features";
+    pauseButton.style.fontSize = "0.8rem";
+  } else {
+    pauseButton.innerHTML = "Pause";
+  }
+
   topSection.append(pauseButton);
   pauseButton.addEventListener("click", (event) => {
     game.tutorialRunning
@@ -458,38 +444,40 @@ function createMobileDisplay() {
       : pause();
   });
 
-  document.getElementById("game-info").addEventListener("click", (event) => {
-    debug.clickCounter++;
-    if (debug.clickCounter === 5) {
-      debug.enabled = 1;
-      debug.show = 1;
-      // helpPlayer.timer = 10;
-      leaderboard.canPost = false;
-      leaderboard.reason = "debug";
-      perf.unrankedReason = "debug mode was activated.";
-      win.fpsDisplay.style.color = "black";
-      console.log("debug ON -- Score Posting Disabled");
-    } else if (debug.clickCounter === 8) {
-      debug.show = 0;
-    } else if (debug.clickCounter === 10) {
-      debug.enabled = 0;
-      debug.clickCounter = 0;
-      updateLevelEvents(game.level);
-      console.log("debug OFF");
-      debug.slowdown = 0;
-      debug.freeze = 0;
-      if (game.mode === "cpu-play") cpu.enabled = cpu.control = true;
-    }
-  });
+  document
+    .getElementById("game-info-table")
+    .addEventListener("click", (event) => {
+      debug.clickCounter++;
+      if (debug.clickCounter === 5) {
+        debug.enabled = 1;
+        debug.show = 1;
+        // helpPlayer.timer = 10;
+        leaderboard.canPost = false;
+        leaderboard.reason = "debug";
+        perf.unrankedReason = "debug mode was activated.";
+        win.fpsDisplay.style.color = "black";
+        console.log("debug ON -- Score Posting Disabled");
+      } else if (debug.clickCounter === 8) {
+        debug.show = 0;
+      } else if (debug.clickCounter === 10) {
+        debug.enabled = 0;
+        debug.clickCounter = 0;
+        updateLevelEvents(game.level);
+        console.log("debug OFF");
+        debug.slowdown = 0;
+        debug.freeze = 0;
+        if (game.mode === "cpu-play") cpu.enabled = cpu.control = true;
+      }
+    });
 
   // column1.append(win.gameInfoTable);
 
   // setUpQuickStatDisplay(column1);
-  if (game.mode === "arcade") {
-    setUpBestScoreDisplay(gameContainer);
-  } else if (game.mode === "training") {
-    setUpTrainingMode(gameContainer);
-  }
+  // if (game.mode === "arcade") {
+  //   setUpBestScoreDisplay(gameContainer);
+  // } else if (game.mode === "training") {
+  //   setUpTrainingMode(gameContainer);
+  // }
 
   createClickListeners();
 }

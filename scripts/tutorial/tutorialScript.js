@@ -73,7 +73,7 @@ export function loadTutorialState(state, index = 0) {
     console.log("tutorial complete");
     game.tutorialRunning = false;
     game.humanCanPlay = true;
-    document.getElementById("game-info").style.display = "inline";
+    document.getElementById("game-info-table").style.display = "inline";
     win.running = false;
     win.restartGame = true;
     return;
@@ -124,7 +124,7 @@ export function startTutorial() {
   cpu.enabled = true;
   cpu.control = true;
   [game.cursor.x, game.cursor.y] = [2, 6];
-  document.getElementById("game-info").style.display = "none";
+  document.getElementById("game-info-table").style.display = "none";
   document.getElementById("main-info").style = "font-size: 2rem;";
   loadTutorialState(tutorial.state, tutorial.msgIndex);
 }

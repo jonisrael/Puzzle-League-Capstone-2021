@@ -17,6 +17,7 @@ import {
   touch,
   helpPlayer,
   detectInfiniteLoop,
+  saveState,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
@@ -47,7 +48,7 @@ import {
   tutorial,
   tutorialBoard,
 } from "../tutorial/tutorialScript";
-import { createHeadsUpDisplay } from "./viewportDisplay";
+import { createHeadsUpDisplay } from "./setUpViewport";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed, version = 1) {
@@ -72,13 +73,18 @@ export function startGame(selectedGameSpeed, version = 1) {
   // });
   // console.log(game);
   resetGameVariables();
-  if (game.mode === "training") game.frames = -76;
   helpPlayer.timer = 600;
+  helpPlayer.done = false;
+  touch.moveOrderExists = false;
   cpu.enabled = cpu.control = game.mode === "cpu-play";
   game.humanCanPlay = game.mode !== "cpu-play";
   cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay(window.innerWidth < 800);
+  if (game.mode === "training") {
+    game.frames = -76;
+    updateLevelEvents(0);
+  }
   win.timeDisplay.innerHTML = "00:00";
   win.scoreDisplay.innerHTML = "00000";
   win.levelDisplay.innerHTML = "1";
@@ -87,8 +93,9 @@ export function startGame(selectedGameSpeed, version = 1) {
   touch.moveOrderExists = false;
   touch.arrowList.length = 0;
   game.tutorialRunning = false;
-  // document.getElementById("game-info").style.display = "inline";
+  // document.getElementById("game-info-table").style.display = "inline";
   game.board = generateOpeningBoard(40, 7);
+  Object.keys(saveState).forEach((stateType) => (saveState[stateType] = {}));
   // if (!win.tutorialPlayedOnce && game.mode == "arcade") {
   //   win.tutorialPlayedOnce = true;
   //   // game.board = generateOpeningBoard(40, 7);

@@ -3,7 +3,7 @@
     The game is most known as Pokemon Puzzle League, which was released 2000 on Nintendo 64),
     but it is actually a clone of Panel De Pon, a Super Nintendo Entertainment system
     game released in Japan in 1995.  There is another clone globally released in 1995 called Tetris
-    Attack (It featured Yoshi!), but the game is really nothing like Tetris other than a grid.
+    Attack (It featured Yoshi!), but the game xs really nothing like Tetris other than a grid.
 */
 
 import html from "html-literal";
@@ -108,6 +108,8 @@ import {
   tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
+import { doTrainingAction } from "./scripts/functions/trainingControls";
+import { spawnSquare } from "./scripts/functions/debugControls";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -494,21 +496,22 @@ export function newBlock(c, r, vacant = false) {
 }
 
 export function checkIfHelpPlayer() {
+  if (helpPlayer.forceHint) helpPlayer.timer = 0;
   if (
-    game.score < 500 &&
+    ((game.score < 500 && !game.mode === "tutorial") || helpPlayer.forceHint) &&
     game.frames > 0 &&
     game.frames < 7200 &&
-    helpPlayer.timer > 0 &&
     !game.disableSwap &&
-    game.currentChain == 0 &&
-    !game.tutorialRunning
+    game.currentChain === 0 &&
+    !game.tutorialRunning &&
+    helpPlayer.timer > 0
   ) {
     helpPlayer.timer--;
   } else if (helpPlayer.timer === 0) {
     if (!helpPlayer.done) {
       cpu.matchList.length = 0;
       cpu.matchStrings.length = 0;
-      cpuAction({}, true);
+      if (game.currentChain === 0) cpuAction({}, true);
       if (cpu.matchList.length > 0) {
         helpPlayer.done = true;
       }
@@ -527,12 +530,14 @@ export function drawGrid() {
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
 
-      if (game.cursor_type[0] !== "d") {
-        Square.drawGridLines();
-      }
+      Square.drawGridLines();
+
+      // if (game.cursor_type[0] !== "d") {
+      //   Square.drawGridLines();
+      // }
 
       if (
-        (helpPlayer.timer == 0 || (cpu.enabled && !game.tutorialRunning)) &&
+        (helpPlayer.timer === 0 || (cpu.enabled && !game.tutorialRunning)) &&
         cpu.matchStrings.includes([x, y].join())
       ) {
         Square.drawHint();
@@ -781,6 +786,24 @@ window.addEventListener(
 //   { passive: false }
 // );
 
+document.addEventListener("keydown", TRAINING_CONTROL);
+function TRAINING_CONTROL(event) {
+  if (game.mode === "training" && !debug.enabled) {
+    if (event.code.includes("Digit")) {
+      doTrainingAction(event.code[5]);
+    }
+  }
+}
+
+document.addEventListener("keydown", DEBUG_CONTROL);
+function DEBUG_CONTROL(event) {
+  if (debug.enabled) {
+    if (event.code.includes("Digit")) {
+      spawnSquare(event.code[5]);
+    }
+  }
+}
+
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
   // When on home page, before game start
@@ -796,29 +819,29 @@ function KEYBOARD_CONTROL(event) {
 
       document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
-      document.getElementById("watch-ai-play-button").remove();
+      document.getElementById("ai-plays-button").remove();
       game.mode = "arcade";
       startGame(1);
     } else if (event.keyCode === 84 && win.patchNotesShown) {
       // t
       document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
-      document.getElementById("watch-ai-play-button").remove();
+      document.getElementById("ai-plays-button").remove();
       game.mode = "training";
       startGame(1);
     } else if (event.keyCode === 66 && win.patchNotesShown) {
       // b
       document.getElementById("arcade-button").remove();
       document.getElementById("training-mode").remove();
-      document.getElementById("watch-ai-play-button").remove();
+      document.getElementById("ai-plays-button").remove();
       game.mode = "cpu-play";
       startGame(1);
     }
-  } else if (document.getElementById("watch-ai-play-button")) {
+  } else if (document.getElementById("ai-plays-button")) {
     if ((event.keyCode == 83 || event.keyCode == 84) && win.patchNotesShown) {
       // s or t
       // document.getElementById("arcade-button").remove();
-      // document.getElementById("watch-ai-play-button").remove();
+      // document.getElementById("ai-plays-button").remove();
       // startGame(2);
     }
   }
@@ -919,43 +942,38 @@ function KEYBOARD_CONTROL(event) {
     }
 
     if (debug.enabled || game.mode === "training") {
-      if (event.keyCode === 77) {
-        //m
+      if (event.keyCode === 187) {
+        // +
         if (0 === 0 || game.level + 1 < preset.speedValues.length) {
           game.level++;
           updateLevelEvents(game.level);
-          if (game.level === 7 && !game.tutorialRunning) {
-            playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
-          }
-        }
-      } else if (event.keyCode === 78) {
-        //n
-        if (game.level - 1 > -1) {
-          game.level--;
-          updateLevelEvents(game.level);
-          if (game.level === 6) {
-            playMusic(
-              music[randInt(music.length, true, lastIndex.music, "music")]
-            );
-          }
-        }
-      } else if (event.keyCode === 187) {
-        // +
-        game.frames += 60;
-        game.seconds++;
-        if (game.seconds > 60) {
-          game.minutes++;
-          game.seconds -= 60;
         }
       } else if (event.keyCode === 189) {
         // -
-        game.frames -= 60;
-        game.seconds--;
-        if (game.seconds < 0) {
-          game.minutes--;
-          game.seconds += 60;
+        if (game.level - 1 > -1) {
+          game.level--;
+          updateLevelEvents(game.level);
         }
+      } else if (event.keyCode === 89) {
+        // y
       }
+      // else if (event.keyCode === 77) {
+      //   // m
+      //   game.frames += 60;
+      //   game.seconds++;
+      //   if (game.seconds > 60) {
+      //     game.minutes++;
+      //     game.seconds -= 60;
+      //   }
+      // } else if (event.keyCode === 78) {
+      //   // -
+      //   game.frames -= 60;
+      //   game.seconds--;
+      //   if (game.seconds < 0) {
+      //     game.minutes--;
+      //     game.seconds += 60;
+      //   }
+      // }
 
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
@@ -966,22 +984,6 @@ function KEYBOARD_CONTROL(event) {
           startTutorial();
           debug.enabled = false;
           debug.show = false;
-        } else if (event.keyCode === 89) {
-          // y
-          console.log(game, debug);
-          game.seconds = pastSeconds;
-          game.cursor.x = debug.pastGameState.cursor.x;
-          game.cursor.y = debug.pastGameState.cursor.y;
-          game.cursor_type = debug.pastGameState.cursor_type;
-          game.rise = debug.pastGameState.rise;
-          for (let x = 0; x < grid.COLS; x++) {
-            for (let y = 0; y < grid.ROWS + 2; y++) {
-              Object.keys(game.board[x][y]).forEach(
-                (key) =>
-                  (game.board[x][y][key] = debug.pastGameState.board[x][y][key])
-              );
-            }
-          }
         } else if (event.keyCode == 79) {
           // o
           win.appleProduct = (win.appleProduct + 1) % 2;
@@ -1031,6 +1033,7 @@ export function updateLevelEvents(level) {
     game.level++;
     return;
   }
+
   if (level > preset.speedValues.length - 1) {
     game.boardRiseSpeed = preset.speedValues.length - 1 - level;
     level = preset.speedValues.length - 1;
@@ -1043,11 +1046,21 @@ export function updateLevelEvents(level) {
   game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex =
     game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 13 ? 3 : 5;
+
+  console.log(
+    sound.Music[0],
+    music.includes(sound.Music[0]),
+    overtimeMusic.includes(sound.Music[0])
+  );
+  if (game.level < 7 && overtimeMusic.includes(sound.Music[0])) {
+    playMusic(music[randInt(music.length, true)]);
+  } else if (game.level >= 7 && music.includes(sound.Music[0])) {
+    playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
+  }
 }
 
 // GAME HERE
 let cnt;
-let pastSeconds = 0;
 export function gameLoop() {
   cnt++;
   if (win.running && !game.paused && !debug.show) {
@@ -1192,13 +1205,16 @@ export function gameLoop() {
             0.8 * colorRatio}%, ${20 + 0.5 * colorRatio}%)`;
         }
         if (debug.enabled && game.seconds % 5 === 1) {
-          pastSeconds = game.seconds;
+          game.pastSeconds = game.seconds;
         }
 
         if (sound.Music[1].currentTime >= sound.Music[1].duration) {
-          playMusic(
-            music[randInt(music.length, true, lastIndex.music, "music")]
-          );
+          if (game.level < 7) {
+            playMusic(music[randInt(music.length, true)]);
+          } else {
+            playMusic(overtimeMusic[randInt(overtimeMusic.length, true)]);
+          }
+
           console.log("Track ended, now playing", sound.Music[0]);
         }
 
@@ -1265,9 +1281,6 @@ export function gameLoop() {
 
         if (game.level + 1 < preset.speedValues.length && game.frames > 0) {
           game.level++;
-          if (game.level === 7 && !game.tutorialRunning) {
-            playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
-          }
           updateLevelEvents(game.level);
         }
       }
@@ -1403,7 +1416,7 @@ export function gameLoop() {
         }
       }
 
-      if (game.frames > 0 && game.frameMod[60] == 0 && !game.over) {
+      if (game.frames > 0 && !game.over) {
         if (helpPlayer.done && cpu.matchList.length) {
           let colorToMatch =
             game.board[cpu.matchList[0][0]][cpu.matchList[0][1]].color;
@@ -1547,7 +1560,7 @@ export function gameLoop() {
         Highest Row: ${game.highestRow}`;
       } else {
         win.timeDisplay.innerHTML = game.timeString;
-        win.levelDisplay.innerHTML = `${game.level}`;
+        win.levelDisplay.innerHTML = `${game.level > 0 ? game.level : "PR"}`;
       }
       win.scoreDisplay.innerHTML = scoreString;
       win.multiplierDisplay.innerHTML = `${game.scoreMultiplier.toFixed(2)}x`;
@@ -1583,9 +1596,9 @@ export function gameLoop() {
         win.focused = true;
       }
 
-      document.getElementById("pause-button").innerHTML = game.tutorialRunning
-        ? `Next ${tutorial.state + 1}/${tutorial.board.length}`
-        : "Pause";
+      // document.getElementById("pause-button").innerHTML = game.tutorialRunning
+      //   ? `Next ${tutorial.state + 1}/${tutorial.board.length}`
+      //   : "Pause";
 
       if (debug.enabled) {
         win.controlsDisplay.innerHTML = html`

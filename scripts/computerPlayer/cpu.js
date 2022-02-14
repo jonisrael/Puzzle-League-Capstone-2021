@@ -99,7 +99,7 @@ export function cpuAction(input, helpPlayer = false) {
   //     console.log(game.frames, "tutorial complete");
   //     cpu.enabled = false;
   //     game.tutorialRunning = false;
-  //     document.getElementById("game-info").style.display = "inline";
+  //     document.getElementById("game-info-table").style.display = "inline";
   //   }
   //   return input;
   // }
@@ -145,6 +145,7 @@ export function cpuAction(input, helpPlayer = false) {
   }
 
   if (helpPlayer) {
+    console.log(game.frames, "giving hint");
     return cpu.matchList;
   }
 
