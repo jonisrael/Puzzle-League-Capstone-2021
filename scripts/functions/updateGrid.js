@@ -9,6 +9,7 @@ import {
   grid,
   helpPlayer,
   INTERACTIVE_TYPES,
+  perf,
   touch,
   win,
 } from "../global";
@@ -105,7 +106,7 @@ export function updateGrid(frameAdvance = false) {
       }
 
       if (Square.lightTimer > 0) {
-        Square.lightTimer--;
+        Square.lightTimer -= 1;
         // if (blockVacOrClearing(Square)) Square.lightTimer = 0;
       }
 

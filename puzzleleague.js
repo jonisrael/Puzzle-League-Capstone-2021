@@ -1150,7 +1150,7 @@ export function gameLoop() {
 
     // Big Game Loop
     if (!game.paused && win.audioLoaded) {
-      game.frames++;
+      game.frames += 1 * perf.gameSpeed;
       updateFrameMods(game.frames);
       if (
         game.tutorialRunning &&
@@ -1440,11 +1440,15 @@ export function gameLoop() {
           perf.realTime - perf.sumOfPauseTimes - game.frames / 60
         );
         if (
-          perf.realTimeDiff >= 5 &&
+          perf.realTimeDiff >= 3 &&
+          perf.gameSpeed !== 2 &&
           game.mode !== "cpu-play" &&
           !leaderboard.reason
         ) {
-          perf.drawDivisor = 2;
+          // switch to 30fps game since running slow
+          if (game.frameMod[2] === 1) game.frames += 1; // make sure frame count is even
+          perf.gameSpeed = 2;
+          perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
         if (
           perf.realTimeDiff >= 15 &&
@@ -1464,12 +1468,16 @@ export function gameLoop() {
         // }
       }
       if (game.frameMod[6] == 0) {
-        // fps counter
+        // fps counter updates 10 times per second
         perf.secondsPerLoop =
           Math.round(100 * (runtime / 1000 - perf.prev)) / 100;
-        perf.fps = Math.round(1 * 6 * (1 / perf.secondsPerLoop)) / 1;
+        perf.fps = Math.round(
+          (1 * 6 * (1 / perf.secondsPerLoop)) / perf.gameSpeed
+        );
         perf.prev = runtime / 1000;
       }
+      if (perf.fps === 27) perf.fps = 30; // corrections
+      if (perf.fps === 55) perf.fps = 60; // corrections
       let minutesString = "";
       let secondsString = "";
       let scoreString = "";
