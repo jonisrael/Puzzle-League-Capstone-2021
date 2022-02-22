@@ -250,6 +250,7 @@ function createDesktopDisplay() {
   // setUpQuickStatDisplay(column1);
   if (game.mode === "arcade") {
     setUpBestScoreDisplay(column1);
+    setUpGameLogDisplay(column3);
   } else if (game.mode === "training") {
     setUpTrainingMode(column3);
   }
@@ -480,4 +481,10 @@ function createMobileDisplay() {
   // }
 
   createClickListeners();
+}
+
+function setUpGameLogDisplay(parentElement) {
+  win.gameLogDisplay = document.createElement("div");
+  win.gameLogDisplay.setAttribute("id", "game-log-box");
+  parentElement.appendChild(win.gameLogDisplay);
 }

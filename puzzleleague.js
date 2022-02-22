@@ -71,7 +71,7 @@ import {
   randInt,
   leaderboard,
   loadedAudios,
-  padInteger,
+  padInt,
   music,
   overtimeMusic,
   touch,
@@ -624,6 +624,8 @@ export function isChainActive() {
 
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
+  if (game.currentChain > 1) {
+  }
   game.boardRiseRestarter = 0;
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
@@ -737,6 +739,9 @@ export function createNewRow(board) {
   // score gained for new row passed
   if (game.mode !== "training") {
     game.score += Math.floor(game.scoreMultiplier * 10);
+    game.log.push(
+      `Time: ${game.timeString}, Line Bonus +${game.seconds}, Total: ${game.score}`
+    );
   }
 
   return board;
@@ -1220,7 +1225,7 @@ export function gameLoop() {
 
         cnt = 0; // game loop counter
         if (game.mode !== "training") {
-          game.defaultMessage = `Level ${game.level} | 0:${padInteger(
+          game.defaultMessage = `Level ${game.level} | 0:${padInt(
             20 - (game.seconds % 20),
             2
           )} remaining`;

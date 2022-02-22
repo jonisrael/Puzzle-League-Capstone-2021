@@ -6,7 +6,7 @@ import {
   perf,
   leaderboard,
   api,
-  padInteger,
+  padInt,
   cpu,
   sound,
 } from "../global";
@@ -133,11 +133,11 @@ export function checkCanUserPost() {
 //     "Unable to get data from WorldTimeAPI. Using Local Time instead"
 //   );
 //   let date = new Date();
-//   api.data.month = padInteger(Date.getMonth(), 2);
-//   api.data.day = padInteger(Date.getDay(), 2);
+//   api.data.month = padInt(Date.getMonth(), 2);
+//   api.data.day = padInt(Date.getDay(), 2);
 //   api.data.year = Date.getYear();
 //   api.data.hour = Date.getHour();
-//   api.data.minute = padInteger(Date.getHour(), 2);
+//   api.data.minute = padInt(Date.getHour(), 2);
 //   api.data.meridian = "A.M.";
 //   if (api.data.hour == 12) {
 //     api.data.meridian = "P.M.";

@@ -3,6 +3,13 @@ body {
   /* text-align: center; */
 }
 
+p {
+  text-indent: 3rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  padding: 1rem;
+}
+
 #patch-notes-overlay {
   display: grid;
   cursor: pointer;
@@ -80,6 +87,17 @@ body {
 #player-name {
   font-size: large;
   border-radius: 3px;
+}
+
+#pla-title {
+  color: white;
+  padding-bottom: 0.5vh;
+  font-size: 3rem;
+}
+
+#version-release {
+  font-size: 2rem;
+  padding: 0 2rem;
 }
 
 #enter-name {
@@ -248,6 +266,15 @@ th {
   justify-content: center;
 }
 
+.extra-buttons {
+  background-image: linear-gradient(to top, orange, gold);
+  font-size: 120%;
+}
+
+.extra-buttons:hover {
+  background-image: linear-gradient(to bottom, red, orange);
+}
+
 .start-buttons {
   min-width: 50vw;
   padding: 0.5rem;
@@ -397,14 +424,30 @@ label {
 
 header {
   background-image: linear-gradient(to bottom right, dodgerblue, turquoise);
-  padding: 1rem;
+  /* padding: 1rem; */
   text-align: center;
+  padding: 0;
+  padding-top: 0.5vh;
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
 }
 
-#home-page {
+p {
+  /* text-indent: 3rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  padding: 1rem; */
+}
+
+.game-log-entry p {
+  font-size: 2vh;
+  text-indent: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+#header #home-page {
   text-align: center;
 }
 
@@ -423,6 +466,20 @@ header {
 #score {
   /* font-size: x-large; */
   color: blueviolet;
+}
+
+#game-log-box {
+  display: none;
+  outline: 0.3vh black solid;
+  overflow-y: scroll;
+  background-color: white;
+  width: 100%;
+  margin: 4.5vh auto;
+  height: 71.5vh;
+}
+
+.column3 {
+  /* outline: 1px white solid; */
 }
 
 #best-scores-table {
@@ -475,13 +532,6 @@ canvas {
   /* min-height: 80vh; */
 }
 
-p {
-  text-indent: 3rem;
-  font-size: 1.5rem;
-  line-height: 1.5;
-  padding: 1rem;
-}
-
 #bugs-page li {
   padding: 10px;
   width: 80%;
@@ -513,9 +563,12 @@ h3 {
   overflow: hidden;
 }
 
+.nav-breaks {
+  display: none;
+}
+
 select {
   display: flex;
-  padding: 3rem;
   overflow: auto;
 }
 
@@ -577,6 +630,10 @@ select {
 #vl {
   padding: 10px;
   height: 200px;
+}
+
+#title {
+  font-size: 7vw;
 }
 
 footer {
@@ -647,6 +704,10 @@ footer {
     width: 70vw;
   }
 
+  .extra-buttons {
+    font-size: 100%;
+  }
+
   #game-info-table th,
   #game-info-table td {
     font-size: 0.8rem;
@@ -686,6 +747,15 @@ footer {
     padding: 0.5vh;
     /* padding: 1rem 1rem; */
     align-items: center;
+  }
+
+  #sound-mute-menu {
+    text-align: left;
+    line-height: 0.5vh;
+  }
+
+  .nav-breaks {
+    display: block;
   }
 }
 

@@ -15,6 +15,7 @@ import {
   helpPlayer,
   detectInfiniteLoop,
   saveState,
+  padInt,
 } from "../global";
 
 import { playChainSFX, playAudio, playAnnouncer } from "./audioFunctions";
@@ -205,7 +206,7 @@ export function checkMatch() {
             false
           );
       }
-      updateScore(blocksCleared, game.currentChain);
+      updateScore(blocksCleared, game.currentChain, add1ToChain);
       win.mainInfoDisplay.style.color = "black";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
@@ -308,13 +309,15 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
   }
 }
 
-export function updateScore(blocksCleared, currentChain) {
+export function updateScore(blocksCleared, currentChain, partOfChain) {
+  let blockBonus = 10 * blocksCleared;
   let comboBonus = 0;
   let chainBonus = 0;
+  let isChain = partOfChain && game.currentChain > 1;
 
   if (blocksCleared === 3) comboBonus = 0;
-  else if (blocksCleared < 6) comboBonus = 10 * blocksCleared - 20;
-  else if (blocksCleared < 10) comboBonus = 10 * blocksCleared - 10;
+  else if (blocksCleared < 6) comboBonus = blockBonus - 20;
+  else if (blocksCleared < 10) comboBonus = blockBonus - 10;
   else comboBonus = 10 * blocksCleared + 30 * (blocksCleared - 10);
 
   if (currentChain == 1) {
@@ -334,12 +337,49 @@ export function updateScore(blocksCleared, currentChain) {
   }
 
   let addToScore = comboBonus + chainBonus;
+  let scoreMult = game.scoreMultiplier;
+  let matchString = `MATCH: ${padInt(blocksCleared)} Clear`;
+  let bonusString = `ADD: `;
+  if (isChain) {
+    bonusString += `${scoreMult} * (${padInt(
+      comboBonus,
+      3
+    )}) Chain & Clear Bonus`;
+    matchString += `, Chain ${padInt(currentChain)}`;
+  } else {
+    bonusString += `${scoreMult} * (${padInt(comboBonus, 3)}) Clear Bonus`;
+  }
 
-  game.scoreUpdate = Math.round(game.scoreMultiplier * addToScore);
+  game.scoreUpdate = Math.round(addToScore * game.scoreMultiplier);
   game.chainScoreAdded += game.scoreUpdate;
   game.score += game.scoreUpdate;
   if (game.log.length < 500) {
-    let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
+    let loggedScore = [
+      `TIME ${game.minutes}:${padInt(game.seconds)}
+      `,
+      `MATCH: ${padInt(blocksCleared)}${
+        isChain ? ", Chain " + currentChain : ""
+      }`,
+      `CHAIN: ${padInt(currentChain)} || BONUS: ${chainBonus * scoreMult}`,
+      `CLEAR: ${padInt(blocksCleared)} || BONUS: ${comboBonus * scoreMult}`,
+      `TOTAL: ${padInt(game.scoreUpdate, 4)}`,
+      `NEW SCORE: ${game.score}`,
+      `--------------------`,
+    ];
+    // let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
     game.log.push(loggedScore);
+    // if (win.gameLogDisplay) {
+    //   let div = document.createElement("div");
+    //   div.className = "game-log-entry";
+    //   game.log[game.log.length - 1].forEach((line) => {
+    //     let p = document.createElement("p");
+    //     p.className = "game-log-entry-text";
+    //     p.innerHTML += line;
+    //     div.appendChild(p);
+    //   });
+    //   win.gameLogDisplay.appendChild(div);
+
+    //   win.gameLogDisplay.scrollTop = win.gameLogDisplay.scrollHeight;
+    // }
   }
 }

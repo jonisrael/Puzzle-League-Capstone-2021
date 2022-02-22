@@ -202,6 +202,7 @@ export const win = {
   borderColor: "burlywood",
   cvs: null,
   ctx: null,
+  gameLogDisplay: null,
   mainInfoDisplay: null,
   gameInfoTable: null,
   fpsDisplay: null,
@@ -570,7 +571,8 @@ export function updateFrameMods(frameCount) {
   game.frameMod[7200] = frameCount % 7200;
 }
 
-export function padInteger(integer, digits) {
+export function padInt(integer, digits = 2) {
+  // default pad 2 digits, with a single 0 in front (02)
   switch (digits) {
     case 2:
       return integer < 10 ? `0${integer}` : `${integer}`;

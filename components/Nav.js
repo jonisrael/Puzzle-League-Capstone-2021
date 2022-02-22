@@ -1,11 +1,11 @@
 import html from "html-literal";
 
-export default links => html`
+export default (links) => html`
   <nav id="nav-bar">
     <i class="fas fa-bars"></i>
-    <ul class="hidden--mobile nav-links">
+    <ul class="nav-links">
       ${links.map(
-        link =>
+        (link) =>
           `<li><a href="/${link.title}" title="${link.title}" style="color:${
             link.title === "Home" ? "yellow" : "white"
           }" data-navigo>${link.text}</a></li>`

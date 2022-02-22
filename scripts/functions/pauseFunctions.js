@@ -145,11 +145,30 @@ export function addPauseContent() {
 
     let morePauseOptions = document.createElement("div");
     if (game.mode === "arcade" || (game.mode === "training" && !win.mobile)) {
-      let arcadeMoreOptions = [
+      pauseContent.append(document.createElement("hr"));
+      let div = document.createElement("div");
+      div.setAttribute("id", "extra-pause-options");
+      pauseContent.appendChild(div);
+      let extraOptions = [
         ["Game Tutorial (Old)", "game-tutorial-link"],
         ["Touch-Screen Tutorial", "touch-tutorial"],
       ];
-      morePauseOptions = arcadeMoreOptions;
+      for (let i = 0; i < extraOptions.length; i++) {
+        let option = extraOptions[i];
+        let btn = document.createElement("button");
+        btn.className = "default-button pause-buttons extra-buttons";
+        btn.innerHTML = option[0];
+        btn.setAttribute("id", option[1]);
+        div.appendChild(btn);
+        if (i === 0) {
+          btn.onclick = function() {
+            window.open("https://youtu.be/5o8C81D-Uo0", "_blank");
+          };
+        }
+        if (i === 1) {
+          btn.disabled = true;
+        }
+      }
     }
   }
 }
