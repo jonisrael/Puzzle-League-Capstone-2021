@@ -239,7 +239,7 @@ function checkBelowMatch(FirstBlock) {
   if (pair) {
     match[1] = [SecondBlock.x, SecondBlock.y];
     let dir = pair == "L" ? -1 : 1;
-    if (x + 2 * dir >= 0 && x + 2 * dir < grid.ROWS) {
+    if (x + 2 * dir >= 0 && x + 2 * dir < grid.COLS) {
       ThirdBlock = game.board[x + 2 * dir][lowKeyY];
       if (isSolidPair(FirstBlock, ThirdBlock)) {
         match[2] = [ThirdBlock.x, ThirdBlock.y];
@@ -248,7 +248,7 @@ function checkBelowMatch(FirstBlock) {
       }
     }
 
-    if (x - 1 * dir >= 0 && x - 1 * dir < grid.ROWS) {
+    if (x - 1 * dir >= 0 && x - 1 * dir < grid.COLS) {
       ThirdBlock = game.board[x - 1 * dir][lowKeyY];
       if (isSolidPair(FirstBlock, ThirdBlock)) {
         match[2] = [ThirdBlock.x, ThirdBlock.y];

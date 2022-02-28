@@ -13,6 +13,7 @@ import {
   CLEARING_TYPES,
   blockIsSolid,
   transferProperties,
+  saveSttransferPropate,
   saveState,
 } from "../global";
 import { playAudio } from "./audioFunctions";
@@ -87,14 +88,6 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
       // game.messageChangeDelay = 90;
     }
   }
-  if (touch.enabled && touch.mouse.clicked && !clickSwap) {
-    legalSwapFailReason = "same block clicked";
-    touch.moveOrderExists = false;
-    touch.disableAllMoveOrders = true;
-    touch.thereIsABlockCurrentlySelected = false;
-    touch.arrowList.length = 0;
-    touch.moveOrderList.length = 0;
-  }
 
   legalSwap = !legalSwapFailReason;
   // if (!legalSwap && debug.enabled)
@@ -111,7 +104,7 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
       touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
       game.cursor.x = touch.selectedBlock.x;
       game.cursor.y = touch.selectedBlock.y;
-      if (touch.arrowList.length) touch.arrowList.shift();
+      // if (touch.arrowLists.length) touch.arrowLists.shift();
     }
     cpu.swapSuccess = true;
     playAudio(audio.select);
@@ -192,17 +185,11 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
         }
       }
     } // end y > 0 condition
-
-    if (touch.moveOrderExists) {
+    if (0 === 1 && game.board[x + 1][y].targetX !== undefined) {
+      // console.log(game.frames, "sticky checking", x + 1, y);
       try {
-        touch.moveOrderExists = !stickyCheck(
-          touch.selectedBlock.x,
-          touch.selectedBlock.y
-        );
-        // touch.moveOrderExists = !sticky(
-        //   touch.selectedBlock.x,
-        //   touch.selectedBlock.y
-        // );
+        if (stickyCheck(x, y) || stickyCheck(x + 1, y))
+          game.board[x][y].targetX = undefined;
       } catch (error) {
         playAudio(audio.selectionFailed);
         // debug.enabled = true;
@@ -225,7 +212,10 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
       }
     }
   } else if (!legalSwap) {
-    if (
+    if (game.cursor_type[0] === "d") {
+      game.board[x][y].targetX = undefined;
+    } else if (
+      game.cursor_type[0] !== "d" &&
       touch.enabled &&
       touch.moveOrderExists &&
       LeftBlock.type !== "swapping" &&
@@ -251,5 +241,43 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
     // else {
     //   playAudio(audio.selectionFailed);
     // }
+  }
+}
+
+export function checkSwapTargets() {
+  game.boardHasTargets = false;
+  for (let c = 0; c < grid.COLS; c++) {
+    for (let r = 0; r < grid.ROWS; r++) {
+      const Square = game.board[c][r];
+      if (Square.targetX !== undefined) {
+        game.boardHasTargets = true;
+        // console.log(
+        //   game.frames,
+        //   "Square at",
+        //   c,
+        //   r,
+        //   "has a target at ",
+        //   Square.targetX,
+        // );
+        if (Square.x < Square.targetX) {
+          // console.log(
+          //   game.frames,
+          //   "swapping right",
+          //   Square.x,
+          //   Square.y,
+          //   "target is",
+          //   Square.targetX
+          // );
+          trySwappingBlocks(Square.x, Square.y);
+        } else if (c > 0 && Square.x > Square.targetX) {
+          const LeftSquare = game.board[c - 1][r];
+          trySwappingBlocks(Square.x - 1, Square.y);
+        }
+      }
+      // now check if block needs to reset target
+      if (Square.type === "stalling" || CLEARING_TYPES.includes(Square.type)) {
+        Square.targetX = undefined;
+      }
+    }
   }
 }

@@ -91,6 +91,7 @@ export function isGameOver() {
         for (let y = grid.ROWS - 1; y > 4; y--) {
           game.board[x][y].color = blockColor.VACANT;
           game.board[x][y].type = blockType.NORMAL;
+          game.board[x][y].targetX = undefined;
         }
       }
       // for (let x = 0; x < grid.COLS; x++) {
@@ -104,7 +105,7 @@ export function isGameOver() {
       // }
 
       return false;
-    }
+    } // end non-arcade game over
     endGame();
     game.rise = 0;
     return true;

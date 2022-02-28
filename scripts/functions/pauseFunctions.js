@@ -24,9 +24,10 @@ export function pause(lostFocus = false, message = "Pause") {
 
   console.log(
     `FRAME ${game.frames}`,
+    `\nblock`,
+    game.board[game.cursor.x][game.cursor.y],
     "\ngame:",
     game,
-    game.board[game.cursor.x][game.cursor.y],
     "\nwin",
     win,
     "\nsound",
@@ -56,7 +57,6 @@ export function pause(lostFocus = false, message = "Pause") {
   //   game.board[game.cursor.x][game.cursor.y],
 
   // );
-
   perf.pauseStartTime = Date.now();
   if (!debug.enabled) playAudio(audio.pause, 0.1);
   if (lostFocus) {

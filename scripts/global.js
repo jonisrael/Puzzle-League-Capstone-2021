@@ -261,7 +261,8 @@ export const touch = {
   selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
   moveOrderExists: false,
   moveOrderList: [],
-  arrowList: [],
+  arrowLists: [],
+  arrowMoveTypes: [],
   target: { x: 2, y: 6 }, // swap until target is reached
   keySquare: { x: 2, y: 6 },
   arrowPointer: { x: 2, y: 6 },
@@ -362,6 +363,7 @@ export let game = {
   boardIsClearing: false,
   boardHasAirborneBlock: false,
   boardHasSwappingBlock: false,
+  boardHasTargets: true,
   VacantBlock: {},
   tutorialRunning: false,
 };
@@ -664,15 +666,93 @@ export function vacantBlockBelow(Square) {
 }
 
 export function transferProperties(FirstBlock, SecondBlock, type) {
-  let FirstKeys = Object.keys(FirstBlock).splice(2);
-  let SecondKeys = Object.keys(SecondBlock).splice(2);
-  let TempBlock = JSON.parse(JSON.stringify(SecondBlock));
+  // do not transfer x, y, or targetX
+  let FirstKeys = Object.keys(FirstBlock).splice(2); // dont change x and y
+  let SecondKeys = Object.keys(SecondBlock).splice(2); // dont change x and y
+  let firstBlockHasTarget, secondBlockHasTarget, TempBlock;
 
-  SecondKeys.forEach((key) => (SecondBlock[key] = FirstBlock[key]));
   if (type === "between") {
-    FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
-  } else if (type === "to") {
+    TempBlock = JSON.parse(JSON.stringify(SecondBlock));
+  }
+
+  // always transfer 1st block to second block
+  SecondKeys.forEach((key) => (SecondBlock[key] = FirstBlock[key]));
+  if (type === "to") {
     FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
+  } else if (type === "between") {
+    // console.log(
+    //   game.frames,
+    //   "Before",
+    //   `Row ${FirstBlock.y}:`,
+    //   game.board[0][y].targetX !== 0 ? game.board[0][y].targetX : "0",
+    //   game.board[1][y].targetX !== 1 ? game.board[1][y].targetX : "1",
+    //   game.board[2][y].targetX !== 2 ? game.board[2][y].targetX : "2",
+    //   game.board[3][y].targetX !== 3 ? game.board[3][y].targetX : "3",
+    //   game.board[4][y].targetX !== 4 ? game.board[4][y].targetX : "4",
+    //   game.board[5][y].targetX !== 5 ? game.board[5][y].targetX : "5"
+    // );
+    FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
+    // console.log(
+    //   game.frames,
+    //   firstBlockHasTarget,
+    //   secondBlockHasTarget,
+    //   "before (#1 diff, #2 same)",
+    //   `#1 (${FirstBlock.x},${FirstBlock.y}) => (${FirstBlock.targetX},${FirstBlock.y}) T1`,
+    //   `#2 (${SecondBlock.x},${SecondBlock.y}) => (${SecondBlock.targetX},${SecondBlock.y}) T2`
+    // );
+    // console.log(
+    //   "before 1st",
+    //   firstBlockHasTarget,
+    //   FirstBlock.x,
+    //   FirstBlock.targetX
+    // );
+    // console.log(
+    //   "before 2nd",
+    //   secondBlockHasTarget,
+    //   SecondBlock.x,
+    //   SecondBlock.targetX
+    // );
+
+    // SecondBlock.targetX = FirstBlock.targetX; // transfer block target
+    // FirstBlock.targetX = FirstBlock.x; // remove block target
+
+    // FirstBlock.targetX = SecondBlock.targetX; // transfer block target
+    // SecondBlock.targetX = SecondBlock.x; // remove block target
+
+    // console.log(
+    //   "after 1st",
+    //   firstBlockHasTarget,
+    //   FirstBlock.x,
+    //   FirstBlock.targetX
+    // );
+    // console.log(
+    //   "after 2nd",
+    //   secondBlockHasTarget,
+    //   SecondBlock.x,
+    //   SecondBlock.targetX
+    // );
+
+    // console.log(
+    //   game.frames,
+    //   "After",
+    //   `Row ${FirstBlock.y}:`,
+    //   game.board[0][y].targetX !== 0 ? game.board[0][y].targetX : "0",
+    //   game.board[1][y].targetX !== 1 ? game.board[1][y].targetX : "1",
+    //   game.board[2][y].targetX !== 2 ? game.board[2][y].targetX : "2",
+    //   game.board[3][y].targetX !== 3 ? game.board[3][y].targetX : "3",
+    //   game.board[4][y].targetX !== 4 ? game.board[4][y].targetX : "4",
+    //   game.board[5][y].targetX !== 5 ? game.board[5][y].targetX : "5"
+    // );
+    // console.log(
+    //   game.frames,
+    //   firstBlockHasTarget,
+    //   secondBlockHasTarget,
+    //   "after (#1 same, #2 equals prev #1)",
+    //   `#1 (${FirstBlock.x},${FirstBlock.y}) => (${FirstBlock.targetX},${FirstBlock.y}) T1`,
+    //   `#2 (${SecondBlock.x},${SecondBlock.y}) => (${SecondBlock.targetX},${SecondBlock.y}) T2`
+    // );
+
+    // console.log("--------------");
   }
 
   if (helpPlayer.timer === 0) {

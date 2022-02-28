@@ -26,7 +26,11 @@ import {
   startGame,
   resetGameVariables,
 } from "./scripts/functions/startGame";
-import { trySwappingBlocks } from "./scripts/functions/swapBlock";
+import {
+  checkBlockTargets,
+  checkSwapTargets,
+  trySwappingBlocks,
+} from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
@@ -168,7 +172,8 @@ class Block {
     availForSecondaryChain = false,
     swapDirection = 0,
     lightTimer = 0,
-    swapOrders = JSON.parse(JSON.stringify(TouchOrder))
+    swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
+    targetX = undefined
   ) {
     this.x = x;
     this.y = y;
@@ -184,6 +189,7 @@ class Block {
     this.swapDirection = swapDirection;
     this.lightTimer = lightTimer;
     this.swapOrders = swapOrders;
+    this.targetX = targetX;
   }
 
   drawGridLines() {
@@ -243,31 +249,66 @@ class Block {
       );
   }
 
-  drawArrows() {
-    if (
-      (touch.moveOrderExists && touch.target.x === -1) ||
-      touch.target.y === -1
-    ) {
-      [touch.target.x, touch.target.y] = [game.cursor.x, game.cursor.y];
-      console.log("true");
-      touch.arrowList.length = 0;
-      return;
+  drawArrows2(move = "Move") {
+    if (this.targetX === undefined || game.over) return;
+    let filename;
+    let inc = this.targetX < this.x ? -1 : 1;
+    let dir = this.targetX < this.x ? "Left" : "Right";
+    let bufferDetected = false;
+    win.loopCounter = 0;
+    for (let i = this.x; true; i += inc) {
+      win.loopCounter++;
+      if (detectInfiniteLoop("drawArrows2", win.loopCounter)) break;
+      if (
+        !bufferDetected &&
+        CLEARING_TYPES.includes(game.board[i][this.y].type)
+      ) {
+        bufferDetected = true;
+        move = "Buffer"; // change to buffer arrow
+        i = this.x; // repaint earlier arrows to be pink
+      }
+      if (i === this.x) {
+        filename = `arrow${dir}${move}Start`;
+      } else if (i === this.targetX) {
+        filename = `arrow${dir}${move}End`;
+      } else {
+        filename = `arrowMid${move}`;
+      }
+
+      {
+        win.ctx.drawImage(
+          loadedSprites[filename],
+          grid.SQ * i,
+          grid.SQ * this.y - game.rise
+        );
+      }
+
+      if (i === this.targetX) break;
     }
+  }
+
+  drawArrows(arrowList, move) {
+    // if (
+    //   (touch.moveOrderExists && touch.target.x === -1) ||
+    //   touch.target.y === -1
+    // ) {
+    //   [touch.target.x, touch.target.y] = [game.cursor.x, game.cursor.y];
+    //   console.log("true");
+    //   touch.arrowLists.length = 0;
+    //   return;
+    // }
     let filename = "";
-    let [x, y] = touch.moveOrderExists
-      ? [touch.target.x, touch.target.y]
-      : [touch.mouse.x, touch.mouse.y];
-    let move = touch.moveType;
+    let [tarX] = [this.targetX];
     let coordinates = `${this.x},${this.y}`;
+    let [initialX, initialY] = arrowList[0].split(",");
     // if (touch.moveOrderExists)
 
-    let dir = x < touch.mouseStart.x ? "Left" : "Right";
-    if (touch.arrowList[0] === coordinates)
-      filename = `arrow${dir}${move}Start`;
-    else if (touch.arrowList[touch.arrowList.length - 1] === coordinates)
+    let dir = initialX > this.targetX ? "Left" : "Right";
+    console.log(this.swapDirection, dir, this.x, this.y);
+    if (arrowList[0] === coordinates) filename = `arrow${dir}${move}Start`;
+    else if (arrowList[arrowList.length - 1] === coordinates)
       filename = `arrow${dir}${move}End`;
-    else if (touch.arrowList.includes(coordinates))
-      filename = `arrowMid${move}`;
+    else if (arrowList.includes(coordinates)) filename = `arrowMid${move}`;
     if (filename) {
       {
         win.ctx.drawImage(
@@ -277,7 +318,7 @@ class Block {
         );
       }
     }
-  }
+  } // end drawArrows
 
   drawDebugDots() {
     //Debug Visuals
@@ -325,26 +366,31 @@ class Block {
       );
     }
 
-    if (this.airborne) {
+    if (this.targetX !== undefined) {
+      win.ctx.drawImage(
+        loadedSprites["debugBlue"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
       win.ctx.drawImage(
         loadedSprites["debugRed"],
-        grid.SQ * this.x,
+        grid.SQ * this.targetX,
         grid.SQ * this.y - game.rise
       );
     }
 
     if (game.cursor_type[0] !== "d") {
-      if (
-        this.x === touch.target.x &&
-        this.y === touch.target.y &&
-        touch.moveOrderExists
-      ) {
-        win.ctx.drawImage(
-          loadedSprites["debugRed"],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      }
+      // if (
+      //   this.x === touch.target.x &&
+      //   this.y === touch.target.y &&
+      //   touch.moveOrderExists
+      // ) {
+      //   win.ctx.drawImage(
+      //     loadedSprites["debugRed"],
+      //     grid.SQ * this.x,
+      //     grid.SQ * this.y - game.rise
+      //   );
+      // }
 
       if (
         touch.thereIsABlockCurrentlySelected &&
@@ -554,40 +600,56 @@ export function drawGrid() {
     }
   }
 
-  if (debug.show || cpu.showInfo) {
+  if (game.cursor_type[0] !== "d" || debug.show || cpu.showInfo) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
       for (let y = 0; y < grid.ROWS + 1; y++) {
         let Square = game.board[x][y];
+        if (game.cursor_type[0] !== "d") Square.drawArrows2();
         if (cpu.showInfo) Square.drawAILogic();
         if (debug.show) Square.drawDebugDots();
       }
     }
   }
 
-  if (game.cursor_type[0] !== "d") {
-    try {
-      if (touch.arrowList.length && touch.mouse.x !== game.cursor.x) {
-        touch.arrowList = Array.from(
-          new Set(touch.arrowList.map(JSON.stringify)),
-          JSON.parse
-        );
-        for (let x = 0; x < grid.COLS; x++) {
-          for (let y = 0; y < grid.ROWS + 1; y++) {
-            let Square = game.board[x][y];
-            if (game.cursor_type[0] !== "d") {
-              if (blockVacOrClearing(game.board[game.cursor.x][game.cursor.y]))
-                touch.moveOrderExists = false;
-              if (!touch.moveOrderExists && !touch.mouse.clicked)
-                touch.arrowList = [];
-              Square.drawArrows();
-            }
-          }
-        }
-      }
-    } catch (error) {
-      0 === 0;
-    }
-  }
+  // if (game.cursor_type[0] !== "d") {
+  //   try {
+
+  // //     if (touch.arrowLists.length) {
+  // //       if (game.frames % 30 === 0 && touch.arrowLists.length)
+  // //         console.log(touch.arrowLists, touch.arrowMoveTypes);
+  // //       for (let i = 0; i < touch.arrowLists.length; i++) {
+  // //         touch.arrowLists[i] = Array.from(
+  // //           new Set(touch.arrowLists[i].map(JSON.stringify)),
+  // //           JSON.parse
+  // //         );
+  // //         let arrowList = touch.arrowLists[i];
+  // //         let moveType = touch.arrowMoveTypes[i];
+  // //         for (let x = 0; x < grid.COLS; x++) {
+  // //           for (let y = 0; y < grid.ROWS + 1; y++) {
+  // //             let Square = game.board[x][y];
+  // //             if (game.cursor_type[0] !== "d") {
+  // //               if (
+  // //                 blockVacOrClearing(game.board[game.cursor.x][game.cursor.y])
+  // //               )
+  // //                 touch.moveOrderExists = false;
+  // //               if (!touch.moveOrderExists && !touch.mouse.clicked) {
+  // //                 console.log(
+  // //                   (game.frames, "not move order exists and not mouse clicked")
+  // //                 );
+  // //                 touch.arrowLists.splice(i, 1);
+  // //                 touch.arrowMoveTypes.splice(i, 1);
+  // //               }
+
+  // //               Square.drawArrows(arrowList, moveType);
+  // //             }
+  // //           }
+  // //         }
+  // //       }
+  //     // }
+  //   } catch (error) {
+  //     console.log(error, error.stack);
+  //   }
+  // }
 
   if (!game.over) {
     if (game.cursor_type[0] !== "d") {
@@ -1051,12 +1113,6 @@ export function updateLevelEvents(level) {
   game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex =
     game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 13 ? 3 : 5;
-
-  console.log(
-    sound.Music[0],
-    music.includes(sound.Music[0]),
-    overtimeMusic.includes(sound.Music[0])
-  );
   if (game.level < 7 && overtimeMusic.includes(sound.Music[0])) {
     playMusic(music[randInt(music.length, true)]);
   } else if (game.level >= 7 && music.includes(sound.Music[0])) {
@@ -1231,7 +1287,7 @@ export function gameLoop() {
           )} remaining`;
         }
         // overtime bonuses
-        if (!cpu.enabled && game.minutes > 2) {
+        if (game.minutes > 2 && game.mode !== "training") {
           game.score += game.minutes < 4 ? 25 : 100;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
@@ -1391,35 +1447,40 @@ export function gameLoop() {
           }
         }
       }
-
       if (game.swapPressed) {
         if (!touch.enabled || !touch.moveOrderExists) {
-          game.swapPressed = false;
+          // console.log(game.frames, "Do swap at", game.cursor.x, game.cursor.y);
+          game.board[game.cursor.x][game.cursor.y].targetX = game.cursor.x + 1;
           trySwappingBlocks(game.cursor.x, game.cursor.y);
-        } else {
-          // for (let order in touch.moveOrderList) {
-          //   let [c, r] = [order[0], order[1]];
-          //   if (game.board[c][r].x < game.board[c][r].target.x) {
-          //     trySwappingBlocks(c, r);
-          //   } else if (game.board[c][r].x > game.board[c][r].target.x) {
-          //     trySwappingBlocks(c - 1, r);
-          //   } else {
-          //     game.board[c][r].swapOrders.active = false;
-          //   }
-          // }
-          // game.swapPressed = false;
-          if (touch.selectedBlock.x < touch.target.x) {
-            trySwappingBlocks(touch.selectedBlock.x, touch.selectedBlock.y);
-          } else if (touch.selectedBlock.x > touch.target.x) {
-            trySwappingBlocks(touch.selectedBlock.x - 1, touch.selectedBlock.y);
-          } else {
-            game.swapPressed = false;
-            touch.moveOrderExists = false; // block has reached target
-            // if (debug.enabled)
-            //   console.log("frame", game.frames, "target reached.");
-          }
+          game.boardHasTargets = true;
+          game.swapPressed = false;
         }
-      }
+        // else {
+        //   // for (let order in touch.moveOrderList) {
+        //   //   let [c, r] = [order[0], order[1]];
+        //   //   if (game.board[c][r].x < game.board[c][r].target.x) {
+        //   //     trySwappingBlocks(c, r);
+        //   //   } else if (game.board[c][r].x > game.board[c][r].target.x) {
+        //   //     trySwappingBlocks(c - 1, r);
+        //   //   } else {
+        //   //     game.board[c][r].swapOrders.active = false;
+        //   //   }
+        //   // }
+        //   // game.swapPressed = false;
+        //   if (touch.selectedBlock.x < touch.target.x) {
+        //     trySwappingBlocks(touch.selectedBlock.x, touch.selectedBlock.y);
+        //   } else if (touch.selectedBlock.x > touch.target.x) {
+        //     trySwappingBlocks(touch.selectedBlock.x - 1, touch.selectedBlock.y);
+        //   } else {
+        //     game.swapPressed = false;
+        //     touch.moveOrderExists = false; // block has reached target
+        //     // if (debug.enabled)
+        //     //   console.log("frame", game.frames, "target reached.");
+        //   }
+        // }
+      } else if (game.boardHasTargets) {
+        checkSwapTargets();
+      } // end game.swapPressed being true
 
       if (game.frames > 0 && !game.over) {
         if (helpPlayer.done && cpu.matchList.length) {

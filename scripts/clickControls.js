@@ -19,12 +19,13 @@ export function updateMousePosition(canvas, e) {
   let clientX = e.type[0] === "t" ? e.touches[0].clientX : e.clientX;
   let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
   const rect = canvas.getBoundingClientRect();
-  const ratio = win.canvas.width / win.canvas.clientWidth;
+  const ratio = win.canvas.height / win.canvas.clientHeight;
   // 10px is currently the border size of the canvas.
   const pixelX = ratio * (clientX - rect.left - 10);
-  const pixelY = ratio * (clientY - rect.top - 10 + game.rise);
+  const pixelY = ratio * (clientY - rect.top - 10) + game.rise;
   let x = Math.floor(pixelX / grid.SQ);
   let y = Math.floor(pixelY / grid.SQ);
+
   // Accept position only if inside game grid
   if (x >= 0 && x < grid.COLS && y >= 1 && y < grid.ROWS) {
     touch.mouse.x = x;
@@ -77,15 +78,11 @@ export function selectBlock() {
   }
 }
 
-export function showPotentialCommand() {
-  let [x, y] = [touch.mouse.x, touch.mouse.y];
-}
-
-export function moveBlockByRelease() {
+export function moveBlockByRelease(x, y) {
   if (cpu.enabled) return;
-  touch.arrowList.length = 0;
-  touch.target.x = touch.mouse.x; // move to x--coordinate
-  touch.target.y = touch.selectedBlock.y; // remains on same row
+  let Square = game.board[x][y];
+  // touch.arrowLists.length = 0; // no longer needed if multiple orders
+  Square.targetX = touch.mouse.x; // move to x--coordinate
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
@@ -93,25 +90,36 @@ export function moveBlockByRelease() {
       touch.mouse.y !== touch.selectedBlock.y)
   ) {
     touch.moveOrderExists = true;
-    game.swapPressed = true;
+    // console.log(
+    //   game.board[0][y].targetX !== 0 ? game.board[0][y].targetX : "0",
+    //   game.board[1][y].targetX !== 1 ? game.board[1][y].targetX : "1",
+    //   game.board[2][y].targetX !== 2 ? game.board[2][y].targetX : "2",
+    //   game.board[3][y].targetX !== 3 ? game.board[3][y].targetX : "3",
+    //   game.board[4][y].targetX !== 4 ? game.board[4][y].targetX : "4",
+    //   game.board[5][y].targetX !== 5 ? game.board[5][y].targetX : "5"
+    // );
+    // game.swapPressed = true;
   }
   touch.thereIsABlockCurrentlySelected = false;
 
-  let dir = touch.target.x < touch.selectedBlock.x ? -1 : 1;
-  touch.moveType = "Move";
-  for (let i = touch.selectedBlock.x; i !== touch.target.x; i += dir) {
-    if (CLEARING_TYPES.includes(game.board[i][touch.selectedBlock.y].type)) {
-      touch.moveType = "Buffer";
-      // touch.target.x = i;
-      // touch.target.y = touch.selectedBlock.y;
-      // break;
-    }
-    touch.arrowList.push(`${i},${touch.selectedBlock.y}`);
-  }
-  if (CLEARING_TYPES.includes(game.board[touch.target.x][touch.target.y].type))
-    touch.moveType = "Buffer";
-  if (touch.moveOrderExists)
-    touch.arrowList.push(`${touch.target.x},${touch.target.y}`);
+  // let dir = Square.targetX < x ? -1 : 1;
+  // let arrowList = [];
+  // let arrowMoveType = "Move";
+  // for (let i = touch.selectedBlock.x; i !== TargetSquare.x; i += dir) {
+  //   if (CLEARING_TYPES.includes(game.board[i][y].type)) {
+  //     arrowMoveType = "Buffer";
+  //   }
+  //   arrowList.push(`${i},${y}`);
+  // }
+  // if (CLEARING_TYPES.includes(TargetSquare.type)) arrowMoveType = "Buffer";
+  // if (touch.moveOrderExists)
+  //   arrowList.push(`${TargetSquare.x},${TargetSquare.y}`);
+
+  // // add to global list of arrows if there is a list of arrows
+  // if (arrowList.length) {
+  //   touch.arrowLists.push(arrowList);
+  //   touch.arrowMoveTypes.push(arrowMoveType);
+  // }
   // game.cursor.x = touch.mouse.x;
   // game.cursor.y = touch.mouse.y;
 }
@@ -120,28 +128,48 @@ function doMouseDown(e) {
   if (!touch.enabled || cpu.enabled) return;
   touch.moveOrderExists = false;
   touch.mouse.clicked = true;
+  touch.doubleClickCounter++;
+  touch.doubleClickTimer += 20;
   if (!updateMousePosition(win.canvas, e)) {
     // click was outside the borders of the canvas
     touch.thereIsABlockCurrentlySelected = false;
     touch.moveOrderExists = false;
     return;
   }
-  if (game.board[game.cursor.x][game.cursor.y].color === "vacant") {
-    if (
-      touch.doubleClickCounter === 1 &&
-      Math.abs(touch.mouse.x - game.cursor.x) < 2 &&
-      Math.abs(touch.mouse.y - game.cursor.y) < 2
-    ) {
-      if (game.highestRow > 1) {
-        game.raisePressed = true;
-        touch.doubleClickCounter = 0;
-        touch.doubleClickTimer += 20;
-
-        if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
+  if (
+    touch.doubleClickCounter === 2 &&
+    Math.abs(touch.mouse.x - game.cursor.x) < 2 &&
+    Math.abs(touch.mouse.y - game.cursor.y) < 2
+  ) {
+    touch.doubleClickCounter = 0;
+    for (let x = 0; x < grid.COLS; x++) {
+      for (let y = 0; y < grid.ROWS; y++) {
+        game.board[x][y].targetX = undefined;
       }
     }
+
+    if (
+      game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
+      game.highestRow > 1
+    ) {
+      game.raisePressed = true;
+    }
+    if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
     if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
-    touch.doubleClickCounter++;
+
+    //   if (
+    //     game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
+    //     game.highestRow > 1
+    //   ) {
+    //     game.raisePressed = true;
+    //     touch.doubleClickCounter = 0;
+    //     touch.doubleClickTimer += 20;
+
+    //     if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
+    //   }
+    // }
+    // if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
+    // touch.doubleClickCounter++;
   }
   game.cursor.x = touch.mouse.x;
   game.cursor.y = touch.mouse.y;
@@ -166,15 +194,25 @@ function doMouseMove(e) {
       game.cursor.y = touch.mouse.y;
       selectBlock();
     } else if (touch.mouseChangedX && touch.mouse.x !== touch.mouseStart.x) {
-      touch.arrowList.length = 0;
+      // touch.arrowLists.length = 0;
+      if (0 === 0) return; // ! DEBUG REMOVED
       if (game.cursor.x === touch.mouse.x) return;
       let dir = touch.mouse.x < touch.mouseStart.x ? -1 : 1;
+
+      let arrowList = [];
+      let arrowMoveType = "Move";
+      // draw premove arrows
       for (let i = touch.mouseStart.x; i !== touch.mouse.x; i += dir) {
-        touch.arrowList.push(`${i},${touch.selectedBlock.y}`);
-        touch.moveType = "Buffer";
+        arrowList.push(`${i},${touch.selectedBlock.y}`);
+        arrowMoveType = "Buffer";
         if (i === touch.mouse.x - dir) {
-          touch.arrowList.push(`${touch.mouse.x},${touch.selectedBlock.y}`);
+          arrowList.push(`${touch.mouse.x},${touch.selectedBlock.y}`);
         }
+      }
+
+      if (arrowList.length) {
+        touch.arrowLists.push(arrowList);
+        touch.arrowMoveTypes.push(arrowMoveType);
       }
     }
   }
@@ -185,7 +223,7 @@ function doMouseUp(e) {
   touch.mouse.clicked = false;
   updateMousePosition(win.canvas, e);
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
-    moveBlockByRelease();
+    moveBlockByRelease(touch.selectedBlock.x, touch.selectedBlock.y);
   }
 }
 
@@ -234,7 +272,7 @@ export function createClickListeners() {
 //     game.cursor.y = touch.mouse.y;
 //     return; // changed cursor, but no swap done.
 //   }
-//   touch.target.x = touch.mouse.x; // move based on x coordinate
-//   touch.target.y = touch.selectedBlock.y; // moved based on the row of the block
+//   Square.x = touch.mouse.x; // move based on x coordinate
+//   Square.y = touch.selectedBlock.y; // moved based on the row of the block
 //   touch.moveOrderExists = true; // now, do continuous swapping function.
 // }

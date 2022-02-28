@@ -20,6 +20,7 @@ import { trySwappingBlocks } from "./swapBlock";
 export function updateGrid(frameAdvance = false) {
   game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
   game.boardIsClearing = false;
+  game.boardHasTargets = false;
   game.boardHasAirborneBlock = false;
   game.boardHasSwappingBlock = false;
   // touch.moveOrderExists = false;
@@ -38,6 +39,13 @@ export function updateGrid(frameAdvance = false) {
       Square.airborne = isBlockAirborne(Square);
       if (Square.airborne) {
         game.boardHasAirborneBlock = true;
+      }
+      if (Square.targetX !== undefined) {
+        if (Square.targetX === Square.x) {
+          Square.targetX = undefined;
+        } else {
+          game.boardHasTargets = true;
+        }
       }
       if (Square.type === "swapping") game.boardHasSwappingBlock = true;
       if (Square.swapOrders.active) {
@@ -119,6 +127,7 @@ export function updateGrid(frameAdvance = false) {
         Square.swapDirection = 0;
         if (Square.airborne) {
           Square.type = "stalling";
+          Square.targetX = undefined; // stop the target
           Square.timer = game.blockStallTime;
           Square.touched = true;
           Square.availForPrimaryChain = false;
