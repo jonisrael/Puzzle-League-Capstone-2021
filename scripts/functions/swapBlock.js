@@ -193,8 +193,18 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     if (game.currentChain) {
       try {
         let c = rightSwap ? x + 1 : x;
-        if (stickyCheck(c, y)) {
+        if (debug.enabled) console.log(game.frames, "checking sticky,", c, y);
+        let stickyResult = stickyCheck(c, y);
+        if (stickyResult) {
           playAudio(audio.smartMatch);
+          if (debug.enabled)
+            console.log(
+              game.frames,
+              c,
+              y,
+              "Smart Match stops order",
+              stickyResult
+            );
           removeFromOrderList(game.board[game.board[c][y].targetX][y]);
           game.board[c][y].targetX = undefined;
           game.board[c][y].lightTimer = 65;
@@ -217,11 +227,16 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
       // stickyCheck(game.cursor.x + 1, game.cursor.y);
     }
   } else if (!legalSwap) {
-    if (debug.enabled) console.log(game.frames, legalSwapFailReason);
     if (game.cursor_type[0] === "d") {
       removeFromOrderList(game.board[x][y]);
     } else if (legalSwapFailReason !== "non-interactive block") {
       if (game.board[x][y].targetX !== undefined) {
+        if (debug.enabled)
+          console.log(
+            game.frames,
+            "remove from order list, reason:",
+            legalSwapFailReason
+          );
         removeFromOrderList(game.board[game.board[x][y].targetX][y]);
       }
       touch.moveOrderExists = false;
@@ -263,14 +278,10 @@ export function checkSwapTargets() {
           // );
           trySwappingBlocks(Square.x, Square.y);
         } else if (c > 0 && Square.x > Square.targetX) {
-          const LeftSquare = game.board[c - 1][r];
           trySwappingBlocks(Square.x - 1, Square.y, false);
         }
       }
       // now check if block needs to reset target
-      if (Square.type === "stalling" || CLEARING_TYPES.includes(Square.type)) {
-        removeFromOrderList(Square);
-      }
     }
   }
 }

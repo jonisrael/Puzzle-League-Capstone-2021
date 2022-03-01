@@ -64,17 +64,17 @@ for (let i = 0; i < 4; i++) {
 
 export let match = [[], [], []];
 
-export function ThreeBlocksMatch() {
-  for (let i = 0; i < match[0].length; i++) {
-    if (match[i][0] === -1) return false;
-    for (let j = i + 1; j < match.length; j++) {
-      if (JSON.stringify(match[i]) === JSON.stringify(match[j])) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
+// export function ThreeBlocksMatch() {
+//   for (let i = 0; i < match[0].length; i++) {
+//     if (match[i][0] === -1) return false;
+//     for (let j = i + 1; j < match.length; j++) {
+//       if (JSON.stringify(match[i]) === JSON.stringify(match[j])) {
+//         return false;
+//       }
+//     }
+//   }
+//   return true;
+// }
 
 export function checkBufferedSwap(x, y) {
   const Square = game.board[x][y];
@@ -92,7 +92,6 @@ export function checkBufferedSwap(x, y) {
     smartMatch.secondCoord = [x, SecondBlock.y];
     // ? if (SecondBlock.x === -1) return false;
     // ? match[1] = [x, SecondBlock.y];
-    // playAudio(audio.announcerGo);
     if (Square.color === SecondBlock.color) {
       // smartMatch.secondCoord = [x, SecondBlock.y];
       // check directly one above for solid pair 1
@@ -183,13 +182,15 @@ export function stickyCheck(x, y) {
       break;
     case "s":
       dir = clearLine === "sideL" ? -1 : 1;
-      MainBlock = Math.abs(KeySquareLowest - Square.x === dir)
+      MainBlock = Math.abs(KeySquareLowest.x - Square.x === dir)
         ? game.board[Square.x][Square.y]
         : game.board[Square.x + dir][Square.y];
+      console.log(MainBlock.x, Square.x);
       if (MainBlock.x !== Square.x) {
         if (!isSolidPair(MainBlock, Square)) break;
-        match[0] = [MainBlock.x, MainBlock.y];
+        // match[0] = [MainBlock.x, MainBlock.y];
       }
+
       if (
         MainBlock.x - dir >= 0 &&
         MainBlock.x - dir < grid.COLS &&
@@ -204,13 +205,9 @@ export function stickyCheck(x, y) {
       }
       if (debug.enabled && result) playAudio(audio.announcer2);
       break;
-    default:
-      // ! REMOVE THIS BEFORE BELOW MATCH CASE
-      break;
     case "b":
       MainBlock = game.board[x][y];
       if (y > grid.ROWS - 2) break; // must be at minimum third row from bottom
-      if (debug.enabled) playAudio(audio.announcerGo);
       result = checkBelowMatch(MainBlock);
       break;
   }
@@ -373,13 +370,16 @@ function checkSideMatch(Square, single = false, dir) {
     smartMatch.lowestKeyCoord[0],
     smartMatch.lowestKeyCoord[1],
   ];
-  let MainBlock = Math.abs(smartMatch.lowestKeyCoord[0] - Square.x === dir)
+  let MainBlock = Math.abs(lowKeyX - Square.x === dir)
     ? game.board[Square.x][Square.y]
     : game.board[Square.x + dir][Square.y];
   // make sure that the lowest key square is on same level as selected block
+  console.log(MainBlock, MainBlock.y, lowKeyY);
+  // playAudio(audio.announcerReady);
   if (MainBlock.y !== lowKeyY) return false;
   if (highKeyX < 0 || highKeyX >= grid.COLS) return false;
   let SideBlock_1 = findSolidBlockAbove(highKeyX, highKeyY);
+  console.log(game.frames, "side block 1", SideBlock_1);
   if (!SideBlock_1) return false;
   if (
     isSolidPair(MainBlock, SideBlock_1) ||

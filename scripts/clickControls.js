@@ -153,9 +153,10 @@ function doMouseDown(e) {
     if (touch.moveOrderList.length > 0) {
       console.log(
         game.frames,
-        touch.moveOrderList,
-        "interrupt touch move order",
-        touch.moveOrderList[0]
+        "Interrupt Move Order:",
+        touch.moveOrderList[0],
+        "from",
+        touch.moveOrderList
       );
       let [tarX, y] = touch.moveOrderList.pop();
       for (let i = 0; i < tarX; i++) {

@@ -42,6 +42,7 @@ export function updateGrid(frameAdvance = false) {
       }
       if (Square.targetX !== undefined) {
         if (Square.targetX === Square.x) {
+          console.log(game.frames, "target reached", Square.x, Square.y);
           removeFromOrderList(Square);
         } else {
           game.boardHasTargets = true;

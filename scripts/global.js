@@ -713,10 +713,11 @@ export function removeFromOrderList(TargetSquare) {
       if (debug.enabled) {
         console.log(
           game.frames,
-          touch.moveOrderList,
-          "Order complete, removing from order list",
           TargetSquare.x,
-          TargetSquare.y
+          TargetSquare.y,
+          "removed,",
+          "Remaining order list: from order list",
+          touch.moveOrderList
         );
       }
       break;

@@ -288,6 +288,7 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
 
     Square.type = blockType.BLINKING;
     if (Square.targetX !== undefined) {
+      console.log(game.frames, c, r, "block became clearing");
       removeFromOrderList(game.board[Square.targetX][r]);
     }
     Square.timer = blinkTime + initialFaceTime + totalPopTime;
