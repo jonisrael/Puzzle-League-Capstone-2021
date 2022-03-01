@@ -77,7 +77,6 @@ export function ThreeBlocksMatch() {
 }
 
 export function checkBufferedSwap(x, y) {
-  console.log("checking buffered swap");
   const Square = game.board[x][y];
   const smartMatch = Square.smartMatch;
   // ? let FirstBlock = game.board[x][y];
@@ -90,7 +89,6 @@ export function checkBufferedSwap(x, y) {
     // there are two cases. First check if above solid block is a pair.
     let SecondBlock = findSolidBlockAbove(x, y - 1);
     if (SecondBlock === undefined) return false;
-    console.log("second coord:", x, SecondBlock.y);
     smartMatch.secondCoord = [x, SecondBlock.y];
     // ? if (SecondBlock.x === -1) return false;
     // ? match[1] = [x, SecondBlock.y];
@@ -102,7 +100,6 @@ export function checkBufferedSwap(x, y) {
         // playAudio(audio.announcer1);
         let ThirdBlock = game.board[x][SecondBlock.y - 1];
         if (ThirdBlock !== undefined && blockIsSolid(ThirdBlock)) {
-          console.log("third coord:", x, SecondBlock.y - 1);
           smartMatch.thirdCoord = [x, SecondBlock.y - 1];
           if (Square.color === ThirdBlock.color) {
             // ? ThirdBlock = game.board[x][SecondBlock.y - 1];
@@ -115,7 +112,6 @@ export function checkBufferedSwap(x, y) {
       if (SecondBlock.y + 1 < grid.ROWS) {
         let ThirdBlock = findSolidBlockBelow(x, ThirdBlock.y);
         if (ThirdBlock === undefined) return false;
-        console.log("third coord:", x, SecondBlock.y - 1);
         smartMatch.thirdCoord = [x, ThirdBlock.y];
         // playAudio(audio.announcer2);
         if (Square.color === ThirdBlock.color) {
@@ -131,8 +127,6 @@ export function stickyCheck(x, y) {
   if (game.board[x][y].airborne) return false;
   if (outOfRange(x, y)) return false;
   if (!blockIsSolid(game.board[x][y])) return false;
-
-  console.log(game.frames, "actually sticky checking");
 
   const Square = game.board[x][y];
   const smartMatch = Square.smartMatch;
@@ -154,7 +148,6 @@ export function stickyCheck(x, y) {
 
   let [clearLine, lowKey, highKey] = findClearLine(Square);
 
-  // console.log("clear line info:", clearLine, lowKey, highKey);
   let dir;
   if (!clearLine || highKey[1] - 1 < 0) return false;
   let KeySquareLowest = game.board[lowKey[0]][lowKey[1]];
@@ -230,7 +223,6 @@ export function stickyCheck(x, y) {
   //   // if (debug.enabled) pause("Fake match detected, check console");
   //   result = false;
   // }
-  console.log(result, x, y);
   return !!result; // send true if not falsy value
 }
 
@@ -444,7 +436,6 @@ function findSolidBlockBelow(x, y, stopAtClearing = false) {
 
 function findClearLine(Square) {
   let [x, y] = [Square.x, Square.y];
-  console.log("finding clear line for", x, y);
   let lowestKeySquare = [];
   let highestClearSquare = [];
   let clearLine = "";
@@ -685,15 +676,13 @@ function checkIfFallingBlockMatches(MainBlock) {
     checkAbove = true;
 
   // check for match of falling block AND either pair or
-  console.log("checking above");
+
   if (checkAbove) {
     // Main Block is the first square directly under vacant blocks
     FirstBlock = pair === "A" ? game.board[x][y - 1] : game.board[x][y];
     for (let j = FirstBlock.y - 1; j >= 0; j--) {
       if (blockIsSolid(game.board[x][j])) {
-        console.log("i see a block above at", x, j, game.board[x][j].color);
         if (FirstBlock.color === game.board[x][j].color) {
-          console.log("it is a match", FirstBlock.color);
           if (pair) {
             ThirdBlock = game.board[x][j];
             smartMatch.thirdCoord = [x, j];
@@ -703,10 +692,8 @@ function checkIfFallingBlockMatches(MainBlock) {
             for (let k = SecondBlock.y - 1; k >= 0; k--) {
               smartMatch.secondCoord = [x, j];
               if (blockIsSolid(game.board[x][k])) {
-                console.log("2nd block above at", x, k, game.board[x][j].color);
                 if (FirstBlock.color === game.board[x][k].color) {
                   ThirdBlock = game.board[x][k];
-                  console.log("it is a match", FirstBlock.color);
                   smartMatch.thirdCoord = [x, k];
                   return "double match above found vac";
                 } else break; // solid block but not pair, end search

@@ -47,7 +47,7 @@ export function checkTime(beforeOvertime) {
     case -60:
       if (game.mode === "training") break;
       sound.Music[1].pause();
-      if (win.restartGame) {
+      if (win.restartGame || game.mode === "cpu-play") {
         document
           .getElementById("home-page")
           .scrollIntoView({ behavior: "smooth", block: "end" });

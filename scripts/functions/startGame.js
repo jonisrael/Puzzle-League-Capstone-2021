@@ -51,7 +51,7 @@ import {
 import { createHeadsUpDisplay } from "./setUpViewport";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
-export function startGame(selectedGameSpeed, version = 1) {
+export function startGame(selectedGameSpeed = 1, version = 1) {
   // Object.keys(game).forEach(key => (game[key] = newGame[key]));
   leaderboard.reason = "";
   getWorldTimeAPI();
@@ -81,9 +81,9 @@ export function startGame(selectedGameSpeed, version = 1) {
   cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay(window.innerWidth < 800);
-  if (game.mode === "training") {
+  if (game.mode !== "arcade") {
     game.frames = -76;
-    updateLevelEvents(0);
+    if (game.mode === "training") updateLevelEvents(0);
   }
   win.timeDisplay.innerHTML = "00:00";
   win.scoreDisplay.innerHTML = "00000";
@@ -156,7 +156,7 @@ export function resetGameVariables() {
   game.largestChainScore = 0;
   game.largestCombo = 0;
   game.totalClears = 0;
-  game.message = "Loading...";
+  game.message = "Loading...(If >5 sec, try refreshing page)";
   game.defaultMessage = "";
   game.over = false; //gameOver
   game.pauseStack = false;

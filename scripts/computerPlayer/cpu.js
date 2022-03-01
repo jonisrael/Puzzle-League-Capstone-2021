@@ -104,7 +104,7 @@ export function cpuAction(input, helpPlayer = false) {
   //   return input;
   // }
 
-  if (game.frames < 30) return input;
+  if (game.frames < 30 || game.frameMod[2] === 1) return input;
   if (game.boardHasSwappingBlock) return input;
   if (cpu.control && game.frames % cpu.cursorSpeedDivisor !== 0) return input;
   win.mainInfoDisplay.style.color = "green";
@@ -125,7 +125,7 @@ export function cpuAction(input, helpPlayer = false) {
     return randomAction(input);
   }
 
-  stackMinimum = game.boardRiseSpeed < 4 ? 4 : 5;
+  stackMinimum = game.boardRiseSpeed < 4 ? 4 : 11;
 
   if (!coordinates) {
     if (stackSize >= stackMinimum || game.currentChain > 0) {

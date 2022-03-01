@@ -25,7 +25,6 @@ export function updateGrid(frameAdvance = false) {
   game.boardHasAirborneBlock = false;
   game.boardHasSwappingBlock = false;
   // touch.moveOrderExists = false;
-  touch.moveOrderList.length = 0;
   let highestRowFound = false;
   game.pauseStack = false;
   game.highestCols = [];
@@ -49,11 +48,6 @@ export function updateGrid(frameAdvance = false) {
         }
       }
       if (Square.type === "swapping") game.boardHasSwappingBlock = true;
-      if (Square.swapOrders.active) {
-        touch.moveOrderExists = true;
-        if (touch.disableAllMoveOrders) Square.swapOrders.active = false;
-        else touch.moveOrderList.push([x, y]);
-      }
       if (!Square.airborne && Square.type !== "landing") {
         game.availForPrimaryChain = false;
         game.availForSecondaryChain = false;
@@ -128,7 +122,9 @@ export function updateGrid(frameAdvance = false) {
         Square.swapDirection = 0;
         if (Square.airborne) {
           Square.type = "stalling";
-          removeFromOrderList(Square);
+          if (Square.targetX !== undefined) {
+            removeFromOrderList(game.board[Square.targetX][Square.y]);
+          }
           Square.timer = game.blockStallTime;
           Square.touched = true;
           Square.availForPrimaryChain = false;

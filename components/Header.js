@@ -3,7 +3,7 @@ import html from "html-literal";
 export default (st) => html`
   <header id="header">
     <h1 id="pla-title">Puzzle League Arcade</h1>
-    <h2 id=version-release>Version Release: 02/28 6:00pm</h2>
+    <h2 id=version-release>Version Release: 03/01 9:30am</h2>
     <h1 style="color:white">${st.header}</h1>
 
     <ul id="sound-mute-menu">

@@ -699,12 +699,26 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
   }
 }
 
-export function removeFromOrderList(Square) {
-  Square.targetX = undefined;
+export function removeFromOrderList(TargetSquare) {
+  for (let c = 0; c < grid.COLS; c++) {
+    if (game.board[c][TargetSquare.y].targetX === TargetSquare.x) {
+      game.board[c][TargetSquare.y].targetX = undefined;
+      break;
+    }
+  }
   for (let i = 0; i < touch.moveOrderList.length; i++) {
     let order = touch.moveOrderList[i];
-    if (Square.x === order[0] && Square.y === order[1]) {
+    if (TargetSquare.x === order[0] && TargetSquare.y === order[1]) {
       touch.moveOrderList.splice(i, 1);
+      if (debug.enabled) {
+        console.log(
+          game.frames,
+          touch.moveOrderList,
+          "Order complete, removing from order list",
+          TargetSquare.x,
+          TargetSquare.y
+        );
+      }
       break;
     }
   }

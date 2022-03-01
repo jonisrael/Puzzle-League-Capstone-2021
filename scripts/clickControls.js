@@ -82,9 +82,15 @@ export function selectBlock() {
 export function moveBlockByRelease(x, y) {
   if (cpu.enabled) return;
   let Square = game.board[x][y];
-  // touch.arrowLists.length = 0; // no longer needed if multiple orders
+  if (Square.x === touch.mouse.x) return;
   Square.targetX = touch.mouse.x; // move to x--coordinate
-  touch.moveOrderList.unshift([Square.x, Square.y]);
+  touch.moveOrderList.push([Square.targetX, Square.y]);
+  console.log(
+    game.frames,
+    touch.moveOrderList,
+    "new order added:",
+    touch.moveOrderList[0]
+  );
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
@@ -144,15 +150,27 @@ function doMouseDown(e) {
     Math.abs(touch.mouse.y - game.cursor.y) < 2
   ) {
     touch.doubleClickCounter = 0;
-    // if (touch.moveOrderList.length > 0) {
-    //   let [x, y] = touch.moveOrderList.pop();
-    //   game.board[x][y].targetX = undefined;
-    // }
-    for (let x = 0; x < grid.COLS; x++) {
-      for (let y = 0; y < grid.ROWS; y++) {
-        removeFromOrderList(game.board[x][y]);
+    if (touch.moveOrderList.length > 0) {
+      console.log(
+        game.frames,
+        touch.moveOrderList,
+        "interrupt touch move order",
+        touch.moveOrderList[0]
+      );
+      let [tarX, y] = touch.moveOrderList.pop();
+      for (let i = 0; i < tarX; i++) {
+        if (game.board[i][y].targetX === tarX) {
+          game.board[i][y].targetX = undefined;
+          console.log("Remaining orders:", touch.moveOrderList);
+          break;
+        }
       }
     }
+    // for (let x = 0; x < grid.COLS; x++) {
+    //   for (let y = 0; y < grid.ROWS; y++) {
+    //     removeFromOrderList(game.board[x][y]);
+    //   }
+    // }
 
     if (
       game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
@@ -199,27 +217,6 @@ function doMouseMove(e) {
       game.cursor.x = touch.mouse.x;
       game.cursor.y = touch.mouse.y;
       selectBlock();
-    } else if (touch.mouseChangedX && touch.mouse.x !== touch.mouseStart.x) {
-      // touch.arrowLists.length = 0;
-      if (0 === 0) return; // ! DEBUG REMOVED
-      if (game.cursor.x === touch.mouse.x) return;
-      let dir = touch.mouse.x < touch.mouseStart.x ? -1 : 1;
-
-      let arrowList = [];
-      let arrowMoveType = "Move";
-      // draw premove arrows
-      for (let i = touch.mouseStart.x; i !== touch.mouse.x; i += dir) {
-        arrowList.push(`${i},${touch.selectedBlock.y}`);
-        arrowMoveType = "Buffer";
-        if (i === touch.mouse.x - dir) {
-          arrowList.push(`${touch.mouse.x},${touch.selectedBlock.y}`);
-        }
-      }
-
-      if (arrowList.length) {
-        touch.arrowLists.push(arrowList);
-        touch.arrowMoveTypes.push(arrowMoveType);
-      }
     }
   }
 }
@@ -264,7 +261,23 @@ export function createClickListeners() {
   win.canvas.addEventListener("contextmenu", function(e) {
     if (!touch.enabled) return;
     e.preventDefault();
-    if (game.frames > 0) game.raisePressed = true;
+    // if (game.frames > 0) game.raisePressed = true;
+    if (touch.moveOrderList.length > 0) {
+      console.log(
+        game.frames,
+        touch.moveOrderList,
+        "interrupt touch move order",
+        touch.moveOrderList[0]
+      );
+      let [tarX, y] = touch.moveOrderList.pop();
+      for (let i = 0; i < grid.COLS; i++) {
+        if (game.board[i][y].targetX === tarX) {
+          game.board[i][y].targetX = undefined;
+          console.log("Remaining orders:", touch.moveOrderList);
+          break;
+        }
+      }
+    }
   });
 }
 

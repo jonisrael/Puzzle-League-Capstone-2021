@@ -53,7 +53,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     !INTERACTIVE_TYPES.includes(LeftBlock.type) ||
     !INTERACTIVE_TYPES.includes(RightBlock.type)
   ) {
-    legalSwapFailReason = "a block is not interactive";
+    legalSwapFailReason = "non-interactive block";
     // game.message = "Swap Failed: Clearing Block";
     // game.messageChangeDelay = 60;
   }
@@ -88,7 +88,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         game.board[x + 1][y - 1].color != blockColor.VACANT &&
         RightBlock.color == blockColor.VACANT)
     ) {
-      legalSwapFailReason = "block below an airborne stalling block";
+      legalSwapFailReason = "below stalling block";
       // game.message = "Swap Failed: Below an Airborne Block";
       // game.messageChangeDelay = 90;
     }
@@ -195,7 +195,8 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         let c = rightSwap ? x + 1 : x;
         if (stickyCheck(c, y)) {
           playAudio(audio.smartMatch);
-          removeFromOrderList(game.board[c][y]);
+          removeFromOrderList(game.board[game.board[c][y].targetX][y]);
+          game.board[c][y].targetX = undefined;
           game.board[c][y].lightTimer = 65;
           let [x2, y2] = game.board[c][y].smartMatch.secondCoord;
           game.board[x2][y2].lightTimer = 65;
@@ -216,25 +217,13 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
       // stickyCheck(game.cursor.x + 1, game.cursor.y);
     }
   } else if (!legalSwap) {
+    if (debug.enabled) console.log(game.frames, legalSwapFailReason);
     if (game.cursor_type[0] === "d") {
       removeFromOrderList(game.board[x][y]);
-    } else if (
-      game.cursor_type[0] !== "d" &&
-      touch.enabled &&
-      touch.moveOrderExists &&
-      LeftBlock.type !== "swapping" &&
-      RightBlock.type !== "swapping" &&
-      !CLEARING_TYPES.includes(LeftBlock.type) &&
-      !CLEARING_TYPES.includes(RightBlock.type)
-    ) {
-      // stop trying to swap since illegal swap has been made
-      // console.log(
-      //   "frame",
-      //   game.frames,
-      //   "stopping swap due to illegal move",
-      //   LeftBlock,
-      //   RightBlock
-      // );
+    } else if (legalSwapFailReason !== "non-interactive block") {
+      if (game.board[x][y].targetX !== undefined) {
+        removeFromOrderList(game.board[game.board[x][y].targetX][y]);
+      }
       touch.moveOrderExists = false;
       game.swapPressed = false;
     }

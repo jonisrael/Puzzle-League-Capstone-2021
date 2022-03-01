@@ -14,27 +14,27 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs
+  audioSrcs,
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch
+  checkMatch,
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables
+  resetGameVariables,
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks
+  trySwappingBlocks,
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne
+  isBlockAirborne,
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
@@ -43,19 +43,19 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction
+  playerAction,
 } from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic
+  playMusic,
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard
+  gameOverBoard,
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -93,13 +93,13 @@ import {
   detectInfiniteLoop,
   debugSquares,
   sound,
-  updateFrameMods
+  updateFrameMods,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match
+  match,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
@@ -109,7 +109,7 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard
+  tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction } from "./scripts/functions/trainingControls";
@@ -180,7 +180,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined
+      solidGroundArray: undefined,
     }
   ) {
     this.x = x;
@@ -217,22 +217,6 @@ class Block {
       grid.SQ * this.y - game.rise
     );
   }
-  // drawGridLines() {
-  //   let filename = "grid_line";
-  //   if (this.y === 0) filename = "grid_line_red";
-  //   if (this.x === this.smartMatch.KeySquare.First.x && this.y === this.smartMatch.KeySquare.First.y)
-  //     filename = "light_up";
-  //   if (this.x === this.smartMatch.KeySquare.Second.x && this.y === this.smartMatch.KeySquare.Second.y)
-  //     filename = "light_up";
-  //   if (this.x === this.smartMatch.KeySquare.Third.x && this.y === this.smartMatch.KeySquare.Third.y)
-  //     filename = "light_up";
-
-  //   win.ctx.drawImage(
-  //     loadedSprites[filename],
-  //     grid.SQ * this.x,
-  //     grid.SQ * this.y - game.rise
-  //   );
-  // }
 
   drawSwappingBlocks() {
     let xOffset = (grid.SQ * (this.timer - 1)) / 4;
@@ -244,7 +228,7 @@ class Block {
   }
 
   drawHint() {
-    if (!game.disableSwap && (game.frameMod[60] < 30 || cpu.enabled))
+    if (!game.disableSwap && game.frameMod[60] < 30 && game.mode !== "cpu-play")
       win.ctx.drawImage(
         loadedSprites["light_up"],
         grid.SQ * this.x,
@@ -252,7 +236,7 @@ class Block {
       );
   }
 
-  drawArrows2(move = "Move") {
+  drawArrows(move = "Move") {
     if (this.targetX === undefined || game.over) return;
     let filename;
     let inc = this.targetX < this.x ? -1 : 1;
@@ -261,7 +245,7 @@ class Block {
     win.loopCounter = 0;
     for (let i = this.x; true; i += inc) {
       win.loopCounter++;
-      if (detectInfiniteLoop("drawArrows2", win.loopCounter)) break;
+      if (detectInfiniteLoop("drawArrows", win.loopCounter)) break;
       if (
         !bufferDetected &&
         CLEARING_TYPES.includes(game.board[i][this.y].type)
@@ -289,39 +273,6 @@ class Block {
       if (i === this.targetX) break;
     }
   }
-
-  drawArrows(arrowList, move) {
-    // if (
-    //   (touch.moveOrderExists && touch.target.x === -1) ||
-    //   touch.target.y === -1
-    // ) {
-    //   [touch.target.x, touch.target.y] = [game.cursor.x, game.cursor.y];
-    //   console.log("true");
-    //   touch.arrowLists.length = 0;
-    //   return;
-    // }
-    let filename = "";
-    let [tarX] = [this.targetX];
-    let coordinates = `${this.x},${this.y}`;
-    let [initialX, initialY] = arrowList[0].split(",");
-    // if (touch.moveOrderExists)
-
-    let dir = initialX > this.targetX ? "Left" : "Right";
-    console.log(this.swapDirection, dir, this.x, this.y);
-    if (arrowList[0] === coordinates) filename = `arrow${dir}${move}Start`;
-    else if (arrowList[arrowList.length - 1] === coordinates)
-      filename = `arrow${dir}${move}End`;
-    else if (arrowList.includes(coordinates)) filename = `arrowMid${move}`;
-    if (filename) {
-      {
-        win.ctx.drawImage(
-          loadedSprites[filename],
-          grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
-        );
-      }
-    }
-  } // end drawArrows
 
   drawDebugDots() {
     //Debug Visuals
@@ -609,7 +560,7 @@ export function drawGrid() {
     for (let x = grid.COLS - 1; x >= 0; x--) {
       for (let y = 0; y < grid.ROWS + 1; y++) {
         let Square = game.board[x][y];
-        if (game.cursor_type[0] !== "d") Square.drawArrows2();
+        if (game.cursor_type[0] !== "d") Square.drawArrows();
         if (cpu.showInfo) Square.drawAILogic();
         if (debug.show) Square.drawDebugDots();
       }
@@ -691,8 +642,6 @@ export function isChainActive() {
 
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
-  if (game.currentChain > 1) {
-  }
   game.boardRiseRestarter = 0;
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
@@ -867,14 +816,14 @@ function TRAINING_CONTROL(event) {
   }
 }
 
-document.addEventListener("keydown", DEBUG_CONTROL);
-function DEBUG_CONTROL(event) {
-  if (debug.enabled) {
-    if (event.code.includes("Digit")) {
-      spawnSquare(event.code[5]);
-    }
-  }
-}
+// document.addEventListener("keydown", DEBUG_CONTROL);
+// function DEBUG_CONTROL(event) {
+//   if (debug.enabled) {
+//     if (event.code.includes("Digit")) {
+//       spawnSquare(event.code[5]);
+//     }
+//   }
+// }
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
@@ -1050,7 +999,7 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
           // ,
-          console.log(touch, match, objectOfAudios);
+          console.log(touch.moveOrderList);
         if (event.keyCode === 73) {
           // i   starts the tutorial
           startTutorial();
@@ -1495,7 +1444,7 @@ export function gameLoop() {
             helpPlayer.done = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach(coord => {
+          cpu.matchList.forEach((coord) => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.done = false;

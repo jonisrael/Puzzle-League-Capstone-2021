@@ -287,7 +287,9 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     let Square = game.board[c][r];
 
     Square.type = blockType.BLINKING;
-    removeFromOrderList(Square);
+    if (Square.targetX !== undefined) {
+      removeFromOrderList(game.board[Square.targetX][r]);
+    }
     Square.timer = blinkTime + initialFaceTime + totalPopTime;
     Square.switchToFaceFrame = initialFaceTime + totalPopTime;
     Square.switchToPoppedFrame = totalPopTime - extraFaceTime;
