@@ -9,6 +9,7 @@ import {
   game,
   grid,
   INTERACTIVE_TYPES,
+  removeFromOrderList,
   touch,
   win,
 } from "./global";
@@ -83,6 +84,7 @@ export function moveBlockByRelease(x, y) {
   let Square = game.board[x][y];
   // touch.arrowLists.length = 0; // no longer needed if multiple orders
   Square.targetX = touch.mouse.x; // move to x--coordinate
+  touch.moveOrderList.unshift([Square.x, Square.y]);
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
@@ -132,8 +134,8 @@ function doMouseDown(e) {
   touch.doubleClickTimer += 20;
   if (!updateMousePosition(win.canvas, e)) {
     // click was outside the borders of the canvas
-    touch.thereIsABlockCurrentlySelected = false;
-    touch.moveOrderExists = false;
+    // touch.thereIsABlockCurrentlySelected = false;
+    // touch.moveOrderExists = false;
     return;
   }
   if (
@@ -142,9 +144,13 @@ function doMouseDown(e) {
     Math.abs(touch.mouse.y - game.cursor.y) < 2
   ) {
     touch.doubleClickCounter = 0;
+    // if (touch.moveOrderList.length > 0) {
+    //   let [x, y] = touch.moveOrderList.pop();
+    //   game.board[x][y].targetX = undefined;
+    // }
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
-        game.board[x][y].targetX = undefined;
+        removeFromOrderList(game.board[x][y]);
       }
     }
 

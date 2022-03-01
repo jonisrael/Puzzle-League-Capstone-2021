@@ -7,6 +7,7 @@ import {
   helpPlayer,
   cpu,
   sound,
+  grid,
 } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
@@ -15,6 +16,7 @@ import { tutorial } from "../tutorial/tutorialScript";
 import { render } from "../../index";
 import * as state from "../../store";
 import { setUpTrainingMode } from "./trainingControls";
+import { drawGrid } from "../../puzzleleague";
 
 export function pause(lostFocus = false, message = "Pause") {
   // document.getElementById("fps-display").style.display = "none";
@@ -80,10 +82,15 @@ export function pause(lostFocus = false, message = "Pause") {
     // document.getElementById("menu-button").style.display = "flex";
     // document.getElementById("more-options").style.display = "flex";
   }
+  if (debug.show) {
+    win.cvs.height = (grid.ROWS + 2) * grid.SQ;
+    drawGrid();
+  }
 }
 
 export function unpause() {
   game.paused = false;
+  if (debug.show) win.cvs.height = grid.ROWS * grid.SQ;
   if (game.mode === "training" && win.mobile) {
     document.getElementById("pause-button").innerHTML = "Training Features";
     document.getElementById("pause-button").style.fontSize = "0.8rem";
@@ -165,6 +172,7 @@ export function addPauseContent() {
             window.open("https://youtu.be/5o8C81D-Uo0", "_blank");
           };
         }
+        // ! WILL BE CHANGED WHEN MOBILE TUTORIAL VIDEO IS COMPLETE
         if (i === 1) {
           btn.disabled = true;
         }

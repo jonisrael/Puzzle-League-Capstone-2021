@@ -14,27 +14,27 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs,
+  audioSrcs
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch,
+  checkMatch
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables,
+  resetGameVariables
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks,
+  trySwappingBlocks
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne,
+  isBlockAirborne
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
@@ -43,19 +43,19 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction,
+  playerAction
 } from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic,
+  playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard,
+  gameOverBoard
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -93,13 +93,13 @@ import {
   detectInfiniteLoop,
   debugSquares,
   sound,
-  updateFrameMods,
+  updateFrameMods
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match,
+  match
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
@@ -109,11 +109,10 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard,
+  tutorialBoard
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction } from "./scripts/functions/trainingControls";
-import { spawnSquare } from "./scripts/functions/debugControls";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -173,7 +172,16 @@ class Block {
     swapDirection = 0,
     lightTimer = 0,
     swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
-    targetX = undefined
+    targetX = undefined,
+    smartMatch = {
+      lowestKeyCoord: undefined,
+      highestKeyCoord: undefined,
+      secondCoord: undefined,
+      thirdCoord: undefined,
+      pair: undefined,
+      clearLine: undefined,
+      solidGroundArray: undefined
+    }
   ) {
     this.x = x;
     this.y = y;
@@ -190,19 +198,14 @@ class Block {
     this.lightTimer = lightTimer;
     this.swapOrders = swapOrders;
     this.targetX = targetX;
+    this.smartMatch = smartMatch;
   }
 
   drawGridLines() {
     let filename = "grid_line";
     if (this.y === 0) filename = "grid_line_red";
     else if (this.lightTimer != 0) {
-      // filename = "light_up";
-      if (this.x === match[0][0] && this.y === match[0][1])
-        filename = "light_up";
-      if (this.x === match[1][0] && this.y === match[1][1])
-        filename = "light_up";
-      if (this.x === match[2][0] && this.y === match[2][1])
-        filename = "light_up";
+      filename = "light_up";
     } else if (this.y === game.cursor.y) {
       filename = "rowLight";
       filename +=
@@ -217,11 +220,11 @@ class Block {
   // drawGridLines() {
   //   let filename = "grid_line";
   //   if (this.y === 0) filename = "grid_line_red";
-  //   if (this.x === TouchOrders[0].KeySquare.First.x && this.y === TouchOrders[0].KeySquare.First.y)
+  //   if (this.x === this.smartMatch.KeySquare.First.x && this.y === this.smartMatch.KeySquare.First.y)
   //     filename = "light_up";
-  //   if (this.x === TouchOrders[0].KeySquare.Second.x && this.y === TouchOrders[0].KeySquare.Second.y)
+  //   if (this.x === this.smartMatch.KeySquare.Second.x && this.y === this.smartMatch.KeySquare.Second.y)
   //     filename = "light_up";
-  //   if (this.x === TouchOrders[0].KeySquare.Third.x && this.y === TouchOrders[0].KeySquare.Third.y)
+  //   if (this.x === this.smartMatch.KeySquare.Third.x && this.y === this.smartMatch.KeySquare.Third.y)
   //     filename = "light_up";
 
   //   win.ctx.drawImage(
@@ -406,8 +409,9 @@ class Block {
 
       if (
         game.currentChain > 0 &&
-        this.x === TouchOrders[0].KeySquare.Highest.x &&
-        this.y === TouchOrders[0].KeySquare.Highest.y
+        this.smartMatch.highestKeyCoord &&
+        this.x === this.smartMatch.highestKeyCoord[0] &&
+        this.y === this.smartMatch.highestKeyCoord[1]
       ) {
         win.ctx.drawImage(
           loadedSprites["debugGreen"],
@@ -418,8 +422,9 @@ class Block {
 
       if (
         game.currentChain > 0 &&
-        this.x === TouchOrders[0].KeySquare.Lowest.x &&
-        this.y === TouchOrders[0].KeySquare.Lowest.y
+        this.smartMatch.lowestKeyCoord &&
+        this.x === this.smartMatch.lowestKeyCoord[0] &&
+        this.y === this.smartMatch.lowestKeyCoord[1]
       ) {
         win.ctx.drawImage(
           loadedSprites["debugMagenta"],
@@ -1045,7 +1050,7 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (event.keyCode === 188)
           // ,
-          console.log(touch, TouchOrders[0].KeySquare, match, objectOfAudios);
+          console.log(touch, match, objectOfAudios);
         if (event.keyCode === 73) {
           // i   starts the tutorial
           startTutorial();
@@ -1490,7 +1495,7 @@ export function gameLoop() {
             helpPlayer.done = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach((coord) => {
+          cpu.matchList.forEach(coord => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.done = false;

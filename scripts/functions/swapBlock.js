@@ -15,6 +15,7 @@ import {
   transferProperties,
   saveSttransferPropate,
   saveState,
+  removeFromOrderList,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -23,8 +24,12 @@ import { pause } from "./pauseFunctions";
 import { isBlockAirborne } from "./gravity";
 import { updateTrainingButtons } from "./trainingControls";
 
-export function trySwappingBlocks(x, y, clickSwap = false) {
-  if (game.disableSwap || game.frames < 0 || x > grid.COLS - 2 || game.over) {
+export function trySwappingBlocks(x, y, rightSwap = true) {
+  if (game.disableSwap || game.frames < 0 || x + 2 > grid.COLS || game.over) {
+    if (game.frames >= 0) {
+      removeFromOrderList(game.board[x][y]);
+      if (x + 1 < grid.COLS) removeFromOrderList(game.board[x + 1][y]);
+    }
     return;
   }
 
@@ -185,11 +190,18 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
         }
       }
     } // end y > 0 condition
-    if (0 === 1 && game.board[x + 1][y].targetX !== undefined) {
-      // console.log(game.frames, "sticky checking", x + 1, y);
+    if (game.currentChain) {
       try {
-        if (stickyCheck(x, y) || stickyCheck(x + 1, y))
-          game.board[x][y].targetX = undefined;
+        let c = rightSwap ? x + 1 : x;
+        if (stickyCheck(c, y)) {
+          playAudio(audio.smartMatch);
+          removeFromOrderList(game.board[c][y]);
+          game.board[c][y].lightTimer = 65;
+          let [x2, y2] = game.board[c][y].smartMatch.secondCoord;
+          game.board[x2][y2].lightTimer = 65;
+          let [x3, y3] = game.board[c][y].smartMatch.thirdCoord;
+          game.board[x3][y3].lightTimer = 65;
+        }
       } catch (error) {
         playAudio(audio.selectionFailed);
         // debug.enabled = true;
@@ -202,18 +214,10 @@ export function trySwappingBlocks(x, y, clickSwap = false) {
 
       // stickyCheck(game.cursor.x, game.cursor.y);
       // stickyCheck(game.cursor.x + 1, game.cursor.y);
-
-      if ((game.cursor_type[0] !== "d" || 0 == 0) && !touch.moveOrderExists) {
-        playAudio(audio.smartMatch);
-        game.board[match[0][0]][match[0][1]].lightTimer = 65;
-        game.board[match[1][0]][match[1][1]].lightTimer = 65;
-        game.board[match[2][0]][match[2][1]].lightTimer = 65;
-        // game.message = "Hold It!";
-      }
     }
   } else if (!legalSwap) {
     if (game.cursor_type[0] === "d") {
-      game.board[x][y].targetX = undefined;
+      removeFromOrderList(game.board[x][y]);
     } else if (
       game.cursor_type[0] !== "d" &&
       touch.enabled &&
@@ -271,12 +275,12 @@ export function checkSwapTargets() {
           trySwappingBlocks(Square.x, Square.y);
         } else if (c > 0 && Square.x > Square.targetX) {
           const LeftSquare = game.board[c - 1][r];
-          trySwappingBlocks(Square.x - 1, Square.y);
+          trySwappingBlocks(Square.x - 1, Square.y, false);
         }
       }
       // now check if block needs to reset target
       if (Square.type === "stalling" || CLEARING_TYPES.includes(Square.type)) {
-        Square.targetX = undefined;
+        removeFromOrderList(Square);
       }
     }
   }

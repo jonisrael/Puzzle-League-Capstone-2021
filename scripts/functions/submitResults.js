@@ -93,7 +93,7 @@ export function afterGame() {
   deleteScores.innerHTML = "Delete Personal Best Scores";
 
   restartGame.addEventListener("click", (event) => {
-    startGame(perf.gameSpeed);
+    startGame();
   });
 
   deleteScores.addEventListener("click", (event) => {

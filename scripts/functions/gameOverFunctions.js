@@ -14,6 +14,7 @@ import {
   perf,
   helpPlayer,
   sound,
+  touch,
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -91,9 +92,9 @@ export function isGameOver() {
         for (let y = grid.ROWS - 1; y > 4; y--) {
           game.board[x][y].color = blockColor.VACANT;
           game.board[x][y].type = blockType.NORMAL;
-          game.board[x][y].targetX = undefined;
         }
       }
+      touch.moveOrderList.length = 0;
       // for (let x = 0; x < grid.COLS; x++) {
       //   for (let y = 0; y < grid.ROWS; y++) {
       //     if (y === 0 && game.board[x][0].color === "vacant") {

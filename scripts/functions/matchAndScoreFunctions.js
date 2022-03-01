@@ -16,6 +16,8 @@ import {
   detectInfiniteLoop,
   saveState,
   padInt,
+  touch,
+  removeFromOrderList,
 } from "../global";
 
 import { playChainSFX, playAudio, playAnnouncer } from "./audioFunctions";
@@ -285,7 +287,7 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     let Square = game.board[c][r];
 
     Square.type = blockType.BLINKING;
-    Square.targetX = undefined;
+    removeFromOrderList(Square);
     Square.timer = blinkTime + initialFaceTime + totalPopTime;
     Square.switchToFaceFrame = initialFaceTime + totalPopTime;
     Square.switchToPoppedFrame = totalPopTime - extraFaceTime;

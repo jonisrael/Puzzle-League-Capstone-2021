@@ -10,6 +10,7 @@ import {
   helpPlayer,
   INTERACTIVE_TYPES,
   perf,
+  removeFromOrderList,
   touch,
   win,
 } from "../global";
@@ -42,7 +43,7 @@ export function updateGrid(frameAdvance = false) {
       }
       if (Square.targetX !== undefined) {
         if (Square.targetX === Square.x) {
-          Square.targetX = undefined;
+          removeFromOrderList(Square);
         } else {
           game.boardHasTargets = true;
         }
@@ -127,7 +128,7 @@ export function updateGrid(frameAdvance = false) {
         Square.swapDirection = 0;
         if (Square.airborne) {
           Square.type = "stalling";
-          Square.targetX = undefined; // stop the target
+          removeFromOrderList(Square);
           Square.timer = game.blockStallTime;
           Square.touched = true;
           Square.availForPrimaryChain = false;

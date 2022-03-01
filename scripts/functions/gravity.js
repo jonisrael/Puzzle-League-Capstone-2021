@@ -57,14 +57,6 @@ export function doGravity(gameSpeed) {
         game.pauseStack = true;
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
-          if (
-            touch.moveOrderExists &&
-            SelectedBlock.x === c &&
-            SelectedBlock.y === r
-          ) {
-            game.cursor.y += 1;
-            touch.target.y += 1;
-          }
           transferProperties(game.board[c][r], game.board[c][r + 1], "to");
           helpPlayer.done = false;
           game.board[c][r + 1].airborne = true;
