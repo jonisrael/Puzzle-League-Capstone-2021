@@ -208,7 +208,14 @@ export function checkMatch() {
             false
           );
       }
-      updateScore(blocksCleared, game.currentChain, add1ToChain);
+      let scoreEarned = updateScore(
+        blocksCleared,
+        game.currentChain,
+        game.scoreMultiplier,
+        add1ToChain
+      );
+      game.chainScoreAdded += scoreEarned;
+      game.score += scoreEarned;
       win.mainInfoDisplay.style.color = "black";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
@@ -315,7 +322,21 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
   }
 }
 
-export function updateScore(blocksCleared, currentChain, partOfChain) {
+export function updateScore(blocksCleared, chain, multiplier, earnsChainBonus) {
+  let blockBonus = 0;
+  let chainBonus = 0;
+  for (let i = 3; i <= blocksCleared; i++) {
+    blockBonus += i * 10;
+  }
+  if (earnsChainBonus) {
+    chainBonus += (chain - 1) * 100;
+  }
+
+  let scoreAdded = multiplier * (blockBonus + chainBonus);
+  return scoreAdded;
+}
+
+export function updateScoreOld(blocksCleared, currentChain, partOfChain) {
   let blockBonus = 10 * blocksCleared;
   let comboBonus = 0;
   let chainBonus = 0;

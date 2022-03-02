@@ -14,27 +14,27 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs,
+  audioSrcs
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch,
+  checkMatch
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables,
+  resetGameVariables
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks,
+  trySwappingBlocks
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne,
+  isBlockAirborne
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
@@ -43,19 +43,19 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction,
+  playerAction
 } from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic,
+  playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard,
+  gameOverBoard
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -93,13 +93,13 @@ import {
   detectInfiniteLoop,
   debugSquares,
   sound,
-  updateFrameMods,
+  updateFrameMods
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match,
+  match
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
@@ -109,7 +109,7 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard,
+  tutorialBoard
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction } from "./scripts/functions/trainingControls";
@@ -180,7 +180,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined,
+      solidGroundArray: undefined
     }
   ) {
     this.x = x;
@@ -1403,10 +1403,7 @@ export function gameLoop() {
       }
       if (game.swapPressed) {
         if (!touch.enabled || !touch.moveOrderExists) {
-          // console.log(game.frames, "Do swap at", game.cursor.x, game.cursor.y);
-          game.board[game.cursor.x][game.cursor.y].targetX = game.cursor.x + 1;
           trySwappingBlocks(game.cursor.x, game.cursor.y);
-          game.boardHasTargets = true;
           game.swapPressed = false;
         }
         // else {
@@ -1444,7 +1441,7 @@ export function gameLoop() {
             helpPlayer.done = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach((coord) => {
+          cpu.matchList.forEach(coord => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.done = false;

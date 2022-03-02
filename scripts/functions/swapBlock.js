@@ -26,7 +26,7 @@ import { updateTrainingButtons } from "./trainingControls";
 
 export function trySwappingBlocks(x, y, rightSwap = true) {
   if (game.disableSwap || game.frames < 0 || x + 2 > grid.COLS || game.over) {
-    if (game.frames >= 0) {
+    if (game.frames >= 0 && game.cursor_type[0] !== "d") {
       removeFromOrderList(game.board[x][y]);
       if (x + 1 < grid.COLS) removeFromOrderList(game.board[x + 1][y]);
     }
