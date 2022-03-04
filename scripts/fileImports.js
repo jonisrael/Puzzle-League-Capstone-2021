@@ -166,6 +166,7 @@ import CUB3D_SONG from ".././assets/Audio/Music/Themes/cub3d.mp3";
 import PHYSICS_SONG from ".././assets/Audio/Music/Themes/physics.mp3";
 import RYU_SONG from ".././assets/Audio/Music/Themes/ryu.mp3";
 import SCATMAN_SONG from ".././assets/Audio/Music/Themes/scatman.mp3";
+import COLLAPSED_REG_SONG from ".././assets/Audio/Music/Themes/collapsedReg.mp3";
 import HUGO_SONG from ".././assets/Audio/Music/Themes/hugo.mp3";
 import LIP_SONG from ".././assets/Audio/Music/Themes/lipTheme.mp3";
 
@@ -174,6 +175,9 @@ import GIO_SONG from ".././assets/Audio/Music/Overtime Themes/gio.mp3";
 import GRIM_SONG from ".././assets/Audio/Music/Overtime Themes/grim.mp3";
 import EDGEWORTH_SONG from ".././assets/Audio/Music/Overtime Themes/edgeworth.mp3";
 import SURGE_SONG from ".././assets/Audio/Music/Overtime Themes/surge.mp3";
+import WRECKING_BALL_SONG from ".././assets/Audio/Music/Overtime Themes/wreckingball.mp3";
+import EXPRESSWAY_SONG from ".././assets/Audio/Music/Overtime Themes/collapsedAllegro.mp3";
+import COLLAPSED_OT_SONG from ".././assets/Audio/Music/Overtime Themes/collapsedAllegro.mp3";
 
 import RESULTS_SONG from ".././assets/Audio/Music/Results/results.mp3";
 import RESULTS_2_SONG from ".././assets/Audio/Music/Results/results2.mp3";
@@ -532,6 +536,10 @@ const audio = {
   hugoMusic: HUGO_SONG,
   physicsMusic: PHYSICS_SONG,
   cub3dMusic: CUB3D_SONG,
+  collapsedRegMusic: COLLAPSED_REG_SONG,
+  expresswaySong: EXPRESSWAY_SONG,
+  wreckingBallSong: WRECKING_BALL_SONG,
+  collapsedOTMusic: COLLAPSED_OT_SONG,
   strikersMusic: STRIKERS_SONG,
   edgeworthMusic: EDGEWORTH_SONG,
   grimMusic: GRIM_SONG,

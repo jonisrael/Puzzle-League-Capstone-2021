@@ -20,7 +20,7 @@ export function updateMousePosition(canvas, e) {
   let clientX = e.type[0] === "t" ? e.touches[0].clientX : e.clientX;
   let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
   const rect = canvas.getBoundingClientRect();
-  const ratio = win.canvas.height / win.canvas.clientHeight;
+  const ratio = win.cvs.height / win.cvs.clientHeight;
   // 10px is currently the border size of the canvas.
   const pixelX = ratio * (clientX - rect.left - 10);
   const pixelY = ratio * (clientY - rect.top - 10) + game.rise;
@@ -138,7 +138,7 @@ function doMouseDown(e) {
   touch.mouse.clicked = true;
   touch.doubleClickCounter++;
   touch.doubleClickTimer += 20;
-  if (!updateMousePosition(win.canvas, e)) {
+  if (!updateMousePosition(win.cvs, e)) {
     // click was outside the borders of the canvas
     // touch.thereIsABlockCurrentlySelected = false;
     // touch.moveOrderExists = false;
@@ -206,8 +206,8 @@ function doMouseDown(e) {
 
 function doMouseMove(e) {
   if (!touch.enabled) return;
-  // if (!updateMousePosition(win.canvas, e)) return;
-  updateMousePosition(win.canvas, e);
+  // if (!updateMousePosition(win.cvs, e)) return;
+  updateMousePosition(win.cvs, e);
   touch.mouseChangedX = false;
   if (touch.mouse.clicked) {
     if (touch.mouse.x !== touch.lastXMoused) {
@@ -225,27 +225,30 @@ function doMouseMove(e) {
 function doMouseUp(e) {
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
-  updateMousePosition(win.canvas, e);
+  updateMousePosition(win.cvs, e);
+  if (debug.enabled && game.paused) {
+    console.log(game.board[touch.mouse.x][touch.mouse.y]);
+  }
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
     moveBlockByRelease(touch.selectedBlock.x, touch.selectedBlock.y);
   }
 }
 
 export function createClickListeners() {
-  win.canvas.addEventListener("mousedown", function(e) {
+  win.cvs.addEventListener("mousedown", function(e) {
     doMouseDown(e);
   });
 
-  win.canvas.addEventListener("touchstart", function(e) {
+  win.cvs.addEventListener("touchstart", function(e) {
     e.preventDefault();
     doMouseDown(e);
   });
 
-  win.canvas.addEventListener("mousemove", function(e) {
+  win.cvs.addEventListener("mousemove", function(e) {
     doMouseMove(e);
   });
 
-  win.canvas.addEventListener("touchmove", function(e) {
+  win.cvs.addEventListener("touchmove", function(e) {
     e.preventDefault();
     doMouseMove(e);
   });
@@ -254,12 +257,12 @@ export function createClickListeners() {
     doMouseUp(e);
   });
 
-  win.canvas.addEventListener("touchend", function(e) {
+  win.cvs.addEventListener("touchend", function(e) {
     e.preventDefault();
     doMouseUp(e);
   });
 
-  win.canvas.addEventListener("contextmenu", function(e) {
+  win.cvs.addEventListener("contextmenu", function(e) {
     if (!touch.enabled) return;
     e.preventDefault();
     // if (game.frames > 0) game.raisePressed = true;

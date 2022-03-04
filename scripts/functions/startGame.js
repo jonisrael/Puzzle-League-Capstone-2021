@@ -81,6 +81,8 @@ export function startGame(selectedGameSpeed = 1, version = 1) {
   cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";
   createHeadsUpDisplay(window.innerWidth < 800);
+  win.cvs = document.getElementById("canvas");
+  win.ctx = win.cvs.getContext("2d");
   if (game.mode !== "arcade") {
     game.frames = -76;
     if (game.mode === "training") updateLevelEvents(0);

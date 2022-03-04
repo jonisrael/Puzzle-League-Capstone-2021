@@ -14,27 +14,27 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs
+  audioSrcs,
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch
+  checkMatch,
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables
+  resetGameVariables,
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks
+  trySwappingBlocks,
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne
+  isBlockAirborne,
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction } from "./scripts/computerPlayer/cpu";
@@ -43,19 +43,19 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction
+  playerAction,
 } from "./scripts/controls";
 import { pause, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic
+  playMusic,
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard
+  gameOverBoard,
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -93,13 +93,13 @@ import {
   detectInfiniteLoop,
   debugSquares,
   sound,
-  updateFrameMods
+  updateFrameMods,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match
+  match,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
@@ -109,10 +109,11 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard
+  tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction } from "./scripts/functions/trainingControls";
+import { drawScoreEarnedMessage } from "./scripts/functions/drawCanvasShapesAndText";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -163,6 +164,8 @@ class Block {
     color = "vacant",
     type = "normal",
     timer = 0,
+    message = "",
+    msgTimer = 1,
     switchToFaceFrame = 0,
     switchToPoppedFrame = 0,
     airborne = false,
@@ -180,7 +183,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined
+      solidGroundArray: undefined,
     }
   ) {
     this.x = x;
@@ -188,6 +191,8 @@ class Block {
     this.color = color;
     this.type = type;
     this.timer = timer;
+    this.message = message;
+    this.msgTimer = msgTimer;
     this.switchToFaceFrame = switchToFaceFrame;
     this.switchToPoppedFrame = switchToPoppedFrame;
     this.airborne = airborne;
@@ -272,6 +277,16 @@ class Block {
 
       if (i === this.targetX) break;
     }
+  }
+
+  drawBlockMessage() {
+    drawScoreEarnedMessage(
+      `+${game.scoreEarned}`,
+      this.x,
+      this.y,
+      grid.SQ,
+      game.rise
+    );
   }
 
   drawDebugDots() {
@@ -526,11 +541,17 @@ export function checkIfHelpPlayer() {
 export function drawGrid() {
   if (game.frames % perf.drawDivisor === 1) return;
   let blocksAreSwapping = false; // to be placed on top of drawn grid
+  let messageAlreadyDrawn = false;
+  let firstBlinkingSquare;
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
+      if (!messageAlreadyDrawn && Square.type === "blinking") {
+        firstBlinkingSquare = [x, y];
+        messageAlreadyDrawn = true;
+      }
 
       Square.drawGridLines();
 
@@ -567,46 +588,6 @@ export function drawGrid() {
     }
   }
 
-  // if (game.cursor_type[0] !== "d") {
-  //   try {
-
-  // //     if (touch.arrowLists.length) {
-  // //       if (game.frames % 30 === 0 && touch.arrowLists.length)
-  // //         console.log(touch.arrowLists, touch.arrowMoveTypes);
-  // //       for (let i = 0; i < touch.arrowLists.length; i++) {
-  // //         touch.arrowLists[i] = Array.from(
-  // //           new Set(touch.arrowLists[i].map(JSON.stringify)),
-  // //           JSON.parse
-  // //         );
-  // //         let arrowList = touch.arrowLists[i];
-  // //         let moveType = touch.arrowMoveTypes[i];
-  // //         for (let x = 0; x < grid.COLS; x++) {
-  // //           for (let y = 0; y < grid.ROWS + 1; y++) {
-  // //             let Square = game.board[x][y];
-  // //             if (game.cursor_type[0] !== "d") {
-  // //               if (
-  // //                 blockVacOrClearing(game.board[game.cursor.x][game.cursor.y])
-  // //               )
-  // //                 touch.moveOrderExists = false;
-  // //               if (!touch.moveOrderExists && !touch.mouse.clicked) {
-  // //                 console.log(
-  // //                   (game.frames, "not move order exists and not mouse clicked")
-  // //                 );
-  // //                 touch.arrowLists.splice(i, 1);
-  // //                 touch.arrowMoveTypes.splice(i, 1);
-  // //               }
-
-  // //               Square.drawArrows(arrowList, moveType);
-  // //             }
-  // //           }
-  // //         }
-  // //       }
-  //     // }
-  //   } catch (error) {
-  //     console.log(error, error.stack);
-  //   }
-  // }
-
   if (!game.over) {
     if (game.cursor_type[0] !== "d") {
       if (touch.moveOrderExists) game.cursor_type = "movingCursor";
@@ -621,6 +602,12 @@ export function drawGrid() {
       }
     }
     game.cursor.draw();
+  }
+
+  if (firstBlinkingSquare) {
+    let [x, y] = firstBlinkingSquare;
+    game.board[x][y].lightTimer = 30;
+    game.board[x][y].drawBlockMessage();
   }
 }
 
@@ -1216,8 +1203,8 @@ export function gameLoop() {
         if (game.frames < 7200 && game.seconds % 5 === 0) {
           if (!debug.enabled) debug.clickCounter = 0;
           let colorRatio = (120 - 60 * game.minutes - game.seconds) / 1.2;
-          win.canvas.style.borderColor = `hsl(34, ${20 +
-            0.8 * colorRatio}%, ${20 + 0.5 * colorRatio}%)`;
+          win.cvs.style.borderColor = `hsl(34, ${20 + 0.8 * colorRatio}%, ${20 +
+            0.5 * colorRatio}%)`;
         }
         if (debug.enabled && game.seconds % 5 === 1) {
           game.pastSeconds = game.seconds;
@@ -1441,7 +1428,7 @@ export function gameLoop() {
             helpPlayer.done = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach(coord => {
+          cpu.matchList.forEach((coord) => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.done = false;
@@ -1564,10 +1551,10 @@ export function gameLoop() {
       //   20 * Math.cos(2 * Math.pi * percentOfSecond)}%)`
       if (game.level >= 6 && game.frameMod[6] === 0 && !game.over)
         if (game.level > 6 || game.frames > 6600) {
-          win.canvas.style.borderColor = overtimeBorderColor(game.level);
+          win.cvs.style.borderColor = overtimeBorderColor(game.level);
         }
 
-      if (game.over) win.canvas.style.borderColor = "red";
+      if (game.over) win.cvs.style.borderColor = "red";
       if (debug.enabled == 1) {
         // ${45 + 25 * Math.sin(game.frames)}
         // 60 + 40 * Math.sin(game.frames)

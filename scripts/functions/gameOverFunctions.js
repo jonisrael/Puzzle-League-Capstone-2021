@@ -31,7 +31,7 @@ export function closeGame(gameFinished) {
   if (win.loopCounter > 999) {
     win.cvs = null;
     win.ctx = null;
-    win.canvas.remove();
+    win.cvs.remove();
   }
   document.getElementById("header").style.display = "block";
   document.getElementById("nav-bar").style.display = "block";

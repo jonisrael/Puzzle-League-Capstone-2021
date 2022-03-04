@@ -243,6 +243,7 @@ export const music = [
   audio.lipMusic,
   audio.physicsMusic,
   audio.cub3dMusic,
+  audio.collapsedRegMusic,
   // audio.scatmanMusic,
   // audio.rashidMusic,
   // audio.hugoMusic,
@@ -278,6 +279,9 @@ export const overtimeMusic = [
   audio.strikersMusic,
   audio.grimMusic,
   audio.edgeworthMusic,
+  audio.collapsedOTMusic,
+  audio.expresswaySong,
+  audio.wreckingBallSong,
   // audio.gioMusic,
   // audio.surgeMusic
 ];
@@ -322,7 +326,7 @@ export let game = {
   pastSeconds: 0,
   timeString: "0:00",
   score: 0,
-  scoreUpdate: 0,
+  scoreEarned: 0,
   scoreMultiplier: 1,
   chainScoreAdded: 0,
   currentChain: 0,

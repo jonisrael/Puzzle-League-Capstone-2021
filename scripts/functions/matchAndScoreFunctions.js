@@ -208,14 +208,14 @@ export function checkMatch() {
             false
           );
       }
-      let scoreEarned = updateScore(
+      game.scoreEarned = updateScore(
         blocksCleared,
         game.currentChain,
         game.scoreMultiplier,
         add1ToChain
       );
-      game.chainScoreAdded += scoreEarned;
-      game.score += scoreEarned;
+      game.chainScoreAdded += game.scoreEarned;
+      game.score += game.scoreEarned;
       win.mainInfoDisplay.style.color = "black";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
@@ -332,7 +332,7 @@ export function updateScore(blocksCleared, chain, multiplier, earnsChainBonus) {
     chainBonus += (chain - 1) * 100;
   }
 
-  let scoreAdded = multiplier * (blockBonus + chainBonus);
+  let scoreAdded = Math.round(multiplier * (blockBonus + chainBonus));
   return scoreAdded;
 }
 
@@ -377,9 +377,9 @@ export function updateScoreOld(blocksCleared, currentChain, partOfChain) {
     bonusString += `${scoreMult} * (${padInt(comboBonus, 3)}) Clear Bonus`;
   }
 
-  game.scoreUpdate = Math.round(addToScore * game.scoreMultiplier);
-  game.chainScoreAdded += game.scoreUpdate;
-  game.score += game.scoreUpdate;
+  game.scoreEarned = Math.round(addToScore * game.scoreMultiplier);
+  game.chainScoreAdded += game.scoreEarned;
+  game.score += game.scoreEarned;
   if (game.log.length < 500) {
     let loggedScore = [
       `TIME ${game.minutes}:${padInt(game.seconds)}
@@ -389,11 +389,11 @@ export function updateScoreOld(blocksCleared, currentChain, partOfChain) {
       }`,
       `CHAIN: ${padInt(currentChain)} || BONUS: ${chainBonus * scoreMult}`,
       `CLEAR: ${padInt(blocksCleared)} || BONUS: ${comboBonus * scoreMult}`,
-      `TOTAL: ${padInt(game.scoreUpdate, 4)}`,
+      `TOTAL: ${padInt(game.scoreEarned, 4)}`,
       `NEW SCORE: ${game.score}`,
       `--------------------`,
     ];
-    // let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreUpdate}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
+    // let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreEarned}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
     game.log.push(loggedScore);
     // if (win.gameLogDisplay) {
     //   let div = document.createElement("div");

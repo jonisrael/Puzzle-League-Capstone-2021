@@ -145,7 +145,6 @@ export function cpuAction(input, helpPlayer = false) {
   }
 
   if (helpPlayer) {
-    console.log(game.frames, "giving hint");
     return cpu.matchList;
   }
 

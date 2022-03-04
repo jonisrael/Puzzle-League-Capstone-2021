@@ -187,16 +187,14 @@ function createDesktopDisplay() {
   // Make Canvas, then append it to home page
   // document.getElementById("page-body").style.maxWidth = "none";
   // document.getElementById("page-body").style.maxHeight = "95vh";
-  win.canvas = document.createElement(`canvas`);
-  win.canvas.setAttribute("id", "canvas");
-  win.canvas.setAttribute("width", `${grid.COLS * grid.SQ}`);
-  win.canvas.setAttribute("height", `${grid.ROWS * grid.SQ}`);
-  column2.appendChild(win.canvas);
+  win.cvs = document.createElement(`canvas`);
+  win.cvs.setAttribute("id", "canvas");
+  win.cvs.setAttribute("width", `${grid.COLS * grid.SQ}`);
+  win.cvs.setAttribute("height", `${grid.ROWS * grid.SQ}`);
+  column2.appendChild(win.cvs);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
   column1.appendChild(win.highScoreDisplay);
-  win.cvs = document.getElementById("canvas");
-  win.ctx = win.cvs.getContext("2d");
 
   // Add invisible "Resume play" button, to be visible when game is paused
   // let resumeButton = document.createElement("button");
@@ -381,16 +379,14 @@ function createMobileDisplay() {
   win.controlsDisplay = controls;
 
   gameContainer.appendChild(controls);
-  win.canvas = document.createElement(`canvas`);
-  win.canvas.setAttribute("id", "canvas");
-  win.canvas.setAttribute("width", `${grid.COLS * grid.SQ}`);
-  win.canvas.setAttribute("height", `${grid.ROWS * grid.SQ}`);
-  gameContainer.appendChild(win.canvas);
+  win.cvs = document.createElement(`canvas`);
+  win.cvs.setAttribute("id", "canvas");
+  win.cvs.setAttribute("width", `${grid.COLS * grid.SQ}`);
+  win.cvs.setAttribute("height", `${grid.ROWS * grid.SQ}`);
+  gameContainer.appendChild(win.cvs);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
   // column1.appendChild(win.highScoreDisplay);
-  win.cvs = document.getElementById("canvas");
-  win.ctx = win.cvs.getContext("2d");
 
   // // Add invisible "Resume play" button, to be visible when game is paused
   // let resumeButton = document.createElement("button");

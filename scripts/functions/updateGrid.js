@@ -152,8 +152,7 @@ export function updateGrid(frameAdvance = false) {
         switch (Square.timer) {
           case Square.switchToPoppedFrame + 2:
             if (!win.appleProduct) playAudio(audio.blockClear);
-            game.scoreUpdate = Math.round(game.scoreMultiplier * 10);
-            game.score += game.scoreUpdate;
+            game.score += Math.round(game.scoreMultiplier * 10);
             break;
           case 0:
             Square.color = "vacant";
