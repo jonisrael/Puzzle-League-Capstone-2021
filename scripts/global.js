@@ -729,6 +729,11 @@ export function removeFromOrderList(TargetSquare) {
   }
 }
 
+export function randomPiece(level) {
+  if (level < 4) return PIECES[randInt(PIECES.length - 1)];
+  return PIECES[randInt(PIECES.length)];
+}
+
 // // Transfer everything except x and y coordinates
 // let tempProperties = [
 //   FirstBlock.color,

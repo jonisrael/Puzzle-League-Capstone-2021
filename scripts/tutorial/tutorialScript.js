@@ -3,8 +3,10 @@ import {
   cpu,
   detectInfiniteLoop,
   game,
+  grid,
   PIECES,
   randInt,
+  randomPiece,
   sound,
   win,
 } from "../global";
@@ -139,7 +141,7 @@ export function createTutorialBoard(colorLocations) {
       block = newBlock(c, r);
       board[c].push(block);
       if (r > ROWS - 1) {
-        board[c][r].color = PIECES[randInt(PIECES.length)];
+        board[c][r].color = randomPiece(game.level);
         board[c][r].type = blockType.DARK;
       } else {
         colorLocations.forEach((arr) => {
@@ -154,14 +156,14 @@ export function createTutorialBoard(colorLocations) {
   }
   for (let x = 0; x < COLS; x++) {
     // Initial Dark Stacks
-    board[x][grid.ROWS].color = PIECES[randInt(PIECES.length)];
-    board[x][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+    board[x][grid.ROWS].color = randomPiece(game.level);
+    board[x][grid.ROWS + 1].color = randomPiece(game.level);
     if (x > 0) {
       win.loopCounter = 0;
       while (board[x][grid.ROWS].color == board[x - 1][grid.ROWS].color) {
         win.loopCounter++;
         if (detectInfiniteLoop("createTutorialBoard1", win.loopCounter)) break;
-        board[x][grid.ROWS].color = PIECES[randInt(PIECES.length)];
+        board[x][grid.ROWS].color = randomPiece(game.level);
       }
       win.loopCounter = 0;
       while (
@@ -169,7 +171,7 @@ export function createTutorialBoard(colorLocations) {
       ) {
         win.loopCounter++;
         if (detectInfiniteLoop("createTutorialBoard2", win.loopCounter)) break;
-        board[x][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+        board[x][grid.ROWS + 1].color = randomPiece(game.level);
       }
     }
   }

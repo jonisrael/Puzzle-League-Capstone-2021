@@ -18,6 +18,7 @@ import {
   helpPlayer,
   detectInfiniteLoop,
   saveState,
+  randomPiece,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
@@ -203,7 +204,7 @@ export function fixNextDarkStack(board) {
         leftRightAdjacent = `Dark Match is Right 2 from ${c}, ${desiredColor}`;
       }
       if (aboveAdjacent || leftRightAdjacent) {
-        board[c][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+        board[c][grid.ROWS + 1].color = randomPiece(game.level);
       }
     } while (aboveAdjacent || leftRightAdjacent);
   } // end for loop
@@ -233,7 +234,7 @@ export function fixNextDarkStack(board) {
   //       leftRightAdjacent += `Dark Match is Right 2 from ${c}`;
   //     }
   //     if (aboveAdjacent || leftRightAdjacent) {
-  //       board[c][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+  //       board[c][grid.ROWS + 1].color = randomPiece(game.level);
   //     }
   //   }
   // }
@@ -273,7 +274,7 @@ export function fixNextDarkStack(board) {
   //   }
 
   //   if (aboveAdjacent || leftRightAdjacent) {
-  //     board[c][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+  //     board[c][grid.ROWS + 1].color = randomPiece(game.level);
   //   }
   //   } // end for loop
   // } // end while loop
@@ -292,7 +293,7 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       block = newBlock(c, r);
       board[c].push(block);
       if (r >= grid.ROWS) {
-        board[c][r].color = PIECES[randInt(PIECES.length)];
+        board[c][r].color = randomPiece(game.level);
         board[c][r].type = blockType.DARK;
       }
       block.draw();
@@ -308,7 +309,7 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       let x = randInt(grid.COLS);
       let y = randInt(stackSize);
       if (board[x][y].color === blockColor.VACANT) {
-        board[x][y].color = PIECES[randInt(PIECES.length)];
+        board[x][y].color = randomPiece(game.level);
         break;
       }
     }
@@ -367,7 +368,7 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
             // console.log(`Color of ${x}, ${y}:`, board[x][y].color);
             break;
           }
-          board[x][y].color = PIECES[randInt(PIECES.length)];
+          board[x][y].color = randomPiece(game.level);
         }
       }
       board[x][y].draw();
@@ -376,15 +377,15 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
 
   for (let x = 0; x < grid.COLS; x++) {
     // Initial Dark Stacks
-    board[x][grid.ROWS].color = PIECES[randInt(PIECES.length)];
-    board[x][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+    board[x][grid.ROWS].color = randomPiece(game.level);
+    board[x][grid.ROWS + 1].color = randomPiece(game.level);
     loopCounter = 0;
     if (x > 0) {
       loopCounter = 0;
       while (board[x][grid.ROWS].color == board[x - 1][grid.ROWS].color) {
         loopCounter++;
         if (detectInfiniteLoop("generateOpeningBoard3", loopCounter)) break;
-        board[x][grid.ROWS].color = PIECES[randInt(PIECES.length)];
+        board[x][grid.ROWS].color = randomPiece(game.level);
       }
       loopCounter = 0;
       while (
@@ -392,7 +393,7 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       ) {
         loopCounter++;
         if (detectInfiniteLoop("generateOpeningBoard3", loopCounter)) break;
-        board[x][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+        board[x][grid.ROWS + 1].color = randomPiece(game.level);
       }
     }
   }

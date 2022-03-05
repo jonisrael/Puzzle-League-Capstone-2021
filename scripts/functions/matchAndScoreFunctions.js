@@ -259,7 +259,7 @@ export function checkMatch() {
             game.raiseDelay = potentialRaiseDelay;
           if (game.raiseDelay < 12) game.raiseDelay = 12;
           if (game.raiseDelay > 180) game.raiseDelay = 180;
-          if (game.level > 6 && game.raiseDelay > 60) game.raiseDelay = 60;
+          if (game.level > 6 && game.raiseDelay > 120) game.raiseDelay = 120;
           if (debug.enabled) {
             console.log(
               `New Raise Delay = ${game.raiseDelay} = 6 * (${game.boardRiseSpeed}) + 6 * (${game.currentChain} - 1)))`

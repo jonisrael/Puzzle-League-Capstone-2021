@@ -94,6 +94,7 @@ import {
   debugSquares,
   sound,
   updateFrameMods,
+  randomPiece,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -728,7 +729,7 @@ export function createNewRow(board) {
     }
     board[c][grid.ROWS - 1].color = board[c][grid.ROWS].color;
     board[c][grid.ROWS].color = board[c][grid.ROWS + 1].color;
-    board[c][grid.ROWS + 1].color = PIECES[randInt(PIECES.length)];
+    board[c][grid.ROWS + 1].color = randomPiece(game.level);
   }
   board = fixNextDarkStack(board);
 

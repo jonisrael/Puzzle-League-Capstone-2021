@@ -136,8 +136,14 @@ function doMouseDown(e) {
   if (!touch.enabled || cpu.enabled) return;
   touch.moveOrderExists = false;
   touch.mouse.clicked = true;
-  touch.doubleClickCounter++;
-  touch.doubleClickTimer += 20;
+  if (!game.disableRaise) {
+    touch.doubleClickCounter++;
+    touch.doubleClickTimer += 20;
+  } else {
+    touch.doubleClickCounter = 0;
+    touch.doubleClickTimer = 0;
+  }
+
   if (!updateMousePosition(win.cvs, e)) {
     // click was outside the borders of the canvas
     // touch.thereIsABlockCurrentlySelected = false;

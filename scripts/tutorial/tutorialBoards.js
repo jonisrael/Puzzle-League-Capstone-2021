@@ -1,4 +1,4 @@
-import { blockType, cpu, game, PIECES, randInt } from "../global";
+import { blockType, cpu, game, PIECES, randInt, randomPiece } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
 import { tutorialBoard, tutorialInputs } from "./tutorialScript";
@@ -241,7 +241,7 @@ export function createTutorialBoard(colorLocations) {
       block = newBlock(c, r);
       game.board[c].push(block);
       if (r > ROWS - 1) {
-        game.board[c][r].color = PIECES[randInt(PIECES.length)];
+        game.board[c][r].color = randomPiece(game.level);
         game.board[c][r].type = blockType.DARK;
       } else {
         colorLocations.forEach((arr) => {

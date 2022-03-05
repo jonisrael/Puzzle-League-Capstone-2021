@@ -58,6 +58,7 @@ export function updateGrid(frameAdvance = false) {
         Square.availForPrimaryChain = false;
         Square.availForSecondaryChain = false;
         Square.touched = false;
+        Square.targetX = undefined;
         Square.timer = 0;
       }
       if (!highestRowFound && Square.color !== "vacant") {
