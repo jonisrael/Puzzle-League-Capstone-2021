@@ -76,6 +76,7 @@ export const announcer = {
     audio.announcerNeverForgetEvent,
     audio.announcerOnlyWordWorthy,
     audio.announcerWatchChampBask,
+    audio.announcerIncredibleCantBelieve,
   ],
   openingIndexLastPicked: -1, // These are used to minimize repeat dialogues
   smallChainIndexLastPicked: -1,
@@ -172,10 +173,10 @@ export const grid = {
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
-  speedValues: [120, 48, 34, 20, 12, 8, 6, 2, 2, 2, 2, 2, 2, 1],
-  clearValues: [200, 100, 88, 76, 68, 56, 42, 36, 36, 28, 28, 20, 20, 16],
-  blinkValues: [120, 60, 54, 48, 42, 36, 28, 24, 24, 16, 16, 12, 12, 8],
-  faceValues: [80, 40, 34, 28, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
+  speedValues: [120, 48, 36, 24, 12, 8, 6, 2, 2, 2, 2, 2, 2, 1],
+  clearValues: [200, 100, 92, 84, 72, 60, 48, 36, 36, 28, 28, 20, 20, 16],
+  blinkValues: [120, 60, 56, 52, 46, 40, 32, 24, 24, 16, 16, 12, 12, 8],
+  faceValues: [80, 40, 36, 32, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
   popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6, 6, 6, 6],
   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12, 12, 12, 12],
   multValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3, 3.25, 3.25, 3.5, 3.5, 4],
@@ -329,9 +330,13 @@ export let game = {
   scoreEarned: 0,
   scoreMultiplier: 1,
   chainScoreAdded: 0,
+  previousChainScore: 0,
+  drawScoreTimeout: 0,
   currentChain: 0,
   combo: 0,
+  // clearingGroups: [],
   lastChain: 0,
+  previousChain: 0,
   largestChain: 0,
   largestChainScore: 0,
   largestCombo: 0,
@@ -570,6 +575,7 @@ export function updateFrameMods(frameCount) {
   game.frameMod[4] = frameCount % 4;
   game.frameMod[6] = frameCount % 6;
   game.frameMod[18] = frameCount % 18;
+  game.frameMod[20] = frameCount % 20;
   game.frameMod[30] = frameCount % 30;
   game.frameMod[60] = frameCount % 60;
   game.frameMod[1200] = frameCount % 1200;
@@ -667,6 +673,12 @@ export function vacantBlockBelow(Square) {
     }
   }
   return false;
+}
+
+export function spawnSquare(digit) {
+  let [x, y] = [game.cursor.x, game.cursor.y];
+  if (digit < PIECES.length) game.board[x][y].color = PIECES[digit];
+  else game.board[x][y].color = "vacant";
 }
 
 export function transferProperties(FirstBlock, SecondBlock, type) {

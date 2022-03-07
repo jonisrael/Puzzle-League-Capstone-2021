@@ -50,6 +50,7 @@ import {
   tutorialBoard,
 } from "../tutorial/tutorialScript";
 import { createHeadsUpDisplay } from "./setUpViewport";
+import { showNotification } from "./showNotification";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed = 1, version = 1) {
@@ -122,7 +123,9 @@ export function startGame(selectedGameSpeed = 1, version = 1) {
   perf.sumOfPauseTimes = 0;
   perf.realTimeDiff = 0;
   win.version = version;
-  win.appleProduct = false; // TEMPORARY
+  if (win.appleProduct) {
+    showNotification("appleWarning");
+  }
   requestAnimationFrame(gameLoop);
   // if (version === 1) {
   //   requestAnimationFrame(gameLoop);

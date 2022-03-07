@@ -28,10 +28,10 @@ p {
   margin: auto;
   background-color: lightgrey;
   text-align: center;
-  padding: 2rem;
+  padding: 1rem 0;
   border-radius: 1rem;
-  max-height: 90%;
-  max-width: 75%;
+  /* max-height: 90%; */
+  max-width: 80vw;
   overflow: auto;
 }
 
@@ -41,10 +41,17 @@ p {
   padding-top: 1vh;
 }
 
+#patch-notes-block p {
+  color: black;
+  text-indent: 0;
+  font-size: 1.25rem;
+  text-align: center !important;
+}
+
 #patch-notes-block label {
   font-weight: bold;
   text-align: left;
-  color: red;
+  /* color: red; */
 }
 #patch-notes-block li {
   text-align: left;

@@ -219,6 +219,7 @@ export function checkMatch() {
       win.mainInfoDisplay.style.color = "black";
       game.message = `${game.currentChain} chain!`;
       game.messageChangeDelay = 90;
+      if (game.currentChain > 1) game.drawScoreTimeout = -2;
 
       // now to assign timers and initiate clear animation
       assignClearTimers(
@@ -259,7 +260,7 @@ export function checkMatch() {
             game.raiseDelay = potentialRaiseDelay;
           if (game.raiseDelay < 12) game.raiseDelay = 12;
           if (game.raiseDelay > 180) game.raiseDelay = 180;
-          if (game.level > 6 && game.raiseDelay > 120) game.raiseDelay = 120;
+          if (game.level > 6 && game.raiseDelay > 90) game.raiseDelay = 90;
           if (debug.enabled) {
             console.log(
               `New Raise Delay = ${game.raiseDelay} = 6 * (${game.boardRiseSpeed}) + 6 * (${game.currentChain} - 1)))`
@@ -324,10 +325,10 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
 
 export function updateScore(blocksCleared, chain, multiplier, earnsChainBonus) {
   let blockBonus = 0;
-  let chainBonus = 0;
-  for (let i = 3; i <= blocksCleared; i++) {
-    blockBonus += i * 10;
+  for (let i = blocksCleared; i > 2; i--) {
+    blockBonus += (i - 2) * 10;
   }
+  let chainBonus = 0;
   if (earnsChainBonus) {
     chainBonus += (chain - 1) * 100;
   }

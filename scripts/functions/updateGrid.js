@@ -28,6 +28,7 @@ export function updateGrid(frameAdvance = false) {
   let highestRowFound = false;
   game.pauseStack = false;
   game.highestCols = [];
+  if (game.drawScoreTimeout > 0) game.drawScoreTimeout--;
   if (touch.doubleClickTimer > 0) {
     touch.doubleClickTimer -= 1;
     if (touch.doubleClickTimer === 0) touch.doubleClickCounter = 0;
@@ -154,6 +155,7 @@ export function updateGrid(frameAdvance = false) {
           case Square.switchToPoppedFrame + 2:
             if (!win.appleProduct) playAudio(audio.blockClear);
             game.score += Math.round(game.scoreMultiplier * 10);
+            game.chainScoreAdded += Math.round(game.scoreMultiplier * 10);
             break;
           case 0:
             Square.color = "vacant";

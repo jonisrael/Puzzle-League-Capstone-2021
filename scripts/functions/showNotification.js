@@ -1,26 +1,61 @@
 import * as state from "../../store";
 
 import html from "html-literal";
+import { game, win } from "../global";
 
-export function showPatchNotes() {
+export function showNotification(messageLabel) {
+  appleWarning();
+  return;
+  // let patchNotesOverlay = document.createElement("div");
+  // patchNotesOverlay.setAttribute("id", "patch-notes-overlay");
+  // document.getElementById("home-page").prepend(patchNotesOverlay);
+  // let patchNotesBlock = document.createElement("div");
+  // patchNotesBlock.setAttribute("id", "patch-notes-block");
+  // patchNotesOverlay.appendChild(patchNotesBlock);
+  // if (messageLabel === "appleWarning") {
+  //   patchNotesBlock.innerHTML = appleWarning();
+  // }
+  // patchNotesBlock.innerHTML = html`
+  //   <h2>
+  //     Watch the AI play!
+  //     <a
+  //       href="https://youtu.be/QOKbWRvVWUM"
+  //       target="_blank"
+  //       rel="noopener noreferrer"
+  //       >https://youtu.be/QOKbWRvVWUM</a
+  //     >
+  //   </h2>
+  // `;
+}
+
+function appleWarning() {
+  console.log("attempting to show apple warning");
+  if (localStorage.getItem("apple-warning-shown") === "true") return;
   let patchNotesOverlay = document.createElement("div");
   patchNotesOverlay.setAttribute("id", "patch-notes-overlay");
   document.getElementById("home-page").prepend(patchNotesOverlay);
   let patchNotesBlock = document.createElement("div");
   patchNotesBlock.setAttribute("id", "patch-notes-block");
   patchNotesOverlay.appendChild(patchNotesBlock);
+  game.paused = 1;
+  localStorage.setItem("mute-music", "true");
+  localStorage.setItem("mute-sfx", "true");
+  localStorage.setItem("mute-announcer", "true");
+  win.muteMusic.checked = true;
+  win.muteAnnouncer.checked = true;
+  win.muteSFX.checked = true;
+  localStorage.setItem("apple-warning-shown", "true");
   patchNotesBlock.innerHTML = html`
-    <h2>
-      Watch the AI play!
-      <a
-        href="https://youtu.be/QOKbWRvVWUM"
-        target="_blank"
-        rel="noopener noreferrer"
-        >https://youtu.be/QOKbWRvVWUM</a
-      >
-    </h2>
-    <h2 style="color:black">Click Anywhere or Press Any Key to Continue</h2>
+    <p>
+      Apple products have issues with music and sound usually not playing
+      correctly, and has automatically been disabled. You can still re-enable it
+      in the options menu. <br /><strong>Click anywhere to continue</strong>.
+    </p>
   `;
+  patchNotesOverlay.addEventListener("click", () => {
+    patchNotesOverlay.remove();
+    game.paused = 0;
+  });
 }
 
 // <h2 style="color:black;">

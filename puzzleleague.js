@@ -95,6 +95,7 @@ import {
   sound,
   updateFrameMods,
   randomPiece,
+  spawnSquare,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -282,7 +283,7 @@ class Block {
 
   drawBlockMessage() {
     drawScoreEarnedMessage(
-      `+${game.scoreEarned}`,
+      `+${game.chainScoreAdded}`,
       this.x,
       this.y,
       grid.SQ,
@@ -542,17 +543,12 @@ export function checkIfHelpPlayer() {
 export function drawGrid() {
   if (game.frames % perf.drawDivisor === 1) return;
   let blocksAreSwapping = false; // to be placed on top of drawn grid
-  let messageAlreadyDrawn = false;
-  let firstBlinkingSquare;
+  // let clearingBlockFound = false;
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
-      if (!messageAlreadyDrawn && Square.type === "blinking") {
-        firstBlinkingSquare = [x, y];
-        messageAlreadyDrawn = true;
-      }
 
       Square.drawGridLines();
 
@@ -602,13 +598,10 @@ export function drawGrid() {
           : "illegalCursorUp";
       }
     }
-    game.cursor.draw();
-  }
 
-  if (firstBlinkingSquare) {
-    let [x, y] = firstBlinkingSquare;
-    game.board[x][y].lightTimer = 30;
-    game.board[x][y].drawBlockMessage();
+    // drawScoreEarnedMessage();
+
+    game.cursor.draw();
   }
 }
 
@@ -631,6 +624,10 @@ export function isChainActive() {
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
   game.boardRiseRestarter = 0;
+  game.previousChainScore = game.chainScoreAdded;
+  game.previousChain = game.currentChain;
+  game.chainScoreAdded = 0;
+  game.drawScoreTimeout = 180;
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
   helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
@@ -804,14 +801,14 @@ function TRAINING_CONTROL(event) {
   }
 }
 
-// document.addEventListener("keydown", DEBUG_CONTROL);
-// function DEBUG_CONTROL(event) {
-//   if (debug.enabled) {
-//     if (event.code.includes("Digit")) {
-//       spawnSquare(event.code[5]);
-//     }
-//   }
-// }
+document.addEventListener("keydown", DEBUG_CONTROL);
+function DEBUG_CONTROL(event) {
+  if (debug.enabled) {
+    if (event.code.includes("Digit")) {
+      spawnSquare(event.code[5]);
+    }
+  }
+}
 
 document.addEventListener("keydown", KEYBOARD_CONTROL);
 function KEYBOARD_CONTROL(event) {
@@ -819,6 +816,7 @@ function KEYBOARD_CONTROL(event) {
   if (document.getElementById("patch-notes-overlay")) {
     if (event.keyCode < 200) {
       document.getElementById("patch-notes-overlay").remove();
+      game.paused = 0;
       win.patchNotesShown = true;
     }
   }
@@ -988,6 +986,18 @@ function KEYBOARD_CONTROL(event) {
         if (event.keyCode === 188)
           // ,
           console.log(touch.moveOrderList);
+        if (event.keyCode === 190) {
+          // .
+          let currentBoard = [];
+          for (let x = 0; x < grid.COLS; x++) {
+            for (let y = 0; y < grid.ROWS; y++) {
+              if (game.board[x][y].color !== "vacant") {
+                currentBoard.push([x, y, game.board[x][y].color]);
+              }
+            }
+          }
+          console.log(currentBoard);
+        }
         if (event.keyCode === 73) {
           // i   starts the tutorial
           startTutorial();

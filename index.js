@@ -18,7 +18,7 @@ import { defaultControls, savedControls } from "./scripts/controls";
 import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
-import { showPatchNotes } from "./scripts/functions/showPatchNotes";
+import { showNotification } from "./scripts/functions/showNotification";
 import {
   getNewKeyboardControls,
   getNewGamePadControls,

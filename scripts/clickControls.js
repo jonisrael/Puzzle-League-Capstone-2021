@@ -85,12 +85,12 @@ export function moveBlockByRelease(x, y) {
   if (Square.x === touch.mouse.x) return;
   Square.targetX = touch.mouse.x; // move to x--coordinate
   touch.moveOrderList.push([Square.targetX, Square.y]);
-  console.log(
-    game.frames,
-    touch.moveOrderList,
-    "new order added:",
-    touch.moveOrderList[0]
-  );
+  // console.log(
+  //   game.frames,
+  //   touch.moveOrderList,
+  //   "new order added:",
+  //   touch.moveOrderList[0]
+  // );
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
@@ -157,18 +157,20 @@ function doMouseDown(e) {
   ) {
     touch.doubleClickCounter = 0;
     if (touch.moveOrderList.length > 0) {
-      console.log(
-        game.frames,
-        "Interrupt Move Order:",
-        touch.moveOrderList[0],
-        "from",
-        touch.moveOrderList
-      );
+      // if (debug.enabled)
+      // console.log(
+      //   game.frames,
+      //   "Interrupt Move Order:",
+      //   touch.moveOrderList[0],
+      //   "from",
+      //   touch.moveOrderList
+      // );
       let [tarX, y] = touch.moveOrderList.pop();
       for (let i = 0; i < tarX; i++) {
         if (game.board[i][y].targetX === tarX) {
           game.board[i][y].targetX = undefined;
-          console.log("Remaining orders:", touch.moveOrderList);
+          // if (debug.enabled)
+          //   console.log("Remaining orders:", touch.moveOrderList);
           break;
         }
       }
@@ -273,17 +275,17 @@ export function createClickListeners() {
     e.preventDefault();
     // if (game.frames > 0) game.raisePressed = true;
     if (touch.moveOrderList.length > 0) {
-      console.log(
-        game.frames,
-        touch.moveOrderList,
-        "interrupt touch move order",
-        touch.moveOrderList[0]
-      );
+      // console.log(
+      //   game.frames,
+      //   touch.moveOrderList,
+      //   "interrupt touch move order",
+      //   touch.moveOrderList[0]
+      // );
       let [tarX, y] = touch.moveOrderList.pop();
       for (let i = 0; i < grid.COLS; i++) {
         if (game.board[i][y].targetX === tarX) {
           game.board[i][y].targetX = undefined;
-          console.log("Remaining orders:", touch.moveOrderList);
+          // console.log("Remaining orders:", touch.moveOrderList);
           break;
         }
       }
