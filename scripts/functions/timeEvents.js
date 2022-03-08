@@ -20,10 +20,10 @@ export function checkTime(beforeOvertime) {
   switch (eventFrames) {
     case -180:
       sound.Music[1].pause();
-      if (win.restartGame) {
-        game.frames = -62;
-        break;
-      }
+      // if (win.restartGame) {
+      //   game.frames = -62;
+      //   break;
+      // }
       debug.show = false;
       game.messagePriority = "3...";
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);

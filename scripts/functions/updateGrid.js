@@ -148,6 +148,7 @@ export function updateGrid(frameAdvance = false) {
           Square.type === "face" ||
           Square.type === "popped")
       ) {
+        Square.targetX = Square.previewX = undefined;
         game.pauseStack = true;
         game.boardRiseDisabled = true;
         // console.log(x, y, Square);

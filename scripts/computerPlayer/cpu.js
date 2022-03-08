@@ -255,6 +255,7 @@ function cpuMoveToTarget(input, targetX, targetY, swapAtTarget) {
   else if (game.cursor.x > targetX) input.left = true;
   else if (game.cursor.x < targetX) input.right = true;
   else if (swapAtTarget && !game.disableSwap) input.swap = true; // reached target
+  // return input;
 }
 
 function randomAction(input) {

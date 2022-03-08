@@ -15,6 +15,13 @@ export default (st) => html`
         <button id="arcade-button" class="default-button start-buttons">
           Play Arcade! (Enter)
         </button>
+        <button
+          id="tutorial-mode"
+          class="default-button start-buttons"
+          style="display:none"
+        >
+          Interactive Tutorial (I)
+        </button>
         <button id="training-mode" class="default-button start-buttons">
           Training Mode (T)
         </button>
@@ -55,40 +62,7 @@ export default (st) => html`
         will be watching and cheering you on, so be sure to give it your best
         shot!
       </p>
-      <hr />
-      <h1>Compatibility</h1>
-      <p>
-        This game is keyboard only, though I may try and add experimental
-        touch/touch support in the future for moving tiles. This game
-        <strong>does NOT usually run on Firefox correctly</strong>, but runs
-        fine on Chrome, Safari, and Edge, with Edge somehow having the best
-        performance results (If you have a Windows computer, Microsoft Edge is
-        preinstalled).
-      </p>
-      <hr />
-      <h1>Game Controller Support</h1>
-      <p>
-        It is now released! However it is experimental and may not work on all
-        devices or controllers. You can click the "Set Controls" view at the top
-        to set your controls. If a gamepad is detected to be connected, a
-        message will appear at the top of the page.
-      </p>
-      <hr />
-      <h1 style="color:black">Notice about Posting Scores</h1>
-      <p style="color:black">
-        This game was written in javascript as a capstone for the
-        <a href="https://savvycoders.com/fullstackdevelopmentcourse/"
-          >Savvy Coders Full Stack Development Bootcamp</a
-        >.
-        <strong
-          >Unfortunately it is not a consistent programming language with
-          running games optimally</strong
-        >, and there are issues with the game running too slowly on certain
-        computers and can lead to an unintended advantage. If the app detects
-        that the in-game timer is six or more seconds behind real time,
-        <strong>your score cannot be ranked.</strong>
-      </p>
-      <hr />
+      <!--   -->
     </div>
   </section>
 `;

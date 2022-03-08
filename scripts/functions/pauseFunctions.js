@@ -17,6 +17,7 @@ import { render } from "../../index";
 import * as state from "../../store";
 import { setUpTrainingMode } from "./trainingControls";
 import { drawGrid } from "../../puzzleleague";
+import { previous } from "./recordGame";
 
 export function pause(lostFocus = false, message = "Pause") {
   // document.getElementById("fps-display").style.display = "none";
@@ -38,6 +39,8 @@ export function pause(lostFocus = false, message = "Pause") {
     touch,
     "\ncpu",
     cpu,
+    "\nprevious",
+    previous,
     "\nhelpPlayer",
     helpPlayer,
     "\ndebug",

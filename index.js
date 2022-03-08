@@ -140,29 +140,44 @@ function addEventListeners(st) {
         e.gamepad.axes.length
       );
     });
-    document.getElementById("arcade-button").addEventListener("click", () => {
-      api.data = getWorldTimeAPI();
-      game.mode = "arcade";
-      document.getElementById("arcade-button").remove();
-      document.getElementById("training-mode").remove();
-      document.getElementById("ai-plays-button").remove();
-      startGame(1);
-    });
-    document.getElementById("training-mode").addEventListener("click", () => {
-      api.data = getWorldTimeAPI();
-      game.mode = "training";
-      document.getElementById("arcade-button").remove();
-      document.getElementById("training-mode").remove();
-      document.getElementById("ai-plays-button").remove();
-      startGame(1);
-    });
-    document.getElementById("ai-plays-button").addEventListener("click", () => {
-      game.mode = "cpu-play";
-      document.getElementById("arcade-button").remove();
-      document.getElementById("training-mode").remove();
-      document.getElementById("ai-plays-button").remove();
-      startGame(1);
-    });
+
+    let startButtons = Array.from(
+      document.getElementsByClassName("start-buttons")
+    );
+    for (let i = 0; i < startButtons.length; i++) {
+      startButtons[i].addEventListener("click", () => {
+        api.data = getWorldTimeAPI();
+        startButtons.forEach((element) => element.remove());
+        if (i === 0) game.mode = "arcade";
+        if (i === 1) game.mode = "tutorial";
+        if (i === 2) game.mode = "training";
+        if (i === 3) game.mode = "cpu-play";
+        startGame(1);
+      });
+    }
+    // document.getElementById("arcade-button").addEventListener("click", () => {
+    //   api.data = getWorldTimeAPI();
+    //   game.mode = "arcade";
+    //   document.getElementById("arcade-button").remove();
+    //   document.getElementById("training-mode").remove();
+    //   document.getElementById("ai-plays-button").remove();
+    //   startGame(1);
+    // });
+    // document.getElementById("training-mode").addEventListener("click", () => {
+    //   api.data = getWorldTimeAPI();
+    //   game.mode = "training";
+    //   document.getElementById("arcade-button").remove();
+    //   document.getElementById("training-mode").remove();
+    //   document.getElementById("ai-plays-button").remove();
+    //   startGame(1);
+    // });
+    // document.getElementById("ai-plays-button").addEventListener("click", () => {
+    //   game.mode = "cpu-play";
+    //   document.getElementById("arcade-button").remove();
+    //   document.getElementById("training-mode").remove();
+    //   document.getElementById("ai-plays-button").remove();
+    //   startGame(1);
+    // });
     // document.addEventListener("click", () => {
     //   if (loadedAudios.length == 0) {
     //     console.log("user has clicked the document, loading audios.");

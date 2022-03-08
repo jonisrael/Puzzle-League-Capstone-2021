@@ -114,7 +114,7 @@ export function runTutorialScript(input, frame, state) {
 }
 
 export function startTutorial() {
-  // game.board = [];
+  game.board = [];
   tutorial.state = game.frames = tutorial.msgIndex = 0;
   // game.board = createTutorialBoard(tutorial.board[tutorial.state]);
   sound.Music[1].src = audio.trainingMusic;

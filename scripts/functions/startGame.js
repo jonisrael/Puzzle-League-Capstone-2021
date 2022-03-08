@@ -51,9 +51,10 @@ import {
 } from "../tutorial/tutorialScript";
 import { createHeadsUpDisplay } from "./setUpViewport";
 import { showNotification } from "./showNotification";
+import { createBoard, previous, saveCurrentBoard } from "./recordGame";
 // import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
 
-export function startGame(selectedGameSpeed = 1, version = 1) {
+export function startGame(selectedGameSpeed = 1) {
   // Object.keys(game).forEach(key => (game[key] = newGame[key]));
   leaderboard.reason = "";
   getWorldTimeAPI();
@@ -66,7 +67,7 @@ export function startGame(selectedGameSpeed = 1, version = 1) {
       break;
     }
   }
-  console.log("Game Speed:", selectedGameSpeed, "| Version: ", version);
+  console.log("Game Speed:", selectedGameSpeed);
   console.log(`Gamepad Port Connected:`, win.gamepadPort);
   // console.log(Object.keys(newGame));
   // Object.keys(game).forEach(key => {
@@ -98,10 +99,17 @@ export function startGame(selectedGameSpeed = 1, version = 1) {
   touch.arrowLists.length = 0;
   game.tutorialRunning = false;
   // document.getElementById("game-info-table").style.display = "inline";
-  game.board = generateOpeningBoard(40, 7);
+  if (game.mode !== "tutorial") {
+    game.board = generateOpeningBoard(42, 8);
+  } else {
+    game.tutorialRunning = true;
+    game.board = generateOpeningBoard(42, 8);
+    startTutorial();
+  }
+
   Object.keys(saveState).forEach((stateType) => (saveState[stateType] = {}));
   // if (!win.tutorialPlayedOnce && game.mode == "arcade") {
-  //   win.tutorialPlayedOnce = true;
+  //   win.tutorialPlayedOnce = true;g
   //   // game.board = generateOpeningBoard(40, 7);
   //   // game.board = generateOpeningBoard(30, 5);
   //   // startTutorial();
@@ -122,14 +130,10 @@ export function startGame(selectedGameSpeed = 1, version = 1) {
   perf.gameStartTime = perf.then;
   perf.sumOfPauseTimes = 0;
   perf.realTimeDiff = 0;
-  win.version = version;
   if (win.appleProduct) {
     showNotification("appleWarning");
   }
   requestAnimationFrame(gameLoop);
-  // if (version === 1) {
-  //   requestAnimationFrame(gameLoop);
-  // }
 }
 
 export function resetGameVariables() {

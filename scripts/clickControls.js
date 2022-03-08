@@ -226,6 +226,10 @@ function doMouseMove(e) {
       game.cursor.x = touch.mouse.x;
       game.cursor.y = touch.mouse.y;
       selectBlock();
+    } else {
+      const SelectedBlock =
+        game.board[touch.selectedBlock.x][touch.selectedBlock.y];
+      SelectedBlock.previewX = touch.mouse.x;
     }
   }
 }
@@ -238,7 +242,10 @@ function doMouseUp(e) {
     console.log(game.board[touch.mouse.x][touch.mouse.y]);
   }
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
+    const SelectedBlock =
+      game.board[touch.selectedBlock.x][touch.selectedBlock.y];
     moveBlockByRelease(touch.selectedBlock.x, touch.selectedBlock.y);
+    SelectedBlock.previewX = undefined;
   }
 }
 

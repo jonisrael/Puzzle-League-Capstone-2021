@@ -37,7 +37,7 @@ import {
   isBlockAirborne,
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
-import { cpuAction } from "./scripts/computerPlayer/cpu";
+import { cpuAction, cpuClick } from "./scripts/computerPlayer/cpu";
 import {
   action,
   actionHeld,
@@ -116,6 +116,7 @@ import {
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction } from "./scripts/functions/trainingControls";
 import { drawScoreEarnedMessage } from "./scripts/functions/drawCanvasShapesAndText";
+import { previous, saveCurrentBoard } from "./scripts/functions/recordGame";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -178,6 +179,7 @@ class Block {
     lightTimer = 0,
     swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
     targetX = undefined,
+    previewX = undefined,
     smartMatch = {
       lowestKeyCoord: undefined,
       highestKeyCoord: undefined,
@@ -205,6 +207,7 @@ class Block {
     this.lightTimer = lightTimer;
     this.swapOrders = swapOrders;
     this.targetX = targetX;
+    this.previewX = previewX;
     this.smartMatch = smartMatch;
   }
 
@@ -244,16 +247,27 @@ class Block {
   }
 
   drawArrows(move = "Move") {
-    if (this.targetX === undefined || game.over) return;
+    if (
+      (this.previewX === undefined && this.targetX === undefined) ||
+      game.over
+    )
+      return;
+    let moveToX = this.previewX === undefined ? this.targetX : this.previewX;
+    if (moveToX === this.x) return;
     let filename;
-    let inc = this.targetX < this.x ? -1 : 1;
-    let dir = this.targetX < this.x ? "Left" : "Right";
+    let inc = moveToX < this.x ? -1 : 1;
+    let dir = moveToX < this.x ? "Left" : "Right";
     let bufferDetected = false;
+    let previewDetected = false;
     win.loopCounter = 0;
     for (let i = this.x; true; i += inc) {
       win.loopCounter++;
       if (detectInfiniteLoop("drawArrows", win.loopCounter)) break;
-      if (
+      if (!previewDetected && moveToX === this.previewX) {
+        previewDetected = true;
+        move = "Buffer";
+        i = this.x;
+      } else if (
         !bufferDetected &&
         CLEARING_TYPES.includes(game.board[i][this.y].type)
       ) {
@@ -263,7 +277,7 @@ class Block {
       }
       if (i === this.x) {
         filename = `arrow${dir}${move}Start`;
-      } else if (i === this.targetX) {
+      } else if (i === moveToX) {
         filename = `arrow${dir}${move}End`;
       } else {
         filename = `arrowMid${move}`;
@@ -277,7 +291,7 @@ class Block {
         );
       }
 
-      if (i === this.targetX) break;
+      if (i === moveToX) break;
     }
   }
 
@@ -988,15 +1002,12 @@ function KEYBOARD_CONTROL(event) {
           console.log(touch.moveOrderList);
         if (event.keyCode === 190) {
           // .
-          let currentBoard = [];
-          for (let x = 0; x < grid.COLS; x++) {
-            for (let y = 0; y < grid.ROWS; y++) {
-              if (game.board[x][y].color !== "vacant") {
-                currentBoard.push([x, y, game.board[x][y].color]);
-              }
-            }
-          }
-          console.log(currentBoard);
+          saveCurrentBoard(game.board, true);
+          saveCurrentBoard(game.board, false);
+        }
+        if (event.keyCode === 220) {
+          // \
+          cpuClick([game.cursor.x, game.cursor.y, 5, "Move"]);
         }
         if (event.keyCode === 73) {
           // i   starts the tutorial
@@ -1095,6 +1106,7 @@ export function gameLoop() {
     closeGame(game.over);
     if (win.restartGame) {
       startGame(perf.gameSpeed);
+      win.restartGame = false;
     }
     return;
   }
@@ -1334,6 +1346,8 @@ export function gameLoop() {
           if (debug.enabled)
             console.log("restarting rise, delay remaining:", game.raiseDelay);
           game.boardRiseRestarter = 0;
+          touch.doubleClickCounter = 0;
+          touch.doubleClickTimer = 0;
           game.boardRiseDisabled = false;
           game.pauseStack = false;
         }

@@ -220,6 +220,7 @@ export function stickyCheck(x, y) {
   //   // if (debug.enabled) pause("Fake match detected, check console");
   //   result = false;
   // }
+  if (debug.enabled && result) console.log(game.frames, result);
   return !!result; // send true if not falsy value
 }
 
@@ -255,7 +256,9 @@ function checkBelowMatch(Square) {
 
   [SecondBlock, pair] = determinePair(Square, "horizontal");
 
-  if (pair) {
+  // We are looking to find if the pair's lowest keyY square are equal.
+  if (pair && lowKeyY === findClearLine(SecondBlock, true)[1][1]) {
+    // findClearLine(SecondBlock, true)[1][1] represents the lowKeyY of SecondBlock
     smartMatch.secondCoord = [SecondBlock.x, SecondBlock.y];
     let dir = pair == "L" ? -1 : 1;
     if (x + 2 * dir >= 0 && x + 2 * dir < grid.COLS) {
@@ -434,37 +437,11 @@ function findSolidBlockBelow(x, y, stopAtClearing = false) {
   return undefined;
 }
 
-function findClearLine(Square) {
+function findClearLine(Square, stopAfterCheckingBelow = false) {
   let [x, y] = [Square.x, Square.y];
   let lowestKeySquare = [];
   let highestClearSquare = [];
   let clearLine = "";
-
-  // check above (Must be at least 2 rows from A)
-  if (y >= 1) {
-    // if first square is vacant, that will be the key square.
-    let useOriginalSquare = Square.color === "vacant";
-    for (let j = y - 1; j >= 0; j--) {
-      if (blockIsSolid(game.board[x][j])) {
-        // end loop immediately if solid non-pair above is detected
-        if (Square.color !== game.board[x][j].color) break;
-      }
-      if (CLEARING_TYPES.includes(game.board[x][j].type)) {
-        lowestKeySquare = useOriginalSquare ? [x, y] : [x, j];
-        clearLine = "a";
-        if (j === 0) {
-          highestClearSquare = [x, 0];
-        }
-        // now find the highest clearing square
-        for (let k = j - 1; k >= 0; k--) {
-          if (!CLEARING_TYPES.includes(game.board[x][k].type)) {
-            highestClearSquare = [x, k + 1];
-            return [clearLine, lowestKeySquare, highestClearSquare];
-          }
-        }
-      }
-    }
-  }
 
   // check below
   if (y < grid.ROWS - 1) {
@@ -489,6 +466,34 @@ function findClearLine(Square) {
         lowestKeySquare = [x, grid.ROWS - 1];
         return [clearLine, lowestKeySquare, highestClearSquare];
       } else if (j - y == 2) break;
+    }
+  }
+
+  if (stopAfterCheckingBelow) return [false, false, false];
+
+  // check above (Must be at least 2 rows from A)
+  if (y >= 1) {
+    // if first square is vacant, that will be the key square.
+    let useOriginalSquare = Square.color === "vacant";
+    for (let j = y - 1; j >= 0; j--) {
+      if (blockIsSolid(game.board[x][j])) {
+        // end loop immediately if solid non-pair above is detected
+        if (Square.color !== game.board[x][j].color) break;
+      }
+      if (CLEARING_TYPES.includes(game.board[x][j].type)) {
+        lowestKeySquare = useOriginalSquare ? [x, y] : [x, j];
+        clearLine = "a";
+        if (j === 0) {
+          highestClearSquare = [x, 0];
+        }
+        // now find the highest clearing square
+        for (let k = j - 1; k >= 0; k--) {
+          if (!CLEARING_TYPES.includes(game.board[x][k].type)) {
+            highestClearSquare = [x, k + 1];
+            return [clearLine, lowestKeySquare, highestClearSquare];
+          }
+        }
+      }
     }
   }
 

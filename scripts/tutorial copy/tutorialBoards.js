@@ -35,6 +35,7 @@ const openingBoard = [
 ];
 
 export const tutorialBoards = [
+  [],
   // smallBoard,
   openingBoard,
   [
