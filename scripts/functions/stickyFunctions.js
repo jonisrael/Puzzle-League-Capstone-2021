@@ -254,6 +254,9 @@ function checkBelowMatch(Square) {
     }
   }
 
+  // stop looking if block below is solid
+  if (!blockVacOrClearing(game.board[Square.x][Square.y + 1])) return "";
+
   [SecondBlock, pair] = determinePair(Square, "horizontal");
 
   // We are looking to find if the pair's lowest keyY square are equal.
@@ -305,7 +308,7 @@ function checkBelowMatch(Square) {
     if (isSolidPair(Square, SecondBlock) && isSolidPair(Square, ThirdBlock)) {
       smartMatch.secondCoord = [SecondBlock.x, SecondBlock.y];
       smartMatch.thirdCoord = [ThirdBlock.x, ThirdBlock.y];
-      return "Main |B| Lef1 Lef2";
+      return "Main |B| Lef1 Rgt1";
     }
   }
 
@@ -325,7 +328,7 @@ function checkBelowMatch(Square) {
     if (isSolidPair(Square, SecondBlock) && isSolidPair(Square, ThirdBlock)) {
       smartMatch.secondCoord = [SecondBlock.x, SecondBlock.y];
       smartMatch.thirdCoord = [ThirdBlock.x, ThirdBlock.y];
-      return "Main |B| Lef1 Lef2";
+      return "Main |B| Rgt1 Rgt2";
     }
   }
 

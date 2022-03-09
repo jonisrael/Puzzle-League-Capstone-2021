@@ -71,7 +71,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
           INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
           game.board[x + 1][j].color === blockColor.VACANT)
       ) {
-        legalSwapFailReason = "a block is airborne";
+        legalSwapFailReason = "airborne block";
         // game.message = "Swap Failed: Airborne Block";
         // game.messageChangeDelay = 90;
         break;
