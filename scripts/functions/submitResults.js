@@ -191,7 +191,6 @@ export function extractTimeFromAPI(dateTimeString) {
   let yearStr = `${dateTimeString.slice(0, 4)}`;
 
   let hour = hourStr[0] === "0" ? parseInt(hourStr[1]) : parseInt(hourStr);
-  console.log(hour);
   let meridian = "A.M.";
   if (hour === 12) {
     meridian = "P.M.";

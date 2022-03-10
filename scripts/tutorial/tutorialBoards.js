@@ -256,3 +256,25 @@ export function createTutorialBoard(colorLocations) {
   fixNextDarkStack();
   return game.board;
 }
+
+// flatten stack board
+// [
+//   [0, 1, "purple"],
+//   [0, 2, "blue"],
+//   [0, 3, "yellow"],
+//   [0, 4, "green"],
+//   [0, 5, "red"],
+//   [0, 6, "blue"],
+//   [0, 7, "yellow"],
+//   [0, 8, "red"],
+//   [0, 9, "purple"],
+//   [0, 10, "green"],
+//   [0, 11, "cyan"],
+//   [1, 10, "cyan"],
+//   [1, 11, "red"],
+//   [3, 11, "blue"],
+//   [4, 10, "yellow"],
+//   [4, 11, "green"],
+//   [5, 10, "cyan"],
+//   [5, 11, "yellow"],
+// ];

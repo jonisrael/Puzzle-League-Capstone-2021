@@ -319,6 +319,7 @@ export let game = {
   blockSelectedXCHANGE: 2,
   blockSelectedYCHANGE: 6,
   boardRiseRestarter: 0,
+  deathTimer: 100,
   raiseDelay: 0,
   frames: -180,
   finalTime: 0,
@@ -387,6 +388,8 @@ export const lastIndex = {
   music: -1,
   overtimeMusic: -1,
 };
+
+export const touchInputs = {};
 
 // export const newGame = JSON.parse(JSON.stringify(game));
 
@@ -685,7 +688,7 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
   // do not transfer x, y, or targetX
   let FirstKeys = Object.keys(FirstBlock).splice(2); // dont change x and y
   let SecondKeys = Object.keys(SecondBlock).splice(2); // dont change x and y
-  let firstBlockHasTarget, secondBlockHasTarget, TempBlock;
+  let TempBlock;
 
   if (type === "between") {
     TempBlock = JSON.parse(JSON.stringify(SecondBlock));
@@ -697,6 +700,10 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
     FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
   } else if (type === "between") {
     FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
+    if (FirstBlock.targetX > FirstBlock.x) {
+      console.log("preventing infinite swap loop");
+      FirstBlock.targetX = undefined;
+    }
   }
 
   if (helpPlayer.timer === 0) {

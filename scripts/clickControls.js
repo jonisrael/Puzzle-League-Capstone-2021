@@ -11,6 +11,7 @@ import {
   INTERACTIVE_TYPES,
   removeFromOrderList,
   touch,
+  touchInputs,
   win,
 } from "./global";
 
@@ -55,10 +56,14 @@ export function updateMousePosition(canvas, e) {
 //   }
 // }
 
-export function selectBlock() {
+export function selectBlock(x, y) {
   // there are two functions to be checked before trying to move the block
-  let x = touch.mouse.x;
-  let y = touch.mouse.y;
+  // if (touchInputs[game.frames] === undefined) {
+  //   touchInputs[game.frames] = [x, y, "select", undefined];
+  // }
+
+  game.cursor.x = touch.mouse.x;
+  game.cursor.y = touch.mouse.y;
   let SquareClicked = game.board[x][y];
   // check if close range swap should happen
 
@@ -72,18 +77,17 @@ export function selectBlock() {
     touch.thereIsABlockCurrentlySelected = true; // select the block
     touch.selectedBlock.x = x;
     touch.selectedBlock.y = y;
-    touch.mouseStart.x = x;
-    touch.mouseStart.y = y;
     // console.log("frame", game.frames, "select block", game.board[x][y]);
     return;
   }
 }
 
-export function moveBlockByRelease(x, y) {
+export function moveBlockByRelease(x, y, targetX) {
   if (cpu.enabled) return;
   let Square = game.board[x][y];
-  if (Square.x === touch.mouse.x) return;
-  Square.targetX = touch.mouse.x; // move to x--coordinate
+  // touchInputs[game.frames] = [x, y, "release", targetX];
+  if (Square.x === targetX) return;
+  Square.targetX = targetX; // move to x--coordinate
   touch.moveOrderList.push([Square.targetX, Square.y]);
   // console.log(
   //   game.frames,
@@ -91,10 +95,11 @@ export function moveBlockByRelease(x, y) {
   //   "new order added:",
   //   touch.moveOrderList[0]
   // );
+  touch.mouse.clicked = false;
   if (
     touch.mouse.y <= touch.selectedBlock.y + 20 &&
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
-    (touch.mouse.x !== touch.selectedBlock.x ||
+    (targetX !== touch.selectedBlock.x ||
       touch.mouse.y !== touch.selectedBlock.y)
   ) {
     touch.moveOrderExists = true;
@@ -133,6 +138,7 @@ export function moveBlockByRelease(x, y) {
 }
 
 function doMouseDown(e) {
+  if (!game.humanCanPlay) return;
   if (!touch.enabled || cpu.enabled) return;
   touch.moveOrderExists = false;
   touch.mouse.clicked = true;
@@ -157,36 +163,43 @@ function doMouseDown(e) {
   ) {
     touch.doubleClickCounter = 0;
     if (touch.moveOrderList.length > 0) {
-      // if (debug.enabled)
-      // console.log(
-      //   game.frames,
-      //   "Interrupt Move Order:",
-      //   touch.moveOrderList[0],
-      //   "from",
-      //   touch.moveOrderList
-      // );
-      let [tarX, y] = touch.moveOrderList.pop();
-      for (let i = 0; i < tarX; i++) {
-        if (game.board[i][y].targetX === tarX) {
-          game.board[i][y].targetX = undefined;
-          // if (debug.enabled)
-          //   console.log("Remaining orders:", touch.moveOrderList);
-          break;
-        }
+      // touch.moveOrderList.length = 0; // ! WILL CANCEL ALL ORDERS
+      // let [tarX, y] = touch.moveOrderList.pop();
+      // for (let i = 0; i < tarX; i++) {
+      //   if (0 === 0 && game.board[i][y].targetX === tarX) {
+      //     game.board[i][y].targetX = undefined;
+      //     // if (debug.enabled)
+      //     //   console.log("Remaining orders:", touch.moveOrderList);
+      //     break;
+      //   }
+      // }
+    }
+    for (let x = 0; x < grid.COLS; x++) {
+      for (let y = 0; y < grid.ROWS; y++) {
+        removeFromOrderList(game.board[x][y]);
       }
     }
-    // for (let x = 0; x < grid.COLS; x++) {
-    //   for (let y = 0; y < grid.ROWS; y++) {
-    //     removeFromOrderList(game.board[x][y]);
-    //   }
-    // }
 
     if (
       game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
-      game.highestRow > 1
+      game.highestRow > 0
     ) {
+      // touchInputs[game.frames] = [
+      //   touch.mouse.x,
+      //   touch.mouse.y,
+      //   "raise",
+      //   undefined,
+      // ];
       game.raisePressed = true;
     }
+    // else {
+    //   touchInputs[game.frames] = [
+    //     touch.mouse.x,
+    //     touch.mouse.y,
+    //     "cancelAll",
+    //     undefined,
+    //   ];
+    // }
     if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
     if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
 
@@ -204,15 +217,14 @@ function doMouseDown(e) {
     // if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
     // touch.doubleClickCounter++;
   }
-  game.cursor.x = touch.mouse.x;
-  game.cursor.y = touch.mouse.y;
-  touch.mouseStart.x = touch.mouse.x;
-  touch.mouseStart.y = touch.mouse.y;
+  // game.cursor.x = touch.mouse.x;
+  // game.cursor.y = touch.mouse.y;
 
-  if (game.frames >= 0) selectBlock();
+  selectBlock(touch.mouse.x, touch.mouse.y);
 }
 
 function doMouseMove(e) {
+  if (!game.humanCanPlay) return;
   if (!touch.enabled) return;
   // if (!updateMousePosition(win.cvs, e)) return;
   updateMousePosition(win.cvs, e);
@@ -223,18 +235,23 @@ function doMouseMove(e) {
       touch.lastXMoused = touch.mouse.x;
     }
     if (!touch.thereIsABlockCurrentlySelected) {
-      game.cursor.x = touch.mouse.x;
-      game.cursor.y = touch.mouse.y;
-      selectBlock();
+      selectBlock(touch.mouse.x, touch.mouse.y);
     } else {
       const SelectedBlock =
         game.board[touch.selectedBlock.x][touch.selectedBlock.y];
       SelectedBlock.previewX = touch.mouse.x;
+      // touchInputs[game.frames] = [
+      //   SelectedBlock.x,
+      //   SelectedBlock.y,
+      //   "premove",
+      //   SelectedBlock.previewX,
+      // ];
     }
   }
 }
 
 function doMouseUp(e) {
+  if (!game.humanCanPlay) return;
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
   updateMousePosition(win.cvs, e);
@@ -244,9 +261,10 @@ function doMouseUp(e) {
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
     const SelectedBlock =
       game.board[touch.selectedBlock.x][touch.selectedBlock.y];
-    moveBlockByRelease(touch.selectedBlock.x, touch.selectedBlock.y);
+    moveBlockByRelease(SelectedBlock.x, SelectedBlock.y, touch.mouse.x);
     SelectedBlock.previewX = undefined;
   }
+  touch.thereIsABlockCurrentlySelected = false;
 }
 
 export function createClickListeners() {

@@ -101,10 +101,15 @@ export function startGame(selectedGameSpeed = 1) {
   // document.getElementById("game-info-table").style.display = "inline";
   if (game.mode !== "tutorial") {
     game.board = generateOpeningBoard(42, 8);
+    game.startingBoard = saveCurrentBoard(game.board, true);
   } else {
     game.tutorialRunning = true;
-    game.board = generateOpeningBoard(42, 8);
-    startTutorial();
+    console.log(game.startingBoard);
+    if (!game.startingBoard) {
+      game.board = generateOpeningBoard(42, 8);
+      game.startingBoard = saveCurrentBoard(game.board, true);
+    }
+    startTutorial(game.startingBoard);
   }
 
   Object.keys(saveState).forEach((stateType) => (saveState[stateType] = {}));

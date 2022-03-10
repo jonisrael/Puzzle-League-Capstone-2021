@@ -8,6 +8,7 @@ import {
   randInt,
   randomPiece,
   sound,
+  touch,
   win,
 } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
@@ -16,6 +17,7 @@ import { tutorialBoards } from "./tutorialBoards";
 import { tutorialMessages } from "./tutorialMessages";
 import { tutorialInputs } from "./tutorialInputs";
 import { audio } from "../fileImports";
+import { moveBlockByRelease, selectBlock } from "../clickControls";
 
 // ROWS
 const COLS = 6;
@@ -113,22 +115,17 @@ export function runTutorialScript(input, frame, state) {
   return input;
 }
 
-export function startTutorial() {
+export function startTutorial(startingBoard) {
   // game.board = [];
-  tutorial.state = game.frames = tutorial.msgIndex = 0;
-  // game.board = createTutorialBoard(tutorial.board[tutorial.state]);
   sound.Music[1].src = audio.trainingMusic;
   sound.Music[1].play();
-  game.tutorialRunning = true;
+  // game.tutorialRunning = true;
   game.humanCanPlay = false;
   updateLevelEvents(3);
-  game.boardRiseSpeed = -2;
-  cpu.enabled = true;
-  cpu.control = true;
-  [game.cursor.x, game.cursor.y] = [2, 6];
   document.getElementById("game-info-table").style.display = "none";
   document.getElementById("main-info").style = "font-size: 2rem;";
-  loadTutorialState(tutorial.state, tutorial.msgIndex);
+  game.board = createTutorialBoard(startingBoard);
+  // loadTutorialState(tutorial.state, tutorial.msgIndex);
 }
 
 export function createTutorialBoard(colorLocations) {
@@ -178,3 +175,39 @@ export function createTutorialBoard(colorLocations) {
   board = fixNextDarkStack(board);
   return board;
 }
+
+export function playScript(touchInput) {
+  if (touchInput === undefined) return;
+  let [x, y, name, targetX] = touchInput;
+  if (name === "move") {
+    moveBlockByRelease(x, y, targetX);
+  }
+  if (name === "premove") {
+    game.board[touch.selectedBlock.x][touch.selectedBlock.y].previewX = targetX;
+  }
+  if (name === "select") {
+    selectBlock(x, y);
+  }
+  if (name === "raise") {
+    game.raisePressed = true;
+  }
+}
+
+// export function startTutorial2(startingBoard) {
+//   // game.board = [];
+//   tutorial.state = game.frames = tutorial.msgIndex = 0;
+//   // game.board = createTutorialBoard(tutorial.board[tutorial.state]);
+//   sound.Music[1].src = audio.trainingMusic;
+//   sound.Music[1].play();
+//   game.tutorialRunning = true;
+//   game.humanCanPlay = false;
+//   updateLevelEvents(3);
+//   game.boardRiseSpeed = -2;
+//   cpu.enabled = true;
+//   cpu.control = true;
+//   [game.cursor.x, game.cursor.y] = [2, 6];
+//   document.getElementById("game-info-table").style.display = "none";
+//   document.getElementById("main-info").style = "font-size: 2rem;";
+//   createTutorialBoard(startingBoard);
+//   // loadTutorialState(tutorial.state, tutorial.msgIndex);
+// }

@@ -45,7 +45,11 @@ import {
   savedControls,
   playerAction,
 } from "./scripts/controls";
-import { pause, unpause } from "./scripts/functions/pauseFunctions";
+import {
+  pause,
+  printDebugInfo,
+  unpause,
+} from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
@@ -96,6 +100,7 @@ import {
   updateFrameMods,
   randomPiece,
   spawnSquare,
+  touchInputs,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -108,6 +113,7 @@ import { checkTime } from "./scripts/functions/timeEvents";
 import {
   createTutorialBoard,
   loadTutorialState,
+  playScript,
   runTutorialScript,
   startTutorial,
   tutorial,
@@ -246,6 +252,18 @@ class Block {
       );
   }
 
+  drawDyingColumn() {
+    if (this.color === "vacant" || this.type !== "panicking") return;
+    win.ctx.fillStyle = this.color;
+    if (this.color === "green") win.ctx.fillStyle = "rgb(0,255,0)";
+    // win.ctx.fillStyle = "white";
+    win.ctx.globalAlpha =
+      (preset.faceValues[game.level] - game.deathTimer) /
+      preset.faceValues[game.level];
+    win.ctx.fillRect(grid.SQ * this.x, grid.SQ * this.y, grid.SQ, grid.SQ);
+    win.ctx.globalAlpha = 1;
+  }
+
   drawArrows(move = "Move") {
     if (
       (this.previewX === undefined && this.targetX === undefined) ||
@@ -282,14 +300,11 @@ class Block {
       } else {
         filename = `arrowMid${move}`;
       }
-
-      {
-        win.ctx.drawImage(
-          loadedSprites[filename],
-          grid.SQ * i,
-          grid.SQ * this.y - game.rise
-        );
-      }
+      win.ctx.drawImage(
+        loadedSprites[filename],
+        grid.SQ * i,
+        grid.SQ * this.y - game.rise
+      );
 
       if (i === moveToX) break;
     }
@@ -564,6 +579,9 @@ export function drawGrid() {
       Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
 
+      if (game.highestRow === 0 && game.highestCols.includes(Square.x)) {
+        Square.drawDyingColumn();
+      }
       Square.drawGridLines();
 
       // if (game.cursor_type[0] !== "d") {
@@ -588,14 +606,12 @@ export function drawGrid() {
     }
   }
 
-  if (game.cursor_type[0] !== "d" || debug.show || cpu.showInfo) {
-    for (let x = grid.COLS - 1; x >= 0; x--) {
-      for (let y = 0; y < grid.ROWS + 1; y++) {
-        let Square = game.board[x][y];
-        if (game.cursor_type[0] !== "d") Square.drawArrows();
-        if (cpu.showInfo) Square.drawAILogic();
-        if (debug.show) Square.drawDebugDots();
-      }
+  for (let x = grid.COLS - 1; x >= 0; x--) {
+    for (let y = 0; y < grid.ROWS + 1; y++) {
+      let Square = game.board[x][y];
+      if (game.cursor_type[0] !== "d") Square.drawArrows();
+      if (cpu.showInfo) Square.drawAILogic();
+      if (debug.show) Square.drawDebugDots();
     }
   }
 
@@ -685,7 +701,7 @@ export function endChain(potentialSecondarySuccessor) {
     );
   }
   if (game.currentChain > 1) {
-    game.message = `${game.currentChain}x chain added ${game.chainScoreAdded} score.`;
+    game.message = `${game.currentChain}x chain added ${game.previousChainScore} score.`;
     game.messageChangeDelay = 90;
   } else if (game.currentChain == 1) {
     game.message = `Combo added ${game.chainScoreAdded} to score.`;
@@ -714,11 +730,12 @@ export function endChain(potentialSecondarySuccessor) {
 }
 
 export function createNewRow(board) {
-  if (game.pauseStack || game.highestRow < 1) {
+  if (game.highestRow < 1) {
+    game.deathTimer = 0;
     return board;
   }
 
-  if (game.boardRiseDisabled || debug.freeze == 1) {
+  if (game.pauseStack || game.boardRiseDisabled || debug.freeze == 1) {
     return board;
   }
 
@@ -758,6 +775,7 @@ export function createNewRow(board) {
       `Time: ${game.timeString}, Line Bonus +${game.seconds}, Total: ${game.score}`
     );
   }
+  if (game.highestRow === 1) game.deathTimer = preset.faceValues[game.level];
 
   return board;
 }
@@ -997,17 +1015,26 @@ function KEYBOARD_CONTROL(event) {
       // }
 
       if (debug.enabled == 1) {
-        if (event.keyCode === 188)
+        if (event.keyCode === 188) {
           // ,
-          console.log(touch.moveOrderList);
+          console.log(game);
+          printDebugInfo();
+        }
         if (event.keyCode === 190) {
           // .
-          saveCurrentBoard(game.board, true);
-          saveCurrentBoard(game.board, false);
+          console.log(saveCurrentBoard(game.board, true));
+          console.log(saveCurrentBoard(game.board, false));
+          console.table(touchInputs);
         }
         if (event.keyCode === 220) {
           // \
           cpuClick([game.cursor.x, game.cursor.y, 5, "Move"]);
+        }
+        if (event.keyCode === 186) {
+          // ;
+          perf.gameSpeed = perf.gameSpeed === 1 ? 2 : 1;
+          if (perf.gameSpeed === 2 && game.frameMod[2] === 1) game.frames++;
+          perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
         if (event.keyCode === 73) {
           // i   starts the tutorial
@@ -1251,7 +1278,7 @@ export function gameLoop() {
           )} remaining`;
         }
         // overtime bonuses
-        if (game.minutes > 2 && game.mode !== "training") {
+        if (game.minutes > 2 && game.mode !== "training" && !debug.enabled) {
           game.score += game.minutes < 4 ? 25 : 100;
           game.log.push(
             `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
@@ -1393,7 +1420,7 @@ export function gameLoop() {
         gameOverBoard();
         drawGrid();
       }
-      if (game.over && game.frames < 25) {
+      if (game.over && game.frames < 26) {
         gameOverBoard();
         drawGrid();
       }
@@ -1401,6 +1428,9 @@ export function gameLoop() {
       drawGrid();
 
       playerAction(action);
+      if (game.mode === "tutorial") {
+        playScript(touchInputs[game.frames]);
+      }
 
       if (game.raisePressed) {
         if (game.frames < -2) game.frames = -2;

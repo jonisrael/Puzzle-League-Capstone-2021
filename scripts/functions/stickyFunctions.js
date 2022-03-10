@@ -54,13 +54,6 @@ export let TouchOrders = [];
 for (let i = 0; i < 4; i++) {
   TouchOrders[i] = JSON.parse(JSON.stringify(TouchOrder));
 }
-// console.log(TouchOrders);
-// export const orders = [
-//   JSON.parse(JSON.stringify(TouchOrders[0])),
-//   JSON.parse(JSON.stringify(TouchOrders[0])),
-//   JSON.parse(JSON.stringify(TouchOrders[0])),
-//   JSON.parse(JSON.stringify(TouchOrders[0]))
-// ];
 
 export let match = [[], [], []];
 
@@ -185,7 +178,6 @@ export function stickyCheck(x, y) {
       MainBlock = Math.abs(KeySquareLowest.x - Square.x === dir)
         ? game.board[Square.x][Square.y]
         : game.board[Square.x + dir][Square.y];
-      console.log(MainBlock.x, Square.x);
       if (MainBlock.x !== Square.x) {
         if (!isSolidPair(MainBlock, Square)) break;
         // match[0] = [MainBlock.x, MainBlock.y];
@@ -211,15 +203,6 @@ export function stickyCheck(x, y) {
       result = checkBelowMatch(MainBlock);
       break;
   }
-  // if (
-  //   smartMatch.thirdCoord[0] !== -1 &&
-  //   smartMatch.secondCoord[0] !== -1 &&
-  //   !ThreeBlocksMatch()
-  // ) {
-  //   if (debug.enabled) console.log("fake match detected:", match);
-  //   // if (debug.enabled) pause("Fake match detected, check console");
-  //   result = false;
-  // }
   if (debug.enabled && result) console.log(game.frames, result);
   return !!result; // send true if not falsy value
 }
@@ -380,12 +363,10 @@ function checkSideMatch(Square, single = false, dir) {
     ? game.board[Square.x][Square.y]
     : game.board[Square.x + dir][Square.y];
   // make sure that the lowest key square is on same level as selected block
-  console.log(MainBlock, MainBlock.y, lowKeyY);
   // playAudio(audio.announcerReady);
   if (MainBlock.y !== lowKeyY) return false;
   if (highKeyX < 0 || highKeyX >= grid.COLS) return false;
   let SideBlock_1 = findSolidBlockAbove(highKeyX, highKeyY);
-  console.log(game.frames, "side block 1", SideBlock_1);
   if (!SideBlock_1) return false;
   if (
     isSolidPair(MainBlock, SideBlock_1) ||
@@ -625,18 +606,6 @@ function checkSolidGround(keyX, keyY) {
   // this function tests if a clear line is on the same row as a solid
 
   let solidGroundCasesPassed = [0];
-  // console.log(
-  //   "x:",
-  //   keyX,
-  //   "y:",
-  //   keyY,
-  //   game.board[keyX][keyY],
-  //   blockVacOrClearing(game.board[keyX - 2][keyY]),
-  //   blockVacOrClearing(game.board[keyX - 1][keyY]),
-  //   blockVacOrClearing(game.board[keyX][keyY]),
-  //   blockVacOrClearing(game.board[keyX + 1][keyY]),
-  //   blockVacOrClearing(game.board[keyX + 2][keyY])
-  // );
   if (
     keyX - 1 >= 0 &&
     (keyY === grid.ROWS - 1 || !game.board[keyX - 1][keyY + 1].airborne)
@@ -748,16 +717,6 @@ function checkIfFallingBlockMatches(MainBlock) {
   ) {
     checkRight2 = true;
   }
-
-  // if (
-  //   debug.enabled &&
-  //   (checkLeft1 || checkLeft2 || checkRight1 || checkRight2 || checkAbove)
-  // ) {
-  //   playAudio(audio.announcerInvincible);
-  //   console.log(
-  //     `L1: ${checkLeft1}, L2: ${checkLeft2}, R1: ${checkRight1}, R2: ${checkRight2}, Abv: ${checkAbove}, Pair: ${pair}`
-  //   );
-  // }
 
   if (checkLeft1) {
     FirstBlock = game.board[x][y];

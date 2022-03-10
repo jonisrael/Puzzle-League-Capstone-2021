@@ -15,6 +15,7 @@ import {
   helpPlayer,
   sound,
   touch,
+  preset,
 } from "../global";
 
 import { audio } from "../fileImports";
@@ -57,15 +58,24 @@ export function closeGame(gameFinished) {
 export function isGameOver() {
   // if score > 1 million or 100 minutes have passed
   if (game.score >= 999999 || game.frames === 360000) return true;
+  if (game.highestRow === 0) {
+    game.rise = 0;
+  } else {
+    game.deathTimer = preset.faceValues[game.level];
+  }
   if (
     game.highestRow === 0 &&
-    game.rise > 0 &&
     game.currentChain === 0 &&
     !game.boardIsClearing &&
     !game.boardHasSwappingBlock &&
     !game.boardRiseDisabled &&
     game.raiseDelay === 0
   ) {
+    game.deathTimer -= perf.gameSpeed;
+    if (game.deathTimer > 0) {
+      console.log(game.frames, "death timer", game.deathTimer);
+      return false;
+    }
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training" || game.score < 100) {
       game.score = game.currentChain = 0;
@@ -89,9 +99,12 @@ export function isGameOver() {
       game.log.length = 0;
       if (game.cursor.y >= grid.ROWS) game.cursor.y = 6;
       for (let x = 0; x < grid.COLS; x++) {
-        for (let y = grid.ROWS - 1; y > 4; y--) {
-          game.board[x][y].color = blockColor.VACANT;
-          game.board[x][y].type = blockType.NORMAL;
+        for (let y = grid.ROWS - 1; y >= 0; y--) {
+          game.board[x][y].targetX = game.board[x][y].previewX = undefined;
+          if (y > 4) {
+            game.board[x][y].color = blockColor.VACANT;
+            game.board[x][y].type = blockType.NORMAL;
+          }
         }
       }
       touch.moveOrderList.length = 0;
@@ -129,9 +142,13 @@ export function gameOverBoard() {
     playAudio(audio.topout);
   }
   game.boardRiseDisabled = true;
+  game.rise = 0;
   let deathRow = Math.floor(game.frames / 2);
   for (let i = 0; i < grid.COLS; i++) {
-    if (game.board[i][deathRow].color != blockColor.VACANT) {
+    if (
+      game.board[i][deathRow].color != blockColor.VACANT &&
+      game.highestCols.includes(i)
+    ) {
       game.board[i][deathRow].type = blockType.DEAD;
     }
   }

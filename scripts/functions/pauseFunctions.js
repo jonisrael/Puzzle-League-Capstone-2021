@@ -25,34 +25,7 @@ export function pause(lostFocus = false, message = "Pause") {
   document.getElementById("pause-button").innerHTML = "Unpause";
   document.getElementById("pause-button").fontSize = "1.5rem";
 
-  console.log(
-    `FRAME ${game.frames}`,
-    `\nblock`,
-    game.board[game.cursor.x][game.cursor.y],
-    "\ngame:",
-    game,
-    "\nwin",
-    win,
-    "\nsound",
-    sound,
-    "\ntouch",
-    touch,
-    "\ncpu",
-    cpu,
-    "\nprevious",
-    previous,
-    "\nhelpPlayer",
-    helpPlayer,
-    "\ndebug",
-    debug,
-    "\nperf",
-    perf,
-    "\ntutorial",
-    tutorial,
-    game.cursor_type[0] === "d"
-      ? game.board[game.cursor.x + 1][game.cursor.y]
-      : ""
-  );
+  printDebugInfo();
   //   "win:",
   //   win,
   //   "perf:",
@@ -182,4 +155,35 @@ export function addPauseContent() {
       }
     }
   }
+}
+
+export function printDebugInfo() {
+  console.log(
+    `FRAME ${game.frames}`,
+    `\nblock`,
+    game.board[game.cursor.x][game.cursor.y],
+    "\ngame:",
+    game,
+    "\nwin",
+    win,
+    "\nsound",
+    sound,
+    "\ntouch",
+    touch,
+    "\ncpu",
+    cpu,
+    "\nprevious",
+    previous,
+    "\nhelpPlayer",
+    helpPlayer,
+    "\ndebug",
+    debug,
+    "\nperf",
+    perf,
+    "\ntutorial",
+    tutorial,
+    game.cursor_type[0] === "d"
+      ? game.board[game.cursor.x + 1][game.cursor.y]
+      : ""
+  );
 }
