@@ -221,6 +221,9 @@ export function checkMatch() {
       game.messageChangeDelay = 90;
       if (game.currentChain > 1) game.drawScoreTimeout = -2;
 
+      game.clearingSets.coord.push(JSON.stringify(clearLocations[0]));
+      game.clearingSets.scores.push(game.scoreEarned);
+
       // now to assign timers and initiate clear animation
       assignClearTimers(
         clearLocations,
@@ -300,6 +303,7 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
       removeFromOrderList(game.board[Square.targetX][r]);
     }
     Square.timer = blinkTime + initialFaceTime + totalPopTime;
+    Square.startingClearFrame = Square.timer;
     Square.switchToFaceFrame = initialFaceTime + totalPopTime;
     Square.switchToPoppedFrame = totalPopTime - extraFaceTime;
     // console.log(c, r, "assigned to:", Square);
@@ -326,7 +330,8 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
 export function updateScore(blocksCleared, chain, multiplier, earnsChainBonus) {
   let blockBonus = 0;
   for (let i = blocksCleared; i > 2; i--) {
-    blockBonus += (i - 2) * 10;
+    if (blocksCleared < 7) blockBonus += 30;
+    else blockBonus += (i - 2) * 10;
   }
   let chainBonus = 0;
   if (earnsChainBonus) {

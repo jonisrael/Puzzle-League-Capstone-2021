@@ -331,11 +331,14 @@ export let game = {
   scoreEarned: 0,
   scoreMultiplier: 1,
   chainScoreAdded: 0,
+  clearingSets: {
+    coord: [],
+    scores: [],
+  },
   previousChainScore: 0,
   drawScoreTimeout: 0,
   currentChain: 0,
   combo: 0,
-  // clearingGroups: [],
   lastChain: 0,
   previousChain: 0,
   largestChain: 0,
@@ -391,7 +394,7 @@ export const lastIndex = {
 
 export const touchInputs = {};
 
-// export const newGame = JSON.parse(JSON.stringify(game));
+export const newGame = JSON.parse(JSON.stringify(game));
 
 export const api = {
   data: {

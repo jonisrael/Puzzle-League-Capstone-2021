@@ -182,7 +182,7 @@ function doMouseDown(e) {
 
     if (
       game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
-      game.highestRow > 0
+      game.highestRow > 1
     ) {
       // touchInputs[game.frames] = [
       //   touch.mouse.x,
@@ -200,26 +200,9 @@ function doMouseDown(e) {
     //     undefined,
     //   ];
     // }
-    if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
-    if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
-
-    //   if (
-    //     game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
-    //     game.highestRow > 1
-    //   ) {
-    //     game.raisePressed = true;
-    //     touch.doubleClickCounter = 0;
-    //     touch.doubleClickTimer += 20;
-
-    //     if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
-    //   }
-    // }
-    // if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
-    // touch.doubleClickCounter++;
   }
-  // game.cursor.x = touch.mouse.x;
-  // game.cursor.y = touch.mouse.y;
-
+  if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
+  if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
   selectBlock(touch.mouse.x, touch.mouse.y);
 }
 

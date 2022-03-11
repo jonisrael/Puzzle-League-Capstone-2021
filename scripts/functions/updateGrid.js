@@ -19,7 +19,7 @@ import { isBlockAirborne } from "./gravity";
 import { trySwappingBlocks } from "./swapBlock";
 
 export function updateGrid(frameAdvance = false) {
-  game.panicking = game.highestRow <= game.panicIndex && game.raiseDelay < 60;
+  game.panicking = game.highestRow <= game.panicIndex;
   game.boardIsClearing = false;
   game.boardHasTargets = false;
   game.boardHasAirborneBlock = false;
@@ -71,7 +71,7 @@ export function updateGrid(frameAdvance = false) {
       // Check to see if a block is still legally in a landing animation
       if (Square.type === "landing") {
         game.pauseStack = true;
-        if (Square.timer < 9) {
+        if (Square.timer < 8) {
           Square.addToPrimaryChain = false;
           Square.addToSecondaryChain = false;
           Square.touched = false;
@@ -158,11 +158,16 @@ export function updateGrid(frameAdvance = false) {
             game.chainScoreAdded += Math.round(game.scoreMultiplier * 10);
             break;
           case 0:
+            // make square vacant
             Square.color = "vacant";
             Square.type = "normal";
-            // Square.switchToFaceFrame = 0;
-            // Square.switchToPoppedFrame = 0;
-            // console.log("do delay timer");
+            for (let i = 0; i < game.clearingSets.coord.length; i++) {
+              let setLeader = game.clearingSets.coord[i];
+              if (setLeader === JSON.stringify([Square.x, Square.y])) {
+                game.clearingSets.coord.splice(i, 1);
+                game.clearingSets.scores.splice(i, 1);
+              }
+            }
             if (
               y > 0 &&
               game.board[x][y - 1].color != "vacant" &&

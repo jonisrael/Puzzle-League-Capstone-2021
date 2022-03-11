@@ -19,6 +19,7 @@ import {
   detectInfiniteLoop,
   saveState,
   randomPiece,
+  gameStart,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
@@ -141,10 +142,23 @@ export function startGame(selectedGameSpeed = 1) {
   requestAnimationFrame(gameLoop);
 }
 
+export function resetGameVariables2() {
+  let gameKeys = Object.keys(game);
+  gameKeys.forEach((key) => {
+    if (typeof key === "object") {
+      game[key] = JSON.parse(JSON.stringify(gameStart[key]));
+    } else {
+      game[key] = gameStart[key];
+    }
+  });
+}
+
 export function resetGameVariables() {
   game.rise = 0;
   game.panicIndex = 1;
   game.board = [];
+  game.clearingSets.coord.length = 0;
+  game.clearingSets.scores.length = 0;
   game.humanCanPlay = true;
   game.mute = 0;
   game.volume = 1;
@@ -385,6 +399,7 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       }
       board[x][y].draw();
     }
+    game.cursor = new Cursor(2, 6);
   }
 
   for (let x = 0; x < grid.COLS; x++) {

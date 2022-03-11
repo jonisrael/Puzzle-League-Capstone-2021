@@ -121,7 +121,11 @@ import {
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction } from "./scripts/functions/trainingControls";
-import { drawScoreEarnedMessage } from "./scripts/functions/drawCanvasShapesAndText";
+import {
+  determineScoreColor,
+  drawChainMessage,
+  drawScoreEarnedMessage,
+} from "./scripts/functions/drawCanvasShapesAndText";
 import { previous, saveCurrentBoard } from "./scripts/functions/recordGame";
 // import {
 //   analyzeBoard,
@@ -164,7 +168,6 @@ export class Cursor {
     win.ctx.drawImage(loadedSprites[game.cursor_type], pixelX, pixelY);
   }
 }
-game.cursor = new Cursor(2, 6);
 
 class Block {
   constructor(
@@ -175,6 +178,7 @@ class Block {
     timer = 0,
     message = "",
     msgTimer = 1,
+    startingClearFrame = 0,
     switchToFaceFrame = 0,
     switchToPoppedFrame = 0,
     airborne = false,
@@ -203,6 +207,7 @@ class Block {
     this.timer = timer;
     this.message = message;
     this.msgTimer = msgTimer;
+    this.startingClearFrame;
     this.switchToFaceFrame = switchToFaceFrame;
     this.switchToPoppedFrame = switchToPoppedFrame;
     this.airborne = airborne;
@@ -258,8 +263,11 @@ class Block {
     if (this.color === "green") win.ctx.fillStyle = "rgb(0,255,0)";
     // win.ctx.fillStyle = "white";
     win.ctx.globalAlpha =
+      0.25 +
       (preset.faceValues[game.level] - game.deathTimer) /
-      preset.faceValues[game.level];
+        preset.faceValues[game.level];
+    if (debug.enabled && game.deathTimer > 0)
+      console.log(game.deathTimer, win.ctx.globalAlpha);
     win.ctx.fillRect(grid.SQ * this.x, grid.SQ * this.y, grid.SQ, grid.SQ);
     win.ctx.globalAlpha = 1;
   }
@@ -310,14 +318,64 @@ class Block {
     }
   }
 
-  drawBlockMessage() {
-    drawScoreEarnedMessage(
-      `+${game.chainScoreAdded}`,
-      this.x,
-      this.y,
-      grid.SQ,
-      game.rise
-    );
+  drawScoreEarned(scoreEarned) {
+    if (this.type !== "blinking") return;
+    let pixelX, pixelY;
+    for (let j = this.y - 1; j >= 0; j--) {
+      if (
+        this.x === 0 &&
+        game.board[this.x][j].color === "vacant" &&
+        game.board[this.x + 1][j].color === "vacant" &&
+        game.board[this.x + 2][j].color === "vacant"
+      ) {
+        pixelX = 0;
+        pixelY = grid.SQ * (j + 0.75);
+        win.ctx.textAlign = "left";
+        break;
+      } else if (
+        this.x > 0 &&
+        this.x < grid.COLS - 1 &&
+        game.board[this.x - 1][j].color === "vacant" &&
+        game.board[this.x][j].color === "vacant" &&
+        game.board[this.x + 1][j].color === "vacant"
+      ) {
+        pixelX = grid.SQ * (this.x + 0.5);
+        pixelY = grid.SQ * (j + 0.75);
+        win.ctx.textAlign = "center";
+        break;
+      } else if (
+        this.x === grid.COLS - 1 &&
+        game.board[this.x - 2][j].color === "vacant" &&
+        game.board[this.x - 1][j].color === "vacant" &&
+        game.board[this.x][j].color === "vacant"
+      ) {
+        pixelX = win.cvs.width;
+        pixelY = grid.SQ * (j + 0.75);
+        win.ctx.textAlign = "right";
+        break;
+      }
+    }
+
+    win.ctx.font = `${1 * grid.SQ}px Comic Sans MS, Comic Sans, cursive`;
+    // win.ctx.fillStyle = determineScoreColor(scoreEarned, "small");
+    win.ctx.fillStyle = "white";
+    win.ctx.strokeStyle = "white";
+    if (this.startingClearFrame - this.timer < 4) {
+      win.ctx.globalAlpha = (this.startingClearFrame - this.timer) / 4;
+      console.log(game.frames, (this.startingClearFrame - this.timer) / 4);
+    }
+    if (this.timer < this.switchToFaceFrame + 8) {
+      win.ctx.globalAlpha = (this.timer - this.switchToFaceFrame) / 8;
+    }
+    win.ctx.fillText(`+${scoreEarned}`, pixelX, pixelY);
+    win.ctx.strokeText(`+${scoreEarned}`, pixelX, pixelY);
+    if (game.currentChain > 1) {
+      win.ctx.fillStyle = determineScoreColor(scoreEarned, "small");
+      win.ctx.fillText(`${game.currentChain}x`, pixelX, pixelY - grid.SQ);
+      win.ctx.strokeText(`+${scoreEarned}`, pixelX, pixelY);
+    }
+
+    win.ctx.globalAlpha = 1;
   }
 
   drawDebugDots() {
@@ -506,9 +564,7 @@ class Block {
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
     if ((this.type === "landing" && this.timer > 9) || this.type === "stalling")
       urlKey = `${this.color}_normal`;
-    if (this.y === 0 && blockIsSolid(this))
-      urlKey = `${this.color}_panicking_0`;
-    if (this.type === "swapping") urlKey = `vacant_normal`;
+    if (this.type === "swapping") return;
     win.ctx.drawImage(
       loadedSprites[urlKey],
       grid.SQ * this.x,
@@ -572,11 +628,14 @@ export function checkIfHelpPlayer() {
 export function drawGrid() {
   if (game.frames % perf.drawDivisor === 1) return;
   let blocksAreSwapping = false; // to be placed on top of drawn grid
+  let blocksAreClearing = false;
   // let clearingBlockFound = false;
+  win.ctx.fillStyle = "black";
+  win.ctx.fillRect(0, 0, win.cvs.width, win.cvs.height);
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
-      Square.draw();
+      if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
       if (Square.swapDirection) blocksAreSwapping = true;
 
       if (game.highestRow === 0 && game.highestCols.includes(Square.x)) {
@@ -615,6 +674,16 @@ export function drawGrid() {
     }
   }
 
+  for (let i = 0; i < game.clearingSets.coord.length; i++) {
+    let coordStr = game.clearingSets.coord[i];
+    let scoreEarned = game.clearingSets.scores[i];
+    let [x, y] = JSON.parse(game.clearingSets.coord[i]);
+    let Square = game.board[x][y];
+    Square.drawScoreEarned(scoreEarned);
+  }
+
+  // drawChainMessage();
+
   if (!game.over) {
     if (game.cursor_type[0] !== "d") {
       if (touch.moveOrderExists) game.cursor_type = "movingCursor";
@@ -628,8 +697,6 @@ export function drawGrid() {
           : "illegalCursorUp";
       }
     }
-
-    // drawScoreEarnedMessage();
 
     game.cursor.draw();
   }
@@ -731,7 +798,7 @@ export function endChain(potentialSecondarySuccessor) {
 
 export function createNewRow(board) {
   if (game.highestRow < 1) {
-    game.deathTimer = 0;
+    game.deathTimer = 0; // game over on next frame
     return board;
   }
 

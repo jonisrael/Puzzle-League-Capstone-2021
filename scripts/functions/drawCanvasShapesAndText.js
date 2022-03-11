@@ -17,6 +17,7 @@ export function drawScoreEarnedMessage(x, y) {
 }
 
 export function drawChainMessage() {
+  if (game.currentChain < 2) return;
   let chainScore;
   if (
     (game.currentChain === 1 && game.drawScoreTimeout === 0) ||
@@ -40,25 +41,8 @@ export function drawChainMessage() {
   else win.ctx.fillStyle = "red";
   let fontSize = 1.5 * grid.SQ + Math.floor(chainScore / 250);
   let message = `+${chainScore}`;
-  // let pixelX = 0;
-  // win.ctx.textAlign = "left";
-  // let pixelY = (y + 1 - 1.1) * SQ - rise;
-  // if (x === 1) {
-  //   pixelX = (1 / 3) * SQ;
-  // } else if (x === 2) {
-  //   pixelX = SQ;
-  // } else if (x === 4) {
-  //   pixelX = win.cvs.width - SQ / 2;
-  //   win.ctx.textAlign = "right";
-  // } else if (x === grid.COLS - 1) {
-  //   pixelX = win.cvs.width;
-  //   win.ctx.textAlign = "right";
-  // } else {
-  //   pixelX = win.cvs.width / 2;
-  //   win.ctx.textAlign = "center";
-  // }
   let pixelX = win.cvs.width / 2;
-  let pixelY = grid.SQ * (game.highestRow - 2);
+  let pixelY = grid.SQ * 1.5;
   if (game.highestRow < 2) pixelY = grid.SQ * (game.ROWS - 3);
   if (game.frameMod[30] === 0) console.log("font size:", fontSize);
   win.ctx.font = `${fontSize}px Comic Sans MS, Comic Sans, cursive`;
@@ -152,4 +136,28 @@ export function drawScoreEarnedMessage2(message, x, y, SQ, rise) {
   win.ctx.strokeStyle = "white";
   // win.ctx.strokeWidth = "50px";
   win.ctx.strokeText(message, xLoc, yLoc, 3 * SQ);
+}
+
+export function determineScoreColor(score, size) {
+  if (size === "big") {
+    if (score < 100) return "white";
+    else if (score < 300) return "yellow";
+    else if (score < 500) return "orange";
+    else if (score < 1000) return "rgb(0,240,0)";
+    else if (score < 1500) return "cyan";
+    else if (score < 2000) return "blue";
+    else if (score < 3000) return "violet";
+    else if (score < 5000) return "magenta";
+    else return "red";
+  } else {
+    if (score < 100) return "white";
+    else if (score < 200) return "yellow";
+    else if (score < 300) return "orange";
+    else if (score < 400) return "rgb(0,240,0)";
+    else if (score < 500) return "cyan";
+    else if (score < 600) return "blue";
+    else if (score < 800) return "violet";
+    else if (score < 1000) return "magenta";
+    else return "red";
+  }
 }
