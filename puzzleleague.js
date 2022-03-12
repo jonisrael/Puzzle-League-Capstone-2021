@@ -602,7 +602,7 @@ export function newBlock(c, r, vacant = false) {
 export function checkIfHelpPlayer() {
   if (helpPlayer.forceHint) helpPlayer.timer = 0;
   if (
-    ((game.score < 500 && !game.mode === "tutorial") || helpPlayer.forceHint) &&
+    ((game.score < 500 && game.mode !== "tutorial") || helpPlayer.forceHint) &&
     game.frames > 0 &&
     game.frames < 7200 &&
     !game.disableSwap &&
@@ -611,6 +611,7 @@ export function checkIfHelpPlayer() {
     helpPlayer.timer > 0
   ) {
     helpPlayer.timer--;
+    if (helpPlayer.timer === 0) console.log("enabling hint");
   } else if (helpPlayer.timer === 0) {
     if (!helpPlayer.done) {
       cpu.matchList.length = 0;
@@ -647,10 +648,7 @@ export function drawGrid() {
       //   Square.drawGridLines();
       // }
 
-      if (
-        (helpPlayer.timer === 0 || (cpu.enabled && !game.tutorialRunning)) &&
-        cpu.matchStrings.includes([x, y].join())
-      ) {
+      if (helpPlayer.timer === 0 && cpu.matchStrings.includes([x, y].join())) {
         Square.drawHint();
       }
     }

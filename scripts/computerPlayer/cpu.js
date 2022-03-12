@@ -56,7 +56,7 @@ const direction = [
   [4, 3, 2, 1, 0], // 5
 ];
 
-export function cpuAction(input, helpPlayer = false) {
+export function cpuAction(input, createHint = false) {
   if (game.tutorialRunning) {
     let tutorialScript = Object.keys(tutorial.inputs[tutorial.state]);
     // console.log(
@@ -121,11 +121,12 @@ export function cpuAction(input, helpPlayer = false) {
   // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
   //   coordinates = flattenStack();
 
-  if (!helpPlayer && cpu.randomInputCounter > 0) {
+  if (!createHint && cpu.randomInputCounter > 0) {
     return randomAction(input);
   }
 
   stackMinimum = game.boardRiseSpeed < 4 ? 4 : 11;
+  if (createHint) stackMinimum = 0; // ignore stack limit for createHint
 
   if (!coordinates) {
     if (stackSize >= stackMinimum || game.currentChain > 0) {
@@ -144,7 +145,8 @@ export function cpuAction(input, helpPlayer = false) {
     }
   }
 
-  if (helpPlayer) {
+  if (createHint) {
+    console.log(game.frames, coordinates, cpu.matchList);
     return cpu.matchList;
   }
 

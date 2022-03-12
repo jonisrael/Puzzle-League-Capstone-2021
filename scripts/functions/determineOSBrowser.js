@@ -19,5 +19,5 @@ export function determineOSAndBrowser(uaStr) {
   else if (uaStr.indexOf("like Mac") != -1) win.os = "iOS";
   else if (uaStr.indexOf("iP") != -1) win.os = "iOS";
 
-  win.notAppleProduct = win.os === "Mac" || win.os === "iOS";
+  win.appleProduct = win.os === "Mac" || win.os === "iOS";
 }
