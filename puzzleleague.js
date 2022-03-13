@@ -273,11 +273,7 @@ class Block {
   }
 
   drawArrows(move = "Move") {
-    if (
-      (this.previewX === undefined && this.targetX === undefined) ||
-      game.over
-    )
-      return;
+    if (game.over) return;
     let moveToX = this.previewX === undefined ? this.targetX : this.previewX;
     if (moveToX === this.x) return;
     let filename;
@@ -627,22 +623,32 @@ export function checkIfHelpPlayer() {
 }
 
 export function drawGrid() {
+  // console.time(`${game.frames}`);
   if (game.frames % perf.drawDivisor === 1) return;
-  let blocksAreSwapping = false; // to be placed on top of drawn grid
-  let blocksAreClearing = false;
+  let swappingBlocksArray = [];
+  let arrowListArray = [];
   // let clearingBlockFound = false;
   win.ctx.fillStyle = "black";
+
   win.ctx.fillRect(0, 0, win.cvs.width, win.cvs.height);
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
-      if (Square.swapDirection) blocksAreSwapping = true;
+      // Square.draw();
+      if (Square.swapDirection && Square.timer > 0) {
+        swappingBlocksArray.push(Square);
+      }
+      if (Square.targetX !== undefined || Square.previewX !== undefined) {
+        if (game.cursor_type[0] !== "d") arrowListArray.push(Square);
+      }
+      // blocksAreSwapping = true;
 
       if (game.highestRow === 0 && game.highestCols.includes(Square.x)) {
         Square.drawDyingColumn();
       }
-      Square.drawGridLines();
+
+      // Square.drawGridLines();
 
       // if (game.cursor_type[0] !== "d") {
       //   Square.drawGridLines();
@@ -653,27 +659,21 @@ export function drawGrid() {
       }
     }
   }
-  if (blocksAreSwapping) {
+
+  swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
+  arrowListArray.forEach((Square) => Square.drawArrows());
+
+  if (cpu.showInfo || debug.show) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
       for (let y = 0; y < grid.ROWS + 1; y++) {
         let Square = game.board[x][y];
-        if (Square.swapDirection && Square.timer > 0)
-          Square.drawSwappingBlocks();
+        if (cpu.showInfo) Square.drawAILogic();
+        if (debug.show) Square.drawDebugDots();
       }
     }
   }
 
-  for (let x = grid.COLS - 1; x >= 0; x--) {
-    for (let y = 0; y < grid.ROWS + 1; y++) {
-      let Square = game.board[x][y];
-      if (game.cursor_type[0] !== "d") Square.drawArrows();
-      if (cpu.showInfo) Square.drawAILogic();
-      if (debug.show) Square.drawDebugDots();
-    }
-  }
-
   for (let i = 0; i < game.clearingSets.coord.length; i++) {
-    let coordStr = game.clearingSets.coord[i];
     let scoreEarned = game.clearingSets.scores[i];
     let [x, y] = JSON.parse(game.clearingSets.coord[i]);
     let Square = game.board[x][y];
@@ -698,6 +698,7 @@ export function drawGrid() {
 
     game.cursor.draw();
   }
+  // console.timeEnd(`${game.frames}`);
 }
 
 export function isChainActive() {
