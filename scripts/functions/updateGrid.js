@@ -60,6 +60,7 @@ export function updateGrid(frameAdvance = false) {
         Square.touched = false;
         Square.targetX = undefined;
         Square.timer = 0;
+        Square.lightTimer = 0;
       }
       if (!highestRowFound && Square.color !== "vacant") {
         game.highestRow = y;
@@ -112,7 +113,6 @@ export function updateGrid(frameAdvance = false) {
 
       if (Square.lightTimer > 0) {
         Square.lightTimer -= 1;
-        // if (blockVacOrClearing(Square)) Square.lightTimer = 0;
       }
 
       if (Square.type === "stalling" && Square.timer === 0) {
@@ -148,6 +148,7 @@ export function updateGrid(frameAdvance = false) {
           Square.type === "popped")
       ) {
         Square.targetX = Square.previewX = undefined;
+        Square.lightTimer = 0;
         game.pauseStack = true;
         game.boardRiseDisabled = true;
         // console.log(x, y, Square);

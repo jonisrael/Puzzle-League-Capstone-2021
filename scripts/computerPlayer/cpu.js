@@ -146,7 +146,6 @@ export function cpuAction(input, createHint = false) {
   }
 
   if (createHint) {
-    console.log(game.frames, coordinates, cpu.matchList);
     return cpu.matchList;
   }
 

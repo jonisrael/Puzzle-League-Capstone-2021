@@ -178,3 +178,5 @@ export function createTutorialBoard(colorLocations) {
   board = fixNextDarkStack(board);
   return board;
 }
+
+export function checkTutorialEvents() {}

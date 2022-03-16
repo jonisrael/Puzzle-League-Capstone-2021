@@ -13,6 +13,7 @@ import { playAnnouncer, playAudio, playMusic } from "./audioFunctions";
 import { updateTrainingButtons } from "./trainingControls";
 
 export function checkTime(beforeOvertime) {
+  if (game.mode === "tutorial") return;
   let eventFrames = beforeOvertime ? game.frames : game.frames - 7200;
   win.muteMusic.checked && game.frames > 60
     ? (sound.Music[1].volume = 0)

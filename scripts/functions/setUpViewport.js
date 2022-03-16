@@ -432,7 +432,6 @@ function createMobileDisplay() {
     pauseButton.innerHTML = "Pause";
   }
 
-  topSection.append(pauseButton);
   pauseButton.addEventListener("click", (event) => {
     game.tutorialRunning
       ? nextDialogue(tutorial.msgIndex)
@@ -475,7 +474,12 @@ function createMobileDisplay() {
   // } else if (game.mode === "training") {
   //   setUpTrainingMode(gameContainer);
   // }
-
+  if (game.mode === "tutorial") {
+    gameContainer.append(pauseButton);
+    pauseButton.innerHTML = "Menu";
+  } else {
+    topSection.append(pauseButton);
+  }
   createClickListeners();
 }
 

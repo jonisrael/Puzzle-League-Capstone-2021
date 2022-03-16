@@ -160,8 +160,6 @@ export function addPauseContent() {
 export function printDebugInfo() {
   console.log(
     `FRAME ${game.frames}`,
-    `\nblock`,
-    game.board[game.cursor.x][game.cursor.y],
     "\ngame:",
     game,
     "\nwin",
@@ -184,6 +182,8 @@ export function printDebugInfo() {
     tutorial,
     game.cursor_type[0] === "d"
       ? game.board[game.cursor.x + 1][game.cursor.y]
-      : ""
+      : "",
+    `\nblock`,
+    game.board[game.cursor.x][game.cursor.y]
   );
 }

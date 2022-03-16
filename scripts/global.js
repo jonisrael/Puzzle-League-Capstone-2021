@@ -356,6 +356,7 @@ export let game = {
   highScore: HIGH_SCORE,
   boardRiseDisabled: false,
   disableSwap: false,
+  disableRaise: false,
   currentlyQuickRaising: false,
   swapPressed: false,
   raisePressed: false,
@@ -583,6 +584,7 @@ export function updateFrameMods(frameCount) {
   game.frameMod[18] = frameCount % 18;
   game.frameMod[20] = frameCount % 20;
   game.frameMod[30] = frameCount % 30;
+  game.frameMod[40] = frameCount % 40;
   game.frameMod[60] = frameCount % 60;
   game.frameMod[1200] = frameCount % 1200;
   game.frameMod[2400] = frameCount % 2400;
@@ -682,9 +684,12 @@ export function vacantBlockBelow(Square) {
 }
 
 export function spawnSquare(digit) {
-  let [x, y] = [game.cursor.x, game.cursor.y];
-  if (digit < PIECES.length) game.board[x][y].color = PIECES[digit];
-  else game.board[x][y].color = "vacant";
+  let Square = game.board[game.cursor.x][game.cursor.y];
+  Square.tutorialSelectable = true;
+  if (digit < PIECES.length) Square.color = PIECES[digit];
+  // else if (digit == PIECES.length)
+  //   Square.color = `unmatchable${Square.x}${Square.y}`;
+  else Square.color = "vacant";
 }
 
 export function transferProperties(FirstBlock, SecondBlock, type) {

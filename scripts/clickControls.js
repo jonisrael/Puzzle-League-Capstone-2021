@@ -32,11 +32,6 @@ export function updateMousePosition(canvas, e) {
   if (x >= 0 && x < grid.COLS && y >= 1 && y < grid.ROWS) {
     touch.mouse.x = x;
     touch.mouse.y = y;
-    if (touch.mouse.clicked) {
-      game.cursor_type = blockIsSolid(game.board[x][y])
-        ? "legalSelectionCursor"
-        : "illegalSelectionCursor";
-    }
     return true;
   }
   return false;
@@ -74,6 +69,7 @@ export function selectBlock(x, y) {
     (SquareClicked.type === "swapping" ||
       INTERACTIVE_TYPES.includes(SquareClicked.type))
   ) {
+    if (game.mode === "tutorial" && !SquareClicked.tutorialSelectable) return;
     touch.thereIsABlockCurrentlySelected = true; // select the block
     touch.selectedBlock.x = x;
     touch.selectedBlock.y = y;
@@ -181,6 +177,7 @@ function doMouseDown(e) {
     }
 
     if (
+      !game.disableRaise &&
       game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
       game.highestRow > 1
     ) {

@@ -100,17 +100,20 @@ export function startGame(selectedGameSpeed = 1) {
   touch.arrowLists.length = 0;
   game.tutorialRunning = false;
   // document.getElementById("game-info-table").style.display = "inline";
-  if (game.mode !== "tutorial") {
+  if (game.mode === "tutorial") {
+    game.tutorialRunning = true;
+    game.disableRaise = true;
+    game.cursor_type = "illegalCursorUp";
+    grid.COLS = 6;
+    grid.ROWS = 8;
+    win.cvs.height = grid.SQ * grid.ROWS;
+    startTutorial();
+  } else {
+    grid.COLS = 6;
+    grid.ROWS = 12;
+    win.cvs.height = grid.SQ * grid.ROWS;
     game.board = generateOpeningBoard(42, 8);
     game.startingBoard = saveCurrentBoard(game.board, true);
-  } else {
-    game.tutorialRunning = true;
-    console.log(game.startingBoard);
-    if (!game.startingBoard) {
-      game.board = generateOpeningBoard(42, 8);
-      game.startingBoard = saveCurrentBoard(game.board, true);
-    }
-    startTutorial(game.startingBoard);
   }
 
   Object.keys(saveState).forEach((stateType) => (saveState[stateType] = {}));
@@ -193,6 +196,7 @@ export function resetGameVariables() {
   game.readyForNewRow = false;
   game.boardRiseDisabled = false;
   game.disableSwap = false;
+  game.disableRaise = false;
   game.currentlyQuickRaising = false;
   game.raisePressed = false;
   game.data = {};
@@ -308,6 +312,7 @@ export function fixNextDarkStack(board) {
 }
 
 export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
+  game.cursor = new Cursor(2, 6);
   game.cursor.x = 2;
   game.cursor.y = 6;
   let block;
@@ -325,6 +330,9 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       block.draw();
     }
   }
+  board = fixNextDarkStack(board); // make sure new stacks follow rules
+
+  if (blockNumber === 0) return board; // keep board empty
 
   console.log("begin openboard1");
   for (let i = 0; i < blockNumber; i++) {
@@ -399,7 +407,6 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       }
       board[x][y].draw();
     }
-    game.cursor = new Cursor(2, 6);
   }
 
   for (let x = 0; x < grid.COLS; x++) {
@@ -424,6 +431,5 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       }
     }
   }
-  board = fixNextDarkStack(board);
   return board;
 }

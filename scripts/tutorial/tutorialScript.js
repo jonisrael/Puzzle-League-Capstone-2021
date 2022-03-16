@@ -13,9 +13,9 @@ import {
 } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
-import { tutorialBoards } from "./tutorialBoards";
+import { createTutorialBoard, tutorialBoards } from "./tutorialBoards";
 import { tutorialMessages } from "./tutorialMessages";
-import { tutorialInputs } from "./tutorialInputs";
+import { tutorialInputs } from "./tutorialEvents";
 import { audio } from "../fileImports";
 import { moveBlockByRelease, selectBlock } from "../clickControls";
 
@@ -67,35 +67,6 @@ export function nextDialogue(index) {
   }
 }
 
-export function loadTutorialState(state, index = 0) {
-  game.frames = game.score = game.minutes = game.seconds = 0;
-
-  tutorial.state = state;
-  tutorial.msgIndex = index;
-  if (state == tutorial.board.length) {
-    tutorial.state = tutorial.board.length - 1;
-    console.log("tutorial complete");
-    game.tutorialRunning = false;
-    game.humanCanPlay = true;
-    document.getElementById("game-info-table").style.display = "inline";
-    win.running = false;
-    win.restartGame = true;
-    return;
-  }
-
-  if (state == tutorial.board.length - 1) {
-    updateLevelEvents(1);
-    game.board = generateOpeningBoard();
-  } else if (state == 1) {
-    game.boardRiseSpeed = -2;
-    generateOpeningBoard(24, 4);
-  } else {
-    game.boardRiseSpeed = -2;
-    [game.cursor.x, game.cursor.y] = tutorialCursors[state];
-    game.board = createTutorialBoard(tutorial.board[state]);
-  }
-}
-
 export function runTutorialScript(input, frame, state) {
   let thisFrameInput = tutorial.inputs[state][frame];
   // console.log(
@@ -115,65 +86,19 @@ export function runTutorialScript(input, frame, state) {
   return input;
 }
 
-export function startTutorial(startingBoard) {
-  // game.board = [];
+export function startTutorial() {
+  win.cvs.style.height = "50vh";
+  game.board = [];
   sound.Music[1].src = audio.trainingMusic;
+  sound.Music[1].volume = 0.2;
   sound.Music[1].play();
   // game.tutorialRunning = true;
-  game.humanCanPlay = false;
+  // game.humanCanPlay = false;
   updateLevelEvents(3);
   document.getElementById("game-info-table").style.display = "none";
   document.getElementById("main-info").style = "font-size: 2rem;";
-  game.board = createTutorialBoard(startingBoard);
+  loadTutorialState(0, 0);
   // loadTutorialState(tutorial.state, tutorial.msgIndex);
-}
-
-export function createTutorialBoard(colorLocations) {
-  let block;
-  let board = [];
-  board.length = 0;
-  for (let c = 0; c < COLS; c++) {
-    board.push([]);
-    for (let r = 0; r < ROWS + 2; r++) {
-      block = newBlock(c, r);
-      board[c].push(block);
-      if (r > ROWS - 1) {
-        board[c][r].color = randomPiece(game.level);
-        board[c][r].type = blockType.DARK;
-      } else {
-        colorLocations.forEach((arr) => {
-          let [locX, locY, definedColor] = arr;
-          if (c == locX && r == locY) {
-            board[c][r].color = definedColor;
-          }
-        });
-      }
-      block.draw();
-    }
-  }
-  for (let x = 0; x < COLS; x++) {
-    // Initial Dark Stacks
-    board[x][grid.ROWS].color = randomPiece(game.level);
-    board[x][grid.ROWS + 1].color = randomPiece(game.level);
-    if (x > 0) {
-      win.loopCounter = 0;
-      while (board[x][grid.ROWS].color == board[x - 1][grid.ROWS].color) {
-        win.loopCounter++;
-        if (detectInfiniteLoop("createTutorialBoard1", win.loopCounter)) break;
-        board[x][grid.ROWS].color = randomPiece(game.level);
-      }
-      win.loopCounter = 0;
-      while (
-        board[x][grid.ROWS + 1].color == board[x - 1][grid.ROWS + 1].color
-      ) {
-        win.loopCounter++;
-        if (detectInfiniteLoop("createTutorialBoard2", win.loopCounter)) break;
-        board[x][grid.ROWS + 1].color = randomPiece(game.level);
-      }
-    }
-  }
-  board = fixNextDarkStack(board);
-  return board;
 }
 
 export function playScript(touchInput) {
@@ -190,6 +115,88 @@ export function playScript(touchInput) {
   }
   if (name === "raise") {
     game.raisePressed = true;
+  }
+}
+
+export function loadTutorialState(state, index = 0) {
+  game.board = generateOpeningBoard(0, 0); // empty board
+  game.board = createTutorialBoard(tutorial.board[state]);
+  game.frames = game.score = game.minutes = game.seconds = 0;
+
+  tutorial.state = state;
+  tutorial.msgIndex = index;
+  if (state == tutorial.board.length) {
+    tutorial.state = tutorial.board.length - 1;
+    console.log("tutorial complete");
+    game.tutorialRunning = false;
+    game.humanCanPlay = true;
+    document.getElementById("game-info-table").style.display = "inline";
+    win.running = false;
+    win.restartGame = true;
+    return;
+  }
+
+  if (state === 0) {
+    updateLevelEvents(1);
+  }
+
+  // if (state == tutorial.board.length - 1) {
+  //   updateLevelEvents(1);
+  //   game.board = generateOpeningBoard();
+  // } else if (state == 1) {
+  //   game.boardRiseSpeed = -2;
+  //   generateOpeningBoard(24, 4);
+  // } else {
+  //   game.boardRiseSpeed = -2;
+  //   [game.cursor.x, game.cursor.y] = tutorialCursors[state];
+  //   game.board = createTutorialBoard(tutorial.board[state]);
+  // }
+}
+
+export function flipLightsOnCol(x, y_values, type) {
+  y_values.forEach((y) => flipLightSwitch(x, y, type));
+}
+
+export function flipLightsOnRow(x_values, y, type) {
+  x_values.forEach((x) => flipLightSwitch(x, y, type));
+}
+
+export function flipAllLightsOff() {
+  for (let x = 0; x < grid.COLS; x++) {
+    for (let y = 0; y < grid.ROWS; y++) {
+      game.board[x][y].lightTimer = 0; // turn off
+    }
+  }
+}
+
+export function flipLightSwitch(x, y, helpX, type) {
+  if (type === undefined) {
+    type =
+      game.board[x][y].lightTimer === 0 && helpX !== undefined ? "on" : "off";
+  }
+  if (type === "on") {
+    game.board[x][y].lightTimer = -2; // turn on indefinitely
+  } else {
+    game.board[x][y].lightTimer = 0; // turn off
+  }
+}
+
+export function makeBlockSelectable(x, y, helpX) {
+  if (helpX !== undefined) {
+    game.board[x][y].tutorialSelectable = true;
+    game.board[x][y].helpX = helpX;
+  } else {
+    game.board[x][y].tutorialSelectable = false;
+    game.board[x][y].helpX = undefined;
+  }
+}
+
+export function deselectAllBlocks() {
+  for (let x = 0; x < grid.COLS; x++) {
+    for (let y = 0; y < grid.ROWS; y++) {
+      game.board[x][y].tutorialSelectable = false;
+      game.board[x][y].helpX = undefined;
+    }
   }
 }
 

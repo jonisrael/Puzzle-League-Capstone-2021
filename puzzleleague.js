@@ -127,6 +127,7 @@ import {
   drawScoreEarnedMessage,
 } from "./scripts/functions/drawCanvasShapesAndText";
 import { previous, saveCurrentBoard } from "./scripts/functions/recordGame";
+import { checkTutorialEvents } from "./scripts/tutorial/tutorialEvents";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -190,6 +191,8 @@ class Block {
     swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
     targetX = undefined,
     previewX = undefined,
+    helpX = undefined,
+    tutorialSelectable = true,
     smartMatch = {
       lowestKeyCoord: undefined,
       highestKeyCoord: undefined,
@@ -219,6 +222,8 @@ class Block {
     this.swapOrders = swapOrders;
     this.targetX = targetX;
     this.previewX = previewX;
+    this.helpX = helpX;
+    this.tutorialSelectable = tutorialSelectable;
     this.smartMatch = smartMatch;
   }
 
@@ -241,6 +246,7 @@ class Block {
 
   drawSwappingBlocks() {
     let xOffset = (grid.SQ * (this.timer - 1)) / 4;
+    // let url = this.color[0] === "u" ? "unmatchable" : `${this.color}_normal`;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
       grid.SQ * this.x + xOffset * this.swapDirection,
@@ -274,18 +280,29 @@ class Block {
 
   drawArrows(move = "Move") {
     if (game.over) return;
-    let moveToX = this.previewX === undefined ? this.targetX : this.previewX;
+
+    let moveToX =
+      this.targetX !== undefined
+        ? this.targetX
+        : this.previewX !== undefined
+        ? this.previewX
+        : this.helpX;
     if (moveToX === this.x) return;
     let filename;
     let inc = moveToX < this.x ? -1 : 1;
     let dir = moveToX < this.x ? "Left" : "Right";
     let bufferDetected = false;
     let previewDetected = false;
+    let helpDetected = false;
     win.loopCounter = 0;
     for (let i = this.x; true; i += inc) {
       win.loopCounter++;
       if (detectInfiniteLoop("drawArrows", win.loopCounter)) break;
-      if (!previewDetected && moveToX === this.previewX) {
+      if (!helpDetected && moveToX === this.helpX) {
+        helpDetected = true;
+        move = "Advice";
+        i = this.x;
+      } else if (!previewDetected && moveToX === this.previewX) {
         previewDetected = true;
         move = "Buffer";
         i = this.x;
@@ -297,19 +314,20 @@ class Block {
         move = "Buffer"; // change to buffer arrow
         i = this.x; // repaint earlier arrows to be pink
       }
-      if (i === this.x) {
-        filename = `arrow${dir}${move}Start`;
-      } else if (i === moveToX) {
-        filename = `arrow${dir}${move}End`;
-      } else {
-        filename = `arrowMid${move}`;
+      if (move !== "Advice" || game.frameMod[60] < 40) {
+        if (i === this.x) {
+          filename = `arrow${dir}${move}Start`;
+        } else if (i === moveToX) {
+          filename = `arrow${dir}${move}End`;
+        } else {
+          filename = `arrowMid${move}`;
+        }
+        win.ctx.drawImage(
+          loadedSprites[filename],
+          grid.SQ * i,
+          grid.SQ * this.y - game.rise
+        );
       }
-      win.ctx.drawImage(
-        loadedSprites[filename],
-        grid.SQ * i,
-        grid.SQ * this.y - game.rise
-      );
-
       if (i === moveToX) break;
     }
   }
@@ -560,7 +578,8 @@ class Block {
     let urlKey = blockKeyOf(this.color, this.type, animationIndex);
     if ((this.type === "landing" && this.timer > 9) || this.type === "stalling")
       urlKey = `${this.color}_normal`;
-    if (this.type === "swapping") return;
+    if (this.type === "swapping") return; // make behind swapping blocks look vacant
+    // if (this.color[0] === "u") urlKey = "unmatchable";
     win.ctx.drawImage(
       loadedSprites[urlKey],
       grid.SQ * this.x,
@@ -639,7 +658,11 @@ export function drawGrid() {
       if (Square.swapDirection && Square.timer > 0) {
         swappingBlocksArray.push(Square);
       }
-      if (Square.targetX !== undefined || Square.previewX !== undefined) {
+      if (
+        Square.targetX !== undefined ||
+        Square.previewX !== undefined ||
+        Square.helpX !== undefined
+      ) {
         if (game.cursor_type[0] !== "d") arrowListArray.push(Square);
       }
       // blocksAreSwapping = true;
@@ -650,9 +673,9 @@ export function drawGrid() {
 
       // Square.drawGridLines();
 
-      // if (game.cursor_type[0] !== "d") {
-      //   Square.drawGridLines();
-      // }
+      if (game.cursor_type[0] !== "d") {
+        Square.drawGridLines();
+      }
 
       if (helpPlayer.timer === 0 && cpu.matchStrings.includes([x, y].join())) {
         Square.drawHint();
@@ -685,7 +708,10 @@ export function drawGrid() {
   if (!game.over) {
     if (game.cursor_type[0] !== "d") {
       if (touch.moveOrderExists) game.cursor_type = "movingCursor";
-      else if (blockIsSolid(game.board[game.cursor.x][game.cursor.y])) {
+      else if (
+        blockIsSolid(game.board[game.cursor.x][game.cursor.y]) &&
+        game.board[game.cursor.x][game.cursor.y].tutorialSelectable
+      ) {
         game.cursor_type = touch.mouse.clicked
           ? "legalCursorDown"
           : "legalCursorUp";
@@ -1089,6 +1115,7 @@ function KEYBOARD_CONTROL(event) {
         if (event.keyCode === 190) {
           // .
           console.log(saveCurrentBoard(game.board, true));
+          console.log(saveCurrentBoard(game.board, true, true));
           console.log(saveCurrentBoard(game.board, false));
           console.table(touchInputs);
         }
@@ -1313,6 +1340,7 @@ export function gameLoop() {
       }
 
       checkTime(game.frames <= 7200);
+      if (game.mode === "tutorial") checkTutorialEvents(tutorial.state);
 
       if (game.frames > 0 && game.frameMod[60] === 0 && !game.over) {
         game.seconds++;
@@ -1365,6 +1393,7 @@ export function gameLoop() {
       if (
         game.frameMod[1200] === 0 &&
         game.mode !== "training" &&
+        game.mode !== "tutorial" &&
         game.level < preset.speedValues.length &&
         game.level > 0 &&
         !debug.enabled &&
@@ -1431,7 +1460,11 @@ export function gameLoop() {
       if (!game.boardRiseSpeed)
         game.boardRiseSpeed = preset.speedValues[game.level];
 
-      if (game.frames % game.boardRiseSpeed == 0 && game.boardRiseSpeed > 0) {
+      if (
+        game.mode !== "tutorial" &&
+        game.frames % game.boardRiseSpeed == 0 &&
+        game.boardRiseSpeed > 0
+      ) {
         if (
           game.boardRiseRestarter >= 180 ||
           (game.boardRiseRestarter >= 60 && game.frames >= 7200)

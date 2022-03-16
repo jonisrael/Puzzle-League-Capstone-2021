@@ -116,7 +116,8 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     transferProperties(LeftBlock, RightBlock, "between");
     // if landing, shorten timer to end the landing animation next frame.
     LeftBlock.timer = RightBlock.timer = 5;
-    LeftBlock.lightTimer = RightBlock.lightTimer = 0;
+    if (game.mode !== "tutorial")
+      LeftBlock.lightTimer = RightBlock.lightTimer = 0;
     LeftBlock.type = RightBlock.type = blockType.SWAPPING;
     LeftBlock.airborne = isBlockAirborne(LeftBlock);
     RightBlock.airborne = isBlockAirborne(RightBlock);

@@ -19,19 +19,24 @@ import PINK_LIGHT from ".././assets/Sprites/pinkLight.png";
 import ORANGE_LIGHT from ".././assets/Sprites/orangeLight.png";
 import L_ARROW_START_ORNG from ".././assets/Sprites/arrows/orange/leftArrowStartOrange.png";
 import L_ARROW_START_PINK from ".././assets/Sprites/arrows/pink/leftArrowStartPink.png";
+import L_ARROW_START_MAGENTA from ".././assets/Sprites/arrows/magenta/leftArrowStartMagenta.png";
 import L_ARROW_START_DARK from ".././assets/Sprites/arrows/dark/leftArrowStartDark.png";
 import L_ARROW_END_ORNG from ".././assets/Sprites/arrows/orange/leftArrowEndOrange.png";
 import L_ARROW_END_PINK from ".././assets/Sprites/arrows/pink/leftArrowEndPink.png";
 import L_ARROW_END_DARK from ".././assets/Sprites/arrows/dark/leftArrowEndDark.png";
+import L_ARROW_END_MAGENTA from ".././assets/Sprites/arrows/magenta/leftArrowEndMagenta.png";
 import R_ARROW_START_ORNG from ".././assets/Sprites/arrows/orange/rightArrowStartOrange.png";
 import R_ARROW_START_PINK from ".././assets/Sprites/arrows/pink/rightArrowStartPink.png";
 import R_ARROW_START_DARK from ".././assets/Sprites/arrows/dark/rightArrowStartDark.png";
+import R_ARROW_START_MAGENTA from ".././assets/Sprites/arrows/magenta/rightArrowStartMagenta.png";
 import R_ARROW_END_ORNG from ".././assets/Sprites/arrows/orange/rightArrowEndOrange.png";
 import R_ARROW_END_PINK from ".././assets/Sprites/arrows/pink/rightArrowEndPink.png";
 import R_ARROW_END_DARK from ".././assets/Sprites/arrows/dark/rightArrowEndDark.png";
+import R_ARROW_END_MAGENTA from ".././assets/Sprites/arrows/magenta/rightArrowEndMagenta.png";
 import H_ARROW_MID from ".././assets/Sprites/arrows/orange/midArrow.png";
 import H_ARROW_MID_PINK from ".././assets/Sprites/arrows/pink/midArrowPink.png";
 import H_ARROW_MID_DARK from ".././assets/Sprites/arrows/dark/midArrowDark.png";
+import H_ARROW_MID_MAGENTA from ".././assets/Sprites/arrows/magenta/midArrowMagenta.png";
 import D_ARROW_START from ".././assets/Sprites/arrows/orange/downArrowStart.png";
 import D_ARROW_END from ".././assets/Sprites/arrows/orange/downArrowEnd.png";
 import D_ARROW_MID from ".././assets/Sprites/arrows/orange/downMidArrow.png";
@@ -134,6 +139,7 @@ import PANICKING_2_Y from ".././assets/Sprites/yellowLightning/panicking/2.png";
 import PANICKING_3_Y from ".././assets/Sprites/yellowLightning/panicking/3.png";
 
 // Image Sprites
+import UNMATCHABLE from ".././assets/Sprites/unmatchable.png";
 import BLINKING_0_V from ".././assets/Sprites/vacantSquare/clearing/0.png";
 import BLINKING_1_V from ".././assets/Sprites/vacantSquare/clearing/1.png";
 import DARK_V from ".././assets/Sprites/vacantSquare/dark.png";
@@ -390,6 +396,7 @@ const sprite = {
   yellow_panicking_2: PANICKING_2_Y,
   yellow_panicking_3: PANICKING_3_Y,
 
+  unmatchable: UNMATCHABLE,
   vacant_normal: NORMAL_V,
   vacant_face: FACE_V,
   vacant_dark: DARK_V,
@@ -409,19 +416,19 @@ const sprite = {
   // arrow items
   arrowLeftMoveStart: L_ARROW_START_ORNG,
   arrowLeftBufferStart: L_ARROW_START_PINK,
-  arrowLeftPreviewStart: L_ARROW_START_DARK,
+  arrowLeftAdviceStart: L_ARROW_START_MAGENTA,
   arrowLeftMoveEnd: L_ARROW_END_ORNG,
   arrowLeftBufferEnd: L_ARROW_END_PINK,
-  arrowLeftPreviewEnd: L_ARROW_END_DARK,
+  arrowLeftAdviceEnd: L_ARROW_END_MAGENTA,
   arrowRightMoveStart: R_ARROW_START_ORNG,
   arrowRightBufferStart: R_ARROW_START_PINK,
-  arrowRightPreviewStart: R_ARROW_START_DARK,
+  arrowRightAdviceStart: R_ARROW_START_MAGENTA,
   arrowRightMoveEnd: R_ARROW_END_ORNG,
   arrowRightBufferEnd: R_ARROW_END_PINK,
-  arrowRightPreviewEnd: R_ARROW_END_DARK,
+  arrowRightAdviceEnd: R_ARROW_END_MAGENTA,
   arrowMidMove: H_ARROW_MID,
   arrowMidBuffer: H_ARROW_MID_PINK,
-  arrowMidPreview: H_ARROW_MID_DARK,
+  arrowMidAdvice: H_ARROW_MID_MAGENTA,
   arrowDownStart: D_ARROW_START,
   arrowDownEnd: D_ARROW_END,
   arrowDownMid: D_ARROW_MID,
