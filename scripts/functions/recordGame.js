@@ -1,5 +1,6 @@
 import { newBlock } from "../../puzzleleague";
 import { blockType, game, grid, randomPiece, touch } from "../global";
+import { tutorial } from "../tutorial/tutorialScript";
 import { fixNextDarkStack } from "./startGame";
 
 export const previous = {};
@@ -47,6 +48,7 @@ export function saveCurrentBoard(board, simple = true, flipped = false) {
   } else {
     currentBoard = JSON.parse(JSON.stringify(board));
   }
+  console.log("saving board and index", tutorial.msgIndex, currentBoard);
   return currentBoard;
 }
 

@@ -10,14 +10,14 @@ export const tutorialBoards = [
     [0, 3, "cyan"],
     [0, 4, "cyan"],
     [0, 5, "green"],
-    [0, 6, "red", true, 1],
+    [0, 6, "red", -2], // starting block
     [0, 7, "cyan"],
     [1, 2, "cyan"],
     [1, 3, "cyan"],
     [1, 4, "green"],
-    [1, 5, "red", true],
+    [1, 5, "red", -2],
     [1, 6, "purple"],
-    [1, 7, "red", true],
+    [1, 7, "red", -2],
     [2, 7, "yellow"],
     [4, 2, "purple"],
     [4, 3, "red"],
@@ -33,15 +33,16 @@ export const tutorialBoards = [
   ],
   [
     [0, 6, "cyan", true, 2],
-    [0, 7, "blue"],
-    [1, 7, "green"],
-    [2, 7, "purple"],
+    [0, 7, "green"],
+    [1, 7, "yellow"],
+    [2, 7, "green"],
     [3, 4, "red"],
     [3, 5, "red"],
     [3, 6, "cyan"],
     [3, 7, "red"],
     [4, 6, "cyan"],
-    [4, 7, "yellow"],
+    [4, 7, "purple"],
+    [5, 7, "purple"],
   ],
   [],
   [],
@@ -69,25 +70,20 @@ export function createTutorialBoard(colorLocations) {
       block = newBlock(c, r);
       block.tutorialSelectable = false;
       game.board[c].push(block);
+      game.board[c][r].tutorialSelectable = false;
       if (r > ROWS - 1) {
         game.board[c][r].color = randomPiece(game.level);
         game.board[c][r].type = blockType.DARK;
       } else {
         colorLocations.forEach((arr) => {
-          let [locX, locY, definedColor, light, helpX] = arr;
+          let [locX, locY, definedColor, timer] = arr;
           if (c == locX && r == locY) {
             game.board[c][r].color = definedColor;
             // if (definedColor === "unmatchable") {
             //   // prevent color from being unmatchable
             //   definedColor = `unmatchable${locX}${locY}`;
             // }
-            if (light) game.board[c][r].lightTimer = -2;
-            if (helpX !== undefined) {
-              game.board[c][r].tutorialSelectable = true;
-              game.board[c][r].helpX = helpX;
-            } else {
-              game.board[c][r].tutorialSelectable = false;
-            }
+            if (timer !== undefined) game.board[c][r].timer = timer;
           }
         });
       }

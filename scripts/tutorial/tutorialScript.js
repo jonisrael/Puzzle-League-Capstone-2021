@@ -37,6 +37,8 @@ const tutorialCursors = [
 
 export const tutorial = {
   board: tutorialBoards,
+  savedBoard: [],
+  savedIndex: 0,
   inputs: tutorialInputs,
   msgIndex: 0,
   cursor: tutorialCursors,
@@ -56,9 +58,12 @@ export function nextDialogue(index) {
     "states",
     tutorialMessages.length
   );
+
   if (index < tutorialMessages[tutorial.state].length - 1) {
     console.log("go to next text box");
     tutorial.msgIndex++;
+    game.message = tutorialMessages[tutorial.state][tutorial.msgIndex];
+    console.log(tutorial.msgIndex, game.message);
   } else {
     console.log("new state");
     tutorial.state++;
@@ -137,6 +142,7 @@ export function loadTutorialState(state, index = 0) {
   }
 
   if (state === 0) {
+    game.cursor.y = -1;
     updateLevelEvents(1);
   }
 
@@ -161,23 +167,33 @@ export function flipLightsOnRow(x_values, y, type) {
   x_values.forEach((x) => flipLightSwitch(x, y, type));
 }
 
-export function flipAllLightsOff() {
+export function flipLightOnBlocksWithNegativeTimer(blink = false) {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
-      game.board[x][y].lightTimer = 0; // turn off
+      if (game.board[x][y].timer < 0) {
+        flipLightSwitch(x, y, "on", blink);
+        game.board[x][y].timer = 0;
+      }
     }
   }
 }
 
-export function flipLightSwitch(x, y, helpX, type) {
-  if (type === undefined) {
-    type =
-      game.board[x][y].lightTimer === 0 && helpX !== undefined ? "on" : "off";
+export function flipAllLightsOff() {
+  for (let x = 0; x < grid.COLS; x++) {
+    for (let y = 0; y < grid.ROWS; y++) {
+      game.board[x][y].lightTimer = 0; // turn off
+      game.board[x][y].lightBlink = false;
+    }
   }
+}
+
+export function flipLightSwitch(x, y, type, blink = false) {
   if (type === "on") {
     game.board[x][y].lightTimer = -2; // turn on indefinitely
+    game.board[x][y].lightBlink = blink;
   } else {
     game.board[x][y].lightTimer = 0; // turn off
+    game.board[x][y].lightBlink = false;
   }
 }
 

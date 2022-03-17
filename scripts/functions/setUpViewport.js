@@ -235,6 +235,7 @@ function createDesktopDisplay() {
   pauseButton.className = "default-button pause-buttons";
   pauseButton.innerHTML = "Pause";
   column1.append(pauseButton);
+  if (game.mode === "tutorial") pauseButton.innerHTML = "Advance";
   pauseButton.addEventListener("click", (event) => {
     game.tutorialRunning
       ? nextDialogue(tutorial.msgIndex)
@@ -293,10 +294,14 @@ function createMobileDisplay() {
   win.fpsDisplay.style.color = "black";
   appContainer.appendChild(win.fpsDisplay);
 
+  let mainInfoContainer = document.createElement("div");
+  mainInfoContainer.setAttribute("id", "main-info-container");
+  appContainer.appendChild(mainInfoContainer);
+
   win.mainInfoDisplay = document.createElement("h2");
   win.mainInfoDisplay.setAttribute("id", "main-info");
   win.mainInfoDisplay.innerHTML = "Loading...";
-  appContainer.appendChild(win.mainInfoDisplay);
+  mainInfoContainer.appendChild(win.mainInfoDisplay);
 
   let topSection = document.createElement("div");
   topSection.setAttribute("id", "top-section");
@@ -475,8 +480,8 @@ function createMobileDisplay() {
   //   setUpTrainingMode(gameContainer);
   // }
   if (game.mode === "tutorial") {
-    gameContainer.append(pauseButton);
-    pauseButton.innerHTML = "Menu";
+    topSection.append(pauseButton);
+    pauseButton.innerHTML = "Advance";
   } else {
     topSection.append(pauseButton);
   }

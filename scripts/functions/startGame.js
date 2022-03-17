@@ -107,6 +107,7 @@ export function startGame(selectedGameSpeed = 1) {
     grid.COLS = 6;
     grid.ROWS = 8;
     win.cvs.height = grid.SQ * grid.ROWS;
+    document.getElementById("main-info-container").style.minHeight = "30vh";
     startTutorial();
   } else {
     grid.COLS = 6;
@@ -115,6 +116,7 @@ export function startGame(selectedGameSpeed = 1) {
     game.board = generateOpeningBoard(42, 8);
     game.startingBoard = saveCurrentBoard(game.board, true);
   }
+  window.scrollTo(0, 0);
 
   Object.keys(saveState).forEach((stateType) => (saveState[stateType] = {}));
   // if (!win.tutorialPlayedOnce && game.mode == "arcade") {

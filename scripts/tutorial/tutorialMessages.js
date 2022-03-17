@@ -1,58 +1,18 @@
 export const tutorialMessages = [
-  ["Tutorial (Press X/S/Swap to Advance, Z/R/Raise to Skip)"],
   [
-    "SWAPPING BLOCKS",
-    "Swap blocks horizontally to align them. You can use X or S...",
-    "Along with (experimental!) game controller support (Press A/B)...",
-    "And (very experimental!!) mobile screen support.",
-    "If on mobile, draw an arrow order to move blocks horizontally",
-    "Double tap any colored block to cancel all current move orders.",
+    "Welcome to Blockle, and thank you for trying my game!", // 0
+    "To play, swap blocks horizontally left or right. Blocks will fall vertically.", // 1
+    "Match 3 of the same color to gain points.", // 2
+    "Go ahead and try it! Select a block by touching it, and hold your finger on it.", // 3
+    "Good! Now drag the block over here and let go of the screen to move it", // 4
+    "Now they are clearing, and you gained 30 points!", // 5
+    "Try clearing 4 at once by moving this block.",
+    "Excellent! 60 points!",
+    "Now see if you can clear 5. But which cyan block should you move first?",
+    "5 has been cleared! 90 points!",
+    "Can you figure out how to create a clear 8?",
+    "There it is!",
+    "Nicely done, let's move on.",
   ],
-  [
-    "MATCHING BLOCKS (1/2)",
-    "Match three to get points and clear the board.",
-    "Match more than three for a small bonus...",
-    "and a compliment from the announcer!",
-  ],
-  [
-    "MATCHING BLOCKS (2/2)",
-    "Airborne blocks cannot match or swap with other blocks.",
-    "Blocks always stall in midair shortly before falling.",
-  ],
-  [
-    "BLOCK CHAINS AND SCORING",
-    "The best way to score points is through block chains.",
-    "Form block chains by setting up automatic matches like below.",
-    "We prepare matches to land on each after the original clears.",
-    "A fanfare jingle will signal a chain was made.",
-    "Large chains will greatly increase bonuses received",
-  ],
-  [
-    "SELF-LIFTING",
-    "Press Z/R/Raise to self-lift the stack, like my AI does here.",
-    "On touch screen, double tap any vacant block to self-raise it.",
-    "The higher the stack, the larger the chains that are possible...",
-    "but the greater the risk of topping out and losing.",
-  ],
-  [
-    "ARCADE GAME RULES",
-    "Arcade mode lasts two minutes. Game speed increases every 20 seconds.",
-    "Score gained in later stages of game is greater, but is also harder.",
-    "At two minutes, the game speed triples. This is called overtime.",
-    "It is very hard to survive. However, score gained here will be very high...",
-    "And for every second survived you get a large bonus.",
-    "The game ends when blocks rise past the top of the board.",
-  ],
-  [
-    "SURVIVAL TIPS",
-    "The stack immediately stops rising if any block is airborne or clearing...",
-    "And creating a 4+ match or 2+ chain will also add a small amount of delay.",
-    "The larger the chain or match, the more delay you can receive.",
-    "Delay becomes less effective as game speed increases and cannot exceed 5 seconds.",
-    "These techniques are essential to survival during overtime!",
-  ],
-  [
-    "If you would like to see this tutorial again, press F5 to reload the web app.",
-    "A more in-depth mobile tutorial is coming soon!",
-  ],
+  ["No more tutorial yet! Come back later!"],
 ];

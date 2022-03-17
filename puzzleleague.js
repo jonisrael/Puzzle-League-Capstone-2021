@@ -188,6 +188,7 @@ class Block {
     availForSecondaryChain = false,
     swapDirection = 0,
     lightTimer = 0,
+    lightBlink = false,
     swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
     targetX = undefined,
     previewX = undefined,
@@ -219,6 +220,7 @@ class Block {
     this.availForSecondaryChain = availForSecondaryChain;
     this.swapDirection = swapDirection;
     this.lightTimer = lightTimer;
+    this.lightBlink = lightBlink;
     this.swapOrders = swapOrders;
     this.targetX = targetX;
     this.previewX = previewX;
@@ -230,7 +232,10 @@ class Block {
   drawGridLines() {
     let filename = "grid_line";
     if (this.y === 0) filename = "grid_line_red";
-    else if (this.lightTimer != 0) {
+    else if (
+      this.lightTimer != 0 &&
+      (!this.lightBlink || game.frameMod[60] < 30)
+    ) {
       filename = "light_up";
     } else if (this.y === game.cursor.y) {
       filename = "rowLight";
@@ -314,7 +319,11 @@ class Block {
         move = "Buffer"; // change to buffer arrow
         i = this.x; // repaint earlier arrows to be pink
       }
-      if (move !== "Advice" || game.frameMod[60] < 40) {
+      if (
+        move !== "Advice" ||
+        (game.frameMod[60] < 25 && dir === "Right") ||
+        (game.frameMod[60] >= 35 && dir === "Left")
+      ) {
         if (i === this.x) {
           filename = `arrow${dir}${move}Start`;
         } else if (i === moveToX) {
@@ -1741,8 +1750,8 @@ export function gameLoop() {
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.tutorialRunning) {
-        win.mainInfoDisplay.innerHTML =
-          tutorialMessages[tutorial.state][tutorial.msgIndex];
+        game.message = tutorialMessages[tutorial.state][tutorial.msgIndex];
+        win.mainInfoDisplay.innerHTML = game.message;
       } else {
         if (game.messageChangeDelay > 0) {
           game.messageChangeDelay -= 1 * perf.gameSpeed;

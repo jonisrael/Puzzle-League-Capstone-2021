@@ -72,11 +72,6 @@ p {
   min-height: 92vh;
 }
 
-#main-info {
-  font-size: 2rem;
-  padding: 0;
-}
-
 .app-message-display {
   background-color: rgb(255, 240, 240);
   padding: 1px;
@@ -734,8 +729,10 @@ footer {
   }
 
   #main-info {
-    font-size: 2.5vh;
+    font-size: 3vh;
     overflow: clip;
+    padding-left: 2vw;
+    padding-right: 2vw;
   }
 
   #root {
