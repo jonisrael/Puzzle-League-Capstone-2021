@@ -18,6 +18,7 @@ import { tutorialMessages } from "./tutorialMessages";
 import { tutorialInputs } from "./tutorialEvents";
 import { audio } from "../fileImports";
 import { moveBlockByRelease, selectBlock } from "../clickControls";
+import { playMusic } from "../functions/audioFunctions";
 
 // ROWS
 const COLS = 6;
@@ -94,9 +95,10 @@ export function runTutorialScript(input, frame, state) {
 export function startTutorial() {
   win.cvs.style.height = "50vh";
   game.board = [];
-  sound.Music[1].src = audio.trainingMusic;
-  sound.Music[1].volume = 0.2;
-  sound.Music[1].play();
+  playMusic(audio.trainingMusic, 0.2);
+  // sound.Music[1].src = audio.trainingMusic;
+  // sound.Music[1].volume = 0.2;
+  // sound.Music[1].play();
   // game.tutorialRunning = true;
   // game.humanCanPlay = false;
   updateLevelEvents(3);

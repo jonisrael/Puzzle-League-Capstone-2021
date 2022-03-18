@@ -19,7 +19,7 @@ export default (st) => html`
           Interactive Tutorial (I)
         </button>
         <button id="training-mode" class="default-button start-buttons">
-          Training Mode (T)
+          Practice (P)
         </button>
         <button id="ai-plays-button" class="default-button start-buttons">
           See My AI Play! (B)

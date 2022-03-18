@@ -132,6 +132,8 @@ section {
     rgb(65, 65, 65)
   );
   /* height: 90%; */
+  padding: 0;
+  padding-bottom: 1px;
   margin: 1vh 1vw;
   /* max-width: 95vw; */
   /* top: 5%; */
@@ -731,12 +733,14 @@ footer {
   #main-info {
     font-size: 3vh;
     overflow: clip;
-    padding-left: 2vw;
-    padding-right: 2vw;
+    /* padding-left: 2vw;
+    padding-right: 2vw; */
+    padding: 0 2vw 0 2vw;
   }
 
   #root {
-    padding-top: 0.25vh;
+    padding-top: 0.5vh;
+    /* padding-top: 0.25vh; */
   }
 
   #pause-button {

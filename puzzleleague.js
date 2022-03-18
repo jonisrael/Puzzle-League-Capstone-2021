@@ -385,7 +385,7 @@ class Block {
     win.ctx.strokeStyle = "white";
     if (this.startingClearFrame - this.timer < 4) {
       win.ctx.globalAlpha = (this.startingClearFrame - this.timer) / 4;
-      console.log(game.frames, (this.startingClearFrame - this.timer) / 4);
+      // console.log(game.frames, (this.startingClearFrame - this.timer) / 4);
     }
     if (this.timer < this.switchToFaceFrame + 8) {
       win.ctx.globalAlpha = (this.timer - this.switchToFaceFrame) / 8;

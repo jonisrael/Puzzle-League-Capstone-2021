@@ -107,7 +107,8 @@ export function startGame(selectedGameSpeed = 1) {
     grid.COLS = 6;
     grid.ROWS = 8;
     win.cvs.height = grid.SQ * grid.ROWS;
-    document.getElementById("main-info-container").style.minHeight = "30vh";
+    if (document.getElementById("main-info-container"))
+      document.getElementById("main-info-container").style.minHeight = "30vh";
     startTutorial();
   } else {
     grid.COLS = 6;

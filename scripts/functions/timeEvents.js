@@ -68,7 +68,7 @@ export function checkTime(beforeOvertime) {
 
       break;
     case 60:
-      if (!debug.enabled && !game.tutorialRunning && beforeOvertime)
+      if (!game.over && !debug.enabled && beforeOvertime)
         playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
       game.messagePriority = "";
       game.defaultMessage = "X to swap Z to lift the stack!";

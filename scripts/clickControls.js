@@ -14,6 +14,7 @@ import {
   touchInputs,
   win,
 } from "./global";
+import { nextDialogue, tutorial } from "./tutorial/tutorialScript";
 
 export function updateMousePosition(canvas, e) {
   if (!touch.enabled || cpu.enabled) return;
@@ -59,6 +60,7 @@ export function selectBlock(x, y) {
 
   game.cursor.x = touch.mouse.x;
   game.cursor.y = touch.mouse.y;
+  game.cursor_type = "legalCursorDown";
   let SquareClicked = game.board[x][y];
   // check if close range swap should happen
 
@@ -134,7 +136,13 @@ export function moveBlockByRelease(x, y, targetX) {
 }
 
 function doMouseDown(e) {
-  if (!game.humanCanPlay) return;
+  if (!game.humanCanPlay || !touch.enabled || cpu.enabled) {
+    if (game.mode === "tutorial") {
+      nextDialogue(tutorial.msgIndex);
+    }
+    return;
+  }
+
   if (!touch.enabled || cpu.enabled) return;
   touch.moveOrderExists = false;
   touch.mouse.clicked = true;

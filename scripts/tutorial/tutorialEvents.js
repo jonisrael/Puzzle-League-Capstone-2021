@@ -89,6 +89,7 @@ export function tutorialEventsAtState_0() {
     flipLightsOnCol(0, [grid.ROWS - 1, grid.ROWS - 4, grid.ROWS - 5], "on");
     flipLightsOnCol(1, [grid.ROWS - 2, grid.ROWS - 3], "on");
     makeBlockSelectable(1, grid.ROWS - 2, 0); // select cyan block
+    makeBlockSelectable(1, grid.ROWS - 3, 0); // select cyan block
   }
   if (
     game.board[0][grid.ROWS - 2].timer === 1 &&
@@ -155,7 +156,9 @@ export function tutorialEventsAtState_0() {
     (game.board[3][grid.ROWS - 1].color === "red" &&
       game.board[3][grid.ROWS - 1].timer === 2) ||
     (game.board[3][grid.ROWS - 1].color === "purple" &&
-      game.board[3][grid.ROWS - 1].timer === 2)
+      game.board[3][grid.ROWS - 1].timer === 2) ||
+    (game.board[0][grid.ROWS - 3].type === "face" &&
+      game.board[0][grid.ROWS - 2].type === "normal")
   ) {
     // return to last save
     console.log("failure, reverting to last save");
@@ -168,7 +171,6 @@ export function tutorialEventsAtState_0() {
       game.board[5][grid.ROWS - 1].timer = 4;
     }
     if (game.board[1][grid.ROWS - 3].color === "green") {
-      tutorial.msgIndex--;
       for (let r = 5; r > 0; r--) {
         game.board[0][grid.ROWS - r].type = "popped";
         game.board[0][grid.ROWS - r].timer = 4;

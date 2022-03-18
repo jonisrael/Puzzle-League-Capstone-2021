@@ -11,8 +11,8 @@ export const tutorialMessages = [
     "Now see if you can clear 5. But which cyan block should you move first?",
     "5 has been cleared! 90 points!",
     "Can you figure out how to create a clear 8?",
-    "There it is!",
+    "There it is! Look at all those points!",
     "Nicely done, let's move on.",
   ],
-  ["No more tutorial yet! Come back later!"],
+  ["No more tutorial yet! Come back later! Please reload page."],
 ];
