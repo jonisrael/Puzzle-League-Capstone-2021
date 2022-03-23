@@ -30,7 +30,7 @@ export function showNotification(messageLabel) {
 
 function appleWarning() {
   console.log("attempting to show apple warning");
-  if (localStorage.getItem("apple-warning-shown") === "true") return;
+  if (localStorage.getItem("apple-warning-shown-march") === "true") return;
   let patchNotesOverlay = document.createElement("div");
   patchNotesOverlay.setAttribute("id", "patch-notes-overlay");
   document.getElementById("home-page").prepend(patchNotesOverlay);
@@ -38,18 +38,18 @@ function appleWarning() {
   patchNotesBlock.setAttribute("id", "patch-notes-block");
   patchNotesOverlay.appendChild(patchNotesBlock);
   game.paused = 1;
-  localStorage.setItem("mute-music", "true");
+  // localStorage.setItem("mute-music", "true");
   localStorage.setItem("mute-sfx", "true");
   localStorage.setItem("mute-announcer", "true");
   win.muteMusic.checked = true;
   win.muteAnnouncer.checked = true;
   win.muteSFX.checked = true;
-  localStorage.setItem("apple-warning-shown", "true");
+  localStorage.setItem("apple-warning-shown-march", "true");
   patchNotesBlock.innerHTML = html`
     <p>
-      Apple products have issues with music and sound usually not playing
-      correctly, and has automatically been disabled. You can still re-enable it
-      in the options menu. <br /><strong>Click anywhere to continue</strong>.
+      Apple products have issues with sound effects not playing correctly, and
+      has automatically been disabled. You can still re-enable it in the options
+      menu. <br /><strong>Click anywhere to continue</strong>.
     </p>
   `;
   patchNotesOverlay.addEventListener("click", () => {
