@@ -272,7 +272,6 @@ export function playerAction(input) {
       game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
       if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
       game.swapPressed = true;
-      win.cvs.scrollIntoView({ block: "nearest" });
     }
 
     if (cursorMoved) {
@@ -288,7 +287,6 @@ export function playerAction(input) {
     if (input.raise) {
       action.raise = false;
       game.raisePressed = true;
-      win.cvs.scrollIntoView({ block: "nearest" });
     }
   }
 

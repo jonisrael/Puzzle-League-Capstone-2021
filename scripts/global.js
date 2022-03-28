@@ -179,7 +179,7 @@ export const preset = {
   faceValues: [80, 40, 36, 32, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
   popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6, 6, 6, 6],
   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12, 12, 12, 12],
-  multValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3, 3.25, 3.25, 3.5, 3.5, 4],
+  multValues: [1, 1, 1.15, 1.3, 1.5, 1.65, 1.8, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 3],
   controlsDefaultMessage: "",
 };
 
@@ -354,7 +354,7 @@ export let game = {
   messagePriority: "",
   messageChangeDelay: 90,
   highScore: HIGH_SCORE,
-  boardRiseDisabled: false,
+  selfRaiseDisabled: false,
   disableSwap: false,
   disableRaise: false,
   currentlyQuickRaising: false,
@@ -760,7 +760,6 @@ export function randomPiece(level) {
   if (level < 4) return PIECES[randInt(PIECES.length - 1)];
   return PIECES[randInt(PIECES.length)];
 }
-
 // // Transfer everything except x and y coordinates
 // let tempProperties = [
 //   FirstBlock.color,

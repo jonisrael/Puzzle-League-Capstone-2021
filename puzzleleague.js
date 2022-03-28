@@ -101,6 +101,7 @@ import {
   randomPiece,
   spawnSquare,
   touchInputs,
+  endAllTimersEarly,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -188,6 +189,7 @@ class Block {
     availForSecondaryChain = false,
     swapDirection = 0,
     lightTimer = 0,
+    scoreDisplayTimer = 0,
     lightBlink = false,
     swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
     targetX = undefined,
@@ -221,6 +223,7 @@ class Block {
     this.swapDirection = swapDirection;
     this.lightTimer = lightTimer;
     this.lightBlink = lightBlink;
+    this.scoreDisplayTimer = scoreDisplayTimer;
     this.swapOrders = swapOrders;
     this.targetX = targetX;
     this.previewX = previewX;
@@ -341,7 +344,9 @@ class Block {
     }
   }
 
-  drawScoreEarned(scoreEarned) {
+  drawScoreEarned(scoreEarned) {}
+
+  drawScoreEarned2(scoreEarned) {
     if (this.type !== "blinking") return;
     let pixelX, pixelY;
     for (let j = this.y - 1; j >= 0; j--) {
@@ -833,10 +838,6 @@ export function endChain(potentialSecondarySuccessor) {
 export function createNewRow(board) {
   if (game.highestRow < 1) {
     game.deathTimer = 0; // game over on next frame
-    return board;
-  }
-
-  if (game.pauseStack || game.boardRiseDisabled || debug.freeze == 1) {
     return board;
   }
 
@@ -1442,17 +1443,18 @@ export function gameLoop() {
       }
 
       if (game.currentlyQuickRaising) {
-        game.disableSwap = true;
-        game.message = "Quick-Raise Initiated";
+        // game.disableSwap = true;
+        // game.message = "Quick-Raise Initiated";
         game.messageChangeDelay = 1000;
         win.mainInfoDisplay.style.color = "black";
-        if (game.rise == 0) {
+        if (game.rise === 0) {
           game.disableSwap = false;
           game.currentlyQuickRaising = false;
-          game.message = "Quick-Raise Complete";
+          game.raiseDelay = 0;
+          // game.message = "Quick-Raise Complete";
           game.messageChangeDelay = 90;
           win.mainInfoDisplay.style.color = "black";
-          game.raiseDelay = 0;
+
           game.boardRiseSpeed = preset.speedValues[game.level];
         } else {
           game.boardRiseSpeed = 1;
@@ -1474,6 +1476,7 @@ export function gameLoop() {
         game.frames % game.boardRiseSpeed == 0 &&
         game.boardRiseSpeed > 0
       ) {
+        // game.pauseStack = false;
         if (
           game.boardRiseRestarter >= 180 ||
           (game.boardRiseRestarter >= 60 && game.frames >= 7200)
@@ -1483,21 +1486,21 @@ export function gameLoop() {
           game.boardRiseRestarter = 0;
           touch.doubleClickCounter = 0;
           touch.doubleClickTimer = 0;
-          game.boardRiseDisabled = false;
-          game.pauseStack = false;
+          // game.selfRaiseDisabled = false;
+          // game.pauseStack = false;
         }
-        if (!game.boardRiseDisabled && !game.pauseStack && debug.freeze == 0) {
+        if (!game.pauseStack || game.currentlyQuickRaising) {
           if (game.raiseDelay > 0) {
             if (game.raiseDelay > 300) game.raiseDelay = 300;
             game.raiseDelay -= game.boardRiseSpeed * perf.gameSpeed;
-            if (game.raiseDelay < 0) {
+            if (game.raiseDelay <= 0) {
               game.raiseDelay = 0;
+            } else {
+              game.pauseStack = true;
             }
-          } else if (
-            game.frames > 0 &&
-            !game.pauseStack &&
-            !game.boardHasAirborneBlock
-          ) {
+          }
+          // otherwise, subtract raiseDelay
+          if (game.raiseDelay === 0 && game.frames >= 0) {
             game.rise = (game.rise + 2) % 32;
             if (game.cursor.y === 0 && game.rise !== 0) game.cursor.y += 1;
             game.boardRiseRestarter = 0; // restart failsafe timer
@@ -1543,11 +1546,11 @@ export function gameLoop() {
       if (game.raisePressed) {
         if (game.frames < -2) game.frames = -2;
         else game.raisePressed = false;
-        if (!game.boardRiseDisabled) {
+        if (!game.selfRaiseDisabled) {
           if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
-            if (game.rise == 0) game.rise = 2;
+            if (game.rise === 0) game.rise = 2;
             game.currentlyQuickRaising = true;
-            game.raiseDelay = 0;
+            if (game.currentChain === 0) game.raiseDelay = 0; // only if not clearing
           }
         }
       }

@@ -32,6 +32,18 @@ export const tutorialBoards = [
     [5, 7, "yellow"],
   ],
   [
+    [2, 7, "purple"],
+    [2, 8, "red"],
+    [2, 9, "purple"],
+    [2, 10, "red"],
+    [2, 11, "purple"],
+    [3, 7, "red"],
+    [3, 8, "purple"],
+    [3, 9, "red"],
+    [3, 10, "purple"],
+    [3, 11, "red"],
+  ],
+  [
     [0, 6, "cyan", true, 2],
     [0, 7, "green"],
     [1, 7, "yellow"],

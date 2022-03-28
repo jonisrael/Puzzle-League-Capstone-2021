@@ -108,7 +108,7 @@ export function startGame(selectedGameSpeed = 1) {
     grid.ROWS = 8;
     win.cvs.height = grid.SQ * grid.ROWS;
     if (document.getElementById("main-info-container"))
-      document.getElementById("main-info-container").style.minHeight = "30vh";
+      document.getElementById("main-info-container").style.minHeight = "20vh";
     startTutorial();
   } else {
     grid.COLS = 6;
@@ -197,7 +197,7 @@ export function resetGameVariables() {
   game.pauseStack = false;
   game.addToPrimaryChain = false; // used to start/continue a chain
   game.readyForNewRow = false;
-  game.boardRiseDisabled = false;
+  game.selfRaiseDisabled = false;
   game.disableSwap = false;
   game.disableRaise = false;
   game.currentlyQuickRaising = false;

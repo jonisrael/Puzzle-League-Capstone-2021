@@ -2,6 +2,7 @@ import { cpuAction } from "../computerPlayer/cpu";
 import { findVerticalMatches } from "../computerPlayer/findVerticalMatches";
 import { audio } from "../fileImports";
 import {
+  blockIsSolid,
   blockVacOrClearing,
   CLEARING_TYPES,
   debug,
@@ -10,6 +11,7 @@ import {
   helpPlayer,
   INTERACTIVE_TYPES,
   perf,
+  preset,
   removeFromOrderList,
   touch,
   win,
@@ -26,7 +28,7 @@ export function updateGrid(frameAdvance = false) {
   game.boardHasSwappingBlock = false;
   // touch.moveOrderExists = false;
   let highestRowFound = false;
-  game.pauseStack = false;
+  // game.pauseStack = false;
   game.highestCols = [];
   if (game.drawScoreTimeout > 0) game.drawScoreTimeout--;
   if (touch.doubleClickTimer > 0) {
@@ -40,6 +42,8 @@ export function updateGrid(frameAdvance = false) {
       Square.airborne = isBlockAirborne(Square);
       if (Square.airborne) {
         game.boardHasAirborneBlock = true;
+        // game.currentlyQuickRaising = false;
+        game.boardRiseSpeed = preset.speedValues[game.level];
       }
       if (Square.targetX !== undefined) {
         if (Square.targetX === Square.x) {
@@ -71,7 +75,7 @@ export function updateGrid(frameAdvance = false) {
       }
       // Check to see if a block is still legally in a landing animation
       if (Square.type === "landing") {
-        game.pauseStack = true;
+        // game.pauseStack = true;
         if (Square.timer < 8) {
           Square.addToPrimaryChain = false;
           Square.addToSecondaryChain = false;
@@ -107,13 +111,12 @@ export function updateGrid(frameAdvance = false) {
         Square.timer -= 1;
         if (Square.type !== "swapping") {
           Square.swapDirection = 0;
-          game.boardRiseDisabled = true;
+          // game.selfRaiseDisabled = true;
         }
       }
 
-      if (Square.lightTimer > 0) {
-        Square.lightTimer -= 1;
-      }
+      if (Square.lightTimer > 0) Square.lightTimer -= 1;
+      if (Square.scoreDisplayTimer > 0) Square.scoreDisplayTimer--;
 
       if (Square.type === "stalling" && Square.timer === 0) {
         Square.type = "normal";
@@ -149,8 +152,8 @@ export function updateGrid(frameAdvance = false) {
       ) {
         Square.targetX = Square.previewX = undefined;
         Square.lightTimer = 0;
-        game.pauseStack = true;
-        game.boardRiseDisabled = true;
+        // game.pauseStack = true;
+        // game.selfRaiseDisabled = true;
         // console.log(x, y, Square);
         switch (Square.timer) {
           case Square.switchToPoppedFrame + 2:
@@ -183,17 +186,18 @@ export function updateGrid(frameAdvance = false) {
                 } else break;
               }
             }
-            game.boardRiseDisabled = false;
+            // game.selfRaiseDisabled = false;
             for (let j = y - 1; j >= 0; j--) {
               // create chain available blocks above current
               // If clearing piece detected, break loop since no more chainable blocks.
-              if (game.board[x][j].type === "stalling") {
+              // if (game.board[x][j].type === "stalling") OLD CODE
+              if (blockIsSolid(game.board[x][j])) {
                 if (Square.availForPrimaryChain) {
                   game.board[x][j].availForPrimaryChain = true;
-                  // game.board[x][j].touched = false;
+                  game.board[x][j].touched = false;
                 } else if (Square.availForSecondaryChain) {
                   game.board[x][j].availForSecondaryChain = true;
-                  // game.board[x][j].touched = false;
+                  game.board[x][j].touched = false;
                 }
               } else break; // stop iterating since this clearing block shields the other blocks
             }
@@ -216,4 +220,16 @@ export function updateGrid(frameAdvance = false) {
     } // end x
   } // end y
   touch.disableAllMoveOrders = false;
+  game.pauseStack = checkIfStackShouldPause();
+}
+
+function checkIfStackShouldPause() {
+  let reasonsToPause = "";
+  if (game.boardHasAirborneBlock) reasonsToPause += "airborne, ";
+  if (game.boardIsClearing) reasonsToPause += "clearing, ";
+  // if (game.raiseDelay) reasonsToPause += `raise delay at ${game.raiseDelay}, `;
+  if (debug.enabled && reasonsToPause) console.log(game.frames, reasonsToPause);
+  if (debug.enabled && game.raiseDelay > 0 && !reasonsToPause)
+    console.log(game.frames, "raise delay at", game.raiseDelay);
+  return !!reasonsToPause;
 }

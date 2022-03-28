@@ -68,7 +68,7 @@ export function isGameOver() {
     game.currentChain === 0 &&
     !game.boardIsClearing &&
     !game.boardHasSwappingBlock &&
-    !game.boardRiseDisabled &&
+    !game.selfRaiseDisabled &&
     game.raiseDelay === 0
   ) {
     game.deathTimer -= perf.gameSpeed;
@@ -146,7 +146,7 @@ export function gameOverBoard() {
   if (game.frames == 4) {
     playAudio(audio.topout);
   }
-  game.boardRiseDisabled = true;
+  game.selfRaiseDisabled = true;
   game.rise = 0;
   let deathRow = Math.floor(game.frames / 2);
   for (let i = 0; i < grid.COLS; i++) {

@@ -738,6 +738,11 @@ footer {
     padding: 0 2vw 0 2vw;
   }
 
+  #main-info-container {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
   #root {
     padding-top: 0.5vh;
     /* padding-top: 0.25vh; */

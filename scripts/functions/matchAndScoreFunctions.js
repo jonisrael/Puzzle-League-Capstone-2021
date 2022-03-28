@@ -48,7 +48,6 @@ export function legalMatch(clearLocations) {
       }
     }
   }
-  game.pauseStack = true;
   return true;
 }
 
@@ -159,6 +158,9 @@ export function checkMatch() {
 
     // now determine chain
     if (legalMatch(clearLocations)) {
+      // game.pauseStack = true;
+      game.currentlyQuickRaising = false;
+      game.boardRiseSpeed = preset.speedValues[game.level];
       game.boardRiseRestarter = 0; // restart failsafe timer
       helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
       // helpPlayer.timer < 120
@@ -240,7 +242,7 @@ export function checkMatch() {
         if (game.highestRow === 1 || (game.highestRow < 4 && game.level > 5)) {
           if (
             game.level > 6 &&
-            !game.boardRiseDisabled &&
+            !game.selfRaiseDisabled &&
             game.currentChain < 2
           ) {
             // always say hold it in overtime
