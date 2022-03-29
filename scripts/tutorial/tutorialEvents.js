@@ -22,7 +22,7 @@ export function checkTutorialEvents(state) {
     location.reload();
     return;
   }
-  eval(`tutorialEventsAtState_${state}()`);
+  // eval(`tutorialEventsAtState_${state}()`);
 }
 
 // export function tutorialEventsAtState_0() {
