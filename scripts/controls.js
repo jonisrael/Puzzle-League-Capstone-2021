@@ -9,6 +9,7 @@ import { render } from "..";
 import * as state from "../store";
 import { nextDialogue, tutorial } from "./tutorial/tutorialScript";
 import { tutorialMessages } from "./tutorial/tutorialMessages";
+import { loadTutorialState } from "./tutorial/tutorialEvents";
 
 export const action = {
   up: 0,
@@ -417,11 +418,12 @@ function tutorialBreakInputs(input) {
     console.log("state is now", tutorial.state, input);
   } else if (input.raise) {
     console.log("raise was pressed", input);
-    tutorial.state = tutorial.board.length - 1;
-    game.tutorialRunning = false;
-    document.getElementById("game-info-table").style.display = "inline";
-    win.running = false;
-    win.restartGame = true;
+    loadTutorialState(tutorial.state + 1, 0, true);
+    // tutorial.state = tutorial.board.length - 1;
+    // game.tutorialRunning = false;
+    // document.getElementById("game-info-table").style.display = "inline";
+    // win.running = false;
+    // win.restartGame = true;
   }
   Object.keys(action).forEach((btn) => (action[btn] = false));
   return input;

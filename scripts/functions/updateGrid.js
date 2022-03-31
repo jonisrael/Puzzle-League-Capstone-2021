@@ -59,8 +59,8 @@ export function updateGrid(frameAdvance = false) {
         Square.availForSecondaryChain = false;
         Square.touched = false;
         Square.targetX = undefined;
-        Square.timer = 0;
         Square.lightTimer = 0;
+        if (game.mode !== "tutorial") Square.timer = 0;
       }
       if (!highestRowFound && Square.color !== "vacant") {
         game.highestRow = y;

@@ -15,7 +15,7 @@ import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
 import { createTutorialBoard, tutorialBoards } from "./tutorialBoards";
 import { tutorialMessages } from "./tutorialMessages";
-import { tutorialInputs } from "./tutorialEvents";
+import { loadTutorialState, tutorialInputs } from "./tutorialEvents";
 import { audio } from "../fileImports";
 import { moveBlockByRelease, selectBlock } from "../clickControls";
 import { playMusic } from "../functions/audioFunctions";
@@ -44,6 +44,8 @@ export const tutorial = {
   msgIndex: 0,
   cursor: tutorialCursors,
   state: 0,
+  movesMade: 0,
+  failCount: 0,
 };
 
 console.log(tutorial);
@@ -68,8 +70,7 @@ export function nextDialogue(index) {
   } else {
     console.log("new state");
     tutorial.state++;
-    tutorial.msgIndex = 0;
-    loadTutorialState(tutorial.state, tutorial.msgIndex);
+    loadTutorialState(tutorial.state, tutorial.msgIndex, true);
   }
 }
 
@@ -123,42 +124,6 @@ export function playScript(touchInput) {
   if (name === "raise") {
     game.raisePressed = true;
   }
-}
-
-export function loadTutorialState(state, index = 0) {
-  game.board = generateOpeningBoard(0, 0); // empty board
-  game.board = createTutorialBoard(tutorial.board[state]);
-  game.frames = game.score = game.minutes = game.seconds = 0;
-
-  tutorial.state = state;
-  tutorial.msgIndex = index;
-  if (state == tutorial.board.length) {
-    tutorial.state = tutorial.board.length - 1;
-    console.log("tutorial complete");
-    game.tutorialRunning = false;
-    game.humanCanPlay = true;
-    document.getElementById("game-info-table").style.display = "inline";
-    win.running = false;
-    win.restartGame = true;
-    return;
-  }
-
-  if (state === 0) {
-    game.cursor.y = -1;
-    updateLevelEvents(1);
-  }
-
-  // if (state == tutorial.board.length - 1) {
-  //   updateLevelEvents(1);
-  //   game.board = generateOpeningBoard();
-  // } else if (state == 1) {
-  //   game.boardRiseSpeed = -2;
-  //   generateOpeningBoard(24, 4);
-  // } else {
-  //   game.boardRiseSpeed = -2;
-  //   [game.cursor.x, game.cursor.y] = tutorialCursors[state];
-  //   game.board = createTutorialBoard(tutorial.board[state]);
-  // }
 }
 
 export function flipLightsOnCol(x, y_values, type) {

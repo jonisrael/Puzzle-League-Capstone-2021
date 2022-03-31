@@ -112,7 +112,6 @@ import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
 import {
   createTutorialBoard,
-  loadTutorialState,
   playScript,
   runTutorialScript,
   startTutorial,
@@ -127,7 +126,10 @@ import {
   drawScoreEarnedMessage,
 } from "./scripts/functions/drawCanvasShapesAndText";
 import { previous, saveCurrentBoard } from "./scripts/functions/recordGame";
-import { checkTutorialEvents } from "./scripts/tutorial/tutorialEvents";
+import {
+  checkTutorialEvents,
+  loadTutorialState,
+} from "./scripts/tutorial/tutorialEvents";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -404,7 +406,7 @@ class Block {
   drawDebugDots() {
     //Debug Visuals
     if (
-      this.timer > 0 ||
+      this.timer !== 0 ||
       (this.x == 0 && this.y == 1 && game.currentChain < 1)
     ) {
       win.ctx.drawImage(
@@ -663,7 +665,6 @@ export function drawGrid() {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
-      // Square.draw();
       if (Square.swapDirection && Square.timer > 0) {
         swappingBlocksArray.push(Square);
       }
@@ -1123,8 +1124,9 @@ function KEYBOARD_CONTROL(event) {
         }
         if (event.keyCode === 190) {
           // .
-          console.log(saveCurrentBoard(game.board, true));
-          console.log(saveCurrentBoard(game.board, true, true));
+          console.log("s", saveCurrentBoard(game.board, true));
+          console.log("t", saveCurrentBoard(game.board, true, false, true)); // tutorial
+          console.log("f", saveCurrentBoard(game.board, true, true)); // flipped
           console.log(saveCurrentBoard(game.board, false));
           console.table(touchInputs);
         }
@@ -1344,7 +1346,7 @@ export function gameLoop() {
           resetGameVariables();
           game.tutorialRunning = true;
           game.over = false;
-          loadTutorialState(tutorial.state, tutorial.msgIndex);
+          loadTutorialState(tutorial.state, tutorial.msgIndex, true);
         }
       }
 

@@ -34,13 +34,19 @@ export function cpuClick(arr) {
   }
 }
 
-export function saveCurrentBoard(board, simple = true, flipped = false) {
+export function saveCurrentBoard(
+  board,
+  simple = true,
+  flipped = false,
+  tutorial = false
+) {
   let currentBoard = [];
   if (simple) {
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {
         if (board[x][y].color !== "vacant") {
           let r = flipped ? grid.ROWS - y : y;
+          if (tutorial) r -= 4;
           currentBoard.push([x, r, board[x][y].color]);
         }
       }

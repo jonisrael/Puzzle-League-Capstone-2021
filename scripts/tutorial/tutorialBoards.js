@@ -32,6 +32,18 @@ export const tutorialBoards = [
     [5, 7, "yellow"],
   ],
   [
+    [2, 3, "green"],
+    [2, 4, "purple"],
+    [2, 5, "green"],
+    [2, 6, "purple"],
+    [2, 7, "green"],
+    [3, 3, "purple"],
+    [3, 4, "green"],
+    [3, 5, "purple"],
+    [3, 6, "green"],
+    [3, 7, "purple"],
+  ],
+  [
     [0, 6, "cyan", true, 2],
     [0, 7, "green"],
     [1, 7, "yellow"],
@@ -62,32 +74,22 @@ export function runTutorialScript(input, frame) {
   return input;
 }
 
-export function createTutorialBoard(colorLocations) {
-  let block;
+export function createTutorialBoard(colorLocations, blocksSelectable = false) {
   for (let c = 0; c < COLS; c++) {
-    game.board.push([]);
     for (let r = 0; r < ROWS + 2; r++) {
-      block = newBlock(c, r);
-      block.tutorialSelectable = false;
-      game.board[c].push(block);
-      game.board[c][r].tutorialSelectable = false;
+      game.board[c][r].tutorialSelectable = blocksSelectable;
       if (r > ROWS - 1) {
         game.board[c][r].color = randomPiece(game.level);
         game.board[c][r].type = blockType.DARK;
       } else {
-        colorLocations.forEach((arr) => {
-          let [locX, locY, definedColor, timer] = arr;
-          if (c == locX && r == locY) {
+        for (let i in colorLocations) {
+          let [locX, locY, definedColor, timer] = colorLocations[i];
+          if (c === locX && r === locY) {
             game.board[c][r].color = definedColor;
-            // if (definedColor === "unmatchable") {
-            //   // prevent color from being unmatchable
-            //   definedColor = `unmatchable${locX}${locY}`;
-            // }
             if (timer !== undefined) game.board[c][r].timer = timer;
           }
-        });
+        }
       }
-      block.draw();
     }
   }
   game.board = fixNextDarkStack(game.board);

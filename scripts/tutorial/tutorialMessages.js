@@ -14,5 +14,13 @@ export const tutorialMessages = [
     "There it is! Look at all those points!",
     "Nicely done, let's move on.",
   ],
-  ["No more tutorial yet! Come back later! Please reload page."],
+  [
+    "Can you make a Clear 10 within 5 moves?", // 0
+    "Out of moves! Try again!",
+    "Clear too small, you must clear 10 at the same time!",
+    "You can enable a hint to help solve this puzzle.",
+    "Fantastic! You have now mastered how to create large matches!",
+  ],
+  [`More tutorial in the future! Launching arcade mode in `],
+  ["(Arcade mode should be launching!)"],
 ];

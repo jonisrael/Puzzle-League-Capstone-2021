@@ -2,6 +2,7 @@ import { saveCurrentBoard } from "../../functions/recordGame";
 import { generateOpeningBoard } from "../../functions/startGame";
 import { game, grid } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
+import { loadTutorialState } from "../tutorialEvents";
 import {
   deselectAllBlocks,
   flipAllLightsOff,
@@ -9,7 +10,6 @@ import {
   flipLightsOnCol,
   flipLightsOnRow,
   flipLightSwitch,
-  loadTutorialState,
   makeBlockSelectable,
   tutorial,
 } from "../tutorialScript";
@@ -186,6 +186,6 @@ export function tutorialEventsAtState_0() {
     game.board[1][grid.ROWS - 1].type === "normal"
   ) {
     tutorial.state++;
-    loadTutorialState(1, 0);
+    loadTutorialState(1, 0, true);
   }
 }
