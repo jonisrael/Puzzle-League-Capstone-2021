@@ -21,6 +21,7 @@ export function playAnnouncer(
   playbackImportant = true
 ) {
   try {
+    if (game.mode === "tutorial") return;
     if (win.muteAnnouncer.checked) return;
 
     let selection = randInt(arr.length);

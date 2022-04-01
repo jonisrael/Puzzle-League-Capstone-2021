@@ -15,21 +15,25 @@ import {
 
 import { tutorialEventsAtState_0 } from "./states/state0";
 import { tutorialEventsAtState_1 } from "./states/state1";
-import { updateLevelEvents } from "../../puzzleleague";
 import { tutorialEventsAtState_2 } from "./states/state2";
 import { tutorialEventsAtState_3 } from "./states/state3";
+import { tutorialEventsAtState_4 } from "./states/state4";
+import { updateLevelEvents } from "../../puzzleleague";
 
 export function checkTutorialEvents(state) {
   if (state >= tutorialBoards.length) {
     win.running = false;
     win.restartGame = true;
     game.mode = "arcade";
+    console.log("state is not less than board length");
     return;
   }
   if (state === 0) tutorialEventsAtState_0();
   if (state === 1) tutorialEventsAtState_1();
   if (state === 2) tutorialEventsAtState_2();
   if (state === 3) tutorialEventsAtState_3();
+  if (state === 4) tutorialEventsAtState_4();
+
   // tutorialEventsAtState_0();
   // console.log(state, `tutorialEventsAtState_${state}()`);
   // eval(`tutorialEventsAtState_${state}()`);
@@ -38,6 +42,7 @@ export function checkTutorialEvents(state) {
 export function loadTutorialState(state, index = 0, allSelectable = false) {
   tutorial.state = state;
   tutorial.msgIndex = index;
+  game.frames = 0;
   if (tutorial.state == tutorial.board.length) {
     tutorial.state = tutorial.board.length - 1;
     console.log("tutorial complete");

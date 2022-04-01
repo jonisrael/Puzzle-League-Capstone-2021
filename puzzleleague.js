@@ -1199,7 +1199,7 @@ export function updateLevelEvents(level) {
     game.boardRiseSpeed = preset.speedValues.length - 1 - level;
     level = preset.speedValues.length - 1;
   } else game.boardRiseSpeed = preset.speedValues[level];
-  game.scoreMultiplier = preset.multValues[level];
+  if (game.mode !== "tutorial") game.scoreMultiplier = preset.multValues[level];
   game.blockClearTime = preset.clearValues[level];
   game.blockBlinkTime = preset.blinkValues[level];
   game.blockInitialFaceTime = preset.faceValues[level];

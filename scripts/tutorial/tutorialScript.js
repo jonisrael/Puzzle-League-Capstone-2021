@@ -62,6 +62,7 @@ export function nextDialogue(index) {
     tutorialMessages.length
   );
 
+  game.frames = 0;
   if (index < tutorialMessages[tutorial.state].length - 1) {
     console.log("go to next text box");
     tutorial.msgIndex++;
@@ -105,7 +106,7 @@ export function startTutorial() {
   updateLevelEvents(3);
   document.getElementById("game-info-table").style.display = "none";
   document.getElementById("main-info").style = "font-size: 2rem;";
-  loadTutorialState(0, 0);
+  loadTutorialState(1, 0);
   // loadTutorialState(tutorial.state, tutorial.msgIndex);
 }
 
@@ -126,19 +127,33 @@ export function playScript(touchInput) {
   }
 }
 
-export function flipLightsOnCol(x, y_values, type) {
-  y_values.forEach((y) => flipLightSwitch(x, y, type));
+export function flipLightsOnCol(x, y_values, type, blinking = true) {
+  if (type === undefined) type === "on";
+  if (y_values === undefined) {
+    y_values = Array.apply(null, { length: grid.ROWS }).map(
+      Number.call,
+      Number
+    );
+  }
+  y_values.forEach((y) => flipLightSwitch(x, y, type, blinking));
 }
 
-export function flipLightsOnRow(x_values, y, type) {
-  x_values.forEach((x) => flipLightSwitch(x, y, type));
+export function flipLightsOnRow(x_values, y, type, blinking = true) {
+  if (type === undefined) type === "on";
+  if (x_values === undefined) {
+    x_values = Array.apply(null, { length: grid.COLS }).map(
+      Number.call,
+      Number
+    );
+  }
+  x_values.forEach((x) => flipLightSwitch(x, y, type, blinking));
 }
 
-export function flipLightOnBlocksWithNegativeTimer(blink = false) {
+export function flipLightOnBlocksWithNegativeTimer(blinking = true) {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
       if (game.board[x][y].timer < 0) {
-        flipLightSwitch(x, y, "on", blink);
+        flipLightSwitch(x, y, "on", blinking);
         game.board[x][y].timer = 0;
       }
     }
@@ -155,10 +170,13 @@ export function flipAllLightsOff() {
 }
 
 export function flipLightSwitch(x, y, type, blink = false) {
+  if (type === undefined) type = "on";
   if (type === "on") {
+    console.log("flipping", x, y, "light switch on.");
     game.board[x][y].lightTimer = -2; // turn on indefinitely
     game.board[x][y].lightBlink = blink;
   } else {
+    console.log("flipping", x, y, "light switch off.");
     game.board[x][y].lightTimer = 0; // turn off
     game.board[x][y].lightBlink = false;
   }
@@ -175,10 +193,12 @@ export function makeBlockSelectable(x, y, helpX) {
 }
 
 export function deselectAllBlocks() {
+  console.log("deselecting all blocks");
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
       game.board[x][y].tutorialSelectable = false;
       game.board[x][y].helpX = undefined;
+      game.board[x][y].targetX = undefined;
     }
   }
 }

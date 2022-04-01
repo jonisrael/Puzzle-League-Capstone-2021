@@ -196,9 +196,10 @@ export function checkMatch() {
       } else if (blocksCleared > 3 && !win.muteAnnouncer.checked) {
         // make sure that "hold it! is not playing instead"
         if (
-          game.highestRow !== 1 ||
-          game.raiseDelay > 0 ||
-          (game.highestRow !== 2 && game.level > 6)
+          game.mode !== "tutorial" &&
+          (game.highestRow !== 1 ||
+            game.raiseDelay > 0 ||
+            (game.highestRow !== 2 && game.level > 6))
         )
           playAnnouncer(
             announcer.comboDialogue,

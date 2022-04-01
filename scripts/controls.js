@@ -410,7 +410,7 @@ function tutorialBreakInputs(input) {
       tutorial.state == tutorial.board.length - 1 &&
       tutorial.msgIndex == tutorialMessages.length - 1
     ) {
-      game.tutorialRunning = false;
+      // game.tutorialRunning = false;
       document.getElementById("game-info-table").style.display = "inline";
       win.restartGame = true;
     }

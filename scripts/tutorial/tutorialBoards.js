@@ -32,6 +32,31 @@ export const tutorialBoards = [
     [5, 7, "yellow"],
   ],
   [
+    [0, 3, "cyan"],
+    [0, 4, "cyan"],
+    [0, 5, "green"],
+    [0, 6, "red", -2], // starting block
+    [0, 7, "cyan"],
+    [1, 2, "cyan"],
+    [1, 3, "cyan"],
+    [1, 4, "green"],
+    [1, 5, "red", -2],
+    [1, 6, "purple"],
+    [1, 7, "red", -2],
+    [2, 7, "yellow"],
+    [4, 2, "purple"],
+    [4, 3, "red"],
+    [4, 4, "purple"],
+    [4, 5, "red"],
+    [4, 6, "purple"],
+    [4, 7, "yellow"],
+    [5, 3, "red"],
+    [5, 4, "purple"],
+    [5, 5, "red"],
+    [5, 6, "yellow"],
+    [5, 7, "yellow"],
+  ],
+  [
     [2, 3, "green"],
     [2, 4, "purple"],
     [2, 5, "green"],
@@ -56,10 +81,6 @@ export const tutorialBoards = [
     [4, 7, "purple"],
     [5, 7, "purple"],
   ],
-  [],
-  [],
-  [],
-  [],
 ];
 
 export function runTutorialScript(input, frame) {

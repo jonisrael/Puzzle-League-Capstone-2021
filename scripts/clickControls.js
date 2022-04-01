@@ -137,7 +137,7 @@ export function moveBlockByRelease(x, y, targetX) {
 
 function doMouseDown(e) {
   if (!game.humanCanPlay || !touch.enabled || cpu.enabled) {
-    if (game.mode === "tutorial") {
+    if (game.mode === "tutorial" && !game.paused) {
       nextDialogue(tutorial.msgIndex);
     }
     return;
@@ -245,6 +245,9 @@ function doMouseUp(e) {
   updateMousePosition(win.cvs, e);
   if (debug.enabled && game.paused) {
     console.log(game.board[touch.mouse.x][touch.mouse.y]);
+    if (game.mode === "tutorial") {
+      console.log("action:", game.board[0][grid.ROWS].timer);
+    }
   }
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
     const SelectedBlock =

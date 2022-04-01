@@ -38,6 +38,7 @@ export const tutorialBoards = [
   [],
   // smallBoard,
   openingBoard,
+  openingBoard,
   [
     [0, ROWS - 1, "cyan"],
     [0, ROWS - 2, "cyan"],

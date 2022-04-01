@@ -1,26 +1,90 @@
 export const tutorialMessages = [
   [
-    "Welcome to Blockle, and thank you for trying my game!", // 0
+    "Welcome, and thank you for trying my game!", // 0
+    "There are two parts to the first tutorial, and should take around 3-5 minutes.",
+    "Let's get started!",
+  ],
+  [
+    "BASICS",
     "To play, swap blocks horizontally left or right. Blocks will fall vertically.", // 1
-    "Match 3 of the same color to gain points.", // 2
+    "Match 3 of the same color to gain points. This is called a set.", // 2
     "Go ahead and try it! Select a block by touching it, and hold your finger on it.", // 3
     "Good! Now drag the block over here and let go of the screen to move it", // 4
     "Now they are clearing, and you gained 30 points!", // 5
     "Try clearing 4 at once by moving this block.",
-    "Excellent! 60 points!",
-    "Now see if you can clear 5. But which cyan block should you move first?",
-    "5 has been cleared! 90 points!",
+    "Beautiful! 60 points!",
+    "Now see if you can create a 5 set. But which cyan block should you move first?",
+    "There it is! 90 points!",
     "Can you figure out how to create a clear 8?",
-    "There it is! Look at all those points!",
-    "Nicely done, let's move on.",
+    "And there's the payoff! Look at all those points! Now for a challenge...",
   ],
   [
-    "Can you make a Clear 10 within 5 moves?", // 0
+    "Can you make a 10 set within 5 moves?", // 0
     "Out of moves! Try again!",
     "Clear too small, you must clear 10 at the same time!",
     "You can enable a hint to help solve this puzzle.",
     "Fantastic! You have now mastered how to create large matches!",
+    "Nicely done, let's move on.",
   ],
-  [`More tutorial in the future! Launching arcade mode in `],
-  ["(Arcade mode should be launching!)"],
+  [
+    "CHAINS PART 1/2",
+    "The sets we created are good... but chains are an even faster way to gain score.",
+    "Chains occur when, after a set clears, a block above lands onto another.",
+    "It sounds more confusing than it actually is, so let's break it down.",
+    "Let's look at these three similar blocks. They are highlighted below.",
+    "If we could clear the row in between, then they would land and form a set!",
+    "We can clear this row by moving this block over here. Do that now!",
+    "OK! Now when the blocks clear...",
+    "a chain will be made! (click to continue)",
+    "a chain will be made! (click to continue)",
+    "2x",
+    "What a rush! We just created a 2 chain.",
+    "The score gained was 30 for set 1 and 130 for set 2, so 160 points total.",
+    "This 2x chain of 3's score more points than forming a single 7 set!",
+    "Now for the challenge...(End of tutorial for now)",
+  ],
+
+  [
+    "CHAINS PART 2/2",
+    "We are now going to set up a large chain of 5. Don't worry, we will do it slowly!",
+    "First, create a match here. We can see that it will form a 2x chain.",
+    "But we have more! Quickly, we can move this block here and get another match.",
+    "3x chain! Keep going. Where do we move this block in order to finish the chain?",
+    "4x!",
+    "5x!",
+    "Incredible! I can't believe it!",
+    "Adding up the score, 30 + 130 + 230 + 330 + 430 = 1150 points. Wow!",
+    "You can see that with each extra chain, a lot of extra points are added.",
+    "And although this is a rare third method of scoring, notice we completely cleared the field.",
+    "Doing that earned us 10,000 points!",
+  ],
+  [
+    "Let's see if you can do this again, but in real time. The last beginner lesson is next!",
+    "What power! Great job!!!",
+    `You may have seen blocks light up. This is an mechanic I programmed in the game called "smart match.`,
+    `Smart match is a system that helps you set up chains by automatically stopping a block.`,
+    `I recommend keeping this on, but you can disable it in the pause menu.`,
+    `Now onto the final beginner lesson...`,
+  ],
+  [
+    `ARCADE RULES AND SURVIVING (4/4)`,
+    "This next part is a lot more reading then playing, but we are almost done!",
+    "We also get to watch Floyd, the AI I excitedly created just for this game.",
+    "For the tutorial I am weakening it by slowing the speed the AI moves around...",
+    "But if you select watching the cpu play from the main menu, you'll see that it is very fast",
+    "ANYWAY, in this game, you lose when the stack hits the top.",
+    "In arcade, the level increases every 20 seconds, and so does game speed and score earned.",
+    "At two minutes in arcade, the board rise speed triples! This is called overtime.",
+    "In overtime, you will also gain score by surviving, and all points earned are doubled.",
+    "Let's see how long Floyd lasts when we crank up the speed to overtime...",
+    "Ouch! The AI didn't stand a chance.",
+    "It looks hard to survive, but there are ways to mitigate this.",
+    "There are two main ways to fight the stack rise -- clearing blocks and flattening the stack",
+    "First, if a block is clearing, the stack will stop rising, plain and simple.",
+    "And second, flattening the stack gives yourself more space.",
+    "Moreover, the stack will also stop moving while a block is airborne.",
+    "There is also another game mechanic called raise delay, but that is for a later tutorial.",
+    "You can self-raise the stack by double tapping any vacant block. Raise it 4 lines please.",
+    "And that's all! Go show the world what you are made of.",
+  ],
 ];

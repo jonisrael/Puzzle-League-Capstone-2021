@@ -158,6 +158,7 @@ export function addPauseContent() {
 }
 
 export function printDebugInfo() {
+  tutorial.action = game.board[0][grid.ROWS].timer;
   console.log(
     `FRAME ${game.frames}`,
     "\ngame:",
