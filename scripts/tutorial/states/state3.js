@@ -24,7 +24,7 @@ import {
 export function tutorialEventsAtState_3() {
   const rows = grid.ROWS;
   let action = game.board[0][rows]; // off screen hidden block used for reference
-  if (game.board[0][rows].timer === 0) {
+  if (action.timer === 0) {
     game.humanCanPlay = false;
     document.getElementById("pause-button").disabled = false;
     action.timer = -tutorial.msgIndex;
@@ -56,7 +56,7 @@ export function tutorialEventsAtState_3() {
     // chain has ended
     game.humanCanPlay = false;
     document.getElementById("pause-button").disabled = false;
-    playAudio(audio.announcerWhatARush);
+    playAudio(audio.announcerPerfect);
     tutorial.msgIndex++;
   }
 

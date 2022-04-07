@@ -3,7 +3,7 @@ import html from "html-literal";
 export default (st) => html`
   <section id="home-page">
     <div id="container">
-      <h2 style="color:white;">Welcome to Puzzle League: Arcade Edition!</h2>
+      <h2 id="welcome">Welcome to Puzzle League: Arcade Edition!</h2>
       <h1>Controls</h1>
       <ul id="controls">
         <li>Press Arrow keys to <strong>move</strong> the Cursor</li>
@@ -17,6 +17,9 @@ export default (st) => html`
         </button>
         <button id="tutorial-mode" class="default-button start-buttons">
           Interactive Tutorial (I)
+        </button>
+        <button id="chain-challenge-mode" class="default-button start-buttons">
+          Chain Challenge (C)
         </button>
         <button id="training-mode" class="default-button start-buttons">
           Practice (P)

@@ -2,6 +2,7 @@ import { blockType, cpu, game, PIECES, randInt, randomPiece } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
 import { tutorialBoard, tutorialInputs } from "./tutorialScript";
+import { tutorialBoard_4 } from "./states/state4";
 const COLS = 6;
 const ROWS = 8;
 
@@ -81,6 +82,7 @@ export const tutorialBoards = [
     [4, 7, "purple"],
     [5, 7, "purple"],
   ],
+  tutorialBoard_4,
 ];
 
 export function runTutorialScript(input, frame) {

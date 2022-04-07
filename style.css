@@ -4,10 +4,10 @@ body {
 }
 
 p {
-  text-indent: 3rem;
-  font-size: 1.5rem;
+  /* text-indent: 3rem; */
+  font-size: 2vh;
   line-height: 1.5;
-  padding: 1rem;
+  padding: 0 2vw;
 }
 
 #patch-notes-overlay {
@@ -92,13 +92,18 @@ p {
 
 #pla-title {
   color: white;
-  padding-bottom: 0.5vh;
-  font-size: 3rem;
+  padding-bottom: 0;
+  font-size: 3vh;
+}
+
+#current-page {
+  font-size: 3vh;
+  padding: 0;
 }
 
 #version-release {
   color: blue;
-  font-size: 2rem;
+  font-size: 2vh;
   padding: 0 2rem;
 }
 
@@ -544,13 +549,13 @@ canvas {
 }
 
 h1 {
-  color: red;
+  color: black;
   text-align: center;
   padding: 1rem;
 }
 
 h2 {
-  color: red;
+  color: black;
   text-align: center;
   padding: 1rem;
 }
@@ -562,9 +567,13 @@ h3 {
 
 #controls {
   list-style-type: none;
-  font-size: large;
+  font-size: 2vh;
   text-align: center;
-  overflow: hidden;
+  /* overflow: hidden; */
+}
+
+#controls li {
+  font-size: 2vh;
 }
 
 .nav-breaks {
@@ -668,7 +677,7 @@ footer {
   list-style-type: none;
   margin: 0 auto;
   border-radius: 1rem;
-  padding: 0.2rem;
+  padding: 0;
   overflow: hidden;
   background-color: #333;
 }
@@ -759,6 +768,7 @@ footer {
 
   #sound-mute-menu {
     text-align: left;
+    font-size: 2vh;
     line-height: 0.5vh;
   }
 

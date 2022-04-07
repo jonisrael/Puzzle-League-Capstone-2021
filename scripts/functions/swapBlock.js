@@ -16,6 +16,7 @@ import {
   saveSttransferPropate,
   saveState,
   removeFromOrderList,
+  preset,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -115,7 +116,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     playAudio(audio.select);
     transferProperties(LeftBlock, RightBlock, "between");
     // if landing, shorten timer to end the landing animation next frame.
-    LeftBlock.timer = RightBlock.timer = 5;
+    LeftBlock.timer = RightBlock.timer = preset.swapTimer;
     if (game.mode !== "tutorial")
       LeftBlock.lightTimer = RightBlock.lightTimer = 0;
     LeftBlock.type = RightBlock.type = blockType.SWAPPING;
@@ -159,7 +160,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
       ) {
         game.board[x][y - 1].type = blockType.NORMAL;
-        game.board[x][y - 1].timer = game.blockStallTime + 5;
+        game.board[x][y - 1].timer = game.blockStallTime + preset.swapTimer;
         for (let j = y - 1; j >= 0; j--) {
           game.board[x][j].touched = true;
           LeftBlock.availForPrimaryChain = false;
@@ -178,7 +179,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         INTERACTIVE_TYPES.includes(game.board[x + 1][y - 1].type)
       ) {
         game.board[x + 1][y - 1].type = blockType.NORMAL;
-        game.board[x + 1][y - 1].timer = game.blockStallTime + 5; // Default 12 frames
+        game.board[x + 1][y - 1].timer = game.blockStallTime + preset.swapTimer; // Default 12 frames
         for (let j = y - 1; j >= 0; j--) {
           game.board[x + 1][j].touched = true;
           RightBlock.availForPrimaryChain = false;

@@ -59,6 +59,7 @@ export function updateGrid(frameAdvance = false) {
         Square.availForSecondaryChain = false;
         Square.touched = false;
         Square.targetX = undefined;
+        Square.helpX = undefined;
         Square.lightTimer = 0;
         Square.timer = 0;
       }

@@ -19,8 +19,13 @@ import { tutorialEventsAtState_2 } from "./states/state2";
 import { tutorialEventsAtState_3 } from "./states/state3";
 import { tutorialEventsAtState_4 } from "./states/state4";
 import { updateLevelEvents } from "../../puzzleleague";
+import { chainChallengeEvents } from "./states/chainChallenge";
 
 export function checkTutorialEvents(state) {
+  if (tutorial.chainChallenge) {
+    chainChallengeEvents();
+    return;
+  }
   if (state >= tutorialBoards.length) {
     win.running = false;
     win.restartGame = true;
@@ -57,7 +62,13 @@ export function loadTutorialState(state, index = 0, allSelectable = false) {
   }
   game.board = generateOpeningBoard(0, 0); // empty board
   console.log(tutorialBoards[state], tutorial.state, allSelectable);
-  game.board = createTutorialBoard(tutorial.board[state], allSelectable);
+  if (tutorial.chainChallenge) {
+    game.board = createTutorialBoard(tutorial.board[4], true);
+    updateLevelEvents(0);
+  } else {
+    game.board = createTutorialBoard(tutorial.board[state], allSelectable);
+  }
+
   game.frames = game.score = game.minutes = game.seconds = 0;
 
   if (state === 0) {

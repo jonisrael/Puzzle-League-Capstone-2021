@@ -237,7 +237,7 @@ function createDesktopDisplay() {
   column1.append(pauseButton);
   if (game.mode === "tutorial") pauseButton.innerHTML = "Advance";
   pauseButton.addEventListener("click", (event) => {
-    game.tutorialRunning
+    game.tutorialRunning && !tutorial.chainChallenge
       ? nextDialogue(tutorial.msgIndex)
       : game.paused
       ? unpause()
@@ -438,7 +438,7 @@ function createMobileDisplay() {
   }
 
   pauseButton.addEventListener("click", (event) => {
-    game.tutorialRunning
+    game.tutorialRunning && !tutorial.chainChallenge
       ? nextDialogue(tutorial.msgIndex)
       : game.paused
       ? unpause()

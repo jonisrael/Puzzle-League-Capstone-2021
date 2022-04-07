@@ -12,6 +12,26 @@ import {
   detectInfiniteLoop,
   sound,
 } from "../global";
+import { tutorial } from "../tutorial/tutorialScript";
+
+// export const audioContext = new AudioContext();
+
+// export function playMusicAudioContext(file, volume = 0.2, currentTime = 0) {
+//   console.log("Using Web Audio API");
+//   const audioElement = objectOfAudios[file];
+//   const track = audioContext.createMediaElementSource(audioElement);
+//   sound.Music[0] = file;
+//   sound.Music[1] = objectOfAudios[file];
+//   track.connect(audioContext.destination);
+//   // copy paste code from mozilla.org:
+//   if (audioContext.state === "suspended") {
+//     audioContext.resume();
+//   }
+//   audioElement.play();
+//   const gainNode = audioContext.createGain();
+//   track.connect(gainNode).connect(audioContext.destination);
+//   gainNode.gain.value = volume;
+// }
 
 export function playAnnouncer(
   arr,
@@ -21,7 +41,7 @@ export function playAnnouncer(
   playbackImportant = true
 ) {
   try {
-    if (game.mode === "tutorial") return;
+    if (game.mode === "tutorial" && !tutorial.chainChallenge) return;
     if (win.muteAnnouncer.checked) return;
 
     let selection = randInt(arr.length);
@@ -157,6 +177,8 @@ export function playChainSFX(chain) {
 }
 
 export function playMusic(file, volume = 1, currentTime = 0) {
+  // playMusicAudioContext(file, volume, currentTime);
+  // return;
   try {
     if (win.muteMusic.checked) return;
     sound.Music[1].pause();

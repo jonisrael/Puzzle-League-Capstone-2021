@@ -27,21 +27,22 @@ export const announcer = {
     audio.announcerBeautiful,
     audio.announcerWhatARush,
     audio.announcerInvincible,
-    audio.announcerIncredibleCantBelieve,
+    audio.announcerPerfect,
+    audio.announcerWhatPower,
   ],
   mediumChainDialogue: [
     audio.announcerMovesLikeThat,
     audio.announcerWhereComeFrom,
-    audio.announcerWhatPower,
+    audio.announcerIncredibleTechnique,
   ],
   largeChainDialogue: [
     audio.announcerAnythingLike,
     audio.announcerComboIntense,
-    audio.announcerPerfect,
+    audio.announcerIncredibleCantBelieve,
   ],
   bestChainDialogue: [
     audio.announcerUnbelievable,
-    // audio.announcerDecisiveStrength,
+    audio.announcerDecisiveStrength,
     audio.announcerNoDoubt,
     // audio.announcerMakeNoMistake,
   ],
@@ -174,12 +175,13 @@ export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
   speedValues: [120, 48, 36, 24, 12, 8, 6, 2, 2, 2, 2, 2, 2, 1],
-  clearValues: [200, 100, 92, 84, 72, 60, 48, 36, 36, 28, 28, 20, 20, 16],
-  blinkValues: [120, 60, 56, 52, 46, 40, 32, 24, 24, 16, 16, 12, 12, 8],
-  faceValues: [80, 40, 36, 32, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
-  popMultiplier: [20, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6, 6, 6, 6],
+  clearValues: [180, 100, 92, 84, 72, 60, 48, 36, 36, 28, 28, 20, 20, 16],
+  blinkValues: [110, 60, 56, 52, 46, 40, 32, 24, 24, 16, 16, 12, 12, 8],
+  faceValues: [70, 40, 36, 32, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
+  popMultiplier: [18, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6, 6, 6, 6],
   stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12, 12, 12, 12],
   multValues: [1, 1, 1.15, 1.3, 1.5, 1.65, 1.8, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 3],
+  swapTimer: 5,
   controlsDefaultMessage: "",
 };
 
@@ -297,6 +299,19 @@ export let sound = {
   SFX2: ["", gameSFX[2]],
   SFX3: ["", gameSFX[2]],
 };
+
+// export const channels = [
+//   sound.Music,
+//   sound.AnnVoice,
+//   sound.SFX0[1],
+//   sound.SFX1[1],
+//   sound.SFX2[1],
+//   sound.SFX3[1],
+// ];
+
+// for (let i = 0; i < channels.length; i++) {
+//   channels[i].gain.value = 0;
+// }
 
 export let game = {
   // use let instead of export const to revert to resetGameVar
@@ -439,13 +454,13 @@ export const debug = {
   show: 0,
   updateGameState: false,
   advanceOneFrame: false,
-  saveState: {},
 };
 
 export const saveState = {
   chainStart: {},
   lastMatch: {},
   lastSwap: {},
+  selfSave: {},
 };
 
 export const cpu = {

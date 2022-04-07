@@ -9,10 +9,11 @@ import {
   saveState,
   preset,
   win,
+  touch,
 } from "../global";
 import { unpause } from "./pauseFunctions";
 
-function rewind(gameState) {
+export function rewind(gameState) {
   game.seconds = game.pastSeconds;
   game.cursor.x = gameState.cursor.x;
   game.cursor.y = gameState.cursor.y;
@@ -23,6 +24,7 @@ function rewind(gameState) {
       Object.keys(game.board[x][y]).forEach(
         (key) => (game.board[x][y][key] = gameState.board[x][y][key])
       );
+      game.board[x][y].targetX = undefined;
     }
   }
 }
@@ -30,6 +32,7 @@ function rewind(gameState) {
 export function doTrainingAction(number) {
   let num = JSON.parse(number);
   if (
+    game.mode === "training" &&
     !win.mobile &&
     document.getElementsByClassName("training-buttons")[num - 1].disabled
   )
@@ -38,8 +41,10 @@ export function doTrainingAction(number) {
   else if (num === 2) updateLevelEvents(game.level + 1);
   else if (num === 3) rewind(saveState.chainStart);
   else if (num === 4) rewind(saveState.lastMatch);
-  else if (num === 5) rewind(saveState.lastSwap);
-  else if (num === 6) {
+  else if (num === 5) {
+    touch.moveOrderExists = false;
+    rewind(saveState.lastSwap);
+  } else if (num === 6) {
     helpPlayer.forceHint = (helpPlayer.forceHint + 1) % 2;
     helpPlayer.done = false;
     document.querySelector("#hint-button").innerHTML = `(${num}) Turn Hint ${

@@ -24,6 +24,7 @@ import {
   getNewGamePadControls,
   setNewControls,
 } from "./scripts/controls";
+import { tutorial } from "./scripts/tutorial/tutorialScript";
 dotenv.config();
 
 export const router = new Navigo(window.location.origin);
@@ -149,9 +150,16 @@ function addEventListeners(st) {
         api.data = getWorldTimeAPI();
         startButtons.forEach((element) => element.remove());
         if (i === 0) game.mode = "arcade";
-        if (i === 1) game.mode = "tutorial";
-        if (i === 2) game.mode = "training";
-        if (i === 3) game.mode = "cpu-play";
+        if (i === 1) {
+          game.mode = "tutorial";
+          tutorial.chainChallenge = false;
+        }
+        if (i === 2) {
+          game.mode = "tutorial";
+          tutorial.chainChallenge = true;
+        }
+        if (i === 3) game.mode = "training";
+        if (i === 4) game.mode = "cpu-play";
         startGame(1);
       });
     }

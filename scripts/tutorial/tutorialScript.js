@@ -71,6 +71,7 @@ export function nextDialogue(index) {
   } else {
     console.log("new state");
     tutorial.state++;
+    tutorial.msgIndex = 0;
     loadTutorialState(tutorial.state, tutorial.msgIndex, true);
   }
 }
@@ -160,11 +161,16 @@ export function flipLightOnBlocksWithNegativeTimer(blinking = true) {
   }
 }
 
-export function flipAllLightsOff() {
+export function flipAllLightsOff(alsoDeselectBlocks = "") {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
       game.board[x][y].lightTimer = 0; // turn off
       game.board[x][y].lightBlink = false;
+      if (alsoDeselectBlocks) {
+        game.board[x][y].tutorialSelectable = false;
+        game.board[x][y].helpX = undefined;
+        game.board[x][y].targetX = undefined;
+      }
     }
   }
 }
@@ -199,6 +205,21 @@ export function deselectAllBlocks() {
       game.board[x][y].tutorialSelectable = false;
       game.board[x][y].helpX = undefined;
       game.board[x][y].targetX = undefined;
+    }
+  }
+}
+
+export function allBlocksAreSelectable(lightsOff = false) {
+  console.log("deselecting all blocks");
+  for (let x = 0; x < grid.COLS; x++) {
+    for (let y = 0; y < grid.ROWS; y++) {
+      game.board[x][y].tutorialSelectable = true;
+      if (lightsOff) {
+        game.board[x][y].helpX = undefined;
+        game.board[x][y].targetX = undefined;
+        game.board[x][y].lightTimer = 0; // turn off
+        game.board[x][y].lightBlink = false;
+      }
     }
   }
 }

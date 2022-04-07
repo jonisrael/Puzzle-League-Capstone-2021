@@ -101,6 +101,7 @@ import {
   randomPiece,
   spawnSquare,
   touchInputs,
+  saveState,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -111,6 +112,7 @@ import {
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { checkTime } from "./scripts/functions/timeEvents";
 import {
+  allBlocksAreSelectable,
   createTutorialBoard,
   playScript,
   runTutorialScript,
@@ -119,7 +121,7 @@ import {
   tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
-import { doTrainingAction } from "./scripts/functions/trainingControls";
+import { doTrainingAction, rewind } from "./scripts/functions/trainingControls";
 import {
   determineScoreColor,
   drawChainMessage,
@@ -252,7 +254,7 @@ class Block {
   }
 
   drawSwappingBlocks() {
-    let xOffset = (grid.SQ * (this.timer - 1)) / 4;
+    let xOffset = (grid.SQ * (this.timer - 1)) / (preset.swapTimer - 1);
     // let url = this.color[0] === "u" ? "unmatchable" : `${this.color}_normal`;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
@@ -628,7 +630,8 @@ export function newBlock(c, r, vacant = false) {
 export function checkIfHelpPlayer() {
   if (helpPlayer.forceHint) helpPlayer.timer = 0;
   if (
-    ((game.score < 500 && game.mode !== "tutorial") || helpPlayer.forceHint) &&
+    ((game.score < 500 && game.mode !== "tutorial" && !debug.show) ||
+      helpPlayer.forceHint) &&
     game.frames > 0 &&
     game.frames < 7200 &&
     !game.disableSwap &&
@@ -755,6 +758,7 @@ export function isChainActive() {
 
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
+  // this impacts the chainChallengeEvents() function
   game.boardRiseRestarter = 0;
   game.previousChainScore = game.chainScoreAdded;
   game.previousChain = game.currentChain;
@@ -805,6 +809,8 @@ export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain > 1) {
     game.message = `${game.currentChain}x chain added ${game.previousChainScore} score.`;
     game.messageChangeDelay = 90;
+    // this impacts the chainChallengeEvents() function
+    if (tutorial.chainChallenge) game.board[0][grid.ROWS].timer = -3;
   } else if (game.currentChain == 1) {
     game.message = `Combo added ${game.chainScoreAdded} to score.`;
   }
@@ -829,6 +835,9 @@ export function endChain(potentialSecondarySuccessor) {
       }
     }
   }
+
+  if (game.currentChain === 1 && tutorial.chainChallenge)
+    game.board[0][grid.ROWS].timer = -3;
 }
 
 export function createNewRow(board) {
@@ -931,6 +940,11 @@ function TRAINING_CONTROL(event) {
   if (game.mode === "training" && !debug.enabled) {
     if (event.code.includes("Digit")) {
       doTrainingAction(event.code[5]);
+    }
+  }
+  if (debug.enabled) {
+    if (event.code.includes("Numpad")) {
+      doTrainingAction(event.code[6]);
     }
   }
 }
@@ -1056,7 +1070,7 @@ function KEYBOARD_CONTROL(event) {
     }
 
     if (event.keyCode == 192) {
-      // tilda `~
+      // ~
       debug.enabled = (debug.enabled + 1) % 2;
       if (debug.enabled == 1) {
         if (game.frames < 0) {
@@ -1065,6 +1079,7 @@ function KEYBOARD_CONTROL(event) {
             music[randInt(music.length, true, lastIndex.music, "music")]
           );
         }
+        allBlocksAreSelectable(true);
         debug.show = 1;
         // helpPlayer.timer = 10;
         leaderboard.canPost = false;
@@ -1095,8 +1110,6 @@ function KEYBOARD_CONTROL(event) {
           game.level--;
           updateLevelEvents(game.level);
         }
-      } else if (event.keyCode === 89) {
-        // y
       }
       // else if (event.keyCode === 77) {
       //   // m
@@ -1122,11 +1135,24 @@ function KEYBOARD_CONTROL(event) {
           console.log(game);
           printDebugInfo();
         }
+        if (event.keyCode === 219) {
+          // [
+          console.log("board saved successfully");
+          saveState.selfSave = JSON.parse(JSON.stringify(game));
+        }
+        if (event.keyCode === 221) {
+          // ]
+          console.log("loading saved board");
+          rewind(saveState.selfSave);
+        }
         if (event.keyCode === 190) {
           // .
-          console.log("s", saveCurrentBoard(game.board, true));
-          console.log("t", saveCurrentBoard(game.board, true, false, true)); // tutorial
-          console.log("f", saveCurrentBoard(game.board, true, true)); // flipped
+          console.log("simple", saveCurrentBoard(game.board, true));
+          console.log(
+            "tutorial converted",
+            saveCurrentBoard(game.board, true, false, true)
+          ); // tutorial
+          console.log("full", saveCurrentBoard(game.board, true, true)); // flipped
           console.log(saveCurrentBoard(game.board, false));
           console.table(touchInputs);
         }
@@ -1752,7 +1778,23 @@ export function gameLoop() {
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.tutorialRunning) {
-        game.message = tutorialMessages[tutorial.state][tutorial.msgIndex];
+        if (tutorial.chainChallenge)
+          if (game.currentChain > 0) {
+            game.message = `${game.currentChain}x!`;
+          } else {
+            if (game.largestChain > 0)
+              game.message = `Largest Chain Achieved: ${game.largestChain}`;
+            else if (game.largestChain === 9) {
+              game.message = "Congratulations, You Beat the Chain Challenge!";
+            } else if (game.lastChain > 0 && game.lastChain < game.largestChain)
+              game.message = `${game.lastChain}x achieved. Try again!`;
+            else
+              game.message =
+                "Chain Challenge: Can you clear the whole board in one combo?";
+          }
+        if (!tutorial.chainChallenge) {
+          game.message = tutorialMessages[tutorial.state][tutorial.msgIndex];
+        }
         win.mainInfoDisplay.innerHTML = game.message;
       } else {
         if (game.messageChangeDelay > 0) {
