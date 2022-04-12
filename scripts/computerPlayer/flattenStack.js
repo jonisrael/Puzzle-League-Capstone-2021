@@ -7,7 +7,7 @@ import {
   blockColor,
 } from "../global";
 
-import { ableToSwap } from "./cpu";
+import { isAllowedToSwap } from "./cpu";
 
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
 
@@ -27,41 +27,46 @@ export function flattenStack() {
     if (game.highestRow === 11) return false;
 
     // check to see if stack has no holes.
-    let holeIndex = -1;
+    let holeColumn = -1;
     for (let i = 0; i < default_hole_check_order.length; i++) {
-      let potentialHoleIndex = default_hole_check_order[i];
+      let potentialHoleColumn = default_hole_check_order[i];
       if (
-        game.board[potentialHoleIndex][game.highestRow + 1].color ===
+        game.board[potentialHoleColumn][game.highestRow + 1].color ===
         blockColor.VACANT
       )
-        holeIndex = potentialHoleIndex;
-      cpu.holeDetectedAt = [holeIndex, game.highestRow + 1];
+        holeColumn = potentialHoleColumn;
+      cpu.holeDetectedAt = [holeColumn, game.highestRow + 1];
     }
-    if (holeIndex === -1) {
+    if (holeColumn === -1) {
       return false;
     }
-    for (let i = 0; i < order[holeIndex].length; i++) {
+    for (let i = 0; i < order[holeColumn].length; i++) {
       let leftBlockIndex =
-        holeIndex < 5 ? order[holeIndex][i] : order[holeIndex - 1][i];
-      let rightBlockIndex = leftBlockIndex + 1;
+        holeColumn < 5 ? order[holeColumn][i] : order[holeColumn - 1][i];
       let leftBlock = game.board[leftBlockIndex][game.highestRow];
-      let rightBlock = game.board[rightBlockIndex][game.highestRow];
+      let rightBlock = game.board[leftBlockIndex + 1][game.highestRow];
       if (
-        (leftBlockIndex < holeIndex &&
+        (leftBlock.x <= holeColumn &&
           INTERACTIVE_TYPES.includes(leftBlock.type) &&
           leftBlock.timer === 0 &&
           leftBlock.color !== blockColor.VACANT &&
           rightBlock.color === blockColor.VACANT) ||
-        (leftBlockIndex >= holeIndex &&
+        (leftBlock.x > holeColumn &&
           INTERACTIVE_TYPES.includes(rightBlock.type) &&
           rightBlock.timer === 0 &&
           leftBlock.color === blockColor.VACANT &&
           rightBlock.color !== blockColor.VACANT)
       ) {
         // for (let r = game.highestRow; r > 0; r--) {
-        //   if (game.board[holeIndex][r].color != blockColor.VACANT) return false;
+        //   if (game.board[holeColumn][r].color != blockColor.VACANT) return false;
         // }
-        return ableToSwap(leftBlockIndex, game.highestRow, true);
+        cpu.destination = [holeColumn, game.highestRow];
+        cpu.blockToSelect =
+          leftBlock.x <= holeColumn
+            ? [leftBlock.x, leftBlock.y]
+            : [rightBlock.x, rightBlock.y];
+
+        return isAllowedToSwap(leftBlockIndex, game.highestRow, true);
       }
     }
     return false;

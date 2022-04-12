@@ -22,10 +22,10 @@ export default (st) => html`
           Chain Challenge (C)
         </button>
         <button id="training-mode" class="default-button start-buttons">
-          Practice (P)
+          Endless Mode (E)
         </button>
         <button id="ai-plays-button" class="default-button start-buttons">
-          See My AI Play! (B)
+          See My AI Play! (A)
         </button>
       </div>
       <hr />

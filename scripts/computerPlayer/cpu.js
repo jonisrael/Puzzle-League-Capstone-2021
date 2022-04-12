@@ -7,6 +7,7 @@ import {
   cpu,
   win,
   randInt,
+  touch,
 } from "../global";
 import { sprite } from "../fileImports";
 import { findHorizontalMatches } from "./findHorizontalMatches";
@@ -18,6 +19,7 @@ import {
   tutorial,
 } from "../tutorial/tutorialScript";
 import { updateLevelEvents } from "../../puzzleleague";
+import { doCpuTouchInputs, updateCPUMouse } from "../clickControls";
 
 // hole check order, prioritizing center
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
@@ -56,7 +58,7 @@ const direction = [
   [4, 3, 2, 1, 0], // 5
 ];
 
-export function cpuAction(input, createHint = false) {
+export function cpuAction(input, createHint = false, controlType = "digital") {
   if (game.tutorialRunning) {
     let tutorialScript = Object.keys(tutorial.inputs[tutorial.state]);
     // console.log(
@@ -104,7 +106,8 @@ export function cpuAction(input, createHint = false) {
   //   return input;
   // }
 
-  if (game.frames < 30 || game.frameMod[2] === 1) return input;
+  if (game.frames < 30 || game.frameMod[cpu.cursorSpeedDivisor] === 2)
+    return input;
   if (game.boardHasSwappingBlock) return input;
   if (cpu.control && game.frames % cpu.cursorSpeedDivisor !== 0) return input;
   win.mainInfoDisplay.style.color = "green";
@@ -251,11 +254,28 @@ export function cpuAction(input, createHint = false) {
 } // end cpuAction
 
 function cpuMoveToTarget(input, targetX, targetY, swapAtTarget) {
-  if (game.cursor.y < targetY) input.down = true;
-  else if (game.cursor.y > targetY) input.up = true;
-  else if (game.cursor.x > targetX) input.left = true;
-  else if (game.cursor.x < targetX) input.right = true;
-  else if (swapAtTarget && !game.disableSwap) input.swap = true; // reached target
+  if (cpu.inputType === "digital") {
+    if (game.cursor.y < targetY) input.down = true;
+    else if (game.cursor.y > targetY) input.up = true;
+    else if (game.cursor.x > targetX) input.left = true;
+    else if (game.cursor.x < targetX) input.right = true;
+    else if (swapAtTarget && !game.disableSwap) input.swap = true; // reached target
+  }
+  if (cpu.inputType === "touch") {
+    // updateCPUMouse(
+    //   cpu.blockToSelect[0],
+    //   cpu.blockToSelect[1],
+    //   cpu.destination[0]
+    // );
+    doCpuTouchInputs(
+      cpu.blockToSelect[0],
+      cpu.blockToSelect[1],
+      cpu.destination[0],
+      cpu.destination[1],
+      cpu.destination[0] < cpu.blockToSelect[0] ? -1 : 1
+    );
+  }
+
   // return input;
 }
 
@@ -265,7 +285,7 @@ function randomAction(input) {
   let arr = ["down", "up", "left", "right", "swap", "swap"];
 
   let selection = randInt(6);
-  if (selection > 3 && !ableToSwap(game.cursor.x, game.cursor.y)) {
+  if (selection > 3 && !isAllowedToSwap(game.cursor.x, game.cursor.y, true)) {
     selection = randInt(4);
   }
   cpu.randomInputCounter--;
@@ -279,19 +299,20 @@ function randomAction(input) {
   return input;
 }
 
-export function ableToSwap(x, y, swapAtTarget) {
+export function isAllowedToSwap(x, y, swapAtTarget) {
   // temp fixes
   if (x > grid.COLS - 1) return false; // crash occurred at this line
   if (x < 0) return false;
 
   let SquareLeft = game.board[x][y];
   let SquareRight = game.board[x + 1][y];
+  // cannot swap two blocks that are vacant
   if (SquareLeft.color === "vacant" && SquareRight.color === "vacant")
     return false;
-  if (!INTERACTIVE_TYPES.includes(SquareLeft.type)) return false;
-  if (!INTERACTIVE_TYPES.includes(SquareRight.type)) return false;
-  if (SquareLeft.timer !== 0 && SquareLeft.type !== "landing") return false;
-  if (SquareRight.timer !== 0 && SquareRight.type !== "landing") return false;
+  if (!INTERACTIVE_TYPES.includes(SquareLeft.type)) return false; // left must be interactive
+  if (!INTERACTIVE_TYPES.includes(SquareRight.type)) return false; // right must be interactive
+  if (SquareLeft.timer !== 0 && SquareLeft.type !== "landing") return false; // cannot be stalling
+  if (SquareRight.timer !== 0 && SquareRight.type !== "landing") return false; // cannot be stalling
 
   // Cannot swap directly below a block
   if (y > 0) {

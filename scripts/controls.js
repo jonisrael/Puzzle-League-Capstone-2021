@@ -12,13 +12,13 @@ import { tutorialMessages } from "./tutorial/tutorialMessages";
 import { loadTutorialState } from "./tutorial/tutorialEvents";
 
 export const action = {
-  up: 0,
-  down: 0,
-  left: 0,
-  right: 0,
-  swap: 0,
-  raise: 0,
-  pause: 0,
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+  swap: false,
+  raise: false,
+  pause: false,
 };
 
 export const holdTime = JSON.parse(JSON.stringify(action));
@@ -207,6 +207,7 @@ export function playerAction(input) {
   // let inputsActive = Object.keys(action).filter(key => action[key] === true);
   // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
+    if (game.board[game.cursor.x][game.cursor.y].type === "swapping") return;
     if (Object.values(input).includes(true) && !input.byCPU) {
       cpu.control = 0;
       console.log("player input detected, cpu control off.");
@@ -270,16 +271,20 @@ export function playerAction(input) {
     } else if (input.swap && !game.over) {
       action.swap = false;
 
-      game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
+      // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
       if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
       game.swapPressed = true;
-      win.cvs.scrollIntoView({ block: "nearest" });
+      if (input.byCPU)
+        cpu.showFakeCursorPosition = cpu.targetX === game.cursor.x;
     }
 
     if (cursorMoved) {
-      game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
+      game.cursor_type = "defaultCursor";
+      // if (!input.byCPU) {
+      //   game.cursor_type = "defaultCursor";
+      // }
+      // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
       if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
-      win.cvs.scrollIntoView({ block: "nearest" });
       if (!win.appleProduct && (!cpu.enabled || game.tutorialRunning)) {
         playAudio(audio.moveCursor);
       }

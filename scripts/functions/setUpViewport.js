@@ -88,7 +88,7 @@ function createDesktopDisplay() {
   appContainer.appendChild(win.fpsDisplay);
 
   win.mainInfoDisplay = document.createElement("h2");
-  win.mainInfoDisplay.setAttribute("id", "main-info");
+  win.mainInfoDisplay.setAttribute("id", `main-info`);
   win.mainInfoDisplay.innerHTML = "Loading...";
   appContainer.appendChild(win.mainInfoDisplay);
 
@@ -248,8 +248,8 @@ function createDesktopDisplay() {
 
   // setUpQuickStatDisplay(column1);
   if (game.mode === "arcade") {
-    setUpBestScoreDisplay(column1);
-    setUpGameLogDisplay(column3);
+    setUpBestScoreDisplay(column3);
+    // setUpGameLogDisplay(column3);
   } else if (game.mode === "training") {
     setUpTrainingMode(column3);
   }
@@ -433,6 +433,8 @@ function createMobileDisplay() {
   if (game.mode === "training") {
     pauseButton.innerHTML = "Training Features";
     pauseButton.style.fontSize = "0.8rem";
+  } else if (game.mode === "tutorial") {
+    pauseButton.innerHTML = "Advance";
   } else {
     pauseButton.innerHTML = "Pause";
   }

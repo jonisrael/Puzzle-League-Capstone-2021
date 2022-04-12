@@ -8,7 +8,7 @@ import {
   detectInfiniteLoop,
   win,
 } from "../global";
-import { ableToSwap } from "./cpu";
+import { isAllowedToSwap } from "./cpu";
 import { sprite } from "../fileImports";
 import { checkForObstacle } from "./findHorizontalMatches";
 
@@ -24,7 +24,7 @@ export function findVerticalMatches(middleRowIndex, dir) {
       let desiredColor = PIECES[i];
       // console.log(desiredColor);
       matchLocations = [];
-      cpu.matchList = [];
+      cpu.matchList.length = cpu.matchStrings.length = 0;
       for (let r = middleRowIndex + 1; r >= middleRowIndex - 1; r--) {
         let c = start;
         win.loopCounter = 0;
@@ -74,12 +74,25 @@ function startVerticalSwapping(matchLocations) {
     let bottomX = matchLocations[0][0];
     let bottomY = matchLocations[0][1];
 
-    if (topX < centerX) inputArr = [topX, topY, true];
-    else if (topX > centerX) inputArr = [topX - 1, topY, true];
-    else {
-      // since bottomX == centerX, now check topX
-      if (bottomX < centerX) inputArr = [bottomX, bottomY, true];
-      else if (bottomX > centerX) inputArr = [bottomX - 1, bottomY, true];
+    if (topX < centerX) {
+      inputArr = [topX, topY, true];
+      cpu.blockToSelect = [topX, topY];
+      cpu.destination = [centerX, topY];
+    } else if (topX > centerX) {
+      inputArr = [topX - 1, topY, true];
+      cpu.blockToSelect = [topX, topY];
+      cpu.destination = [centerX, topY];
+    } else {
+      // since topX == centerX, now check bottomX
+      if (bottomX < centerX) {
+        inputArr = [bottomX, bottomY, true];
+        cpu.blockToSelect = [bottomX, bottomY];
+        cpu.destination = [centerX, bottomY];
+      } else if (bottomX > centerX) {
+        inputArr = [bottomX - 1, bottomY, true];
+        cpu.blockToSelect = [bottomX, bottomY];
+        cpu.destination = [centerX, bottomY];
+      }
     }
 
     // otherwise, desired match has been made.
@@ -96,7 +109,7 @@ function startVerticalSwapping(matchLocations) {
 
     if (checkForObstacle(inputArr[0], inputArr[0] + 1, inputArr[1]))
       return false;
-    return ableToSwap(inputArr[0], inputArr[1], true);
+    return isAllowedToSwap(inputArr[0], inputArr[1], true);
   } catch (error) {
     // console.log(`A bug occurred running the startVerticalSwapping function:`);
     // console.log(error, error.stack);

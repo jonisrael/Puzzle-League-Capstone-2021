@@ -1,3 +1,4 @@
+import { selectBlock } from "../clickControls";
 import { cpuAction } from "../computerPlayer/cpu";
 import { findVerticalMatches } from "../computerPlayer/findVerticalMatches";
 import { audio } from "../fileImports";
@@ -22,6 +23,7 @@ export function updateGrid(frameAdvance = false) {
   game.panicking = game.highestRow <= game.panicIndex;
   game.boardIsClearing = false;
   game.boardHasTargets = false;
+  let numberOfPreviews = 0;
   game.boardHasAirborneBlock = false;
   game.boardHasSwappingBlock = false;
   // touch.moveOrderExists = false;
@@ -41,6 +43,9 @@ export function updateGrid(frameAdvance = false) {
       if (Square.airborne) {
         game.boardHasAirborneBlock = true;
       }
+
+      if (touch.removePreviews) Square.previewX = undefined;
+
       if (Square.targetX !== undefined) {
         if (Square.targetX === Square.x) {
           removeFromOrderList(Square);
@@ -48,6 +53,15 @@ export function updateGrid(frameAdvance = false) {
           game.boardHasTargets = true;
         }
       }
+
+      if (Square.previewX !== undefined) {
+        numberOfPreviews++;
+      }
+
+      if (touch.removeAllArrows) {
+        Square.previewX = Square.targetX = undefined;
+      }
+
       if (Square.type === "swapping") game.boardHasSwappingBlock = true;
       if (!Square.airborne && Square.type !== "landing") {
         game.availForPrimaryChain = false;
@@ -59,6 +73,7 @@ export function updateGrid(frameAdvance = false) {
         Square.availForSecondaryChain = false;
         Square.touched = false;
         Square.targetX = undefined;
+        Square.previewX = undefined;
         Square.helpX = undefined;
         Square.lightTimer = 0;
         Square.timer = 0;
@@ -216,5 +231,6 @@ export function updateGrid(frameAdvance = false) {
       }
     } // end x
   } // end y
-  touch.disableAllMoveOrders = false;
+  if (touch.removePreviews) touch.removePreviews = false;
+  else if (numberOfPreviews > 1) touch.removePreviews = true;
 }

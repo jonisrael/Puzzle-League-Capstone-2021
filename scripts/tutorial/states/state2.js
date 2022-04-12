@@ -70,9 +70,9 @@ export function tutorialEventsAtState_2() {
     ) {
       if (game.board[2][grid.ROWS - 5].timer === 171) {
         playAudio(audio.announcerFantasticCombo);
+        tutorial.msgIndex = tutorialMessages[2].length - 1;
+        deselectAllBlocks();
       }
-      deselectAllBlocks();
-      tutorial.msgIndex = tutorialMessages[1].length - 1;
       if (game.board[3][grid.ROWS - 1].timer === 2) {
         tutorial.state++;
         tutorial.msgIndex = 0;

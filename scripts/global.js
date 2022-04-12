@@ -254,7 +254,6 @@ export const music = [
 
 export const touch = {
   enabled: true,
-  disableAllMoveOrders: false,
   thereIsABlockCurrentlySelected: false,
   mouse: {
     clicked: false,
@@ -270,6 +269,7 @@ export const touch = {
   target: { x: 2, y: 6 }, // swap until target is reached
   keySquare: { x: 2, y: 6 },
   arrowPointer: { x: 2, y: 6 },
+  removeAllArrows: false,
   swapOrderPrepared: false,
   doubleClickCounter: 0,
   doubleClickTimer: 0,
@@ -318,7 +318,7 @@ export let game = {
   mode: "arcade",
   controller: null,
   cursor: { x: 2, y: 6 },
-  cursor_type: "defaultCursor",
+  cursor_type: "legalCursorDown",
   humanCanPlay: true,
   rise: 0,
   board: [],
@@ -466,13 +466,15 @@ export const saveState = {
 export const cpu = {
   enabled: 0,
   control: 0,
-  cursorSpeedDivisor: 1,
+  cursorSpeedDivisor: 10,
   showInfo: 0,
+  showFakeCursorPosition: false,
   up: false,
   down: false,
   left: false,
   right: false,
   swap: false,
+  inputType: "digital",
   swapSuccess: false,
   quickRaise: false,
   pause: false,
@@ -480,6 +482,9 @@ export const cpu = {
   prevTargetY: 5,
   targetX: 0,
   targetY: 0,
+  directionToMove: 1,
+  destination: [],
+  blockToSelect: [],
   targetColor: sprite.debugRed,
   userChangedSpeed: 0,
   holeDetectedAt: [0, 0],

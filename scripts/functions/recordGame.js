@@ -10,6 +10,8 @@ export function recordTouchInput(frame, x, y, moveTo, type) {
   return [x, y, moveTo, type];
 }
 
+export function playbackTouchInput(order) {}
+
 export function recordDigitalInput(frame, input) {
   return input;
 }

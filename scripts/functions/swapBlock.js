@@ -127,6 +127,12 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     LeftBlock.touched = RightBlock.touched = true;
     LeftBlock.availForPrimaryChain = RightBlock.availForPrimaryChain = false;
     LeftBlock.availForSecondaryChain = RightBlock.availForSecondaryChain = false;
+    if (cpu.control && cpu.inputType === "touch") {
+      if (game.cursor.x === LeftBlock.x) game.cursor.x = RightBlock.x;
+      else if (game.cursor.x === RightBlock.x) game.cursor.x = LeftBlock.x;
+      if (game.boardHasSwappingBlock) game.cursor_type = "movingCursor";
+      else game.cursor_type = "legalCursorUp";
+    }
 
     // if (y < 11) {
     //   //Check to see if block is about to fall

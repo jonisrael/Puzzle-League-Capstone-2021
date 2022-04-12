@@ -19,6 +19,7 @@ import {
 export function tutorialEventsAtState_1() {
   let advanceButton = document.getElementById("pause-button");
   game.humanCanPlay = tutorial.msgIndex > 2;
+  advanceButton.disabled = game.humanCanPlay;
   if (tutorial.msgIndex === 2 && game.cursor.x !== 0) {
     flipLightOnBlocksWithNegativeTimer(true);
     // flipLightSwitch(0, grid.ROWS - 2, "on", true, true);
@@ -28,10 +29,10 @@ export function tutorialEventsAtState_1() {
     flipAllLightsOff();
     flipLightSwitch(0, 6, "on", true);
     makeBlockSelectable(0, grid.ROWS - 2, 1);
-    advanceButton.disabled = true;
   }
   if (tutorial.msgIndex === 3 && game.cursor.x === 0 && game.cursor.y === 6) {
     tutorial.msgIndex++;
+    advanceButton.disabled = game.humanCanPlay;
   }
   // if (tutorial.msgIndex === 3 && game.board[1][grid.ROWS - 1].timer === -2) {
   //   flipLightOnBlocksWithNegativeTimer();

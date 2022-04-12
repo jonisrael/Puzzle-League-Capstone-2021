@@ -96,7 +96,8 @@ export function runTutorialScript(input, frame, state) {
 }
 
 export function startTutorial() {
-  win.cvs.style.height = "50vh";
+  if (window.innerWidth > 350) win.cvs.style.height = "50vh";
+  else win.cvs.style.height = "45vh";
   game.board = [];
   playMusic(audio.trainingMusic, 0.2);
   // sound.Music[1].src = audio.trainingMusic;

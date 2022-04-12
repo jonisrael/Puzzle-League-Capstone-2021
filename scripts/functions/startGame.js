@@ -84,7 +84,7 @@ export function startGame(selectedGameSpeed = 1) {
   game.humanCanPlay = game.mode !== "cpu-play";
   cpu.showInfo = false;
   document.getElementById("container").innerHTML = "Loading...";
-  createHeadsUpDisplay(window.innerWidth < 800);
+  createHeadsUpDisplay(window.innerWidth <= 870); // should be 768
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
   if (game.mode !== "arcade") {
@@ -107,8 +107,6 @@ export function startGame(selectedGameSpeed = 1) {
     grid.COLS = 6;
     grid.ROWS = 8;
     win.cvs.height = grid.SQ * grid.ROWS;
-    if (document.getElementById("main-info-container"))
-      document.getElementById("main-info-container").style.minHeight = "30vh";
     startTutorial();
   } else {
     grid.COLS = 6;
@@ -333,7 +331,6 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       block.draw();
     }
   }
-  board = fixNextDarkStack(board); // make sure new stacks follow rules
 
   if (blockNumber === 0) return board; // keep board empty
 
@@ -434,5 +431,6 @@ export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
       }
     }
   }
+  board = fixNextDarkStack(board); // make sure new stacks follow rules
   return board;
 }

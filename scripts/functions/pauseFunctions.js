@@ -24,8 +24,6 @@ export function pause(lostFocus = false, message = "Pause") {
   game.paused = true;
   document.getElementById("pause-button").innerHTML = "Unpause";
   document.getElementById("pause-button").fontSize = "1.5rem";
-
-  printDebugInfo();
   //   "win:",
   //   win,
   //   "perf:",
@@ -36,7 +34,6 @@ export function pause(lostFocus = false, message = "Pause") {
 
   // );
   perf.pauseStartTime = Date.now();
-  if (!debug.enabled) playAudio(audio.pause, 0.1);
   if (lostFocus) {
     win.mainInfoDisplay.innerHTML = "Pause -- Clicked Off Tab";
     // sound.Music[1].pause();
@@ -46,8 +43,9 @@ export function pause(lostFocus = false, message = "Pause") {
     win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
   else win.mainInfoDisplay.innerHTML = message;
   // sound.Music[1].volume *= 0.25;
-  sound.Music[1].pause();
   if (!debug.enabled) {
+    playAudio(audio.pause, 0.1);
+    sound.Music[1].pause();
     // still show board during debug mode
     win.mainInfoDisplay.style.color = "black";
     win.cvs.style.display = "none";
@@ -62,6 +60,7 @@ export function pause(lostFocus = false, message = "Pause") {
     win.cvs.height = (grid.ROWS + 2) * grid.SQ;
     drawGrid();
   }
+  printDebugInfo();
 }
 
 export function unpause() {
@@ -173,6 +172,8 @@ export function printDebugInfo() {
     cpu,
     "\nprevious",
     previous,
+    "\naction",
+    action,
     "\nhelpPlayer",
     helpPlayer,
     "\ndebug",

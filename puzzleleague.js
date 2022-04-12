@@ -168,6 +168,7 @@ export class Cursor {
     // param used to be ctx
     let pixelX = this.x * grid.SQ;
     let pixelY = this.y * grid.SQ - game.rise;
+    // if (cpu.showFakeCursorPosition) pixelX += grid.SQ;
     // const CURSOR_IMAGE = new Image();
     // CURSOR_IMAGE.src = sprite.cursor;
     win.ctx.drawImage(loadedSprites[game.cursor_type], pixelX, pixelY);
@@ -281,8 +282,6 @@ class Block {
       0.25 +
       (preset.faceValues[game.level] - game.deathTimer) /
         preset.faceValues[game.level];
-    if (debug.enabled && game.deathTimer > 0)
-      console.log(game.deathTimer, win.ctx.globalAlpha);
     win.ctx.fillRect(grid.SQ * this.x, grid.SQ * this.y, grid.SQ, grid.SQ);
     win.ctx.globalAlpha = 1;
   }
@@ -543,6 +542,28 @@ class Block {
         grid.SQ * this.y - game.rise
       );
     }
+    if (cpu.destination[0] === this.x && cpu.destination[1] === this.y) {
+      win.ctx.drawImage(
+        loadedSprites["debugMagenta"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+    if (cpu.blockToSelect[0] === this.x && cpu.blockToSelect[1] === this.y) {
+      win.ctx.drawImage(
+        loadedSprites["debugViolet"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+
+    if (touch.mouse.x === this.x && touch.mouse.y === this.y) {
+      win.ctx.drawImage(
+        loadedSprites["debugWhite"],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
   }
 
   draw() {
@@ -686,7 +707,7 @@ export function drawGrid() {
 
       // Square.drawGridLines();
 
-      if (game.cursor_type[0] !== "d") {
+      if (0 === 0 || game.cursor_type[0] !== "d") {
         Square.drawGridLines();
       }
 
@@ -872,7 +893,12 @@ export function createNewRow(board) {
   }
   board = fixNextDarkStack(board);
 
-  if (game.highestRow === 3 && game.level > 3 && game.mode !== "training") {
+  if (
+    !debug.enabled &&
+    game.highestRow === 3 &&
+    game.level > 3 &&
+    game.mode !== "training"
+  ) {
     playAnnouncer(
       announcer.panicDialogue,
       announcer.panicIndexLastPicked,
@@ -1050,6 +1076,7 @@ function KEYBOARD_CONTROL(event) {
 
     if (game.mode === "cpu-play" && !debug.enabled) {
       if (event.keyCode === 83) {
+        // s
         cpu.showInfo = (cpu.showInfo + 1) % 2;
       }
       if (event.keyCode === 75) {
@@ -1439,7 +1466,7 @@ export function gameLoop() {
         // Speed the stack up every 20 seconds
 
         if (game.frames >= 1200) {
-          game.message = `Level ${game.level + 1}, game speed increases...`;
+          game.message = `Level ${game.level + 1}, speed increases...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
           if (

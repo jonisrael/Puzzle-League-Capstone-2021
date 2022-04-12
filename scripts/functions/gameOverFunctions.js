@@ -73,12 +73,6 @@ export function isGameOver() {
   ) {
     game.deathTimer -= perf.gameSpeed;
     if (game.deathTimer > 0) {
-      if (debug.enabled)
-        console.log(
-          game.frames,
-          "death timer",
-          1 - game.deathTimer / preset.faceValues[game.level]
-        );
       return false;
     }
     // if debug, do not game over.

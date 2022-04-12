@@ -10,7 +10,7 @@ import {
 
 import { sprite } from "../fileImports";
 
-import { ableToSwap } from "./cpu";
+import { isAllowedToSwap } from "./cpu";
 
 export function findHorizontalMatches(r) {
   try {
@@ -18,6 +18,7 @@ export function findHorizontalMatches(r) {
     let matchLocations = [];
     for (let i = 0; i < PIECES.length; i++) {
       matchLocations = [];
+      cpu.matchList.length = cpu.matchStrings.length = 0;
       for (let c = grid.COLS - 1; c >= 0; c--) {
         if (
           game.board[c][r].color === PIECES[i] &&
@@ -53,22 +54,26 @@ function startHorizontalSwapping(matchLocations) {
     let y = matchLocations[0][1];
 
     // check which clear is closer
-    if (centerX - leftX < rightX - centerX || 0 === 0) {
-      if (centerX + 1 !== rightX) {
-        if (checkForObstacle(centerX, rightX, y)) return false;
-        else {
-          cpu.targetColor = sprite.debugGreen;
-          return ableToSwap(centerX, y, true);
-        }
-      }
-      if (leftX + 1 !== centerX) {
-        if (checkForObstacle(leftX, centerX, y)) return false;
-        else {
-          cpu.targetColor = sprite.debugGreen;
-          return ableToSwap(leftX, y, true);
-        }
+
+    if (centerX + 1 !== rightX) {
+      if (checkForObstacle(centerX, rightX, y)) return false;
+      else {
+        cpu.targetColor = sprite.debugGreen;
+        cpu.blockToSelect = [rightX, y];
+        cpu.destination = [centerX + 1, y];
+        return isAllowedToSwap(centerX, y, true);
       }
     }
+    if (centerX - 1 !== leftX) {
+      if (checkForObstacle(leftX, centerX, y)) return false;
+      else {
+        cpu.targetColor = sprite.debugGreen;
+        cpu.blockToSelect = [leftX, y];
+        cpu.destination = [centerX - 1, y];
+        return isAllowedToSwap(leftX, y, true);
+      }
+    }
+
     // Otherwise, desired pair has been made
   } catch (error) {
     console.log(`A bug occurred while running horizontal swap function:`);

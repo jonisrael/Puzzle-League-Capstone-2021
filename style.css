@@ -175,10 +175,10 @@ th {
   justify-content: center;
   /* display: flex; */
   /* display: none; */
-  display: table-row;
+  display: table;
   /* align-items: center; */
   /* margin: 0 auto; */
-  max-width: 80%;
+  max-width: 70%;
 }
 
 #accept-game-controls {
@@ -224,7 +224,7 @@ th {
 
 #fps-display {
   margin: 0;
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   text-indent: 5vw;
   text-align: left;
   padding: 0.5rem 0 0.2rem 0;
@@ -699,14 +699,35 @@ footer {
   background-color: #111;
 }
 
-/* Now define features of mobile screen. */
-@media only screen and (max-width: 900px) {
-  canvas {
-    min-height: 0%;
-    height: 80vh;
-    margin-top: 2vh;
+@media only screen and (max-width: 1050px) {
+  .column1,
+  .column2,
+  .column3 {
+    flex: 32%;
+    padding: 0.5rem 0rem;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #game-info-table {
+    padding: 0;
   }
 
+  td,
+  th {
+    font-size: 90%;
+  }
+}
+
+@media only screen and (max-width: 970px) {
+  td,
+  th {
+    font-size: 88%;
+    padding: 0.3rem;
+  }
+}
+
+/* Now define features of mobile screen. Should be 768px */
+@media only screen and (max-width: 870px) {
   #game-container {
     flex-direction: column;
   }
@@ -740,11 +761,33 @@ footer {
   }
 
   #main-info {
+    /* align-self: flex-end; */
+    position: relative;
+    bottom: 0;
+    font-size: 3vh;
+    overflow: clip;
+    /* padding-left: 2vw;
+    padding-right: 2vw; */
+    /* padding: 0 2vw 0 2vw; */
+  }
+
+  .tutorial-info {
+    /* align-self: flex-end; */
+    position: relative;
+    bottom: 0;
     font-size: 3vh;
     overflow: clip;
     /* padding-left: 2vw;
     padding-right: 2vw; */
     padding: 0 2vw 0 2vw;
+  }
+
+  #main-info-container {
+    /* display: flex; */
+  }
+
+  #main-info {
+    padding: 0;
   }
 
   #root {
@@ -775,33 +818,56 @@ footer {
   .nav-breaks {
     display: block;
   }
-}
 
-@media only screen and (max-width: 390px) {
   canvas {
-    height: 75vh;
+    min-height: 0vh;
+    max-width: 85vw;
+    /* min-width: 85vw; */
+    /* height: 75vh; */
+    margin-top: 4vh;
   }
 }
 
-@media only screen and (max-width: 365px) {
+@media only screen and (max-width: 375px) {
   canvas {
-    height: 70vh;
+    max-height: 70vh;
   }
 }
 
 @media only screen and (max-width: 340px) {
   canvas {
-    height: 65vh;
+    /* max-height: 62vh; */
+    border-width: 5px;
+  }
+
+  #main-info {
+    font-size: 2.5vh;
   }
 }
 
-@media only screen and (max-height: 800px) {
+@media only screen and (max-height: 900px) {
+  canvas {
+    height: 75vh;
+  }
   .training-buttons {
     height: 4vh;
   }
 }
 
-@media only screen and (max-height: 730px) {
+@media only screen and (max-height: 800px) {
+  canvas {
+    height: 76vh;
+  }
+  .training-buttons {
+    height: 4vh;
+  }
+}
+
+@media only screen and (max-height: 740px) {
+  canvas {
+    height: 74vh;
+  }
+
   .training-buttons {
     height: 3.5vh;
     font-size: 80%;
@@ -809,8 +875,47 @@ footer {
 }
 
 @media only screen and (max-height: 700px) {
+  /* canvas {
+    margin-top: 3vh;
+  } */
   .training-buttons {
     height: 3vh;
     font-size: 65%;
+  }
+}
+@media only screen and (max-height: 620px) {
+  canvas {
+    min-height: 72vh;
+    border-width: 8px;
+  }
+}
+@media only screen and (max-height: 580px) {
+  canvas {
+    min-height: 70vh;
+    border-width: 5px;
+  }
+}
+
+@media only screen and (max-height: 535px) {
+  canvas {
+    min-height: 68vh;
+    height: 68vh;
+    border-width: 5px;
+  }
+  #main-info {
+    /* font-size: 3vh; */
+  }
+}
+
+@media only screen and (max-height: 480px) {
+  canvas {
+    min-height: 65vh;
+    height: 65vh;
+  }
+}
+
+@media only screen and (max-height: 430px) {
+  canvas {
+    height: 60vh;
   }
 }
