@@ -115,8 +115,7 @@ export function createTutorialBoard(colorLocations, blocksSelectable = false) {
       }
     }
   }
-  game.board = fixNextDarkStack(game.board);
-  return game.board;
+  fixNextDarkStack();
 }
 
 // flatten stack board

@@ -25,6 +25,7 @@ import {
   setNewControls,
 } from "./scripts/controls";
 import { tutorial } from "./scripts/tutorial/tutorialScript";
+import { middleMenuSetup } from "./scripts/functions/middleMenu";
 dotenv.config();
 
 export const router = new Navigo(window.location.origin);
@@ -149,18 +150,23 @@ function addEventListeners(st) {
       startButtons[i].addEventListener("click", () => {
         api.data = getWorldTimeAPI();
         startButtons.forEach((element) => element.remove());
-        if (i === 0) game.mode = "arcade";
+        if (i === 0) {
+          game.mode = "arcade";
+          // middleMenuSetup("timeControl");
+        }
         if (i === 1) {
           game.mode = "tutorial";
           tutorial.chainChallenge = false;
+          // middleMenuSetup("selectTutorial");
         }
         if (i === 2) {
           game.mode = "tutorial";
           tutorial.chainChallenge = true;
+          // startGame();
         }
         if (i === 3) game.mode = "training";
         if (i === 4) game.mode = "cpu-play";
-        startGame(1);
+        startGame();
       });
     }
     // document.getElementById("arcade-button").addEventListener("click", () => {

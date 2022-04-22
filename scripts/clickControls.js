@@ -10,6 +10,7 @@ import {
   grid,
   INTERACTIVE_TYPES,
   removeFromOrderList,
+  replay,
   touch,
   touchInputs,
   win,
@@ -17,7 +18,7 @@ import {
 import { nextDialogue, tutorial } from "./tutorial/tutorialScript";
 
 export function updateMousePosition(canvas, e) {
-  if (!touch.enabled || cpu.control) return;
+  if (!touch.enabled || cpu.control || game.playRecording) return;
   if (e.type[0] === "t" && !e.touches[0]) return false;
   let clientX = e.type[0] === "t" ? e.touches[0].clientX : e.clientX;
   let clientY = e.type[0] === "t" ? e.touches[0].clientY : e.clientY;
@@ -97,7 +98,7 @@ export function moveBlockByRelease(x, y, targetX) {
   touch.thereIsABlockCurrentlySelected = false;
 }
 
-function doMouseDown(e) {
+export function doMouseDown(e, virtualX, virtualY) {
   if (!game.humanCanPlay || !touch.enabled || cpu.control) {
     if (game.mode === "tutorial" && !game.paused) {
       nextDialogue(tutorial.msgIndex);
@@ -115,12 +116,18 @@ function doMouseDown(e) {
     touch.doubleClickCounter = 0;
     touch.doubleClickTimer = 0;
   }
-
-  if (!updateMousePosition(win.cvs, e)) {
-    // click was outside the borders of the canvas
-    // touch.thereIsABlockCurrentlySelected = false;
-    // touch.moveOrderExists = false;
+  if (virtualX !== undefined) {
+    touch.mouse.x = virtualX;
+    touch.mouse.y = virtualY;
+  } else if (!updateMousePosition(win.cvs, e)) {
+    return; // ran updateMouse function, click was out of bounds
+  }
+  if (!virtualX && !updateMousePosition(win.cvs, e)) {
     return;
+  }
+  if (virtualX) {
+    touch.mouse.x = virtualX;
+    touch.mouse.y = virtualY;
   }
   if (
     touch.doubleClickCounter === 2 &&
@@ -145,13 +152,14 @@ function doMouseDown(e) {
   if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
   if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
   selectBlock(touch.mouse.x, touch.mouse.y);
+  if (!game.paused && !game.playRecording)
+    replay.mouseInputs.push([game.frames, true, touch.mouse.x, touch.mouse.y]);
 }
 
-function doMouseMove(e) {
+function doMouseMove(e, virtual = false) {
   if (!game.humanCanPlay) return;
   if (!touch.enabled) return;
-  // if (!updateMousePosition(win.cvs, e)) return;
-  updateMousePosition(win.cvs, e);
+  if (!virtual) updateMousePosition(win.cvs, e);
   touch.mouseChangedX = false;
   if (touch.mouse.clicked) {
     if (touch.mouse.x !== touch.lastXMoused) {
@@ -174,11 +182,13 @@ function doMouseMove(e) {
   }
 }
 
-function doMouseUp(e) {
+export function doMouseUp(e, virtualX, virtualY) {
   if (!game.humanCanPlay) return;
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
-  updateMousePosition(win.cvs, e);
+  virtualX === undefined
+    ? updateMousePosition(win.cvs, e)
+    : ([touch.mouse.x, touch.mouse.y] = [virtualX, virtualY]);
   if (debug.enabled && game.paused) {
     console.log(game.board[touch.mouse.x][touch.mouse.y]);
     if (game.mode === "tutorial") {
@@ -193,6 +203,8 @@ function doMouseUp(e) {
     SelectedBlock.previewX = undefined;
   }
   touch.thereIsABlockCurrentlySelected = false;
+  if (!game.paused && !game.playRecording)
+    replay.mouseInputs.push([game.frames, false, touch.mouse.x, touch.mouse.y]);
 }
 
 export function updateCPUMouse(x, y, destinationX) {
@@ -270,33 +282,40 @@ export function doCpuTouchInputs(x, y, destinationX, destinationY, dir) {
 
 export function createClickListeners() {
   win.cvs.addEventListener("mousedown", function(e) {
+    if (game.playRecording) return;
     doMouseDown(e);
   });
 
   win.cvs.addEventListener("touchstart", function(e) {
+    if (game.playRecording) return;
     e.preventDefault();
     doMouseDown(e);
   });
 
   win.cvs.addEventListener("mousemove", function(e) {
+    if (game.playRecording) return;
     doMouseMove(e);
   });
 
   win.cvs.addEventListener("touchmove", function(e) {
+    if (game.playRecording) return;
     e.preventDefault();
     doMouseMove(e);
   });
 
   document.addEventListener("mouseup", function(e) {
+    if (game.playRecording) return;
     doMouseUp(e);
   });
 
   win.cvs.addEventListener("touchend", function(e) {
+    if (game.playRecording) return;
     e.preventDefault();
     doMouseUp(e);
   });
 
   win.cvs.addEventListener("contextmenu", function(e) {
+    if (game.playRecording) return;
     if (!touch.enabled) return;
     e.preventDefault();
     // if (game.frames > 0) game.raisePressed = true;

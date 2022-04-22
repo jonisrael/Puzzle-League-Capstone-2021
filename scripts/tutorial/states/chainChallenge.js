@@ -1,4 +1,4 @@
-import { saveCurrentBoard } from "../../functions/recordGame";
+import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
 import { debug, game, grid, touch, win } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
@@ -25,7 +25,7 @@ export function chainChallengeEvents() {
         game.board[x][y].timer = 0;
       }
     }
-    game.board = createTutorialBoard(tutorial.board[4], true);
+    createTutorialBoard(tutorial.board[4], true);
     allBlocksAreSelectable(true);
   }
   if (action.timer === -2 && game.lastChain === 0) {
@@ -39,6 +39,10 @@ export function chainChallengeEvents() {
     touch.moveOrderExists = false;
     action.timer = 90;
     console.log("chain has ended, chain:", game.lastChain);
+  }
+
+  if (game.largestChain === 9 && action.timer < 2) {
+    action.timer === 300;
   }
 
   if (game.largestChain === 9 && action.timer === 180) {

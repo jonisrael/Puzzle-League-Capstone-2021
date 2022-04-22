@@ -1,31 +1,37 @@
 import { newBlock } from "../../puzzleleague";
-import { blockType, game, grid, randomPiece, touch } from "../global";
+import { doMouseDown, doMouseUp } from "../clickControls";
+import { action } from "../controls";
+import { blockType, game, grid, randomPiece, replay, touch } from "../global";
 import { tutorial } from "../tutorial/tutorialScript";
 import { fixNextDarkStack } from "./startGame";
 
 export const previous = {};
 export const previousGameRecording = {};
 
-export function recordTouchInput(frame, x, y, moveTo, type) {
-  return [x, y, moveTo, type];
+export function playbackInputs() {
+  playbackDigitalInputs();
+  playbackMouseInputs();
 }
 
-export function playbackTouchInput(order) {}
-
-export function recordDigitalInput(frame, input) {
-  return input;
+function playbackMouseInputs() {
+  replay.mouseInputs.forEach(([frame, mouseDown, x, y]) => {
+    if (game.frames === frame) {
+      // console.log("play mouse input", mouseDown, game.frames, x, y);
+      mouseDown ? doMouseDown({}, x, y) : doMouseUp({}, x, y);
+    }
+  });
 }
 
-export function playTouchInput(recordedGame, frame) {
-  if (recordedGame[frame] === undefined) return;
-  cpuClick(recordedGame[frame]);
+function playbackDigitalInputs() {
+  replay.digitalInputs.forEach(([frame, input]) => {
+    if (game.frames === frame) {
+      // console.log("play digital input", input, game.frames);
+      action[input] = true;
+    }
+  });
 }
 
-export function playDigitalInput(recordedGame, frame, input) {
-  if (recordedGame.frame === undefined) return input;
-}
-
-export function cpuClick(arr) {
+function cpuClick(arr) {
   let [x, y, moveToX, type] = arr;
   touch.selectedBlock.x = x;
   touch.selectedBlock.y = y;
@@ -62,33 +68,33 @@ export function saveCurrentBoard(
 
 export function createBoard(colorLocations, darkStackGiven) {
   let block;
-  let board = [];
+  game.board.length = 0;
   for (let c = 0; c < grid.COLS; c++) {
-    board.push([]);
+    game.board.push([]);
     for (let r = 0; r < grid.ROWS + 2; r++) {
       block = newBlock(c, r);
-      board[c].push(block);
+      game.board[c].push(block);
       colorLocations.forEach((arr) => {
         let [locX, locY, definedColor] = arr;
         if (c == locX && r == locY) {
-          board[c][r].color = definedColor;
+          game.board[c][r].color = definedColor;
         }
       });
 
       if (r >= grid.ROWS) {
         if (darkStackGiven) {
-          if (r === grid.ROWS) board[c][r].color = darkStackGiven[0][c];
-          if (r === grid.ROWS + 1) board[c][r].color = darkStackGiven[1][c];
+          if (r === grid.ROWS) game.board[c][r].color = darkStackGiven[0][c];
+          if (r === grid.ROWS + 1)
+            game.board[c][r].color = darkStackGiven[1][c];
         } else {
-          board[c][r].color = randomPiece(game.level);
-          board[c][r].type = blockType.DARK;
+          game.board[c][r].color = randomPiece(game.level);
+          game.board[c][r].type = blockType.DARK;
         }
       }
 
       block.draw();
     }
   }
-  if (!darkStackGiven) board = fixNextDarkStack(board);
-  console.log(board);
-  return board;
+  if (!darkStackGiven) fixNextDarkStack();
+  console.log(game.board);
 }

@@ -1,6 +1,6 @@
 import { audio } from "../../fileImports";
 import { playAnnouncer, playAudio } from "../../functions/audioFunctions";
-import { saveCurrentBoard } from "../../functions/recordGame";
+import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
 import { game, grid } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
@@ -165,8 +165,8 @@ export function tutorialEventsAtState_1() {
     // return to last save
     console.log("failure, reverting to last save");
     tutorial.msgIndex = tutorial.savedIndex - 1;
-    game.board = generateOpeningBoard(0, 0);
-    game.board = createTutorialBoard(tutorial.savedBoard);
+    generateOpeningBoard(0, 0);
+    createTutorialBoard(tutorial.savedBoard);
     if (game.board[1][grid.ROWS - 2].color === "cyan") {
       // revert to the create 5 state
       game.board[5][grid.ROWS - 1].type = "landing";
@@ -187,7 +187,7 @@ export function tutorialEventsAtState_1() {
     (game.board[5][grid.ROWS - 1].color === "red" ||
       game.board[5][grid.ROWS - 1].color === "purple")
   ) {
-    tutorial.msgIndex++;
+    // tutorial.msgIndex++;
     game.board[1][grid.ROWS - 1].timer = 60;
   }
 

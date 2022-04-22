@@ -1,4 +1,4 @@
-import { saveCurrentBoard } from "../functions/recordGame";
+import { saveCurrentBoard } from "../functions/playbackGame";
 import { generateOpeningBoard, startGame } from "../functions/startGame";
 import { game, grid, win } from "../global";
 import { createTutorialBoard, tutorialBoards } from "./tutorialBoards";
@@ -60,13 +60,13 @@ export function loadTutorialState(state, index = 0, allSelectable = false) {
     console.log("restarting game");
     return;
   }
-  game.board = generateOpeningBoard(0, 0); // empty board
+  generateOpeningBoard(0, 0); // empty board
   console.log(tutorialBoards[state], tutorial.state, allSelectable);
   if (tutorial.chainChallenge) {
-    game.board = createTutorialBoard(tutorial.board[4], true);
+    createTutorialBoard(tutorial.board[4], true);
     updateLevelEvents(0);
   } else {
-    game.board = createTutorialBoard(tutorial.board[state], allSelectable);
+    createTutorialBoard(tutorial.board[state], allSelectable);
   }
 
   game.frames = game.score = game.minutes = game.seconds = 0;

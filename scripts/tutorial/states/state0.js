@@ -1,4 +1,4 @@
-import { saveCurrentBoard } from "../../functions/recordGame";
+import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
 import { game, grid } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";

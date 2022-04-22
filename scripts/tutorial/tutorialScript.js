@@ -95,10 +95,10 @@ export function runTutorialScript(input, frame, state) {
   return input;
 }
 
-export function startTutorial() {
+export function startTutorial(state = 1) {
   if (window.innerWidth > 350) win.cvs.style.height = "50vh";
   else win.cvs.style.height = "45vh";
-  game.board = [];
+  game.board.length = 0;
   playMusic(audio.trainingMusic, 0.2);
   // sound.Music[1].src = audio.trainingMusic;
   // sound.Music[1].volume = 0.2;
@@ -108,26 +108,28 @@ export function startTutorial() {
   updateLevelEvents(3);
   document.getElementById("game-info-table").style.display = "none";
   document.getElementById("main-info").style = "font-size: 2rem;";
-  loadTutorialState(1, 0);
+  if (document.getElementById("main-info-container"))
+    document.getElementById("main-info-container").style.minHeight = "20%";
+  loadTutorialState(state, 0);
   // loadTutorialState(tutorial.state, tutorial.msgIndex);
 }
 
-export function playScript(touchInput) {
-  if (touchInput === undefined) return;
-  let [x, y, name, targetX] = touchInput;
-  if (name === "move") {
-    moveBlockByRelease(x, y, targetX);
-  }
-  if (name === "premove") {
-    game.board[touch.selectedBlock.x][touch.selectedBlock.y].previewX = targetX;
-  }
-  if (name === "select") {
-    selectBlock(x, y);
-  }
-  if (name === "raise") {
-    game.raisePressed = true;
-  }
-}
+// export function playScript(touchInput) {
+//   if (touchInput === undefined) return;
+//   let [x, y, name, targetX] = touchInput;
+//   if (name === "move") {
+//     moveBlockByRelease(x, y, targetX);
+//   }
+//   if (name === "premove") {
+//     game.board[touch.selectedBlock.x][touch.selectedBlock.y].previewX = targetX;
+//   }
+//   if (name === "select") {
+//     selectBlock(x, y);
+//   }
+//   if (name === "raise") {
+//     game.raisePressed = true;
+//   }
+// }
 
 export function flipLightsOnCol(x, y_values, type, blinking = true) {
   if (type === undefined) type === "on";

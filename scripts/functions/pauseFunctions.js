@@ -8,6 +8,7 @@ import {
   cpu,
   sound,
   grid,
+  replay,
 } from "../global";
 import { audio } from "../fileImports";
 import { playAudio } from "./audioFunctions";
@@ -17,7 +18,7 @@ import { render } from "../../index";
 import * as state from "../../store";
 import { setUpTrainingMode } from "./trainingControls";
 import { drawGrid } from "../../puzzleleague";
-import { previous } from "./recordGame";
+import { previous } from "./playbackGame";
 
 export function pause(lostFocus = false, message = "Pause") {
   // document.getElementById("fps-display").style.display = "none";
@@ -178,10 +179,13 @@ export function printDebugInfo() {
     helpPlayer,
     "\ndebug",
     debug,
-    "\nperf",
-    perf,
     "\ntutorial",
     tutorial,
+    "\nreplay",
+    replay,
+    "\nperf",
+    perf,
+
     game.cursor_type[0] === "d"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : "",

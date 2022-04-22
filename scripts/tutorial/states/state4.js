@@ -2,7 +2,7 @@ import { updateLevelEvents } from "../../../puzzleleague";
 import { audio } from "../../fileImports";
 import { playAudio } from "../../functions/audioFunctions";
 import { closeGame } from "../../functions/gameOverFunctions";
-import { saveCurrentBoard } from "../../functions/recordGame";
+import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard, startGame } from "../../functions/startGame";
 import { debug, game, grid, preset, saveState, win } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";

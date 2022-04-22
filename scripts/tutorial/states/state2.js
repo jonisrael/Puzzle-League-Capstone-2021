@@ -1,7 +1,7 @@
 import { updateLevelEvents } from "../../../puzzleleague";
 import { audio } from "../../fileImports";
 import { playAudio } from "../../functions/audioFunctions";
-import { saveCurrentBoard } from "../../functions/recordGame";
+import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
 import { CLEARING_TYPES, game, grid } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
@@ -97,8 +97,8 @@ export function tutorialEventsAtState_2() {
 
   //execute failure
   if (game.board[1][grid.ROWS].timer === 2) {
-    game.board = generateOpeningBoard(0, 0);
-    game.board = createTutorialBoard(tutorial.savedBoard, true);
+    generateOpeningBoard(0, 0);
+    createTutorialBoard(tutorial.savedBoard, true);
   }
 }
 

@@ -102,6 +102,8 @@ import {
   spawnSquare,
   touchInputs,
   saveState,
+  replay,
+  getRow,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
@@ -127,7 +129,11 @@ import {
   drawChainMessage,
   drawScoreEarnedMessage,
 } from "./scripts/functions/drawCanvasShapesAndText";
-import { previous, saveCurrentBoard } from "./scripts/functions/recordGame";
+import {
+  playbackInputs,
+  previous,
+  saveCurrentBoard,
+} from "./scripts/functions/playbackGame";
 import {
   checkTutorialEvents,
   loadTutorialState,
@@ -861,14 +867,14 @@ export function endChain(potentialSecondarySuccessor) {
     game.board[0][grid.ROWS].timer = -3;
 }
 
-export function createNewRow(board) {
+export function createNewRow() {
   if (game.highestRow < 1) {
     game.deathTimer = 0; // game over on next frame
-    return board;
+    return;
   }
 
   if (game.pauseStack || game.boardRiseDisabled || debug.freeze == 1) {
-    return board;
+    return;
   }
 
   if (game.cursor.y > 1) {
@@ -884,14 +890,23 @@ export function createNewRow(board) {
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 1; r < grid.ROWS; r++) {
       // Raise all grid.ROWS, then delete bottom grid.ROWS.
-      transferProperties(board[c][r], board[c][r - 1], "to");
+      transferProperties(game.board[c][r], game.board[c][r - 1], "to");
       // board[c][r - 1].color = board[c][r].color;
     }
-    board[c][grid.ROWS - 1].color = board[c][grid.ROWS].color;
-    board[c][grid.ROWS].color = board[c][grid.ROWS + 1].color;
-    board[c][grid.ROWS + 1].color = randomPiece(game.level);
+    game.board[c][grid.ROWS - 1].color = game.board[c][grid.ROWS].color;
+    game.board[c][grid.ROWS].color = game.board[c][grid.ROWS + 1].color;
+    if (game.playRecording) {
+      game.board[c][grid.ROWS + 1].color =
+        replay.darkStacks[game.linesRaised + 1][c]; // on first raise, access 3rd dark stack
+    } else {
+      game.board[c][grid.ROWS + 1].color = randomPiece(game.level);
+    }
   }
-  board = fixNextDarkStack(board);
+  game.linesRaised++;
+  if (!game.playRecording) {
+    fixNextDarkStack();
+    replay.darkStacks.push(getRow(grid.ROWS + 1));
+  }
 
   if (
     !debug.enabled &&
@@ -913,8 +928,6 @@ export function createNewRow(board) {
     );
   }
   if (game.highestRow === 1) game.deathTimer = preset.faceValues[game.level];
-
-  return board;
 }
 
 function overtimeBorderColor(level) {
@@ -1571,7 +1584,7 @@ export function gameLoop() {
           game.frames > 0 &&
           game.highestRow > 0
         ) {
-          game.board = createNewRow(game.board);
+          createNewRow();
           game.readyForNewRow = false;
         }
       }
@@ -1590,10 +1603,8 @@ export function gameLoop() {
 
       drawGrid();
 
+      if (game.playRecording) playbackInputs();
       playerAction(action);
-      if (game.mode === "tutorial") {
-        playScript(touchInputs[game.frames]);
-      }
 
       if (game.raisePressed) {
         if (game.frames < -2) game.frames = -2;

@@ -1,5 +1,5 @@
 import { audio } from "./fileImports";
-import { win, game, cpu, debug, grid, perf } from "./global";
+import { win, game, cpu, debug, grid, perf, replay } from "./global";
 import { cpuAction } from "./computerPlayer/cpu";
 import { pause, unpause } from "./functions/pauseFunctions";
 import { playAudio } from "./functions/audioFunctions";
@@ -246,29 +246,35 @@ export function playerAction(input) {
   if (!game.tutorialRunning || (game.tutorialRunning && input.byCPU)) {
     if (input.up) {
       action.up = false;
+      if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
       if (game.cursor.y > 1 || (game.cursor.y === 1 && game.rise === 0)) {
         game.cursor.y -= 1;
         cursorMoved = true;
       }
     } else if (input.down) {
       action.down = false;
+      if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
       if (game.cursor.y < grid.ROWS - 1) {
         game.cursor.y += 1;
         cursorMoved = true;
       }
     } else if (input.left) {
       action.left = false;
+      if (!game.playRecording) replay.digitalInputs.push([game.frames, "left"]);
       if (game.cursor.x > 0) {
         game.cursor.x -= 1;
         cursorMoved = true;
       }
     } else if (input.right) {
       action.right = false;
+      if (!game.playRecording)
+        replay.digitalInputs.push([game.frames, "right"]);
       if (game.cursor.x < grid.COLS - 2) {
         game.cursor.x += 1;
         cursorMoved = true;
       }
     } else if (input.swap && !game.over) {
+      if (!game.playRecording) replay.digitalInputs.push([game.frames, "swap"]);
       action.swap = false;
 
       // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
@@ -293,6 +299,8 @@ export function playerAction(input) {
     // second input checker
     if (input.raise) {
       action.raise = false;
+      if (!game.playRecording)
+        replay.digitalInputs.push([game.frames, "raise"]);
       game.raisePressed = true;
       win.cvs.scrollIntoView({ block: "nearest" });
     }

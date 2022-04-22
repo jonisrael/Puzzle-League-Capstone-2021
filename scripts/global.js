@@ -174,7 +174,7 @@ export const grid = {
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
-  speedValues: [120, 48, 36, 24, 12, 8, 6, 2, 2, 2, 2, 2, 2, 1],
+  speedValues: [120, 48, 36, 24, 12, 8, 6, 4, 4, 4, 2, 2, 2, 1],
   clearValues: [180, 100, 92, 84, 72, 60, 48, 36, 36, 28, 28, 20, 20, 16],
   blinkValues: [110, 60, 56, 52, 46, 40, 32, 24, 24, 16, 16, 12, 12, 8],
   faceValues: [70, 40, 36, 32, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
@@ -234,6 +234,13 @@ export const win = {
   os: "Unknown",
   mobile: false,
   appleProduct: false,
+};
+
+export const replay = {
+  initialBoard: [],
+  darkStacks: [],
+  digitalInputs: [],
+  mouseInputs: [],
 };
 
 determineOSAndBrowser(navigator.userAgent);
@@ -325,6 +332,8 @@ export let game = {
   mute: 0,
   volume: 1,
   level: 1,
+  timeControl: 2,
+  playRecording: false,
   boardRiseSpeed: preset.speedValues[1],
   blockClearTime: preset.clearValues[1],
   blockBlinkTime: preset.blinkValues[1],
@@ -354,6 +363,7 @@ export let game = {
   drawScoreTimeout: 0,
   currentChain: 0,
   combo: 0,
+  linesRaised: 0,
   lastChain: 0,
   previousChain: 0,
   largestChain: 0,
@@ -466,7 +476,7 @@ export const saveState = {
 export const cpu = {
   enabled: 0,
   control: 0,
-  cursorSpeedDivisor: 10,
+  cursorSpeedDivisor: 4,
   showInfo: 0,
   showFakeCursorPosition: false,
   up: false,
@@ -609,6 +619,15 @@ export function updateFrameMods(frameCount) {
   game.frameMod[1200] = frameCount % 1200;
   game.frameMod[2400] = frameCount % 2400;
   game.frameMod[7200] = frameCount % 7200;
+}
+
+export function getRow(row, colorsOnly = true) {
+  let arr = [];
+  for (let c = 0; c < grid.COLS; c++) {
+    if (colorsOnly) arr.push(game.board[c][row].color);
+    else arr.push(game.board[c][row]);
+  }
+  return arr;
 }
 
 export function padInt(integer, digits = 2) {
