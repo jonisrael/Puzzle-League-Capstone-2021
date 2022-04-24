@@ -15,18 +15,10 @@ export default (st) => html`
         <button id="arcade-button" class="default-button start-buttons">
           Play Arcade! (Enter)
         </button>
-        <button
-          id="tutorial-mode"
-          class="default-button start-buttons"
-          style="display:none"
-        >
+        <button id="tutorial-mode" class="default-button start-buttons">
           Interactive Tutorials (I)
         </button>
-        <button
-          id="chain-challenge-mode"
-          class="default-button start-buttons"
-          style="display:none"
-        >
+        <button id="chain-challenge-mode" class="default-button start-buttons">
           Chain Challenge (C)
         </button>
         <button id="training-mode" class="default-button start-buttons">

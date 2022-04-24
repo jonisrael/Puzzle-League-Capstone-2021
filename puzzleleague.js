@@ -1362,7 +1362,6 @@ export function gameLoop() {
         } else {
           if (Date.now() - perf.lostFocusTimeStamp >= 600000) {
             win.running = false;
-            render(state.Home);
           }
         }
       } else {
@@ -1816,20 +1815,20 @@ export function gameLoop() {
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.tutorialRunning) {
-        if (tutorial.chainChallenge)
-          if (game.currentChain > 0) {
-            game.message = `${game.currentChain}x!`;
-          } else {
-            if (game.largestChain > 0)
-              game.message = `Largest Chain Achieved: ${game.largestChain}`;
-            else if (game.largestChain === 9) {
-              game.message = "Congratulations, You Beat the Chain Challenge!";
-            } else if (game.lastChain > 0 && game.lastChain < game.largestChain)
-              game.message = `${game.lastChain}x achieved. Try again!`;
-            else
-              game.message =
-                "Chain Challenge: Can you clear the whole board in one combo?";
-          }
+        // if (tutorial.chainChallenge)
+        //   if (game.currentChain > 0) {
+        //     game.message = `${game.currentChain}x!`;
+        //   } else if (game.lastChain > 0 && game.lastChain < game.largestChain)
+        //     game.message = `${game.lastChain}x achieved. Try again!`;
+        //   else {
+        //     if (game.largestChain > 0 && game.largestChain < 9)
+        //       game.message = `Largest Chain Achieved: ${game.largestChain}`;
+        //     else if (game.largestChain === 9) {
+        //       game.message = "Congratulations, You Beat the Chain Challenge!";
+        //     } else
+        //       game.message =
+        //         "Chain Challenge! Can you clear the whole board in one combo?";
+        //   }
         if (!tutorial.chainChallenge) {
           game.message = tutorialMessages[tutorial.state][tutorial.msgIndex];
         }

@@ -28,7 +28,10 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 export function closeGame(gameFinished) {
   win.running = false;
   console.log("game finished:", gameFinished);
-  if (!gameFinished) sound.Music[1].volume = 0;
+  if (!gameFinished) {
+    sound.Music[1].pause();
+    render(state.Home);
+  }
   if (win.loopCounter > 999) {
     win.cvs = null;
     win.ctx = null;
