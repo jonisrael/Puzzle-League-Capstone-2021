@@ -10,6 +10,10 @@ p {
   padding: 0 2vw;
 }
 
+/* hr {
+  border : 1px solid rgba(0, 0, 0, 0.3);
+} */
+
 #patch-notes-overlay {
   display: grid;
   cursor: pointer;
@@ -35,6 +39,10 @@ p {
   overflow: auto;
 }
 
+#main-info {
+  padding: 0;
+}
+
 #root {
   margin: 2.5vh auto;
   width: 90vw;
@@ -56,6 +64,11 @@ p {
 #patch-notes-block li {
   text-align: left;
   padding: 0.25rem;
+}
+
+#author-name {
+  font-size: large;
+  padding: 0;
 }
 
 #placeholder {
@@ -407,8 +420,8 @@ th {
 .column1,
 .column2,
 .column3 {
-  flex: 32%;
-  padding: 0.5rem 1rem;
+  flex: 33%;
+  padding: 1% 2%;
   flex-direction: column;
   justify-content: center;
 }
@@ -649,6 +662,10 @@ select {
   font-size: 7vw;
 }
 
+#main-menu-button {
+  display: none;
+}
+
 footer {
   color: white;
   text-align: center;
@@ -699,6 +716,10 @@ footer {
   background-color: #111;
 }
 
+.training-hrs:nth-of-type(4) {
+  display: none;
+}
+
 @media only screen and (max-width: 1050px) {
   .column1,
   .column2,
@@ -732,6 +753,25 @@ footer {
     flex-direction: column;
   }
 
+  #main-menu-button {
+    display: block;
+    margin-top: 1rem;
+    background-image: none;
+    background-color: orange;
+  }
+
+  hr {
+    margin: 0.5rem;
+  }
+
+  .training-hrs:nth-of-type(4) {
+    display: block;
+  }
+
+  .training-numbers {
+    display: none;
+  }
+
   .pause-buttons {
     margin: 3vh auto;
     max-height: 3vh;
@@ -746,6 +786,11 @@ footer {
   #game-info-table td {
     font-size: 0.8rem;
     padding: 0.3vh 1.5vw 0.3vh 1.5vw;
+  }
+
+  .start-buttons {
+    min-width: 80vw;
+    font-size: 150%;
   }
 
   #best-scores-table {
@@ -765,7 +810,7 @@ footer {
     /* position: relative; */
     /* bottom: 0; */
     font-size: 3vh;
-    overflow: clip;
+    overflow: hidden;
     /* padding-left: 2vw;
     padding-right: 2vw; */
     /* padding: 0 2vw 0 2vw; */
@@ -784,10 +829,6 @@ footer {
 
   #main-info-container {
     /* display: flex; */
-  }
-
-  #main-info {
-    padding: 0;
   }
 
   #root {
@@ -820,6 +861,7 @@ footer {
   }
 
   canvas {
+    display: block;
     min-height: 0vh;
     max-width: 85vw;
     /* min-width: 85vw; */
@@ -879,7 +921,7 @@ footer {
     margin-top: 3vh;
   } */
   .training-buttons {
-    height: 3vh;
+    height: 3.5vh;
     font-size: 65%;
   }
 }

@@ -46,7 +46,7 @@ export function doTrainingAction(number) {
     rewind(saveState.lastSwap);
   } else if (num === 6) {
     helpPlayer.forceHint = (helpPlayer.forceHint + 1) % 2;
-    helpPlayer.done = false;
+    helpPlayer.hintVisible = false;
     document.querySelector("#hint-button").innerHTML = `(${num}) Turn Hint ${
       helpPlayer.forceHint ? "Off" : "On"
     }`;
@@ -54,7 +54,7 @@ export function doTrainingAction(number) {
     if (helpPlayer.forceHint) {
       cpuAction({}, true);
       if (cpu.matchList.length > 0) {
-        helpPlayer.done = true;
+        helpPlayer.hintVisible = true;
       }
     }
   } else if (num === 7) updateLevelEvents(0);
@@ -64,6 +64,8 @@ export function doTrainingAction(number) {
   } else if (num === 9) {
     updateLevelEvents(13);
     game.raiseDelay = 60;
+  } else if (num === 10) {
+    win.running = false;
   }
 
   if (num < 3) {
@@ -95,9 +97,10 @@ export function setUpTrainingMode(parentElement) {
     ["Practice Speed", "slow-button"],
     ["Overtime", "overtime-button"],
     ["Overtime++", "over-plus-button"],
+    ["Main Menu", "main-menu-button"],
   ];
   for (let i = 0; i < trainingButtons.length; i++) {
-    if (i === 0 || i === 2 || i === 5 || i === 6) {
+    if (i === 0 || i === 2 || i === 5 || i === 6 || i === 9) {
       if (i !== 0) {
         let hr = document.createElement("hr");
         hr.className = "training-hrs";
@@ -113,16 +116,13 @@ export function setUpTrainingMode(parentElement) {
       parentElement.appendChild(title);
     }
     let btn = document.createElement("button");
-    btn.innerHTML = `<span class="training-numbers">(${i +
-      1})</training-numbers> ${trainingButtons[i][0]}`;
+    btn.innerHTML = `<span class="training-numbers">(${i + 1}) </span>${
+      trainingButtons[i][0]
+    }`;
     btn.setAttribute("id", trainingButtons[i][1]);
     btn.className = "default-button training-buttons";
 
     parentElement.appendChild(btn);
-    if (i === 2 || i === 5 || i === 6) {
-      let hr = document.createElement("hr");
-      hr.class;
-    }
 
     btn.addEventListener("click", () => doTrainingAction(i + 1));
   } // end for loop

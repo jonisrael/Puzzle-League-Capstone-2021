@@ -203,7 +203,7 @@ export function updateGrid(frameAdvance = false) {
             for (let j = y - 1; j >= 0; j--) {
               // create chain available blocks above current
               // If clearing piece detected, break loop since no more chainable blocks.
-              if (game.board[x][j].type === "stalling") {
+              if (!CLEARING_TYPES.includes(Square.type)) {
                 if (Square.availForPrimaryChain) {
                   game.board[x][j].availForPrimaryChain = true;
                   // game.board[x][j].touched = false;

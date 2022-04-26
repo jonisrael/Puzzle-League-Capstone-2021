@@ -149,6 +149,11 @@ export function cpuAction(input, createHint = false, controlType = "digital") {
   }
 
   if (createHint) {
+    for (let i in cpu.matchList) {
+      let pointHintToThisXCoordinate = cpu.matchList[1][0];
+      let [c, r] = cpu.matchList[i];
+      game.board[c][r].helpX = pointHintToThisXCoordinate;
+    }
     return cpu.matchList;
   }
 
@@ -186,7 +191,8 @@ export function cpuAction(input, createHint = false, controlType = "digital") {
     }
   } else {
     // idle, return to center of board
-    game.messagePriority = `Idle, raising stack size to ${stackMinimum}`;
+    if (game.mode === "cpu-play")
+      game.messagePriority = `Idle, raising stack size to ${stackMinimum}`;
     coordinates = flattenStack();
     targetX = 2;
     targetY = 6 + Math.floor(game.highestRow / 2);
@@ -281,7 +287,8 @@ function cpuMoveToTarget(input, targetX, targetY, swapAtTarget) {
 
 function randomAction(input) {
   win.mainInfoDisplay.style.color = "black";
-  game.messagePriority = `AI Stuck, do ${cpu.randomInputCounter} random inputs`;
+  if (game.mode === "cpu-play")
+    game.messagePriority = `AI Stuck, do ${cpu.randomInputCounter} random inputs`;
   let arr = ["down", "up", "left", "right", "swap", "swap"];
 
   let selection = randInt(6);

@@ -31,6 +31,7 @@ dotenv.config();
 export const router = new Navigo(window.location.origin);
 
 export function render(st) {
+  console.log(st);
   win.view = st.view;
   win.viewChanged = true;
   document.querySelector("#root").innerHTML = `
@@ -152,58 +153,23 @@ function addEventListeners(st) {
         startButtons.forEach((element) => element.remove());
         if (i === 0) {
           game.mode = "arcade";
-          // middleMenuSetup("timeControl");
+          middleMenuSetup("timeControl");
         }
         if (i === 1) {
           game.mode = "tutorial";
           tutorial.chainChallenge = false;
-          // middleMenuSetup("selectTutorial");
+          middleMenuSetup("selectTutorial");
         }
         if (i === 2) {
           game.mode = "tutorial";
           tutorial.chainChallenge = true;
-          // startGame();
         }
         if (i === 3) game.mode = "training";
         if (i === 4) game.mode = "cpu-play";
-        startGame();
+        if (i > 1) startGame();
+        // startGame(); // USE WHEN DISABLING MIDDLE MENUS
       });
     }
-    // document.getElementById("arcade-button").addEventListener("click", () => {
-    //   api.data = getWorldTimeAPI();
-    //   game.mode = "arcade";
-    //   document.getElementById("arcade-button").remove();
-    //   document.getElementById("training-mode").remove();
-    //   document.getElementById("ai-plays-button").remove();
-    //   startGame(1);
-    // });
-    // document.getElementById("training-mode").addEventListener("click", () => {
-    //   api.data = getWorldTimeAPI();
-    //   game.mode = "training";
-    //   document.getElementById("arcade-button").remove();
-    //   document.getElementById("training-mode").remove();
-    //   document.getElementById("ai-plays-button").remove();
-    //   startGame(1);
-    // });
-    // document.getElementById("ai-plays-button").addEventListener("click", () => {
-    //   game.mode = "cpu-play";
-    //   document.getElementById("arcade-button").remove();
-    //   document.getElementById("training-mode").remove();
-    //   document.getElementById("ai-plays-button").remove();
-    //   startGame(1);
-    // });
-    // document.addEventListener("click", () => {
-    //   if (loadedAudios.length == 0) {
-    //     console.log("user has clicked the document, loading audios.");
-    //     loadAudios(true);
-    //   }
-    // });
-    // document.addEventListener("keydown", () => {
-    //   if (loadedAudios.length == 0) {
-    //     console.log("user has pressed a key, loading audios.");
-    //     loadAudios(true);
-    //   }
-    // });
     win.muteAnnouncer.checked =
       eval(localStorage.getItem("mute-announcer")) || false;
     win.muteMusic.checked = eval(localStorage.getItem("mute-music")) || false;

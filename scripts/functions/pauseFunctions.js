@@ -9,9 +9,12 @@ import {
   sound,
   grid,
   replay,
+  music,
+  randInt,
+  overtimeMusic,
 } from "../global";
 import { audio } from "../fileImports";
-import { playAudio } from "./audioFunctions";
+import { playAudio, playMusic } from "./audioFunctions";
 import { action } from "../controls";
 import { tutorial } from "../tutorial/tutorialScript";
 import { render } from "../../index";
@@ -19,6 +22,7 @@ import * as state from "../../store";
 import { setUpTrainingMode } from "./trainingControls";
 import { drawGrid } from "../../puzzleleague";
 import { previous } from "./playbackGame";
+import { arcadeEvents } from "./timeEvents";
 
 export function pause(lostFocus = false, message = "Pause") {
   // document.getElementById("fps-display").style.display = "none";
@@ -79,7 +83,7 @@ export function unpause() {
   perf.sumOfPauseTimes += pauseTime;
   win.mainInfoDisplay.innerHTML = game.message;
   win.cvs.style.display = "block";
-  if (game.frames >= 0) sound.Music[1].play();
+  if (game.frames >= 0 && !win.muteMusic.checked) sound.Music[1].play();
   // sound.Music[1].volume *= 4;
   // document.getElementById("fps-display").style.display = "flex";
   if (document.getElementById("pause-content"))
@@ -133,8 +137,8 @@ export function addPauseContent() {
       div.setAttribute("id", "extra-pause-options");
       pauseContent.appendChild(div);
       let extraOptions = [
-        ["Game Tutorial (Old)", "game-tutorial-link"],
-        ["Touch-Screen Tutorial", "touch-tutorial"],
+        ["Change Soundtrack", "change-track"],
+        ["Mute/Unmute Sound", "mute-sound"],
       ];
       for (let i = 0; i < extraOptions.length; i++) {
         let option = extraOptions[i];
@@ -145,12 +149,21 @@ export function addPauseContent() {
         div.appendChild(btn);
         if (i === 0) {
           btn.onclick = function() {
-            window.open("https://youtu.be/5o8C81D-Uo0", "_blank");
+            game.frames < arcadeEvents.overtimeStart
+              ? playMusic(music[randInt(music.length, true)])
+              : playMusic(overtimeMusic[randInt(overtimeMusic.length, true)]);
+            unpause();
           };
         }
         // ! WILL BE CHANGED WHEN MOBILE TUTORIAL VIDEO IS COMPLETE
         if (i === 1) {
-          btn.disabled = true;
+          btn.onclick = function() {
+            win.muteMusic.checked = !win.muteMusic.checked;
+            win.muteSFX.checked = !win.muteSFX.checked;
+            win.muteAnnouncer.checked = !win.muteAnnouncer.checked;
+            if (win.muteMusic.checked) sound.Music[1].pause();
+            unpause();
+          };
         }
       }
     }
@@ -181,11 +194,12 @@ export function printDebugInfo() {
     debug,
     "\ntutorial",
     tutorial,
+    "\narcadeEvents",
+    arcadeEvents,
     "\nreplay",
     replay,
     "\nperf",
     perf,
-
     game.cursor_type[0] === "d"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : "",

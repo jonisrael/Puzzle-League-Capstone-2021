@@ -88,7 +88,7 @@ export function isGameOver() {
         game.frames = -66;
         game.rise = 0;
         game.totalClears = 0;
-        helpPlayer.done = false;
+        helpPlayer.hintVisible = false;
         helpPlayer.timer = 0;
         game.cursor.x = Math.floor(grid.COLS / 2 - 1);
         game.cursor.y = Math.floor(grid.ROWS / 2);

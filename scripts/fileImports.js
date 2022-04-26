@@ -17,31 +17,56 @@ import ROW_LIGHT_RIGHT from ".././assets/Sprites/row_light_right.png";
 import LIGHT from ".././assets/Sprites/lightThick.png";
 import PINK_LIGHT from ".././assets/Sprites/pinkLight.png";
 import ORANGE_LIGHT from ".././assets/Sprites/orangeLight.png";
-import L_ARROW_START_ORNG from ".././assets/Sprites/arrows/orange/leftArrowStartOrange.png";
+import L_ARROW_START_ORANGE from ".././assets/Sprites/arrows/orange/leftArrowStartOrange.png";
 import L_ARROW_START_PINK from ".././assets/Sprites/arrows/pink/leftArrowStartPink.png";
 import L_ARROW_START_MAGENTA from ".././assets/Sprites/arrows/magenta/leftArrowStartMagenta.png";
 import L_ARROW_START_DARK from ".././assets/Sprites/arrows/dark/leftArrowStartDark.png";
-import L_ARROW_END_ORNG from ".././assets/Sprites/arrows/orange/leftArrowEndOrange.png";
+import L_ARROW_START_GREY from ".././assets/Sprites/arrows/grey/leftArrowStartGrey.png";
+import L_ARROW_END_ORANGE from ".././assets/Sprites/arrows/orange/leftArrowEndOrange.png";
 import L_ARROW_END_PINK from ".././assets/Sprites/arrows/pink/leftArrowEndPink.png";
 import L_ARROW_END_DARK from ".././assets/Sprites/arrows/dark/leftArrowEndDark.png";
+import L_ARROW_END_GREY from ".././assets/Sprites/arrows/grey/leftArrowEndGrey.png";
 import L_ARROW_END_MAGENTA from ".././assets/Sprites/arrows/magenta/leftArrowEndMagenta.png";
-import R_ARROW_START_ORNG from ".././assets/Sprites/arrows/orange/rightArrowStartOrange.png";
+import R_ARROW_START_ORANGE from ".././assets/Sprites/arrows/orange/rightArrowStartOrange.png";
 import R_ARROW_START_PINK from ".././assets/Sprites/arrows/pink/rightArrowStartPink.png";
 import R_ARROW_START_DARK from ".././assets/Sprites/arrows/dark/rightArrowStartDark.png";
+import R_ARROW_START_GREY from ".././assets/Sprites/arrows/grey/rightArrowStartGrey.png";
 import R_ARROW_START_MAGENTA from ".././assets/Sprites/arrows/magenta/rightArrowStartMagenta.png";
-import R_ARROW_END_ORNG from ".././assets/Sprites/arrows/orange/rightArrowEndOrange.png";
+import R_ARROW_END_ORANGE from ".././assets/Sprites/arrows/orange/rightArrowEndOrange.png";
 import R_ARROW_END_PINK from ".././assets/Sprites/arrows/pink/rightArrowEndPink.png";
 import R_ARROW_END_DARK from ".././assets/Sprites/arrows/dark/rightArrowEndDark.png";
+import R_ARROW_END_GREY from ".././assets/Sprites/arrows/grey/rightArrowEndGrey.png";
 import R_ARROW_END_MAGENTA from ".././assets/Sprites/arrows/magenta/rightArrowEndMagenta.png";
-import H_ARROW_MID from ".././assets/Sprites/arrows/orange/midArrow.png";
+import H_ARROW_MID_ORANGE from ".././assets/Sprites/arrows/orange/midArrow.png";
 import H_ARROW_MID_PINK from ".././assets/Sprites/arrows/pink/midArrowPink.png";
 import H_ARROW_MID_DARK from ".././assets/Sprites/arrows/dark/midArrowDark.png";
+import H_ARROW_MID_GREY from ".././assets/Sprites/arrows/grey/midArrowGrey.png";
 import H_ARROW_MID_MAGENTA from ".././assets/Sprites/arrows/magenta/midArrowMagenta.png";
-import D_ARROW_START from ".././assets/Sprites/arrows/orange/downArrowStart.png";
-import D_ARROW_END from ".././assets/Sprites/arrows/orange/downArrowEnd.png";
-import D_ARROW_MID from ".././assets/Sprites/arrows/orange/downMidArrow.png";
-import LtD_ARROW from ".././assets/Sprites/arrows/orange/leftToDownArrow.png";
-import RtD_ARROW from ".././assets/Sprites/arrows/orange/rightToDownArrow.png";
+import D_ARROW_START_ORANGE from ".././assets/Sprites/arrows/orange/downArrowStart.png";
+import D_ARROW_START_PINK from ".././assets/Sprites/arrows/pink/downArrowStartPink.png";
+import D_ARROW_START_DARK from ".././assets/Sprites/arrows/dark/downArrowStartDark.png";
+import D_ARROW_START_GREY from ".././assets/Sprites/arrows/grey/downArrowStartGrey.png";
+import D_ARROW_START_MAGENTA from ".././assets/Sprites/arrows/magenta/downArrowStartMagenta.png";
+import D_ARROW_MID_ORANGE from ".././assets/Sprites/arrows/orange/downMidArrow.png";
+import D_ARROW_MID_PINK from ".././assets/Sprites/arrows/pink/downMidArrowPink.png";
+import D_ARROW_MID_DARK from ".././assets/Sprites/arrows/dark/downMidArrowDark.png";
+import D_ARROW_MID_GREY from ".././assets/Sprites/arrows/grey/downMidArrowGrey.png";
+import D_ARROW_MID_MAGENTA from ".././assets/Sprites/arrows/magenta/downMidArrowMagenta.png";
+import D_ARROW_END_ORANGE from ".././assets/Sprites/arrows/orange/downArrowEnd.png";
+import D_ARROW_END_PINK from ".././assets/Sprites/arrows/pink/downArrowEndPink.png";
+import D_ARROW_END_DARK from ".././assets/Sprites/arrows/dark/downArrowEndDark.png";
+import D_ARROW_END_GREY from ".././assets/Sprites/arrows/grey/downArrowEndGrey.png";
+import D_ARROW_END_MAGENTA from ".././assets/Sprites/arrows/magenta/downArrowEndMagenta.png";
+import LtD_ARROW_ORANGE from ".././assets/Sprites/arrows/orange/leftToDownArrow.png";
+import LtD_ARROW_PINK from ".././assets/Sprites/arrows/pink/leftToDownPink.png";
+import LtD_ARROW_DARK from ".././assets/Sprites/arrows/dark/leftToDownDark.png";
+import LtD_ARROW_GREY from ".././assets/Sprites/arrows/grey/leftToDownGrey.png";
+import LtD_ARROW_MAGENTA from ".././assets/Sprites/arrows/magenta/leftToDownMagenta.png";
+import RtD_ARROW_ORANGE from ".././assets/Sprites/arrows/orange/rightToDownArrow.png";
+import RtD_ARROW_PINK from ".././assets/Sprites/arrows/pink/rightToDownArrowPink.png";
+import RtD_ARROW_DARK from ".././assets/Sprites/arrows/dark/rightToDownArrowDark.png";
+import RtD_ARROW_GREY from ".././assets/Sprites/arrows/grey/rightToDownArrowGrey.png";
+import RtD_ARROW_MAGENTA from ".././assets/Sprites/arrows/magenta/rightToDownArrowMagenta.png";
 import BLINKING_0_B from ".././assets/Sprites/blueTriangle/clearing/0.png";
 import BLINKING_1_B from ".././assets/Sprites/blueTriangle/clearing/1.png";
 import DARK_B from ".././assets/Sprites/blueTriangle/dark.png";
@@ -414,26 +439,65 @@ const sprite = {
   vacant_panicking_3: PANICKING_3_V,
 
   // arrow items
-  arrowLeftMoveStart: L_ARROW_START_ORNG,
-  arrowLeftBufferStart: L_ARROW_START_PINK,
-  arrowLeftAdviceStart: L_ARROW_START_MAGENTA,
-  arrowLeftMoveEnd: L_ARROW_END_ORNG,
-  arrowLeftBufferEnd: L_ARROW_END_PINK,
-  arrowLeftAdviceEnd: L_ARROW_END_MAGENTA,
-  arrowRightMoveStart: R_ARROW_START_ORNG,
-  arrowRightBufferStart: R_ARROW_START_PINK,
-  arrowRightAdviceStart: R_ARROW_START_MAGENTA,
-  arrowRightMoveEnd: R_ARROW_END_ORNG,
-  arrowRightBufferEnd: R_ARROW_END_PINK,
-  arrowRightAdviceEnd: R_ARROW_END_MAGENTA,
-  arrowMidMove: H_ARROW_MID,
-  arrowMidBuffer: H_ARROW_MID_PINK,
-  arrowMidAdvice: H_ARROW_MID_MAGENTA,
-  arrowDownStart: D_ARROW_START,
-  arrowDownEnd: D_ARROW_END,
-  arrowDownMid: D_ARROW_MID,
-  arrowLtD: LtD_ARROW,
-  arrowRtD: RtD_ARROW,
+  arrowLeftStartOrange: L_ARROW_START_ORANGE,
+  arrowLeftStartPink: L_ARROW_START_PINK,
+  arrowLeftStartDark: L_ARROW_START_DARK,
+  arrowLeftStartGrey: L_ARROW_START_GREY,
+  arrowLeftStartMagenta: L_ARROW_START_MAGENTA,
+
+  arrowLeftEndOrange: L_ARROW_END_ORANGE,
+  arrowLeftEndPink: L_ARROW_END_PINK,
+  arrowLeftEndDark: L_ARROW_END_DARK,
+  arrowLeftEndGrey: L_ARROW_END_GREY,
+  arrowLeftEndMagenta: L_ARROW_END_MAGENTA,
+
+  arrowRightStartOrange: R_ARROW_START_ORANGE,
+  arrowRightStartPink: R_ARROW_START_PINK,
+  arrowRightStartDark: R_ARROW_START_DARK,
+  arrowRightStartGrey: R_ARROW_START_GREY,
+  arrowRightStartMagenta: R_ARROW_START_MAGENTA,
+
+  arrowRightEndOrange: R_ARROW_END_ORANGE,
+  arrowRightEndPink: R_ARROW_END_PINK,
+  arrowRightEndDark: R_ARROW_END_DARK,
+  arrowRightEndGrey: R_ARROW_END_GREY,
+  arrowRightEndMagenta: R_ARROW_END_MAGENTA,
+
+  arrowMidOrange: H_ARROW_MID_ORANGE,
+  arrowMidPink: H_ARROW_MID_PINK,
+  arrowMidDark: H_ARROW_MID_DARK,
+  arrowMidGrey: H_ARROW_MID_GREY,
+  arrowMidMagenta: H_ARROW_MID_MAGENTA,
+
+  arrowDownStartOrange: D_ARROW_START_ORANGE,
+  arrowDownStartPink: D_ARROW_START_PINK,
+  arrowDownStartDark: D_ARROW_START_DARK,
+  arrowDownStartGrey: D_ARROW_START_GREY,
+  arrowDownStartMagenta: D_ARROW_START_MAGENTA,
+
+  arrowDownMidOrange: D_ARROW_MID_ORANGE,
+  arrowDownMidPink: D_ARROW_MID_PINK,
+  arrowDownMidDark: D_ARROW_MID_DARK,
+  arrowDownMidGrey: D_ARROW_MID_GREY,
+  arrowDownMidMagenta: D_ARROW_MID_MAGENTA,
+
+  arrowDownEndOrange: D_ARROW_END_ORANGE,
+  arrowDownEndPink: D_ARROW_END_PINK,
+  arrowDownEndDark: D_ARROW_END_DARK,
+  arrowDownEndGrey: D_ARROW_END_GREY,
+  arrowDownEndMagenta: D_ARROW_END_MAGENTA,
+
+  arrowLeftToDownOrange: LtD_ARROW_ORANGE,
+  arrowLeftToDownPink: LtD_ARROW_PINK,
+  arrowLeftToDownDark: LtD_ARROW_DARK,
+  arrowLeftToDownGrey: LtD_ARROW_GREY,
+  arrowLeftToDownMagenta: LtD_ARROW_MAGENTA,
+
+  arrowRightToDownOrange: RtD_ARROW_ORANGE,
+  arrowRightToDownPink: RtD_ARROW_PINK,
+  arrowRightToDownDark: RtD_ARROW_DARK,
+  arrowRightToDownGrey: RtD_ARROW_GREY,
+  arrowRightToDownMagenta: RtD_ARROW_MAGENTA,
 
   // debug items
   debugCursor: DEBUG_CURSOR,

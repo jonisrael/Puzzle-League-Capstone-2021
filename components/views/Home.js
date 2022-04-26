@@ -3,13 +3,14 @@ import html from "html-literal";
 export default (st) => html`
   <section id="home-page">
     <div id="container">
-      <h2 id="welcome">Welcome to Puzzle League: Arcade Edition!</h2>
-      <h1>Controls</h1>
+      <h1 id="welcome">Welcome to Blockle!</h1>
+      <h2 id="author-name">Created by Jonathan Israel</h2>
+      <!-- <h1>Controls</h1>
       <ul id="controls">
         <li>Press Arrow keys to <strong>move</strong> the Cursor</li>
         <li>Press S or X to <strong>swap</strong> blocks at the Cursor</li>
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
-      </ul>
+      </ul> -->
       <hr />
       <div id="start-options">
         <button id="arcade-button" class="default-button start-buttons">

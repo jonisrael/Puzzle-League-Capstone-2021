@@ -155,11 +155,12 @@ function createDesktopDisplay() {
   // leftHudElements.appendChild(win.levelHeader);
   // leftHudElements.appendChild(win.levelDisplay);
 
+  let controlsDefaultMessage = "";
   let controls = document.createElement("div");
   controls.style.display = "none";
   controls.setAttribute("id", "controls");
   if (game.mode !== "cpu-play") {
-    preset.controlsDefaultMessage = `
+    controlsDefaultMessage = `
       <ul style="font-size:large;">
       <li>Press Arrow keys to <strong>MOVE</strong> the Rectangle Cursor</li>
       <li>Press S or X to <strong>SWAP</strong> blocks at the Cursor</li>
@@ -169,7 +170,7 @@ function createDesktopDisplay() {
       </ul>
       <br />`;
   } else {
-    preset.controlsDefaultMessage = `
+    controlsDefaultMessage = `
       <ul style="font-size:large;">
       <li>Press S to <strong>Show/Hide</strong> Visual AI Information</li>
       <li>Press K to <strong>KO the AI</strong></li>
@@ -179,7 +180,7 @@ function createDesktopDisplay() {
       </ul>
       <br />`;
   }
-  controls.innerHTML = preset.controlsDefaultMessage;
+  controls.innerHTML = controlsDefaultMessage;
   win.controlsDisplay = controls;
 
   column1.appendChild(controls);
@@ -191,6 +192,7 @@ function createDesktopDisplay() {
   win.cvs.setAttribute("id", "canvas");
   win.cvs.setAttribute("width", `${grid.COLS * grid.SQ}`);
   win.cvs.setAttribute("height", `${grid.ROWS * grid.SQ}`);
+  win.cvs.style.display = "block";
   column2.appendChild(win.cvs);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
@@ -356,11 +358,12 @@ function createMobileDisplay() {
   // leftHudElements.appendChild(win.levelHeader);
   // leftHudElements.appendChild(win.levelDisplay);
 
+  let controlsDefaultMessage = "";
   let controls = document.createElement("div");
   controls.style.display = "none";
   controls.setAttribute("id", "controls");
   if (game.mode !== "cpu-play") {
-    preset.controlsDefaultMessage = `
+    controlsDefaultMessage = `
       <ul style="font-size:large;">
       <li>Press Arrow keys to <strong>MOVE</strong> the Rectangle Cursor</li>
       <li>Press S or X to <strong>SWAP</strong> blocks at the Cursor</li>
@@ -370,7 +373,7 @@ function createMobileDisplay() {
       </ul>
       <br />`;
   } else {
-    preset.controlsDefaultMessage = `
+    controlsDefaultMessage = `
       <ul style="font-size:large;">
       <li>Press S to <strong>Show/Hide</strong> Visual AI Information</li>
       <li>Press K to <strong>KO the AI</strong></li>
@@ -380,7 +383,7 @@ function createMobileDisplay() {
       </ul>
       <br />`;
   }
-  controls.innerHTML = preset.controlsDefaultMessage;
+  controls.innerHTML = controlsDefaultMessage;
   win.controlsDisplay = controls;
 
   gameContainer.appendChild(controls);

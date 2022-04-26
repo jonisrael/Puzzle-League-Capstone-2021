@@ -80,7 +80,7 @@ export function startGame(selectedGameSpeed = 1) {
   // console.log(game);
   resetGameVariables();
   helpPlayer.timer = 600;
-  helpPlayer.done = false;
+  helpPlayer.hintVisible = false;
   touch.moveOrderExists = false;
   cpu.enabled = cpu.control = game.mode === "cpu-play";
   game.humanCanPlay = game.mode !== "cpu-play";
@@ -92,6 +92,8 @@ export function startGame(selectedGameSpeed = 1) {
   if (game.mode !== "arcade") {
     game.frames = -76;
     if (game.mode === "training") updateLevelEvents(0);
+  } else {
+    localStorage.setItem("unlock", "true"); // unlock other options after 1 play
   }
   win.timeDisplay.innerHTML = "00:00";
   win.scoreDisplay.innerHTML = "00000";
@@ -173,9 +175,11 @@ export function resetGameVariables() {
   game.blockPopMultiplier = preset.popMultiplier[1];
   game.blockStallTime = preset.stallValues[game.level];
   game.raiseDelay = 0;
-  game.frames = -186;
+  game.frames = -182;
   game.seconds = 0;
   game.minutes = 0;
+  game.countdownMinutes = game.timeControl;
+  game.countdownSeconds = 0;
   game.score = 0;
   game.paused = false;
   game.scoreMultiplier = 1;
@@ -245,7 +249,8 @@ export function fixNextDarkStack() {
   } // end for loop
 }
 
-export function generateOpeningBoard(blockNumber = 40, stackSize = 7) {
+export function generateOpeningBoard(blockNumber = 40, stackSize = 6) {
+  if (game.timeControl !== 2) [blockNumber, stackSize] = [32, 6];
   game.cursor = new Cursor(2, 6);
   game.cursor.x = 2;
   game.cursor.y = 6;

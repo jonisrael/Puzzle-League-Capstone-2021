@@ -174,16 +174,117 @@ export const grid = {
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
-  speedValues: [120, 48, 36, 24, 12, 8, 6, 4, 4, 4, 2, 2, 2, 1],
-  clearValues: [180, 100, 92, 84, 72, 60, 48, 36, 36, 28, 28, 20, 20, 16],
-  blinkValues: [110, 60, 56, 52, 46, 40, 32, 24, 24, 16, 16, 12, 12, 8],
-  faceValues: [70, 40, 36, 32, 26, 20, 16, 12, 12, 12, 12, 8, 8, 8],
-  popMultiplier: [18, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6, 6, 6, 6],
-  stallValues: [20, 20, 18, 16, 14, 14, 14, 12, 12, 12, 12, 12, 12, 12],
-  multValues: [1, 1, 1.15, 1.3, 1.5, 1.65, 1.8, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 3],
-  swapTimer: 5,
-  controlsDefaultMessage: "",
+  speedValues: [120, 58, 46, 34, 22, 10, 4, 4, 2, 2, 1],
+  clearValues: [180, 100, 90, 80, 70, 60, 50, 40, 30, 20, 16],
+  blinkValues: [110, 60, 54, 48, 42, 36, 30, 24, 18, 12, 8],
+  faceValues: [70, 40, 36, 32, 28, 24, 20, 16, 12, 8, 8],
+  popMultiplier: [16, 10, 10, 10, 8, 8, 6, 6, 6, 6, 6],
+  stallValues: [20, 20, 18, 16, 14, 14, 12, 12, 10, 10, 8],
+  multValues: [1, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.25, 2.5, 2.75, 3],
 };
+console.log(preset);
+
+let presetTimers = [
+  {
+    level: 0,
+    speedOfBoardRise: 120,
+    blinkAnimations: 180,
+    faceAnimations: 110,
+    popAnimations: 18,
+    airStall: 20,
+    scoreMultiplier: 1,
+  },
+  {
+    level: 1,
+    speedOfBoardRise: 48,
+    blinkAnimations: 100,
+    faceAnimations: 60,
+    popAnimations: 10,
+    airStall: 20,
+    scoreMultiplier: 1,
+  },
+  {
+    level: 2,
+    speedOfBoardRise: 36,
+    blinkAnimations: 92,
+    faceAnimations: 56,
+    popAnimations: 10,
+    airStall: 18,
+    scoreMultiplier: 1.15,
+  },
+  {
+    level: 3,
+    speedOfBoardRise: 24,
+    blinkAnimations: 84,
+    faceAnimations: 52,
+    popAnimations: 10,
+    airStall: 16,
+    scoreMultiplier: 1.3,
+  },
+  {
+    level: 4,
+    speedOfBoardRise: 12,
+    blinkAnimations: 72,
+    faceAnimations: 46,
+    popAnimations: 8,
+    airStall: 14,
+    scoreMultiplier: 1.5,
+  },
+  {
+    level: 5,
+    speedOfBoardRise: 8,
+    blinkAnimations: 60,
+    faceAnimations: 40,
+    popAnimations: 8,
+    airStall: 14,
+    scoreMultiplier: 1.65,
+  },
+  {
+    level: 6,
+    speedOfBoardRise: 4,
+    blinkAnimations: 36,
+    faceAnimations: 24,
+    popAnimations: 6,
+    airStall: 12,
+    scoreMultiplier: 2,
+  },
+  {
+    level: 7,
+    speedOfBoardRise: 4,
+    blinkAnimations: 28,
+    faceAnimations: 16,
+    popAnimations: 6,
+    airStall: 12,
+    scoreMultiplier: 2.2,
+  },
+  {
+    level: 8,
+    speedOfBoardRise: 2,
+    blinkAnimations: 28,
+    faceAnimations: 16,
+    popAnimations: 6,
+    airStall: 12,
+    scoreMultiplier: 2.3,
+  },
+  {
+    level: 9,
+    speedOfBoardRise: 2,
+    blinkAnimations: 20,
+    faceAnimations: 12,
+    popAnimations: 6,
+    airStall: 12,
+    scoreMultiplier: 2.4,
+  },
+  {
+    level: 10,
+    speedOfBoardRise: 1,
+    blinkAnimations: 16,
+    faceAnimations: 8,
+    popAnimations: 6,
+    airStall: 12,
+    scoreMultiplier: 3,
+  },
+];
 
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
@@ -196,6 +297,7 @@ export const win = {
   focused: true,
   tutorialPlayedOnce: false,
   gamepadPort: false,
+  goToMenu: "",
   view: "Home",
   viewChanged: false,
   version: 1,
@@ -327,6 +429,7 @@ export let game = {
   cursor: { x: 2, y: 6 },
   cursor_type: "legalCursorDown",
   humanCanPlay: true,
+  swapTimer: 5,
   rise: 0,
   board: [],
   mute: 0,
@@ -349,6 +452,8 @@ export let game = {
   finalTime: 0,
   seconds: 0,
   minutes: 0,
+  countdownSeconds: 0,
+  countdownMinutes: 0,
   pastSeconds: 0,
   timeString: "0:00",
   score: 0,
@@ -410,7 +515,7 @@ export let game = {
 export const helpPlayer = {
   timer: 300,
   forceHint: 0,
-  done: false,
+  hintVisible: false,
 };
 
 export const lastIndex = {
@@ -575,6 +680,20 @@ export const bestScores = [
   parseInt(localStorage.getItem("bestScore5") || 100),
 ];
 
+export function changeAllBlockProperties(propertiesObj, excludeDark = true) {
+  let properties = Object.keys(propertiesObj);
+  let values = Object.values(propertiesObj);
+  let stoppingPoint = excludeDark ? grid.ROWS : grid.ROWS + 2;
+  for (let x = 0; x < grid.COLS; x++) {
+    for (let y = 0; y < stoppingPoint; y++) {
+      for (let i = 0; i < properties.length; i++) {
+        let [property, value] = [properties[i], values[i]];
+        game.board[x][y][property] = value;
+      }
+    }
+  }
+}
+
 export function randInt(
   max,
   firstElementSkewed = false,
@@ -616,9 +735,6 @@ export function updateFrameMods(frameCount) {
   game.frameMod[30] = frameCount % 30;
   game.frameMod[40] = frameCount % 40;
   game.frameMod[60] = frameCount % 60;
-  game.frameMod[1200] = frameCount % 1200;
-  game.frameMod[2400] = frameCount % 2400;
-  game.frameMod[7200] = frameCount % 7200;
 }
 
 export function getRow(row, colorsOnly = true) {

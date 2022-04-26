@@ -176,7 +176,7 @@ export function playChainSFX(chain) {
   }
 }
 
-export function playMusic(file, volume = 1, currentTime = 0) {
+export function playMusic(file, volume = 0.2, currentTime = 0) {
   // playMusicAudioContext(file, volume, currentTime);
   // return;
   try {

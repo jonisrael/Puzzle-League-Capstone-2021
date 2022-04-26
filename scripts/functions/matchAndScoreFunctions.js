@@ -18,6 +18,7 @@ import {
   padInt,
   touch,
   removeFromOrderList,
+  changeAllBlockProperties,
 } from "../global";
 
 import { playChainSFX, playAudio, playAnnouncer } from "./audioFunctions";
@@ -245,7 +246,7 @@ export function checkMatch() {
             game.currentChain < 2
           ) {
             // always say hold it in overtime
-            playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
+            playAudio(hold_it, -1, "holdIt", 0.3, false);
           }
           // else if (
           //   game.raiseDelay === 0 &&
@@ -278,6 +279,10 @@ export function checkMatch() {
         if (game.currentChain === 1) {
           saveState.chainStart = JSON.parse(JSON.stringify(game));
         }
+      }
+
+      if (helpPlayer.hintVisible && game.mode !== "tutorial") {
+        changeAllBlockProperties({ helpX: undefined });
       }
     } else {
       done = true; // Needs to end if confirm clear fails

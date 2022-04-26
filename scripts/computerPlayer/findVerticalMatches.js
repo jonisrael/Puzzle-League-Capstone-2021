@@ -18,7 +18,8 @@ export function findVerticalMatches(middleRowIndex, dir) {
     let start = dir[0];
     let end = dir[1];
     let direction = dir[2];
-    game.messagePriority = "Found a vertical match...";
+    if (game.mode === "cpu-play")
+      game.messagePriority = "Found a vertical match...";
     let matchLocations = [];
     for (let i = 0; i < PIECES.length; i++) {
       let desiredColor = PIECES[i];

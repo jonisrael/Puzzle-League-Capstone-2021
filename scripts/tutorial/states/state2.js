@@ -3,7 +3,7 @@ import { audio } from "../../fileImports";
 import { playAudio } from "../../functions/audioFunctions";
 import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
-import { CLEARING_TYPES, game, grid } from "../../global";
+import { CLEARING_TYPES, game, grid, win } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
 import { loadTutorialState } from "../tutorialEvents";
 import { tutorialMessages } from "../tutorialMessages";
@@ -68,7 +68,7 @@ export function tutorialEventsAtState_2() {
       CLEARING_TYPES.includes(game.board[3][grid.ROWS - 5].type) &&
       CLEARING_TYPES.includes(game.board[3][grid.ROWS - 1].type)
     ) {
-      if (game.board[2][grid.ROWS - 5].timer === 171) {
+      if (game.board[2][grid.ROWS - 5].timer === 168) {
         playAudio(audio.announcerFantasticCombo);
         tutorial.msgIndex = tutorialMessages[2].length - 1;
         deselectAllBlocks();
@@ -76,7 +76,11 @@ export function tutorialEventsAtState_2() {
       if (game.board[3][grid.ROWS - 1].timer === 2) {
         tutorial.state++;
         tutorial.msgIndex = 0;
-        loadTutorialState(tutorial.state, 0);
+        tutorial.movesMade = 0;
+        tutorial.failCount = 0;
+        win.goToMenu = "selectTutorial";
+        win.running = false;
+        // loadTutorialState(tutorial.state, 0);
       }
     } else if (game.board[1][grid.ROWS].timer === 0) {
       // failure case 2
@@ -87,7 +91,7 @@ export function tutorialEventsAtState_2() {
   }
 
   // execute success
-  if (game.board[2][grid.ROWS].timer === 2) {
+  if (game.board[1][grid.ROWS].timer === 2) {
     tutorial.state++;
     tutorial.movesMade = 0;
     tutorial.failCount = 0;
@@ -105,7 +109,7 @@ export function tutorialEventsAtState_2() {
 function countTheMove() {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
-      if (game.board[x][y].timer === 2 && game.board[x][y].swapDirection) {
+      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirection) {
         // count a block that is swapping as 1
         return [x, y];
       }

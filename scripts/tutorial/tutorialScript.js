@@ -72,6 +72,8 @@ export function nextDialogue(index) {
     console.log("new state");
     tutorial.state++;
     tutorial.msgIndex = 0;
+    // win.running = false;
+    // win.goToMenu = "selectTutorial";
     loadTutorialState(tutorial.state, tutorial.msgIndex, true);
   }
 }
@@ -99,7 +101,7 @@ export function startTutorial(state = 1) {
   if (window.innerWidth > 350) win.cvs.style.height = "50vh";
   else win.cvs.style.height = "45vh";
   game.board.length = 0;
-  playMusic(audio.trainingMusic, 0.2);
+  playMusic(audio.trainingMusic, 0.1);
   // sound.Music[1].src = audio.trainingMusic;
   // sound.Music[1].volume = 0.2;
   // sound.Music[1].play();
@@ -153,7 +155,7 @@ export function flipLightsOnRow(x_values, y, type, blinking = true) {
   x_values.forEach((x) => flipLightSwitch(x, y, type, blinking));
 }
 
-export function flipLightOnBlocksWithNegativeTimer(blinking = true) {
+export function flipLightOnBlocksWithNegativeTimer(blinking = false) {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
       if (game.board[x][y].timer < 0) {
@@ -191,10 +193,10 @@ export function flipLightSwitch(x, y, type, blink = false) {
   }
 }
 
-export function makeBlockSelectable(x, y, helpX) {
+export function makeBlockSelectable(x, y, helpX, showArrow = true) {
   if (helpX !== undefined) {
     game.board[x][y].tutorialSelectable = true;
-    game.board[x][y].helpX = helpX;
+    if (showArrow) game.board[x][y].helpX = helpX;
   } else {
     game.board[x][y].tutorialSelectable = false;
     game.board[x][y].helpX = undefined;

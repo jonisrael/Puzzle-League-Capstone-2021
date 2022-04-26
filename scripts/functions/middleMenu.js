@@ -1,6 +1,9 @@
-import { game } from "../global";
+import { render } from "../..";
+import * as state from "../../store";
+import { game, win } from "../global";
 import { startTutorial, tutorial } from "../tutorial/tutorialScript";
 import { startGame } from "./startGame";
+import { defineTimeEvents } from "./timeEvents";
 
 export const menus = {
   timeControl: {
@@ -8,13 +11,13 @@ export const menus = {
     buttonFunction: `setTimeControl`,
     buttons: [
       {
-        text: "2 minutes (20 sec per level)",
+        text: "Regular (5 minutes)",
         bgImage: "linear-gradient(to bottom right, gold, yellow);",
       },
-      { text: "5 minutes (50 sec per level)", disabled: true },
-      { text: "8 minutes (80 sec per level)", disabled: true },
+      { text: "Fast (2 minutes)", lockedText: "Fast" },
+      { text: "Slow (10 minutes)", lockedText: "Slow" },
       {
-        text: "I want to learn how to play first!",
+        text: "Teach me how to play first!",
         bgImage: "revert",
         bgColor: "orange",
       },
@@ -55,21 +58,30 @@ function selectTutorial(option) {
 }
 
 function setTimeControl(option) {
-  if (option === 1) game.timeControl = 2;
-  if (option === 2) game.timeControl = 6;
-  if (option === 3) game.timeControl = 9;
+  if (option === 1) defineTimeEvents(5);
+  if (option === 2) defineTimeEvents(2);
+  if (option === 3) defineTimeEvents(10);
   if (option === 4) middleMenuSetup("selectTutorial");
   if (option < 4) startGame();
 }
 
 export function middleMenuSetup(key) {
+  win.goToMenu = "";
+  let menu = menus[key]; // is an object containing "question" and "buttons"
+  window.scrollTo(0, document.body.scrollHeight / 4);
+  console.log("Middle Menu Object:", menu);
   let container = document.getElementById("container");
   container.innerHTML = "";
-  let menu = menus[key]; // is an object containing "question" and "buttons"
   let question = document.createElement("h1");
   question.setAttribute("id", "menu-question");
   question.innerHTML = menu.question;
   container.appendChild(question);
+  if (menu.description) {
+    let description = document.createElement("p");
+    description.innerHTML = menu.description;
+    description.setAttribute("id", "menu-description");
+    container.appendChild(description);
+  }
   let buttonDiv = document.createElement("div");
   buttonDiv.setAttribute("id", "start-options");
   container.appendChild(buttonDiv);
@@ -88,6 +100,12 @@ export function middleMenuSetup(key) {
       if (btn.bgColor) btnElement.style.backgroundColor = btn.bgColor;
       if (btn.bgImage) btnElement.style.backgroundImage = btn.bgImage;
       if (btn.disabled) btnElement.disabled = true;
+      if (btn.lockedText) {
+        btnElement.disabled = !localStorage.getItem("unlock");
+        if (btnElement.disabled)
+          btnElement.innerHTML = `${btn.lockedText} (Unlocked after playing one game)`;
+      }
+
       btnElement.addEventListener("click", (e) => {
         console.log(`clicked button ${option}`);
         if (key === "timeControl") setTimeControl(option);
@@ -95,11 +113,16 @@ export function middleMenuSetup(key) {
       });
       buttonDiv.appendChild(btnElement);
     }
+    if (i === menu.buttons.length - 1) {
+      buttonDiv.appendChild(document.createElement("hr"));
+    }
   }
-  if (key.description) {
-    let description = document.createElement("p");
-    description.innerHTML = key.description;
-    description.setAttribute("id", "menu-description");
-    container.appendChild(description);
-  }
+
+  let returnBtn = document.createElement("button");
+  returnBtn.innerHTML = "Return to Main Menu";
+  returnBtn.className = "default-button start-buttons";
+  returnBtn.style.backgroundColor = "pink";
+  returnBtn.style.backgroundImage = "revert";
+  returnBtn.addEventListener("click", () => render(state.Home));
+  buttonDiv.appendChild(returnBtn);
 }

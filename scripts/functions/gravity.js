@@ -58,7 +58,7 @@ export function doGravity(gameSpeed) {
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
           transferProperties(game.board[c][r], game.board[c][r + 1], "to");
-          helpPlayer.done = false;
+          helpPlayer.hintVisible = false;
           game.board[c][r + 1].airborne = true;
           possibleLandedLocations.push([c, r + 1]);
 

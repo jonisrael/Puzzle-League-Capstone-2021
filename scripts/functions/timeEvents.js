@@ -12,15 +12,47 @@ import {
 import { playAnnouncer, playAudio, playMusic } from "./audioFunctions";
 import { updateTrainingButtons } from "./trainingControls";
 
-export function checkTime(beforeOvertime) {
-  if (game.mode === "tutorial") return;
-  let eventFrames = beforeOvertime ? game.frames : game.frames - 7200;
-  win.muteMusic.checked && game.frames > 60
-    ? (sound.Music[1].volume = 0)
-    : (sound.Music[1].volume = 0.2);
-  switch (eventFrames) {
+export const arcadeEvents = {};
+
+export function defineTimeEvents(timeControl, isBeforeOvertime = true) {
+  game.timeControl = timeControl;
+  const overtimeStart = game.timeControl * 3600;
+  let nextOvertime, levelUpIncrement;
+  if (isBeforeOvertime) {
+    nextOvertime = overtimeStart;
+    levelUpIncrement = overtimeStart / 5;
+  } else {
+    nextOvertime = overtimeStart + (game.level - 4) * 1800;
+    levelUpIncrement = 1800;
+  }
+
+  arcadeEvents.levelUpIncrement = levelUpIncrement;
+  arcadeEvents.secondsPerLevel = levelUpIncrement / 60;
+  arcadeEvents.overtimeStart = overtimeStart;
+  arcadeEvents.superOvertimeStart = overtimeStart + 7200;
+  arcadeEvents.nextOvertime = nextOvertime;
+  arcadeEvents.tenSecondsRemain = nextOvertime - 600;
+  arcadeEvents.resetMessagePriority1 = nextOvertime - 480;
+  arcadeEvents.fiveSecondsRemain = nextOvertime - 300;
+  arcadeEvents.fourSecondsRemain = nextOvertime - 240;
+  arcadeEvents.threeSecondsRemain = nextOvertime - 180;
+  arcadeEvents.twoSecondsRemain = nextOvertime - 120;
+  arcadeEvents.oneSecondRemains = nextOvertime - 60;
+  arcadeEvents.resetMessagePriority2 = game.frames + 180;
+  arcadeEvents.nextText = "overtime";
+}
+
+export function checkTime() {
+  // if (game.mode === "tutorial") return;
+  // let eventFrames = beforeOvertime
+  //   ? game.frames
+  //   : game.frames - 1200 * 3 * game.timeControl;
+  if (win.muteMusic.checked && game.frames < 60) sound.Music[1].pause();
+
+  switch (game.frames) {
     case -180:
       sound.Music[1].pause();
+      game.countdownMinutes = game.timeControl;
       // if (win.restartGame) {
       //   game.frames = -62;
       //   break;
@@ -43,10 +75,11 @@ export function checkTime(beforeOvertime) {
       game.messagePriority = "Training Stage...";
       updateTrainingButtons();
       if (!win.muteAnnouncer.checked)
-        playAudio(audio.announcerTrainingStage, 0.2, true);
+        playAudio(audio.announcerTrainingStage, 0.1, true);
       break;
     case -60:
       if (game.mode === "training") break;
+      game.countdownMinutes = game.timeControl;
       sound.Music[1].pause();
       if (win.restartGame || game.mode === "cpu-play") {
         document
@@ -64,71 +97,84 @@ export function checkTime(beforeOvertime) {
       break;
     case 0:
       game.messagePriority = "Go!";
+      game.countdownMinutes = game.timeControl;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcerGo, 0.1, true);
-
       break;
     case 60:
-      if (!game.over && !debug.enabled && beforeOvertime)
+      if (!game.over && !debug.enabled && game.mode !== "tutorial")
         playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
       game.messagePriority = "";
       game.defaultMessage = "X to swap Z to lift the stack!";
       game.message = game.defaultMessage;
-
       break;
-    case 6600:
+    case arcadeEvents.tenSecondsRemain:
       if (game.mode === "training") break;
-      game.messagePriority = "10 seconds before overtime!";
+      if (game.frames < arcadeEvents.overtimeStart)
+        arcadeEvents.nextText = "overtime";
+      else if (game.frames < arcadeEvents.superOvertimeStart - 1200)
+        arcadeEvents.nextText = "speed-up";
+      else arcadeEvents.nextText = "super-overtime";
+      if (game.frames < arcadeEvents.overtimeStart)
+        game.messagePriority = `10 seconds before ${arcadeEvents.nextText}!`;
       playAnnouncer(
         announcer.hurryUpDialogue,
         announcer.hurryUpIndexLastPicked,
         "hurryUp"
       );
       break;
-    case 6700:
+    case arcadeEvents.resetMessagePriority1:
       if (game.mode === "training") break;
       game.messagePriority = "";
       break;
-    case 6900:
+    case arcadeEvents.fiveSecondsRemain:
       if (game.mode === "training") break;
-      game.messagePriority = "5 seconds before overtime...";
+      game.messagePriority = `5 seconds before ${arcadeEvents.nextText}...`;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer5, 0.2, true);
       break;
-    case 6960:
+    case arcadeEvents.fourSecondsRemain:
       if (game.mode === "training") break;
-      game.messagePriority = "4 seconds before overtime...";
+      game.messagePriority = `4 seconds before ${arcadeEvents.nextText}...`;
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer4, 0.2, true);
       break;
-    case 7020:
+    case arcadeEvents.threeSecondsRemain:
       if (game.mode === "training") break;
-      game.messagePriority = "3 seconds before overtime...";
+      game.messagePriority = `3 seconds before ${arcadeEvents.nextText}...`;
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer3, 0.2, true);
       break;
-    case 7080:
+    case arcadeEvents.twoSecondsRemain:
       if (game.mode === "training") break;
-      game.messagePriority = "2 seconds before overtime...";
+      game.messagePriority = `2 seconds before ${arcadeEvents.nextText}...`;
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer2, 0.2, true);
       break;
-    case 7140:
+    case arcadeEvents.oneSecondRemains:
       if (game.mode === "training") break;
-      game.messagePriority = "1 second before overtime...";
+      game.messagePriority = `1 second before ${arcadeEvents.nextText}...`;
       game.defaultMessage = game.message;
       if (!win.muteAnnouncer.checked) playAudio(audio.announcer1, 0.2, true);
       break;
-    case 7200:
+    case arcadeEvents.nextOvertime:
       if (game.mode === "training") break;
-      game.messagePriority = "Overtime, I hope you're ready...";
-      game.defaultMessage = game.message;
+      if (game.frames === arcadeEvents.nextOvertime)
+        game.messagePriority = "Overtime, Stay Focused!";
+      else if (game.frames === arcadeEvents.superOvertimeStart) {
+        game.messagePriority = "Super Overtime! Keep it up...";
+      } else if (game.level % 2 === 0)
+        game.messagePriority = "Block Delay Timers are getting shorter...";
+      else if (game.level % 2 === 1)
+        game.messagePriority = "Board Rise Speed has doubled...";
       playAnnouncer(
         announcer.overtimeDialogue,
         announcer.overtimeIndexLastPicked,
         "overtime"
       );
+      defineTimeEvents(game.timeControl, false); // beforeOvertime is false
       break;
-    case 7320:
+    case arcadeEvents.resetMessagePriority2:
       if (game.mode === "training") break;
       game.messagePriority = "";
+      break;
   }
 }

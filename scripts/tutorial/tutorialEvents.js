@@ -1,6 +1,6 @@
 import { saveCurrentBoard } from "../functions/playbackGame";
 import { generateOpeningBoard, startGame } from "../functions/startGame";
-import { game, grid, win } from "../global";
+import { changeAllBlockProperties, game, grid, win } from "../global";
 import { createTutorialBoard, tutorialBoards } from "./tutorialBoards";
 import {
   deselectAllBlocks,
@@ -61,6 +61,7 @@ export function loadTutorialState(state, index = 0, allSelectable = false) {
     return;
   }
   generateOpeningBoard(0, 0); // empty board
+  changeAllBlockProperties({ color: "vacant" });
   console.log(tutorialBoards[state], tutorial.state, allSelectable);
   if (tutorial.chainChallenge) {
     createTutorialBoard(tutorial.board[4], true);

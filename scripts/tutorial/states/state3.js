@@ -37,15 +37,16 @@ export function tutorialEventsAtState_3() {
   if (tutorial.msgIndex === 7 && game.board[3][rows - 3].type === "stalling") {
     // pause until user clicks
     flipLightsOnCol(3, [rows - 1, rows - 3, rows - 4], "on", false);
-    game.humanCanPlay = false;
-    document.getElementById("pause-button").disabled = false;
+    // game.humanCanPlay = false;
+    // document.getElementById("pause-button").disabled = false;
     tutorial.msgIndex++;
   }
   if (tutorial.msgIndex === 8) {
     // blocks indefinitely stall until user clicks next
-    game.board[3][rows - 3].timer = 30;
-    game.board[3][rows - 4].timer = 30;
-    game.board[3][rows - 1].timer = 30;
+    game.board[3][rows - 3].timer = 60;
+    game.board[3][rows - 4].timer = 60;
+    game.board[3][rows - 1].timer = 60;
+    tutorial.msgIndex++; // used to skip msgIndex #8
   }
 
   if (tutorial.msgIndex === 9 && game.currentChain === 2) {

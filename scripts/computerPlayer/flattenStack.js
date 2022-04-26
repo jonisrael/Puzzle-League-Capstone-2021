@@ -23,7 +23,8 @@ const order = [
 export function flattenStack() {
   if (game.tutorialRunning) return false;
   try {
-    game.messagePriority = "Flattening the stack.";
+    if (game.mode === "cpu-play")
+      game.messagePriority = "Flattening the stack.";
     if (game.highestRow === 11) return false;
 
     // check to see if stack has no holes.

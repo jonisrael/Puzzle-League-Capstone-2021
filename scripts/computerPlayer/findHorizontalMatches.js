@@ -14,7 +14,8 @@ import { isAllowedToSwap } from "./cpu";
 
 export function findHorizontalMatches(r) {
   try {
-    game.messagePriority = "Found a horizontal match...";
+    if (game.mode === "cpu-play")
+      game.messagePriority = "Found a horizontal match...";
     let matchLocations = [];
     for (let i = 0; i < PIECES.length; i++) {
       matchLocations = [];

@@ -112,7 +112,7 @@ import {
   match,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
-import { checkTime } from "./scripts/functions/timeEvents";
+import { arcadeEvents, checkTime } from "./scripts/functions/timeEvents";
 import {
   allBlocksAreSelectable,
   createTutorialBoard,
@@ -138,6 +138,7 @@ import {
   checkTutorialEvents,
   loadTutorialState,
 } from "./scripts/tutorial/tutorialEvents";
+import { middleMenuSetup } from "./scripts/functions/middleMenu";
 // import {
 //   analyzeBoard,
 //   checkMatches,
@@ -261,7 +262,7 @@ class Block {
   }
 
   drawSwappingBlocks() {
-    let xOffset = (grid.SQ * (this.timer - 1)) / (preset.swapTimer - 1);
+    let xOffset = (grid.SQ * (this.timer - 1)) / (game.swapTimer - 1);
     // let url = this.color[0] === "u" ? "unmatchable" : `${this.color}_normal`;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
@@ -292,7 +293,7 @@ class Block {
     win.ctx.globalAlpha = 1;
   }
 
-  drawArrows(move = "Move") {
+  drawArrows(type = "Move") {
     if (game.over) return;
 
     let moveToX =
@@ -309,43 +310,81 @@ class Block {
     let previewDetected = false;
     let helpDetected = false;
     win.loopCounter = 0;
-    for (let i = this.x; true; i += inc) {
+
+    for (let i = this.x; i >= 0 && i < grid.COLS; i += inc) {
       win.loopCounter++;
       if (detectInfiniteLoop("drawArrows", win.loopCounter)) break;
       if (!helpDetected && moveToX === this.helpX) {
         helpDetected = true;
-        move = "Advice";
+        type = "Advice";
         i = this.x;
       } else if (!previewDetected && moveToX === this.previewX) {
         previewDetected = true;
-        move = "Buffer";
+        type = "Buffer";
         i = this.x;
       } else if (
         !bufferDetected &&
         CLEARING_TYPES.includes(game.board[i][this.y].type)
       ) {
         bufferDetected = true;
-        move = "Buffer"; // change to buffer arrow
+        type = "Buffer"; // change to buffer arrow
         i = this.x; // repaint earlier arrows to be pink
       }
-      if (
-        move !== "Advice" ||
-        (game.frameMod[60] < 25 && dir === "Right") ||
-        (game.frameMod[60] >= 35 && dir === "Left")
-      ) {
-        if (i === this.x) {
-          filename = `arrow${dir}${move}Start`;
-        } else if (i === moveToX) {
-          filename = `arrow${dir}${move}End`;
+      let color;
+      if (type === "Move") color = "Orange";
+      if (type === "Buffer") color = "Pink";
+      if (type === "Advice") color = "Grey";
+
+      if (type !== "Advice" || game.frameMod[60] < 30) {
+        if (
+          0 == 0 ||
+          this.y === grid.ROWS - 1 ||
+          game.board[i][this.y + 1].color !== "vacant"
+        ) {
+          // If block below is not vacant, do not draw down arrows
+          // block below is not vacant, draw normal arrows
+          if (i === this.x) {
+            filename = `arrow${dir}Start${color}`;
+          } else if (i === moveToX) {
+            filename = `arrow${dir}End${color}`;
+          } else {
+            filename = `arrowMid${color}`;
+          }
+          win.ctx.drawImage(
+            loadedSprites[filename],
+            grid.SQ * i,
+            grid.SQ * this.y - game.rise
+          );
         } else {
-          filename = `arrowMid${move}`;
+          // block below is vacant, so draw downward arrows
+          win.ctx.drawImage(
+            loadedSprites[filename],
+            grid.SQ * i,
+            grid.SQ * this.y - game.rise
+          );
+          // check for more vacant blocks
+          let arrowHitsGround = false;
+          for (let j = this.y + 1; j < grid.ROWS; j++) {
+            if (
+              j + 1 === grid.ROWS - 1 ||
+              game.board[i][j + 1].color !== "vacant"
+            ) {
+              filename = `arrowDownEnd${color}`;
+              arrowHitsGround = true; // the block will land here
+            } else {
+              filename = `arrowDownMid${color}`;
+            }
+            win.ctx.drawImage(
+              loadedSprites[filename],
+              grid.SQ * i,
+              grid.SQ * j - game.rise
+            );
+            console.log("filename to draw:", filename, game.frames, i, j);
+            if (arrowHitsGround) break;
+          }
         }
-        win.ctx.drawImage(
-          loadedSprites[filename],
-          grid.SQ * i,
-          grid.SQ * this.y - game.rise
-        );
       }
+
       if (i === moveToX) break;
     }
   }
@@ -660,7 +699,7 @@ export function checkIfHelpPlayer() {
     ((game.score < 500 && game.mode !== "tutorial" && !debug.show) ||
       helpPlayer.forceHint) &&
     game.frames > 0 &&
-    game.frames < 7200 &&
+    game.frames < arcadeEvents.overtimeStart &&
     !game.disableSwap &&
     game.currentChain === 0 &&
     !game.tutorialRunning &&
@@ -669,15 +708,15 @@ export function checkIfHelpPlayer() {
     helpPlayer.timer--;
     if (helpPlayer.timer === 0) console.log("enabling hint");
   } else if (helpPlayer.timer === 0) {
-    if (!helpPlayer.done) {
+    if (!helpPlayer.hintVisible) {
       cpu.matchList.length = 0;
       cpu.matchStrings.length = 0;
       if (game.currentChain === 0) cpuAction({}, true);
       if (cpu.matchList.length > 0) {
-        helpPlayer.done = true;
+        helpPlayer.hintVisible = true;
       }
-    } else if (helpPlayer.done && game.currentChain > 0) {
-      helpPlayer.done = false;
+    } else if (helpPlayer.hintVisible && game.currentChain > 0) {
+      helpPlayer.hintVisible = false;
     }
   }
 }
@@ -717,6 +756,14 @@ export function drawGrid() {
         Square.drawGridLines();
       }
 
+      // if (
+      //   cpu.matchList.length !== 0 &&
+      //   cpu.matchList[1][0] === x &&
+      //   cpu.matchList[1][1] === y &&
+      //   helpPlayer.timer === 0
+      // ) {
+      //   Square.drawHint();
+      // }
       if (helpPlayer.timer === 0 && cpu.matchStrings.includes([x, y].join())) {
         Square.drawHint();
       }
@@ -794,7 +841,7 @@ export function endChain(potentialSecondarySuccessor) {
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
   helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
-  helpPlayer.done = false;
+  helpPlayer.hintVisible = false;
   cpu.matchList.length = 0;
   cpu.matchStrings.length = 0;
   if (game.currentChain > 8) {
@@ -889,9 +936,7 @@ export function createNewRow() {
 
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 1; r < grid.ROWS; r++) {
-      // Raise all grid.ROWS, then delete bottom grid.ROWS.
       transferProperties(game.board[c][r], game.board[c][r - 1], "to");
-      // board[c][r - 1].color = board[c][r].color;
     }
     game.board[c][grid.ROWS - 1].color = game.board[c][grid.ROWS].color;
     game.board[c][grid.ROWS].color = game.board[c][grid.ROWS + 1].color;
@@ -931,10 +976,10 @@ export function createNewRow() {
 }
 
 function overtimeBorderColor(level) {
-  let [hue, cnst] =
-    level < 7 || (game.frames > 13800 && level < 13) ? [30, 20] : [0, 0];
-  let mult =
-    level < 7 ? 2 : level < 9 ? 3 : level < 11 ? 4 : level < 13 ? 5 : 6;
+  let [hue, cnst] = [0, 0];
+  if (level < 6 || game.frames > arcadeEvents.superOvertimeStart - 600)
+    [hue, cnst] = [30, 20];
+  let mult = level < 6 ? 2 : level < 8 ? 3 : level < 10 ? 4 : 5;
   // let mult = game.minutes < 3 ? 1 : 2;
   return `hsl(${hue}, ${cnst + 50 + 40 * Math.cos(mult * game.frames)}%, ${30 +
     20 * Math.cos(mult * game.frames)}%)`;
@@ -1202,7 +1247,7 @@ function KEYBOARD_CONTROL(event) {
         }
         if (event.keyCode === 186) {
           // ;
-          perf.gameSpeed = perf.gameSpeed === 1 ? 2 : 1;
+          perf.gameSpeed = perf.gameSpeed === 1 ? 2 : 1; // switch to 30 fps
           if (perf.gameSpeed === 2 && game.frameMod[2] === 1) game.frames++;
           perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
@@ -1272,10 +1317,10 @@ export function updateLevelEvents(level) {
   game.blockStallTime = preset.stallValues[level];
   game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex =
-    game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 13 ? 3 : 5;
-  if (game.level < 7 && overtimeMusic.includes(sound.Music[0])) {
+    game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 9 ? 3 : 5;
+  if (game.level < 6 && overtimeMusic.includes(sound.Music[0])) {
     playMusic(music[randInt(music.length, true)]);
-  } else if (game.level >= 7 && music.includes(sound.Music[0])) {
+  } else if (game.level >= 6 && music.includes(sound.Music[0])) {
     playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
   }
 }
@@ -1304,6 +1349,9 @@ export function gameLoop() {
     if (win.restartGame) {
       startGame(perf.gameSpeed);
       win.restartGame = false;
+    }
+    if (win.goToMenu) {
+      middleMenuSetup(win.goToMenu);
     }
     return;
   }
@@ -1373,20 +1421,21 @@ export function gameLoop() {
     if (!game.paused && win.audioLoaded) {
       game.frames += 1 * perf.gameSpeed;
       updateFrameMods(game.frames);
-      if (
-        game.tutorialRunning &&
-        tutorial.state == tutorial.cursor.length - 1 &&
-        game.frameMod[60] == 0 &&
-        game.frames < 9600 &&
-        !game.over
-      ) {
-        game.frames += 1140;
-        game.seconds += 19;
-      }
+      // if (
+      //   game.tutorialRunning &&
+      //   tutorial.state == tutorial.cursor.length - 1 &&
+      //   game.frameMod[60] == 0 &&
+      //   game.frames < 9600 &&
+      //   !game.over
+      // ) {
+      //   game.frames += 1140;
+      //   game.seconds += 19;
+      // }
       // if (touch.down) {
       // }
 
       if (game.over) {
+        game.rise = 0;
         let number;
         if (game.frames > 300) {
           number = Math.floor((300 - game.frames) / 60);
@@ -1403,7 +1452,7 @@ export function gameLoop() {
             (api.data !== undefined && leaderboard.data.length > 0) ||
             game.frames === 600
           ) {
-            win.running = false;
+            win.running = false; // fetch leaderboard timeout
           }
         }
         if (game.tutorialRunning && game.frames > 150) {
@@ -1415,12 +1464,17 @@ export function gameLoop() {
         }
       }
 
-      checkTime(game.frames <= 7200);
+      checkTime(game.frames <= arcadeEvents.overtimeStart);
       if (game.mode === "tutorial") checkTutorialEvents(tutorial.state);
 
       if (game.frames > 0 && game.frameMod[60] === 0 && !game.over) {
         game.seconds++;
-        if (game.frames < 7200 && game.seconds % 5 === 0) {
+        game.countdownSeconds = 60 - game.seconds; // will be corrected later if at 60 seconds
+        if (game.seconds === 1) game.countdownMinutes--;
+        if (
+          game.frames < arcadeEvents.overtimeStart &&
+          game.seconds % 5 === 0
+        ) {
           if (!debug.enabled) debug.clickCounter = 0;
           let colorRatio = (120 - 60 * game.minutes - game.seconds) / 1.2;
           win.cvs.style.borderColor = `hsl(34, ${20 + 0.8 * colorRatio}%, ${20 +
@@ -1431,7 +1485,7 @@ export function gameLoop() {
         }
 
         if (sound.Music[1].currentTime >= sound.Music[1].duration) {
-          if (game.level < 7) {
+          if (game.level < 6) {
             playMusic(music[randInt(music.length, true)]);
           } else {
             playMusic(overtimeMusic[randInt(overtimeMusic.length, true)]);
@@ -1442,10 +1496,10 @@ export function gameLoop() {
 
         cnt = 0; // game loop counter
         if (game.mode !== "training") {
-          game.defaultMessage = `Level ${game.level} | 0:${padInt(
-            20 - (game.seconds % 20),
-            2
-          )} remaining`;
+          game.defaultMessage = `Level ${
+            game.level
+          } | ${arcadeEvents.secondsPerLevel -
+            (game.seconds % arcadeEvents.secondsPerLevel)} seconds remaining`;
         }
         // overtime bonuses
         if (game.minutes > 2 && game.mode !== "training" && !debug.enabled) {
@@ -1464,10 +1518,11 @@ export function gameLoop() {
       if (game.seconds % 60 == 0 && game.seconds != 0) {
         game.minutes++;
         game.seconds = 0;
+        game.countdownSeconds = 0;
       }
 
       if (
-        game.frameMod[1200] === 0 &&
+        game.frames % arcadeEvents.levelUpIncrement === 0 &&
         game.mode !== "training" &&
         game.mode !== "tutorial" &&
         game.level < preset.speedValues.length &&
@@ -1477,17 +1532,11 @@ export function gameLoop() {
       ) {
         // Speed the stack up every 20 seconds
 
-        if (game.frames >= 1200) {
+        if (game.frames > 0) {
           game.message = `Level ${game.level + 1}, speed increases...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          if (
-            (!game.tutorialRunning ||
-              (game.tutorialRunning && game.frameMod[2400] == 0)) &&
-            game.frames !== 7200 &&
-            game.frames !== 14400 &&
-            (game.frames <= 7200 || game.frameMod[2400] === 0)
-          )
+          if (!game.tutorialRunning && game.frames < arcadeEvents.overtimeStart)
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
@@ -1543,7 +1592,8 @@ export function gameLoop() {
       ) {
         if (
           game.boardRiseRestarter >= 180 ||
-          (game.boardRiseRestarter >= 60 && game.frames >= 7200)
+          (game.boardRiseRestarter >= 60 &&
+            game.frames >= arcadeEvents.overtimeStart)
         ) {
           if (debug.enabled)
             console.log("restarting rise, delay remaining:", game.raiseDelay);
@@ -1649,21 +1699,21 @@ export function gameLoop() {
       } // end game.swapPressed being true
 
       if (game.frames > 0 && !game.over) {
-        if (helpPlayer.done && cpu.matchList.length) {
+        if (helpPlayer.hintVisible && cpu.matchList.length) {
           let colorToMatch =
             game.board[cpu.matchList[0][0]][cpu.matchList[0][1]].color;
           if (colorToMatch === "vacant") {
-            helpPlayer.done = false;
+            helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
           cpu.matchList.forEach((coord) => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
-              helpPlayer.done = false;
+              helpPlayer.hintVisible = false;
               console.log("colors are not matching, redo cpuMatch");
             }
           });
-          if (!helpPlayer.done) {
+          if (!helpPlayer.hintVisible) {
             cpu.matchList.length = cpu.matchStrings.length = 0;
             console.log("needed to correct cpuMatch");
           }
@@ -1700,7 +1750,7 @@ export function gameLoop() {
         // }
       }
       if (game.frameMod[6] == 0) {
-        // fps counter updates 10 times per second
+        // fps counter updates 10 times per second to save memory
         perf.secondsPerLoop =
           Math.round(100 * (runtime / 1000 - perf.prev)) / 100;
         perf.fps = Math.round(
@@ -1708,49 +1758,67 @@ export function gameLoop() {
         );
         perf.prev = runtime / 1000;
       }
-      if (perf.fps === 27) perf.fps = 30; // corrections
-      if (perf.fps === 55) perf.fps = 60; // corrections
+      if (perf.fps === 27) perf.fps = 30; // hard-coded correction
+      if (perf.fps === 55) perf.fps = 60; // hard-coded correction
       let minutesString = "";
       let secondsString = "";
       let scoreString = "";
       let multiplierString = "";
-      if (game.mode === "training") {
-        if (game.minutes < 10) {
-          minutesString = `0${game.minutes}`;
-        } else {
-          minutesString = `${game.minutes}`;
-        }
-        if (game.seconds < 10) {
-          secondsString = `0${game.seconds}`;
-        } else {
-          secondsString = `${game.seconds}`;
-        }
+      if (
+        game.frames < arcadeEvents.overtimeStart &&
+        (game.mode === "arcade" || game.mode === "cpu-play")
+      ) {
+        minutesString =
+          game.countdownMinutes < 10
+            ? `0${game.countdownMinutes}`
+            : `${game.countdownMinutes}`;
+        secondsString =
+          game.countdownSeconds < 10
+            ? `0${game.countdownSeconds}`
+            : `${game.countdownSeconds}`;
       } else {
-        if (game.seconds === 0) {
-          minutesString = `0${2 - game.minutes}`;
-        } else if (game.minutes < 2) {
-          minutesString = `0${1 - game.minutes}`;
-        } else if (game.minutes < 10) {
-          minutesString = `0${game.minutes - 2}`;
-        } else {
-          minutesString = `${game.minutes - 2}`;
-        }
-        if (game.minutes < 2) {
-          if (game.seconds === 0) {
-            secondsString = "00";
-          } else if (game.seconds > 50) {
-            secondsString = `0${60 - game.seconds}`;
-          } else {
-            secondsString = `${60 - game.seconds}`;
-          }
-        } else {
-          if (game.seconds < 10) {
-            secondsString = `0${game.seconds}`;
-          } else {
-            secondsString = `${game.seconds}`;
-          }
-        }
+        minutesString =
+          game.minutes < 10 ? `0${game.minutes}` : `${game.minutes}`;
+        secondsString =
+          game.seconds < 10 ? `0${game.seconds}` : `${game.seconds}`;
       }
+      // if (game.mode === "training") {
+      //   if (game.minutes < 10) {
+      //     minutesString = `0${game.minutes}`;
+      //   } else {
+      //     minutesString = `${game.minutes}`;
+      //   }
+      //   if (game.seconds < 10) {
+      //     secondsString = `0${game.seconds}`;
+      //   } else {
+      //     secondsString = `${game.seconds}`;
+      //   }
+      // } else {
+      //   if (game.seconds === 0) {
+      //     minutesString = `0${2 - game.minutes}`;
+      //   } else if (game.minutes < 2) {
+      //     minutesString = `0${1 - game.minutes}`;
+      //   } else if (game.minutes < 10) {
+      //     minutesString = `0${game.minutes - 2}`;
+      //   } else {
+      //     minutesString = `${game.minutes - 2}`;
+      //   }
+      //   if (game.minutes < 2) {
+      //     if (game.seconds === 0) {
+      //       secondsString = "00";
+      //     } else if (game.seconds > 50) {
+      //       secondsString = `0${60 - game.seconds}`;
+      //     } else {
+      //       secondsString = `${60 - game.seconds}`;
+      //     }
+      //   } else {
+      //     if (game.seconds < 10) {
+      //       secondsString = `0${game.seconds}`;
+      //     } else {
+      //       secondsString = `${game.seconds}`;
+      //     }
+      //   }
+      // }
 
       game.timeString = `${minutesString}:${secondsString}`;
 
@@ -1778,7 +1846,7 @@ export function gameLoop() {
       //   40 * Math.cos(2 * Math.pi * percentOfSecond)}%, ${30 +
       //   20 * Math.cos(2 * Math.pi * percentOfSecond)}%)`
       if (game.level >= 6 && game.frameMod[6] === 0 && !game.over)
-        if (game.level > 6 || game.frames > 6600) {
+        if (game.level > 6 || game.frames > arcadeEvents.tenSecondsRemain) {
           win.cvs.style.borderColor = overtimeBorderColor(game.level);
         }
 

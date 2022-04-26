@@ -2,7 +2,7 @@ import { audio } from "../../fileImports";
 import { playAnnouncer, playAudio } from "../../functions/audioFunctions";
 import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
-import { game, grid } from "../../global";
+import { game, grid, preset } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
 import { loadTutorialState } from "../tutorialEvents";
 import {
@@ -21,7 +21,8 @@ export function tutorialEventsAtState_1() {
   game.humanCanPlay = tutorial.msgIndex > 2;
   advanceButton.disabled = game.humanCanPlay;
   if (tutorial.msgIndex === 2 && game.cursor.x !== 0) {
-    flipLightOnBlocksWithNegativeTimer(true);
+    flipLightOnBlocksWithNegativeTimer(false);
+    makeBlockSelectable(0, grid.ROWS - 2, 1);
     // flipLightSwitch(0, grid.ROWS - 2, "on", true, true);
   }
   if (tutorial.msgIndex === 3 && game.cursor.y === -1) {
@@ -66,7 +67,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(5, grid.ROWS - 2, 3);
   }
   if (
-    game.board[5][grid.ROWS - 1].timer === 111 &&
+    game.board[5][grid.ROWS - 1].timer === 108 &&
     game.board[5][grid.ROWS - 1].color === "yellow"
   ) {
     // yellow match started
@@ -75,7 +76,7 @@ export function tutorialEventsAtState_1() {
   }
   if (
     game.board[5][grid.ROWS - 1].type === "landing" &&
-    game.board[5][grid.ROWS - 1].timer === 2
+    game.board[5][grid.ROWS - 1].timer === 3
   ) {
     // after 4 yellow match clearing, switch to new cyan block action.
     tutorial.msgIndex++;
@@ -92,7 +93,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(1, grid.ROWS - 3, 0); // select cyan block
   }
   if (
-    game.board[0][grid.ROWS - 2].timer === 1 &&
+    game.board[0][grid.ROWS - 2].timer === 3 &&
     game.board[0][grid.ROWS - 2].type === "swapping" &&
     game.board[0][grid.ROWS - 2].color === "cyan"
   ) {
@@ -100,7 +101,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(0, grid.ROWS - 2); // deselect
     makeBlockSelectable(1, grid.ROWS - 3, 0); // select cyan make 5
   }
-  if (game.board[0][grid.ROWS - 1].timer === 121) {
+  if (game.board[0][grid.ROWS - 1].timer === 118) {
     // cyan match created
     tutorial.msgIndex++;
     tutorial.savedIndex = tutorial.msgIndex;
@@ -116,8 +117,8 @@ export function tutorialEventsAtState_1() {
     flipAllLightsOff();
     flipLightsOnCol(4, [7, 6, 5, 4], "on", false);
     flipLightsOnCol(5, [7, 6, 5, 4], "on", false);
-    makeBlockSelectable(4, grid.ROWS - 1, 5);
-    makeBlockSelectable(4, grid.ROWS - 4, 5);
+    makeBlockSelectable(4, grid.ROWS - 1, 5, false);
+    makeBlockSelectable(4, grid.ROWS - 4, 5, false);
     makeBlockSelectable(5, grid.ROWS - 1, 4);
     makeBlockSelectable(5, grid.ROWS - 4, 4);
   }
@@ -131,7 +132,7 @@ export function tutorialEventsAtState_1() {
     deselectAllBlocks();
     flipLightsOnRow([4, 5], grid.ROWS - 3, "on", false);
     makeBlockSelectable(5, grid.ROWS - 3, 4);
-    makeBlockSelectable(4, grid.ROWS - 3, 5);
+    makeBlockSelectable(4, grid.ROWS - 3, 5, false);
   }
   if (
     game.board[5][grid.ROWS - 4].color === "purple" &&
@@ -145,7 +146,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(5, grid.ROWS - 2, 4);
     makeBlockSelectable(4, grid.ROWS - 2, 5);
   }
-  if (game.board[5][grid.ROWS - 4].timer === 151) {
+  if (game.board[5][grid.ROWS - 4].timer === 148) {
     // 8 blocks have just started clearing.
     playAudio(audio.announcerPayoff);
     tutorial.msgIndex++;
