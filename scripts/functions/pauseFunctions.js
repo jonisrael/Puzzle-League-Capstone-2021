@@ -12,6 +12,7 @@ import {
   music,
   randInt,
   overtimeMusic,
+  leaderboard,
 } from "../global";
 import { audio } from "../fileImports";
 import { playAudio, playMusic } from "./audioFunctions";
@@ -149,7 +150,7 @@ export function addPauseContent() {
         div.appendChild(btn);
         if (i === 0) {
           btn.onclick = function() {
-            game.frames < arcadeEvents.overtimeStart
+            game.level <= 5
               ? playMusic(music[randInt(music.length, true)])
               : playMusic(overtimeMusic[randInt(overtimeMusic.length, true)]);
             unpause();
@@ -194,6 +195,8 @@ export function printDebugInfo() {
     debug,
     "\ntutorial",
     tutorial,
+    "\nleaderboard",
+    leaderboard,
     "\narcadeEvents",
     arcadeEvents,
     "\nreplay",

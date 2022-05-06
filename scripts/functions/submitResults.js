@@ -1,5 +1,14 @@
 import { startGame } from "./startGame";
-import { announcer, game, api, perf, leaderboard, sound } from "../global";
+import {
+  announcer,
+  game,
+  api,
+  perf,
+  leaderboard,
+  sound,
+  resultsMusic,
+  randInt,
+} from "../global";
 import {
   deleteEntry,
   getLeaderboardData,
@@ -73,9 +82,9 @@ export function afterGame() {
       announcer.endgameIndexLastPicked,
       "endgame"
     );
-    playMusic(sound.Music[1].src, 0.1);
+    playMusic(resultsMusic[randInt(resultsMusic.length, true)], 0.1);
   } else {
-    playMusic(sound.Music[1].src, 0.1, 3);
+    playMusic(resultsMusic[randInt(resultsMusic.length, true)], 0.1, 3);
   }
 
   let div2 = document.createElement("div");

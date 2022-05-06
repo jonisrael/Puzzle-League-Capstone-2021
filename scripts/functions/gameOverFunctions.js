@@ -52,8 +52,7 @@ export function closeGame(gameFinished) {
     //   return;
     // }
     sound.Music[1].pause();
-    playMusic(resultsMusic[randInt(resultsMusic.length)]);
-    sound.Music[0] = sound.Music[1].src;
+
     afterGame();
   }
 }

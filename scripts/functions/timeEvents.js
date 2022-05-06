@@ -22,7 +22,7 @@ export function defineTimeEvents(timeControl, isBeforeOvertime = true) {
     nextOvertime = overtimeStart;
     levelUpIncrement = overtimeStart / 5;
   } else {
-    nextOvertime = overtimeStart + (game.level - 4) * 1800;
+    nextOvertime = overtimeStart + (game.level - 4) * 3600;
     levelUpIncrement = 1800;
   }
 

@@ -180,7 +180,7 @@ export const preset = {
   faceValues: [70, 40, 36, 32, 28, 24, 20, 16, 12, 8, 8],
   popMultiplier: [16, 10, 10, 10, 8, 8, 6, 6, 6, 6, 6],
   stallValues: [20, 20, 18, 16, 14, 14, 12, 12, 10, 10, 8],
-  multValues: [1, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.25, 2.5, 2.75, 3],
+  multValues: [1, 1, 1.15, 1.3, 1.45, 1.6, 2, 2.25, 2.5, 2.75, 3],
 };
 console.log(preset);
 
@@ -495,7 +495,7 @@ export let game = {
   highestCols: [0, 1, 2, 3, 4, 5],
   frameMod: {},
   panicIndex: 1,
-  panicSpeedDivisor: 1,
+  panicAnimate: {},
   Music: gameMusic,
   SFX0: gameSFX[0],
   SFX1: gameSFX[1],
@@ -539,7 +539,6 @@ export const api = {
 };
 
 export const perf = {
-  canPostToLeaderboard: false,
   unrankedReason: "",
   gameSpeed: 1,
   fps: 0,
@@ -730,6 +729,7 @@ export function updateFrameMods(frameCount) {
   game.frameMod[3] = frameCount % 3;
   game.frameMod[4] = frameCount % 4;
   game.frameMod[6] = frameCount % 6;
+  game.frameMod[12] = frameCount % 12;
   game.frameMod[18] = frameCount % 18;
   game.frameMod[20] = frameCount % 20;
   game.frameMod[30] = frameCount % 30;
@@ -912,7 +912,7 @@ export function removeFromOrderList(TargetSquare) {
 }
 
 export function randomPiece(level) {
-  if (level < 4) return PIECES[randInt(PIECES.length - 1)];
+  if (level < 3) return PIECES[randInt(PIECES.length - 1)];
   return PIECES[randInt(PIECES.length)];
 }
 

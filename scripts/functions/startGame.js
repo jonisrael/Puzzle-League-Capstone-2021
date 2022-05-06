@@ -93,6 +93,7 @@ export function startGame(selectedGameSpeed = 1) {
     game.frames = -76;
     if (game.mode === "training") updateLevelEvents(0);
   } else {
+    updateLevelEvents(1);
     localStorage.setItem("unlock", "true"); // unlock other options after 1 play
   }
   win.timeDisplay.innerHTML = "00:00";

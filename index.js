@@ -64,11 +64,14 @@ function addEventListeners(st) {
       sound.Music[1].volume = 0;
       // If on homepage and game playing, revert to homepage. If game not playing, start game.
       if (st.view === "Home" && state[event.target.title].view === "Home") {
-        if (document.getElementById("canvas"))
+        if (
+          document.getElementById("canvas") ||
+          document.getElementById("button_2")
+        ) {
           render(state[event.target.title]);
-        else {
+        } else {
           game.mode = "arcade";
-          startGame(1, 1);
+          middleMenuSetup("timeControl");
         }
       }
     })
@@ -90,6 +93,30 @@ function addEventListeners(st) {
       item.addEventListener("click", () => {
         item.innerHTML = "Fetching...";
         getLeaderboardData(true);
+      });
+    });
+    document.querySelectorAll(".tab-links").forEach((item) => {
+      item.addEventListener("click", function(e) {
+        let tab_id = e.target.outerText;
+        console.log(e, tab_id, tab_id === "Marathon");
+        // Declare all variables
+        let i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tab-links");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tab_id).style.display = "block";
+        e.currentTarget.className += " active";
       });
     });
   }
@@ -360,8 +387,8 @@ router.hooks({
           .catch((error) => {
             leaderboard.reason = "no-leaderboard";
             console.log("Failed to fetch Leaderboard Data:", error);
-            render(state.Home);
-            router.navigate("/Home");
+            // render(state.Home);
+            // router.navigate("/Home");
             displayMessage(
               `Failed to fetch leaderboard data. Returned to Home Page. ${error}`
             );

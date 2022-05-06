@@ -10,12 +10,12 @@ export const menus = {
     question: "What time control would you like to play?",
     buttonFunction: `setTimeControl`,
     buttons: [
+      { text: "Blitz (2 minutes)", lockedText: "Blitz" },
       {
-        text: "Regular (5 minutes)",
+        text: "Standard (5 minutes)",
         bgImage: "linear-gradient(to bottom right, gold, yellow);",
       },
-      { text: "Fast (2 minutes)", lockedText: "Fast" },
-      { text: "Slow (10 minutes)", lockedText: "Slow" },
+      { text: "Marathon (10 minutes)", lockedText: "Marathon" },
       {
         text: "Teach me how to play first!",
         bgImage: "revert",
@@ -33,14 +33,14 @@ export const menus = {
     buttonFunction: `setTimeControl`,
     buttons: [
       { text: "Controls & Basics of Scoring (Beginner, AI Assist)" },
-      { text: "Arcade Mode Rules (Beginner)", disabled: true },
-      { text: "Maximizing Your Score (Intermediate)" },
-      { text: "Survival Techniques (Intermediate, AI Assist)", disabled: true },
+      { text: "Arcade Mode Rules (COMING SOON)", disabled: true },
+      { text: "Maximizing Your Score (Intermediate) (Coming" },
+      { text: "Survival Techniques (COMING SOON)", disabled: true },
       { text: "Can You Solve the Chain Challenge? (Advanced)" },
       { text: "Touch Screen Only Special Techniques", notAButton: true },
-      { text: "Buffering Swaps (Intermediate)", disabled: true },
-      { text: "Using Multiple Move Orders (Advanced)", disabled: true },
-      { text: "Using The Smart Match System (Advanced)", disabled: true },
+      { text: "Buffering Swaps (COMING SOON)", disabled: true },
+      { text: "Using Multiple Move Orders (COMING SOON)", disabled: true },
+      { text: "Using The Smart Match System (COMING SOON)", disabled: true },
     ],
     description:
       "These tutorials are interactive, but designed for touch screen. " +
@@ -58,8 +58,8 @@ function selectTutorial(option) {
 }
 
 function setTimeControl(option) {
-  if (option === 1) defineTimeEvents(5);
-  if (option === 2) defineTimeEvents(2);
+  if (option === 1) defineTimeEvents(2);
+  if (option === 2) defineTimeEvents(5);
   if (option === 3) defineTimeEvents(10);
   if (option === 4) middleMenuSetup("selectTutorial");
   if (option < 4) startGame();
@@ -103,7 +103,7 @@ export function middleMenuSetup(key) {
       if (btn.lockedText) {
         btnElement.disabled = !localStorage.getItem("unlock");
         if (btnElement.disabled)
-          btnElement.innerHTML = `${btn.lockedText} (Unlocked after playing one game)`;
+          btnElement.innerHTML = `${btn.lockedText} (Unlocks After Playing One Game)`;
       }
 
       btnElement.addEventListener("click", (e) => {

@@ -627,16 +627,22 @@ class Block {
       case blockType.PANICKING:
         if (game.highestRow === 0 || this.y === 0) {
           animationIndex = 0;
-        } else if (game.frameMod[18] >= 0 && game.frameMod[18] < 3) {
+        } else if (
+          game.frameMod[game.panicAnimate.divisor] >= 0 &&
+          game.frameMod[game.panicAnimate.divisor] < game.panicAnimate[1]
+        ) {
           animationIndex = 0;
         } else if (
-          (game.frameMod[18] >= 3 && game.frameMod[18] < 6) ||
-          (game.frameMod[18] >= 15 && game.frameMod[18] < 18)
+          (game.frameMod[game.panicAnimate.divisor] >= game.panicAnimate[1] &&
+            game.frameMod[game.panicAnimate.divisor] < game.panicAnimate[2]) ||
+          game.frameMod[game.panicAnimate.divisor] >= game.panicAnimate[5]
         ) {
           animationIndex = 1;
         } else if (
-          (game.frameMod[18] >= 6 && game.frameMod[18] < 9) ||
-          (game.frameMod[18] >= 12 && game.frameMod[18] < 15)
+          (game.frameMod[game.panicAnimate.divisor] >= game.panicAnimate[2] &&
+            game.frameMod[game.panicAnimate.divisor] < game.panicAnimate[3]) ||
+          (game.frameMod[game.panicAnimate.divisor] >= game.panicAnimate[4] &&
+            game.frameMod[game.panicAnimate.divisor] < game.panicAnimate[5])
         ) {
           animationIndex = 2;
         } else {
@@ -1306,6 +1312,14 @@ export function updateLevelEvents(level) {
     return;
   }
 
+  game.panicAnimate.divisor = game.level < 8 ? 18 : 12;
+  game.panicAnimate[0] = 0;
+  game.panicAnimate[1] = game.panicAnimate.divisor / 6;
+  game.panicAnimate[2] = (2 * game.panicAnimate.divisor) / 6;
+  game.panicAnimate[3] = (3 * game.panicAnimate.divisor) / 6;
+  game.panicAnimate[4] = (4 * game.panicAnimate.divisor) / 6;
+  game.panicAnimate[5] = (5 * game.panicAnimate.divisor) / 6;
+
   if (level > preset.speedValues.length - 1) {
     game.boardRiseSpeed = preset.speedValues.length - 1 - level;
     level = preset.speedValues.length - 1;
@@ -1320,7 +1334,11 @@ export function updateLevelEvents(level) {
     game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 9 ? 3 : 5;
   if (game.level < 6 && overtimeMusic.includes(sound.Music[0])) {
     playMusic(music[randInt(music.length, true)]);
-  } else if (game.level >= 6 && music.includes(sound.Music[0])) {
+  } else if (
+    game.level >= 6 &&
+    music.includes(sound.Music[0]) &&
+    !sound.Music[0].includes("collapsed") // don't interrupt final fantasy music!!!
+  ) {
     playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
   }
 }
@@ -1403,7 +1421,7 @@ export function gameLoop() {
       playerAction(action);
       if (debug.enabled)
         win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
-      if (!document.hasFocus() && !debug.enabled) {
+      if (leaderboard.canPost && !document.hasFocus()) {
         if (win.focused) {
           perf.lostFocusTimeStamp = Date.now();
           win.focused = false;
@@ -1536,7 +1554,10 @@ export function gameLoop() {
           game.message = `Level ${game.level + 1}, speed increases...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          if (!game.tutorialRunning && game.frames < arcadeEvents.overtimeStart)
+          if (
+            !game.tutorialRunning &&
+            (game.level < 6 || game.level === 7 || game.level === 9)
+          )
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
@@ -1912,7 +1933,7 @@ export function gameLoop() {
       }
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
-      if (!document.hasFocus() && !debug.enabled && !cpu.enabled) {
+      if (!document.hasFocus() && leaderboard.canPost) {
         pause(true);
         win.focused = false;
         perf.lostFocusTimeStamp = Date.now();

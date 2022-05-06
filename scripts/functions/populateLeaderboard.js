@@ -28,10 +28,10 @@ export function populateLeaderboard() {
           ${rank + 1}
         </td>
         <td>
-          ${entry.score}
+          ${entry.name}
         </td>
         <td>
-          ${entry.name}
+          ${entry.score}
         </td>
         <td>
           ${entry.duration}

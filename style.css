@@ -82,20 +82,13 @@ p {
 }
 
 #main {
-  min-height: 92vh;
+  min-height: 80vh;
 }
 
 .app-message-display {
   background-color: rgb(255, 240, 240);
   padding: 1px;
   border-radius: 3px;
-}
-
-.refresh {
-  margin-left: 75%;
-  padding: 0.5rem;
-  justify-content: flex-end;
-  background-color: turquoise;
 }
 
 #player-name {
@@ -187,6 +180,10 @@ th {
   /* align-items: center; */
   /* margin: 0 auto; */
   max-width: 70%;
+}
+
+#scroll-dialogue {
+  display: none;
 }
 
 #accept-game-controls {
@@ -297,6 +294,52 @@ th {
   padding: 0.5rem;
   margin: 1rem auto;
   /* max-width: 40rem; */
+}
+
+.refresh-buttons {
+  /* margin-left: 75%; */
+  padding: 1rem;
+  /* justify-content: flex-end; */
+  background-color: turquoise;
+}
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: orange;
+}
+
+/* Style the tab content */
+.tab-content {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+#Blitz {
+  display: block;
 }
 
 .training-numbers {
@@ -412,8 +455,12 @@ th {
   background-image: linear-gradient(to top, salmon, crimson);
 }
 
+#arcade-button {
+  font-size: 2.5rem;
+}
+
 #arcade-button,
-#button_1 {
+#button_2 {
   background-image: linear-gradient(to bottom right, gold, yellow);
 }
 
@@ -445,7 +492,11 @@ label {
 }
 
 header {
-  background-image: linear-gradient(to top, violet, red);
+  background-image: linear-gradient(
+    to bottom,
+    hsl(219, 20%, 66%),
+    hsl(220, 25%, 50%)
+  );
   /* padding: 1rem; */
   text-align: center;
   padding: 0;
@@ -484,6 +535,10 @@ p {
 #ranked-scores-display {
   color: #ff8484;
 }
+
+/* #ranked-table {
+  overflow-x: scroll;
+} */
 
 #score {
   /* font-size: x-large; */
@@ -870,6 +925,23 @@ footer {
   }
 }
 
+@media only screen and (max-width: 650px) {
+  #ranked-table tbody {
+    width: 100%;
+    overflow-x: scroll;
+    /* transform: rotateX(180deg); */
+  }
+
+  /* #ranked-table {
+    transform: rotateX(180deg);
+  } */
+
+  #scroll-dialogue {
+    display: block;
+    text-align: center;
+    color: orange;
+  }
+}
 @media only screen and (max-width: 375px) {
   canvas {
     max-height: 70vh;

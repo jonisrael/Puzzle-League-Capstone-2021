@@ -14,19 +14,19 @@ export default (st) => html`
       <hr />
       <div id="start-options">
         <button id="arcade-button" class="default-button start-buttons">
-          Play Arcade! (Enter)
+          Play Game!
         </button>
         <button id="tutorial-mode" class="default-button start-buttons">
-          Interactive Tutorials (I)
+          Tutorials
         </button>
         <button id="chain-challenge-mode" class="default-button start-buttons">
-          Chain Challenge (C)
+          Chain Challenge
         </button>
         <button id="training-mode" class="default-button start-buttons">
-          Endless Mode (E)
+          Endless Mode
         </button>
         <button id="ai-plays-button" class="default-button start-buttons">
-          See My AI Play! (A)
+          See My AI Play!
         </button>
       </div>
       <hr />
