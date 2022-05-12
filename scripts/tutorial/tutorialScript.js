@@ -98,8 +98,8 @@ export function runTutorialScript(input, frame, state) {
 }
 
 export function startTutorial(state = 1) {
-  if (window.innerWidth > 350) win.cvs.style.height = "50vh";
-  else win.cvs.style.height = "45vh";
+  // if (window.innerWidth > 350) win.cvs.style.height = "50vh";
+  // else win.cvs.style.height = "45vh";
   game.board.length = 0;
   playMusic(audio.trainingMusic, 0.1);
   // sound.Music[1].src = audio.trainingMusic;
@@ -109,9 +109,12 @@ export function startTutorial(state = 1) {
   // game.humanCanPlay = false;
   updateLevelEvents(3);
   document.getElementById("game-info-table").style.display = "none";
-  document.getElementById("main-info").style = "font-size: 2rem;";
+  // document.getElementById("main-info").style = "font-size: 2rem;";
   if (document.getElementById("main-info-container"))
-    document.getElementById("main-info-container").style.minHeight = "20%";
+    document.getElementById("main-info-container").className += " tutorial";
+  if (document.getElementById("canvas")) {
+    document.getElementById("canvas").className += " small-canvas";
+  }
   loadTutorialState(state, 0);
   // loadTutorialState(tutorial.state, tutorial.msgIndex);
 }

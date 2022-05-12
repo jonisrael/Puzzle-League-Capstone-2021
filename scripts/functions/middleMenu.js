@@ -61,7 +61,11 @@ function setTimeControl(option) {
   if (option === 1) defineTimeEvents(2);
   if (option === 2) defineTimeEvents(5);
   if (option === 3) defineTimeEvents(10);
-  if (option === 4) middleMenuSetup("selectTutorial");
+  if (option === 4) {
+    render(state.Home);
+    if (document.getElementById("tutorial-mode"))
+      document.getElementById("tutorial-mode").click();
+  }
   if (option < 4) startGame();
 }
 

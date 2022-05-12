@@ -480,7 +480,7 @@ export let game = {
   pauseStack: false,
   addToPrimaryChain: false, // used to start/continue a chain
   message: "",
-  defaultMessage: "Welcome to Puzzle League!",
+  defaultMessage: "Welcome to Blockle!",
   messagePriority: "",
   messageChangeDelay: 90,
   highScore: HIGH_SCORE,

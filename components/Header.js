@@ -3,7 +3,7 @@ import html from "html-literal";
 export default (st) => html`
   <header id="header">
     <h1 id="pla-title">Blockle</h1>
-    <h2 id=version-release>Version Release: 05/05</h2>
+    <h2 id=version-release>Version Release: 05/12</h2>
     <h1 id="current-page" style="color:white">${st.header}</h1>
 
     <ul id="sound-mute-menu">

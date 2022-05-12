@@ -803,7 +803,7 @@ footer {
 }
 
 /* Now define features of mobile screen. Should be 768px */
-@media only screen and (max-width: 870px) {
+@media only screen and (max-width: 871px) {
   #game-container {
     flex-direction: column;
   }
@@ -883,7 +883,15 @@ footer {
   }
 
   #main-info-container {
-    /* display: flex; */
+    /* min-height: 15%; */
+  }
+
+  .tutorial {
+    min-height: 15% !important;
+  }
+
+  .tutorial h2 {
+    font-size: 90% !important;
   }
 
   #root {
@@ -917,11 +925,242 @@ footer {
 
   canvas {
     display: block;
-    min-height: 0vh;
-    max-width: 85vw;
-    /* min-width: 85vw; */
-    /* height: 75vh; */
-    margin-top: 4vh;
+    margin-top: 0.75rem;
+    min-height: 0;
+    min-width: 0;
+  }
+  .small-canvas {
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+}
+
+@media only screen and (max-width: 871px) {
+  canvas {
+    height: 80vh;
+  }
+  .small-canvas {
+    height: 65vh !important;
+  }
+
+  @media only screen and (min-height: 750px) {
+    .small-canvas {
+      height: 60vh !important;
+    }
+  }
+  @media only screen and (min-height: 830px) {
+    .small-canvas {
+      height: 55vh !important;
+    }
+  }
+  @media only screen and (min-height: 900px) {
+    .small-canvas {
+      height: 50vh !important;
+    }
+  }
+  @media only screen and (min-height: 1400px) {
+    canvas {
+      height: 75vh;
+    }
+  }
+  @media only screen and (max-height: 850px) {
+    canvas {
+      height: 79vh;
+    }
+  }
+  @media only screen and (max-height: 750px) {
+    canvas {
+      height: 78vh;
+    }
+  }
+  @media only screen and (max-height: 650px) {
+    canvas {
+      height: 77vh;
+      border-width: 8px;
+    }
+  }
+  @media only screen and (max-height: 580px) {
+    canvas {
+      height: 76vh;
+    }
+  }
+  @media only screen and (max-height: 530px) {
+    canvas {
+      height: 75vh;
+      border-width: 7px;
+    }
+  }
+  @media only screen and (max-height: 490px) {
+    canvas {
+      height: 74vh;
+      border-width: 5px;
+    }
+  }
+  @media only screen and (max-height: 460px) {
+    canvas {
+      height: 73vh;
+    }
+  }
+  @media only screen and (max-height: 430px) {
+    canvas {
+      height: 72vh;
+    }
+    .small-canvas {
+      height: 60vh !important;
+    }
+  }
+  @media only screen and (max-height: 400px) {
+    canvas {
+      height: 71vh;
+      border-width: 4px;
+    }
+  }
+  @media only screen and (max-height: 380px) {
+    canvas {
+      height: 70vh;
+      border-width: 4px;
+    }
+  }
+  @media only screen and (max-height: 360px) {
+    canvas {
+      height: 68vh;
+    }
+  }
+
+  @media only screen and (max-width: 450px) {
+    canvas {
+      height: 68vh;
+    }
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  canvas {
+    height: 75vh;
+  }
+  .small-canvas {
+    height: 60vh !important;
+  }
+  @media only screen and (min-height: 700px) {
+    .small-canvas {
+      height: 57vh !important;
+    }
+  }
+  @media only screen and (min-height: 740px) {
+    .small-canvas {
+      height: 50vh !important;
+    }
+  }
+  @media only screen and (min-height: 830px) {
+    canvas {
+      height: 75vh;
+    }
+    .small-canvas {
+      height: 47vh !important;
+    }
+  }
+  @media only screen and (min-height: 870px) {
+    canvas {
+      height: 70vh;
+    }
+    .small-canvas {
+      height: 45vh !important;
+    }
+  }
+  @media only screen and (min-height: 900px) {
+    canvas {
+      height: 65vh;
+    }
+    .small-canvas {
+      height: 42vh !important;
+    }
+  }
+  @media only screen and (min-height: 1000px) {
+    canvas {
+      height: 55vh;
+    }
+    .small-canvas {
+      height: 40vh !important;
+    }
+  }
+}
+
+@media only screen and (max-width: 370px) {
+  canvas {
+    height: 75vh;
+  }
+  .small-canvas {
+    height: 65vh !important;
+  }
+
+  @media only screen and (min-height: 570px) {
+    .small-canvas {
+      height: 60vh !important;
+    }
+  }
+
+  @media only screen and (min-height: 620px) {
+    .small-canvas {
+      height: 55vh !important;
+    }
+  }
+
+  @media only screen and (min-height: 675px) {
+    .small-canvas {
+      height: 51vh !important;
+    }
+  }
+
+  @media only screen and (min-height: 725px) {
+    canvas {
+      height: 73vh;
+    }
+    .small-canvas {
+      height: 50vh !important;
+    }
+  }
+  @media only screen and (min-height: 750px) {
+    canvas {
+      height: 70vh;
+      border-width: 8px;
+    }
+    .small-canvas {
+      height: 47vh !important;
+    }
+  }
+  @media only screen and (min-height: 790px) {
+    canvas {
+      height: 68vh;
+    }
+    .small-canvas {
+      height: 45vh !important;
+    }
+  }
+  @media only screen and (min-height: 815px) {
+    canvas {
+      height: 65vh;
+    }
+    .small-canvas {
+      height: 42vh !important;
+    }
+  }
+  @media only screen and (min-height: 850px) {
+    canvas {
+      height: 62vh;
+    }
+    .small-canvas {
+      height: 42vh !important;
+    }
+  }
+  @media only screen and (min-height: 900px) {
+    canvas {
+      height: 60vh;
+    }
+    .small-canvas {
+      height: 40vh !important;
+    }
   }
 }
 
@@ -942,94 +1181,9 @@ footer {
     color: orange;
   }
 }
-@media only screen and (max-width: 375px) {
-  canvas {
-    max-height: 70vh;
-  }
-}
 
-@media only screen and (max-width: 340px) {
-  canvas {
-    /* max-height: 62vh; */
-    border-width: 5px;
-  }
-
+@media only screen and (max-width: 426px) {
   #main-info {
     font-size: 2.5vh;
-  }
-}
-
-@media only screen and (max-height: 900px) {
-  canvas {
-    height: 75vh;
-  }
-  .training-buttons {
-    height: 4vh;
-  }
-}
-
-@media only screen and (max-height: 800px) {
-  canvas {
-    height: 76vh;
-  }
-  .training-buttons {
-    height: 4vh;
-  }
-}
-
-@media only screen and (max-height: 740px) {
-  canvas {
-    height: 74vh;
-  }
-
-  .training-buttons {
-    height: 3.5vh;
-    font-size: 80%;
-  }
-}
-
-@media only screen and (max-height: 700px) {
-  /* canvas {
-    margin-top: 3vh;
-  } */
-  .training-buttons {
-    height: 3.5vh;
-    font-size: 65%;
-  }
-}
-@media only screen and (max-height: 620px) {
-  canvas {
-    min-height: 72vh;
-    border-width: 8px;
-  }
-}
-@media only screen and (max-height: 580px) {
-  canvas {
-    min-height: 70vh;
-    border-width: 5px;
-  }
-}
-
-@media only screen and (max-height: 535px) {
-  canvas {
-    min-height: 68vh;
-    height: 68vh;
-    border-width: 5px;
-  }
-  #main-info {
-    /* font-size: 3vh; */
-  }
-}
-
-@media only screen and (max-height: 480px) {
-  canvas {
-    min-height: 65vh;
-    height: 65vh;
-  }
-}
-
-@media only screen and (max-height: 430px) {
-  canvas {
-    height: 60vh;
   }
 }
