@@ -20,6 +20,8 @@ import { tutorialEventsAtState_3 } from "./states/state3";
 import { tutorialEventsAtState_4 } from "./states/state4";
 import { updateLevelEvents } from "../../puzzleleague";
 import { chainChallengeEvents } from "./states/chainChallenge";
+import { render } from "../..";
+import * as st from "../../store";
 
 export function checkTutorialEvents(state) {
   if (tutorial.chainChallenge) {
@@ -27,10 +29,11 @@ export function checkTutorialEvents(state) {
     return;
   }
   if (state >= tutorialBoards.length) {
+    // not used
     win.running = false;
-    win.restartGame = true;
-    game.mode = "arcade";
-    console.log("state is not less than board length");
+    render(state.Home);
+    if (document.getElementById("tutorial-mode"))
+      document.getElementById("tutorial-mode").click();
     return;
   }
   if (state === 0) tutorialEventsAtState_0();
@@ -51,13 +54,12 @@ export function loadTutorialState(state, index = 0, allSelectable = false) {
   if (tutorial.state == tutorial.board.length) {
     tutorial.state = tutorial.board.length - 1;
     console.log("tutorial complete");
+
     game.humanCanPlay = true;
     document.getElementById("game-info-table").style.display = "inline";
     win.running = false;
-    win.restartGame = true;
-    game.tutorialRunning = false;
-    game.mode = "arcade";
-    console.log("restarting game");
+    win.restartGame = false;
+    win.goToMenu = "selectTutorial";
     return;
   }
   generateOpeningBoard(0, 0); // empty board
