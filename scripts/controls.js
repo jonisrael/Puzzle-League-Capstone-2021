@@ -182,13 +182,13 @@ export function checkIfControlsExist(controls) {
 
 export function playerAction(input) {
   input.byCPU = false;
-  if (game.tutorialRunning) {
+  if (game.tutorialRunning && (!game.humanCanPlay || debug.enabled)) {
     if (Object.values(action).includes(true)) {
       input = tutorialBreakInputs(input);
       Object.keys(action).forEach((btn) => (action[btn] = false));
     } else if (win.gamepadPort !== false) {
       // check gamepad inputs
-      input = playerInput(input);
+      input = gamepadInput(input);
     }
     // Object.keys(action).forEach((btn) => (action[btn] = false));
     if (Object.values(input).includes(true) && !input.pause) {
@@ -197,7 +197,7 @@ export function playerAction(input) {
   }
 
   if (win.gamepadPort !== false) {
-    input = playerInput(input);
+    input = gamepadInput(input);
   }
 
   if (!game.humanCanPlay && !debug.enabled) {
@@ -243,7 +243,7 @@ export function playerAction(input) {
 
   // first input checker, "else if" is required for priority, so case does not work.
   let cursorMoved = false;
-  if (!game.tutorialRunning || (game.tutorialRunning && input.byCPU)) {
+  if (!game.paused || debug.enabled) {
     if (input.up) {
       action.up = false;
       if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
@@ -276,10 +276,19 @@ export function playerAction(input) {
     } else if (input.swap && !game.over) {
       if (!game.playRecording) replay.digitalInputs.push([game.frames, "swap"]);
       action.swap = false;
-
       // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
       if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
       game.swapPressed = true;
+      if (
+        game.mode === "tutorial" &&
+        !game.board[game.cursor.x][game.cursor.y].tutorialSelectable &&
+        !game.board[game.cursor.x + 1][game.cursor.y].tutorialSelectable &&
+        !input.byCPU
+      ) {
+        console.log("cursor is not swappable here");
+        game.swapPressed = false;
+      }
+
       if (input.byCPU)
         cpu.showFakeCursorPosition = cpu.targetX === game.cursor.x;
     }
@@ -301,7 +310,7 @@ export function playerAction(input) {
       action.raise = false;
       if (!game.playRecording)
         replay.digitalInputs.push([game.frames, "raise"]);
-      game.raisePressed = true;
+      if (!game.tutorialRunning) game.raisePressed = true;
       win.cvs.scrollIntoView({ block: "nearest" });
     }
   }
@@ -321,7 +330,7 @@ export function playerAction(input) {
   // });
 }
 
-function playerInput(input) {
+function gamepadInput(input) {
   if (win.gamepadPort !== false) {
     try {
       pollGamepadInputs(navigator.getGamepads()[win.gamepadPort]);
@@ -429,7 +438,7 @@ function tutorialBreakInputs(input) {
     }
     nextDialogue(tutorial.msgIndex);
     console.log("state is now", tutorial.state, input);
-  } else if (input.raise) {
+  } else if (input.raise && debug.enabled) {
     console.log("raise was pressed", input);
     loadTutorialState(tutorial.state + 1, 0, true);
     // tutorial.state = tutorial.board.length - 1;

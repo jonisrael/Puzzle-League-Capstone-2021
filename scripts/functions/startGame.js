@@ -85,11 +85,11 @@ export function startGame(selectedGameSpeed = 1) {
   cpu.enabled = cpu.control = game.mode === "cpu-play";
   game.humanCanPlay = game.mode !== "cpu-play";
   cpu.showInfo = false;
-  document.getElementById("container").innerHTML = "Loading...";
+  document.getElementById("container").innerHTML = "";
   createHeadsUpDisplay(window.innerWidth <= 870); // should be 768
   win.cvs = document.getElementById("canvas");
   win.ctx = win.cvs.getContext("2d");
-  if (game.mode !== "arcade") {
+  if (game.mode !== "arcade" && game.mode !== "cpu-play") {
     game.frames = -76;
     if (game.mode === "training") updateLevelEvents(0);
   } else {
@@ -123,8 +123,12 @@ export function startGame(selectedGameSpeed = 1) {
   perf.gameStartTime = perf.then;
   perf.sumOfPauseTimes = 0;
   perf.realTimeDiff = 0;
-  if (win.appleProduct) {
-    showNotification("appleWarning");
+  if (!win.restartGame) {
+    if (win.appleProduct) {
+      showNotification("appleWarning");
+    } else {
+      showNotification("soundStatement");
+    }
   }
 
   if (game.mode === "tutorial") {

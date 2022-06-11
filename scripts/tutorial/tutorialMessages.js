@@ -7,7 +7,7 @@ export const tutorialMessages = [
     "Let's get started!",
   ],
   [
-    "BASICS",
+    "BASICS <br>(Click To Continue)",
     "To play, swap blocks horizontally left or right. Blocks will fall vertically.", // 1
     "Match 3 of the same color to gain points. This is called a set.", // 2
     "Go ahead and try it! Select a block by touching it, and hold your finger on it.", // 3

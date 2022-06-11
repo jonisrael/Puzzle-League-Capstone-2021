@@ -17,6 +17,10 @@ import { displayMessage, getLeaderboardData, getWorldTimeAPI } from "../..";
 export function checkCanUserPost() {
   sound.Music[1].loop = false;
 
+  if (leaderboard.reason == "no-available-leaderboard") {
+    return false;
+  }
+
   if (leaderboard.data.length == 0) {
     leaderboard.canPost = false;
     leaderboard.reason = "no-leaderboard";

@@ -27,7 +27,7 @@ const ROWS = 12;
 // export const tutorialInputs = [];
 
 const tutorialCursors = [
-  [2, 6],
+  [8, 6],
   [2, 6],
   [2, 6],
   [1, ROWS - 1],

@@ -27,7 +27,7 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;
-  console.log("game finished:", gameFinished);
+  console.log("game completed normally:", gameFinished);
   if (!gameFinished) {
     sound.Music[1].pause();
     render(state.Home);
@@ -167,6 +167,12 @@ function endGame() {
     localStorage.setItem("highScore", `${game.score}`);
   }
   game.highScore = parseInt(localStorage.getItem("highScore"));
+  win.gamesCompleted++;
+  localStorage.setItem("games-completed", `${win.gamesCompleted}`);
+  if (game.timeControl !== 2) {
+    leaderboard.canPost = false;
+    leaderboard.reason = "no-available-leaderboard";
+  }
   sendData("Anon", game.score, game.minutes, game.seconds);
 }
 

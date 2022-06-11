@@ -511,7 +511,7 @@ class Block {
     if (game.cursor_type[0] !== "d") {
       // if (
       //   this.x === touch.target.x &&
-      //   this.y === touch.target.y &&
+      //   this.y === debugRedtouch.target.y &&
       //   touch.moveOrderExists
       // ) {
       //   win.ctx.drawImage(
@@ -568,7 +568,7 @@ class Block {
       (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
     ) {
       win.ctx.drawImage(
-        loadedSprites["debugRed"],
+        loadedSprites[""],
         grid.SQ * this.x,
         grid.SQ * this.y - game.rise
       );
@@ -814,7 +814,7 @@ export function drawGrid() {
           : "illegalCursorUp";
       }
     }
-
+    if (!game.humanCanPlay && !cpu.control) return;
     game.cursor.draw();
   }
   // console.timeEnd(`${game.frames}`);
@@ -1054,6 +1054,7 @@ function KEYBOARD_CONTROL(event) {
   if (document.getElementById("patch-notes-overlay")) {
     if (event.keyCode < 200) {
       document.getElementById("patch-notes-overlay").remove();
+      document.getElementById("container").style.display = "block";
       game.paused = 0;
       win.patchNotesShown = true;
     }
@@ -1122,12 +1123,11 @@ function KEYBOARD_CONTROL(event) {
   }
   // Game Controls
   if (win.running && (!game.over || game.tutorialRunning)) {
-    if (game.mode !== "cpu-play" || debug.enabled) {
+    if (!game.paused || debug.enabled) {
       if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
       if (savedControls.keyboard.down.includes(event.keyCode)) {
         action.down = true;
       }
-
       if (savedControls.keyboard.left.includes(event.keyCode))
         action.left = true; // left arrow
       if (savedControls.keyboard.right.includes(event.keyCode))

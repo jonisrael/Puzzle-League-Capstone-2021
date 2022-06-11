@@ -89,7 +89,7 @@ function createDesktopDisplay() {
 
   win.mainInfoDisplay = document.createElement("h2");
   win.mainInfoDisplay.setAttribute("id", `main-info`);
-  win.mainInfoDisplay.innerHTML = "Loading...";
+  win.mainInfoDisplay.innerHTML = "";
   appContainer.appendChild(win.mainInfoDisplay);
 
   let topSection = document.createElement("div");
@@ -302,7 +302,7 @@ function createMobileDisplay() {
 
   win.mainInfoDisplay = document.createElement("h2");
   win.mainInfoDisplay.setAttribute("id", "main-info");
-  win.mainInfoDisplay.innerHTML = "Loading...";
+  win.mainInfoDisplay.innerHTML = "";
   mainInfoContainer.appendChild(win.mainInfoDisplay);
 
   let topSection = document.createElement("div");

@@ -63,7 +63,11 @@ export function updateGrid(frameAdvance = false) {
       }
 
       if (Square.type === "swapping") game.boardHasSwappingBlock = true;
-      if (!Square.airborne && Square.type !== "landing") {
+      if (
+        !Square.airborne &&
+        Square.type !== "landing" &&
+        !CLEARING_TYPES.includes(Square.type)
+      ) {
         game.availForPrimaryChain = false;
         game.availForSecondaryChain = false;
         Square.touched = false;
@@ -203,6 +207,7 @@ export function updateGrid(frameAdvance = false) {
             for (let j = y - 1; j >= 0; j--) {
               // create chain available blocks above current
               // If clearing piece detected, break loop since no more chainable blocks.
+              if (CLEARING_TYPES.includes(game.board[x][j].type)) break;
               if (Square.type === "normal") {
                 if (Square.availForPrimaryChain) {
                   game.board[x][j].availForPrimaryChain = true;

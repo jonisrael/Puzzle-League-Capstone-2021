@@ -153,7 +153,6 @@ export function addPauseContent() {
             game.level <= 5
               ? playMusic(music[randInt(music.length, true)])
               : playMusic(overtimeMusic[randInt(overtimeMusic.length, true)]);
-            unpause();
           };
         }
         // ! WILL BE CHANGED WHEN MOBILE TUTORIAL VIDEO IS COMPLETE

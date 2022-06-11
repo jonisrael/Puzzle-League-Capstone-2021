@@ -286,6 +286,9 @@ let presetTimers = [
   },
 ];
 
+if (!localStorage.getItem("games-completed"))
+  localStorage.setItem("games-completed", "0");
+
 let HIGH_SCORE = parseInt(localStorage.getItem("highScore"));
 let gameMusic = new Audio();
 let gameAnnVoice = new Audio();
@@ -336,6 +339,7 @@ export const win = {
   os: "Unknown",
   mobile: false,
   appleProduct: false,
+  gamesCompleted: JSON.parse(localStorage.getItem("games-completed")),
 };
 
 export const replay = {
@@ -844,7 +848,12 @@ export function spawnSquare(digit) {
   if (digit < PIECES.length) Square.color = PIECES[digit];
   // else if (digit == PIECES.length)
   //   Square.color = `unmatchable${Square.x}${Square.y}`;
-  else Square.color = "vacant";
+  else if (digit == 8 && game.mode === "tutorial") {
+    game.board[0][grid.ROWS].timer = 30;
+  } else if (digit == 9 && game.mode === "tutorial") {
+    console.log("give fire");
+    game.board[1][grid.ROWS].timer = 30;
+  } else Square.color = "vacant";
 }
 
 export function transferProperties(FirstBlock, SecondBlock, type) {

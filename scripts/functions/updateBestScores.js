@@ -16,14 +16,54 @@ export let bestScores = [
   parseInt(localStorage.getItem("bestScore3")),
   parseInt(localStorage.getItem("bestScore4")),
   parseInt(localStorage.getItem("bestScore5")),
+
+  parseInt(localStorage.getItem("bestScore1_Standard")),
+  parseInt(localStorage.getItem("bestScore2_Standard")),
+  parseInt(localStorage.getItem("bestScore3_Standard")),
+  parseInt(localStorage.getItem("bestScore4_Standard")),
+  parseInt(localStorage.getItem("bestScore5_Standard")),
+
+  parseInt(localStorage.getItem("bestScore1_Marathon")),
+  parseInt(localStorage.getItem("bestScore2_Marathon")),
+  parseInt(localStorage.getItem("bestScore3_Marathon")),
+  parseInt(localStorage.getItem("bestScore4_Marathon")),
+  parseInt(localStorage.getItem("bestScore5_Marathon")),
 ];
+
+export let highScores = {
+  blitz: [
+    parseInt(localStorage.getItem("bestScore1")),
+    parseInt(localStorage.getItem("bestScore2")),
+    parseInt(localStorage.getItem("bestScore3")),
+    parseInt(localStorage.getItem("bestScore4")),
+    parseInt(localStorage.getItem("bestScore5")),
+  ],
+  standard: [
+    parseInt(localStorage.getItem("bestScore1_Standard")),
+    parseInt(localStorage.getItem("bestScore2_Standard")),
+    parseInt(localStorage.getItem("bestScore3_Standard")),
+    parseInt(localStorage.getItem("bestScore4_Standard")),
+    parseInt(localStorage.getItem("bestScore5_Standard")),
+  ],
+  marathon: [
+    parseInt(localStorage.getItem("bestScore1_Marathon")),
+    parseInt(localStorage.getItem("bestScore2_Marathon")),
+    parseInt(localStorage.getItem("bestScore3_Marathon")),
+    parseInt(localStorage.getItem("bestScore4_Marathon")),
+    parseInt(localStorage.getItem("bestScore5_Marathon")),
+  ],
+};
 
 export function getBestScores(clearScores) {
   if (clearScores) localStorage.clear();
   for (let i = 1; i <= 5; i++) {
     if (localStorage.getItem(`bestScore${i}`) == null) {
-      console.log(`creating item for bestScore${i}`);
-      localStorage.setItem(`bestScore${i}`, `${1200 - i * 200}`);
+      localStorage.setItem(`bestScore${i}`, `${13000 - i * 3000}`);
+      localStorage.setItem(`bestScore${i}_Standard`, `${28000 - i * 3000}`);
+      localStorage.setItem(`bestScore${i}_Marathon`, `${56000 - i * 6000}`);
+      localStorage.setItem(`bestScore3`, `${4000}`);
+      localStorage.setItem(`bestScore4`, `${2000}`);
+      localStorage.setItem(`bestScore5`, `${1000}`);
     }
   }
 }

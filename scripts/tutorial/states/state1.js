@@ -1,8 +1,9 @@
 import { audio } from "../../fileImports";
 import { playAnnouncer, playAudio } from "../../functions/audioFunctions";
+import { middleMenuSetup } from "../../functions/middleMenu";
 import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
-import { game, grid, preset } from "../../global";
+import { game, grid, preset, win } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
 import { loadTutorialState } from "../tutorialEvents";
 import {
@@ -21,6 +22,7 @@ export function tutorialEventsAtState_1() {
   game.humanCanPlay = tutorial.msgIndex > 2;
   advanceButton.disabled = game.humanCanPlay;
   if (tutorial.msgIndex === 2 && game.cursor.x !== 0) {
+    [game.cursor.x, game.cursor.y] = [grid.COLS / 2 - 1, grid.ROWS / 2 - 1];
     flipLightOnBlocksWithNegativeTimer(false);
     makeBlockSelectable(0, grid.ROWS - 2, 1);
     // flipLightSwitch(0, grid.ROWS - 2, "on", true, true);
@@ -198,6 +200,7 @@ export function tutorialEventsAtState_1() {
     game.board[1][grid.ROWS - 1].type === "normal"
   ) {
     tutorial.state++;
+    // tutorial.state = 3; // remove after tutorial state 2 is finished
     loadTutorialState(tutorial.state, 0, true);
   }
 }

@@ -37,7 +37,7 @@ export function tutorialEventsAtState_2() {
     tutorial.failCount = 0;
     let advanceButton = document.getElementById("pause-button");
     advanceButton.disabled = true;
-    updateLevelEvents(3);
+    updateLevelEvents(5);
   }
   let advanceButton = document.getElementById("pause-button");
   game.humanCanPlay = tutorial.msgIndex >= 0;
@@ -68,22 +68,18 @@ export function tutorialEventsAtState_2() {
       CLEARING_TYPES.includes(game.board[3][grid.ROWS - 5].type) &&
       CLEARING_TYPES.includes(game.board[3][grid.ROWS - 1].type)
     ) {
-      if (game.board[2][grid.ROWS - 5].timer === 168) {
+      if (game.board[2][grid.ROWS - 5].timer === 129) {
         playAudio(audio.announcerFantasticCombo);
-        tutorial.msgIndex = tutorialMessages[2].length - 1;
+        tutorial.msgIndex = 4;
         deselectAllBlocks();
       }
+      // success begins
       if (game.board[3][grid.ROWS - 1].timer === 2) {
-        tutorial.state++;
-        tutorial.msgIndex = 0;
-        tutorial.movesMade = 0;
-        tutorial.failCount = 0;
-        win.goToMenu = "selectTutorial";
-        win.running = false;
+        game.board[2][grid.ROWS].timer = 60;
         // loadTutorialState(tutorial.state, 0);
       }
     } else if (game.board[1][grid.ROWS].timer === 0) {
-      // failure case 2
+      // failure case 2 -- clear too small
       deselectAllBlocks();
       game.board[1][grid.ROWS].timer = 150;
       tutorial.msgIndex = 2; // msg: clear too small
@@ -91,12 +87,15 @@ export function tutorialEventsAtState_2() {
   }
 
   // execute success
-  if (game.board[1][grid.ROWS].timer === 2) {
+  if (game.board[2][grid.ROWS].timer === 2) {
     tutorial.state++;
+    tutorial.msgIndex = 0;
     tutorial.movesMade = 0;
     tutorial.failCount = 0;
     updateLevelEvents(6);
-    loadTutorialState(tutorial.state, 0);
+    win.running = false;
+    win.goToMenu = `nextTutorial_${tutorial.state}`;
+    // loadTutorialState(tutorial.state, 0);
   }
 
   //execute failure

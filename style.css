@@ -290,7 +290,7 @@ th {
 }
 
 .start-buttons {
-  min-width: 50vw;
+  min-width: 60vw;
   padding: 0.5rem;
   margin: 1rem auto;
   /* max-width: 40rem; */
@@ -460,7 +460,7 @@ th {
 }
 
 #arcade-button,
-#button_2 {
+#button_1 {
   background-image: linear-gradient(to bottom right, gold, yellow);
 }
 
@@ -817,6 +817,14 @@ footer {
 
   hr {
     margin: 0.5rem;
+  }
+
+  #menu-question {
+    font-size: large;
+  }
+
+  .start-button {
+    min-width: 0;
   }
 
   .training-hrs:nth-of-type(4) {

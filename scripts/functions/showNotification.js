@@ -1,10 +1,12 @@
 import * as state from "../../store";
 
 import html from "html-literal";
-import { game, win } from "../global";
+import { game, sound, win } from "../global";
 
 export function showNotification(messageLabel) {
-  appleWarning();
+  // document.getElementById("container").style.display = "none";
+  if (messageLabel.includes("appleWarning")) appleWarning();
+  if (messageLabel.includes("soundStatement")) soundStatement();
   return;
   // let patchNotesOverlay = document.createElement("div");
   // patchNotesOverlay.setAttribute("id", "patch-notes-overlay");
@@ -30,7 +32,7 @@ export function showNotification(messageLabel) {
 
 function appleWarning() {
   console.log("attempting to show apple warning");
-  if (localStorage.getItem("apple-warning-shown-march") === "true") return;
+  if (win.gamesCompleted > 0) return;
   let patchNotesOverlay = document.createElement("div");
   patchNotesOverlay.setAttribute("id", "patch-notes-overlay");
   document.getElementById("home-page").prepend(patchNotesOverlay);
@@ -55,6 +57,35 @@ function appleWarning() {
   patchNotesOverlay.addEventListener("click", () => {
     patchNotesOverlay.remove();
     game.paused = 0;
+    document.getElementById("container").style.display = "block";
+  });
+}
+
+function soundStatement() {
+  console.log("attempting to show sound statement");
+  if (win.gamesCompleted > 0) return;
+  let patchNotesOverlay = document.createElement("div");
+  patchNotesOverlay.setAttribute("id", "patch-notes-overlay");
+  document.getElementById("home-page").prepend(patchNotesOverlay);
+  let patchNotesBlock = document.createElement("div");
+  patchNotesBlock.setAttribute("id", "patch-notes-block");
+  patchNotesOverlay.appendChild(patchNotesBlock);
+  game.paused = 1;
+  // win.muteMusic.checked = true;
+  // win.muteAnnouncer.checked = true;
+  // win.muteSFX.checked = true;
+  localStorage.setItem("apple-warning-shown-march", "true");
+  patchNotesBlock.innerHTML = html`
+    <p>
+      Play the game with the sound ON for the best experience! <br /><strong
+        >Click anywhere to continue</strong
+      >.
+    </p>
+  `;
+  patchNotesOverlay.addEventListener("click", () => {
+    patchNotesOverlay.remove();
+    game.paused = 0;
+    document.getElementById("container").style.display = "block";
   });
 }
 

@@ -180,7 +180,11 @@ function addEventListeners(st) {
         startButtons.forEach((element) => element.remove());
         if (i === 0) {
           game.mode = "arcade";
-          middleMenuSetup("timeControl");
+          if (win.gamesCompleted === 0) {
+            middleMenuSetup("firstGameTutorialQuestion");
+          } else {
+            middleMenuSetup("timeControl");
+          }
         }
         if (i === 1) {
           game.mode = "tutorial";
