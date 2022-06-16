@@ -1,6 +1,7 @@
 import { audio } from "../fileImports";
 import {
   announcer,
+  bestScores,
   debug,
   game,
   lastIndex,
@@ -20,10 +21,10 @@ export function defineTimeEvents(timeControl, isBeforeOvertime = true) {
   let nextOvertime, levelUpIncrement;
   if (isBeforeOvertime) {
     nextOvertime = overtimeStart;
-    levelUpIncrement = overtimeStart / 5;
+    levelUpIncrement = overtimeStart / 6;
   } else {
     nextOvertime = overtimeStart + (game.level - 4) * 3600;
-    levelUpIncrement = 1800;
+    levelUpIncrement = 1200;
   }
 
   arcadeEvents.levelUpIncrement = levelUpIncrement;

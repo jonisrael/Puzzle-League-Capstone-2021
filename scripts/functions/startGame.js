@@ -22,6 +22,7 @@ import {
   gameStart,
   replay,
   getRow,
+  bestScores,
 } from "../global";
 import html from "html-literal";
 import * as state from "../../store";
@@ -41,7 +42,6 @@ import {
   updateLevelEvents,
 } from "../../puzzleleague";
 import { pause, unpause } from "./pauseFunctions";
-import { bestScores } from "./updateBestScores";
 import { action } from "../controls";
 import { createClickListeners } from "../clickControls";
 import {
@@ -209,6 +209,10 @@ export function resetGameVariables() {
   game.raisePressed = false;
   game.data = {};
   game.log = [];
+  if (game.timeControl === 2) game.timeControlName = "Blitz";
+  if (game.timeControl === 5) game.timeControlName = "Standard";
+  if (game.timeControl === 10) game.timeControlName = "Marathon";
+  game.highScoresList = bestScores[game.timeControlName];
 }
 
 export function fixNextDarkStack() {

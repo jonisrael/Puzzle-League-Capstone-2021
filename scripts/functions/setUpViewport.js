@@ -34,14 +34,14 @@ function setUpBestScoreDisplay(column) {
     <th>Best Scores</th>
   </tr>`;
 
-  for (let i = 0; i < bestScores.length; i++) {
+  for (let i = 0; i < game.highScoresList.length; i++) {
     bestScoresString += `
     <tr>
       <td>
       #${i + 1}
       </td>
       <td>
-        ${bestScores[i]}
+        ${game.highScoresList[i]}
       </td>
     </tr>
     `;

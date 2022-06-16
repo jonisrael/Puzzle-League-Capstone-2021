@@ -171,7 +171,7 @@ export const grid = {
 // multValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
 // controlsDefaultMessage: "",
 
-export const preset = {
+export const preset5Levels = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   // old speed values
   speedValues: [120, 58, 46, 34, 22, 10, 4, 4, 2, 2, 1],
@@ -182,109 +182,19 @@ export const preset = {
   stallValues: [20, 20, 18, 16, 14, 14, 12, 12, 10, 10, 8],
   multValues: [1, 1, 1.15, 1.3, 1.45, 1.6, 2, 2.25, 2.5, 2.75, 3],
 };
-console.log(preset);
 
-let presetTimers = [
-  {
-    level: 0,
-    speedOfBoardRise: 120,
-    blinkAnimations: 180,
-    faceAnimations: 110,
-    popAnimations: 18,
-    airStall: 20,
-    scoreMultiplier: 1,
-  },
-  {
-    level: 1,
-    speedOfBoardRise: 48,
-    blinkAnimations: 100,
-    faceAnimations: 60,
-    popAnimations: 10,
-    airStall: 20,
-    scoreMultiplier: 1,
-  },
-  {
-    level: 2,
-    speedOfBoardRise: 36,
-    blinkAnimations: 92,
-    faceAnimations: 56,
-    popAnimations: 10,
-    airStall: 18,
-    scoreMultiplier: 1.15,
-  },
-  {
-    level: 3,
-    speedOfBoardRise: 24,
-    blinkAnimations: 84,
-    faceAnimations: 52,
-    popAnimations: 10,
-    airStall: 16,
-    scoreMultiplier: 1.3,
-  },
-  {
-    level: 4,
-    speedOfBoardRise: 12,
-    blinkAnimations: 72,
-    faceAnimations: 46,
-    popAnimations: 8,
-    airStall: 14,
-    scoreMultiplier: 1.5,
-  },
-  {
-    level: 5,
-    speedOfBoardRise: 8,
-    blinkAnimations: 60,
-    faceAnimations: 40,
-    popAnimations: 8,
-    airStall: 14,
-    scoreMultiplier: 1.65,
-  },
-  {
-    level: 6,
-    speedOfBoardRise: 4,
-    blinkAnimations: 36,
-    faceAnimations: 24,
-    popAnimations: 6,
-    airStall: 12,
-    scoreMultiplier: 2,
-  },
-  {
-    level: 7,
-    speedOfBoardRise: 4,
-    blinkAnimations: 28,
-    faceAnimations: 16,
-    popAnimations: 6,
-    airStall: 12,
-    scoreMultiplier: 2.2,
-  },
-  {
-    level: 8,
-    speedOfBoardRise: 2,
-    blinkAnimations: 28,
-    faceAnimations: 16,
-    popAnimations: 6,
-    airStall: 12,
-    scoreMultiplier: 2.3,
-  },
-  {
-    level: 9,
-    speedOfBoardRise: 2,
-    blinkAnimations: 20,
-    faceAnimations: 12,
-    popAnimations: 6,
-    airStall: 12,
-    scoreMultiplier: 2.4,
-  },
-  {
-    level: 10,
-    speedOfBoardRise: 1,
-    blinkAnimations: 16,
-    faceAnimations: 8,
-    popAnimations: 6,
-    airStall: 12,
-    scoreMultiplier: 3,
-  },
-];
+export const preset = {
+  //            00, 00, 30, 60, 90,120,150,180,210,240,270
+  speedValues: [120, 48, 36, 24, 12, 8, 6, 2, 2, 2, 2, 2, 2, 1],
+  clearValues: [200, 100, 90, 80, 70, 60, 50, 40, 36, 32, 28, 24, 20, 20],
+  blinkValues: [120, 60, 54, 48, 42, 36, 30, 24, 22, 20, 18, 16, 14, 14],
+  faceValues: [80, 40, 36, 32, 28, 24, 20, 16, 14, 12, 10, 8, 6, 6],
+  popMultiplier: [20, 10, 10, 10, 8, 8, 8, 8, 8, 8, 6, 6, 6, 6],
+  stallValues: [20, 14, 14, 14, 12, 12, 12, 10, 10, 10, 10, 10, 10, 10],
+  multValues: [1, 1, 1.15, 1.3, 1.45, 1.6, 1.75, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 3],
+};
+
+console.log(preset);
 
 if (!localStorage.getItem("games-completed"))
   localStorage.setItem("games-completed", "0");
@@ -413,6 +323,29 @@ export let sound = {
   SFX3: ["", gameSFX[2]],
 };
 
+export const bestScores = {
+  Blitz: [
+    parseInt(localStorage.getItem("bestScore1")),
+    parseInt(localStorage.getItem("bestScore2")),
+    parseInt(localStorage.getItem("bestScore3")),
+    parseInt(localStorage.getItem("bestScore4")),
+    parseInt(localStorage.getItem("bestScore5")),
+  ],
+  Standard: [
+    parseInt(localStorage.getItem("bestScore1_Standard")),
+    parseInt(localStorage.getItem("bestScore2_Standard")),
+    parseInt(localStorage.getItem("bestScore3_Standard")),
+    parseInt(localStorage.getItem("bestScore4_Standard")),
+    parseInt(localStorage.getItem("bestScore5_Standard")),
+  ],
+  Marathon: [
+    parseInt(localStorage.getItem("bestScore1_Marathon")),
+    parseInt(localStorage.getItem("bestScore2_Marathon")),
+    parseInt(localStorage.getItem("bestScore3_Marathon")),
+    parseInt(localStorage.getItem("bestScore4_Marathon")),
+    parseInt(localStorage.getItem("bestScore5_Marathon")),
+  ],
+};
 // export const channels = [
 //   sound.Music,
 //   sound.AnnVoice,
@@ -440,6 +373,8 @@ export let game = {
   volume: 1,
   level: 1,
   timeControl: 2,
+  timeControlName: "Blitz",
+  highScoresList: bestScores.Blitz,
   playRecording: false,
   boardRiseSpeed: preset.speedValues[1],
   blockClearTime: preset.clearValues[1],
@@ -674,14 +609,6 @@ for (let i = 1; i <= 5; i++) {
 if (localStorage.getItem(`username`) == null) {
   localStorage.setItem("username", "Enter Name Here");
 }
-
-export const bestScores = [
-  parseInt(localStorage.getItem("bestScore1") || 500),
-  parseInt(localStorage.getItem("bestScore2") || 400),
-  parseInt(localStorage.getItem("bestScore3") || 300),
-  parseInt(localStorage.getItem("bestScore4") || 200),
-  parseInt(localStorage.getItem("bestScore5") || 100),
-];
 
 export function changeAllBlockProperties(propertiesObj, excludeDark = true) {
   let properties = Object.keys(propertiesObj);

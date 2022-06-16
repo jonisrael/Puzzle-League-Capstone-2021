@@ -1313,6 +1313,8 @@ export function updateLevelEvents(level) {
   }
 
   game.panicAnimate.divisor = game.level < 8 ? 18 : 12;
+  game.panicAnimate.divisor = 18;
+
   game.panicAnimate[0] = 0;
   game.panicAnimate[1] = game.panicAnimate.divisor / 6;
   game.panicAnimate[2] = (2 * game.panicAnimate.divisor) / 6;
@@ -1331,11 +1333,11 @@ export function updateLevelEvents(level) {
   game.blockStallTime = preset.stallValues[level];
   game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex =
-    game.level < 4 ? 1 : game.level < 7 ? 2 : game.level < 9 ? 3 : 5;
-  if (game.level < 6 && overtimeMusic.includes(sound.Music[0])) {
+    game.level <= 3 ? 1 : game.level <= 6 ? 2 : game.level <= 9 ? 3 : 5;
+  if (game.level <= 6 && overtimeMusic.includes(sound.Music[0])) {
     playMusic(music[randInt(music.length, true)]);
   } else if (
-    game.level >= 6 &&
+    game.level > 6 &&
     music.includes(sound.Music[0]) &&
     !sound.Music[0].includes("collapsed") // don't interrupt final fantasy music!!!
   ) {
@@ -1504,7 +1506,7 @@ export function gameLoop() {
         }
 
         if (sound.Music[1].currentTime >= sound.Music[1].duration) {
-          if (game.level < 6) {
+          if (game.level < 7) {
             playMusic(music[randInt(music.length, true)]);
           } else {
             playMusic(overtimeMusic[randInt(overtimeMusic.length, true)]);
@@ -1555,10 +1557,7 @@ export function gameLoop() {
           game.message = `Level ${game.level + 1}, speed increases...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
-          if (
-            !game.tutorialRunning &&
-            (game.level < 6 || game.level === 7 || game.level === 9)
-          )
+          if (!game.tutorialRunning)
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
