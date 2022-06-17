@@ -449,6 +449,8 @@ export let game = {
   boardHasTargets: true,
   VacantBlock: {},
   tutorialRunning: false,
+  stickyJingleAllowed: true,
+  holdItSoundAllowed: true,
 };
 
 export const helpPlayer = {

@@ -839,18 +839,25 @@ export function isChainActive() {
 export function endChain(potentialSecondarySuccessor) {
   if (game.currentChain == 0) return;
   // this impacts the chainChallengeEvents() function
+  let awardAllClearBonus = false;
   game.boardRiseRestarter = 0;
   game.previousChainScore = game.chainScoreAdded;
   game.previousChain = game.currentChain;
   game.chainScoreAdded = 0;
   game.drawScoreTimeout = 180;
+  game.stickyJingleAllowed = true;
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
   helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
   helpPlayer.hintVisible = false;
   cpu.matchList.length = 0;
   cpu.matchStrings.length = 0;
-  if (game.currentChain > 8) {
+  // check for all clear bonus by checking bottom row for a non-vacant block
+  for (let x = 0; x < grid.COLS; x++) {
+    if (game.board[x][grid.ROWS - 1].color !== "vacant") break;
+    if (x === grid.COLS - 1) awardAllClearBonus = true;
+  }
+  if (game.currentChain > 8 || awardAllClearBonus) {
     playAudio(audio.fanfare5, 0.25);
     playAnnouncer(
       announcer.bestChainDialogue,
@@ -886,8 +893,12 @@ export function endChain(potentialSecondarySuccessor) {
       "smallChain"
     );
   }
-  if (game.currentChain > 1) {
-    game.message = `${game.currentChain}x chain added ${game.previousChainScore} score.`;
+  if (awardAllClearBonus && !game.tutorialRunning) {
+    game.message = "All Clear! 10000 bonus points are added to your score.";
+    game.messageChangeDelay = 120;
+    game.score += 10000;
+  } else if (game.currentChain > 1) {
+    game.message = `${game.lastChain}x chain added ${game.previousChainScore} score.`;
     game.messageChangeDelay = 90;
     // this impacts the chainChallengeEvents() function
     if (tutorial.chainChallenge) game.board[0][grid.ROWS].timer = -3;
@@ -981,14 +992,56 @@ export function createNewRow() {
   if (game.highestRow === 1) game.deathTimer = preset.faceValues[game.level];
 }
 
-function overtimeBorderColor(level) {
-  let [hue, cnst] = [0, 0];
-  if (level < 6 || game.frames > arcadeEvents.superOvertimeStart - 600)
-    [hue, cnst] = [30, 20];
-  let mult = level < 6 ? 2 : level < 8 ? 3 : level < 10 ? 4 : 5;
-  // let mult = game.minutes < 3 ? 1 : 2;
-  return `hsl(${hue}, ${cnst + 50 + 40 * Math.cos(mult * game.frames)}%, ${30 +
-    20 * Math.cos(mult * game.frames)}%)`;
+function canvasBorderColor(level) {
+  if (game.over) return "red";
+  if (game.tutorialRunning || game.frames < arcadeEvents.levelUpIncrement - 180)
+    return "#hsl(30, 100%, 70%)";
+  if (game.frames > arcadeEvents.tenSecondsRemain) {
+    // game is in close to or at overtime
+    let [hueDesired, cnst] = [0, 0];
+    if (level < 7) [hueDesired, cnst] = [30, 20];
+    let mult = level <= 7 ? 2 : level <= 10 ? 3 : level <= 13 ? 4 : 5;
+    let satDesired = cnst + 50 + 40 * Math.cos(mult * game.frames);
+    let lightnessDesired = 30 + 20 * Math.cos(mult * game.frames);
+    // let mult = game.minutes < 3 ? 1 : 2;
+    return `hsl(${hueDesired}, ${satDesired}%, ${lightnessDesired}%)`;
+  }
+  // otherwise, not in overtime.
+  let color, hue1, hue2;
+  // starts at beige for level 1. Then, from level 2 to 6 below the hue at 50% lightness is:
+  // 2 blue (240), 3 cyan (180), 4 green (120), 5 yellow (60), 6 orange, 7 red
+  if (game.level <= 1 && game.mode !== "training")
+    [color, hue1, hue2] = ["purple", 300, 240];
+  if (game.level === 2) [color, hue1, hue2] = ["blue", 240, 180];
+  if (game.level === 3) [color, hue1, hue2] = ["cyan", 180, 120];
+  if (game.level === 4) [color, hue1, hue2] = ["#00FF00", 120, 60];
+  if (game.level === 5) [color, hue1, hue2] = ["yellow", 50, 30];
+  if (game.level === 6) [color, hue1, hue2] = ["orange", 30, 0];
+  if (game.mode === "training") return "color";
+
+  let framesUntilLevelUp =
+    arcadeEvents.levelUpIncrement -
+    (game.frames % arcadeEvents.levelUpIncrement);
+  if (framesUntilLevelUp > 200) {
+    return color;
+  } else {
+    let mult = 2;
+    let hueDifference = (hue1 - hue2) / 2;
+    if (framesUntilLevelUp < 90) {
+      hue1 -= hueDifference / 2; // made so that it sticks to its new color
+    }
+    let hueMedian = (hue1 + hue2) / 2;
+
+    let hueDesired =
+      hueMedian - 10 + hueDifference * Math.cos(mult * game.frames);
+    if (game.level === 1) {
+      let lightnessDesired = 50 + 10 * Math.cos(mult * game.frames);
+      color = `hsl(${hueDesired}, 100%, ${lightnessDesired}%)`;
+    } else {
+      color = `hsl(${hueDesired}, 100%, 50%)`;
+    }
+    return color;
+  }
 
   // let decidedValue;
   // if (value < 5) decidedValue = 10 - 2 * value;
@@ -1497,9 +1550,9 @@ export function gameLoop() {
           game.seconds % 5 === 0
         ) {
           if (!debug.enabled) debug.clickCounter = 0;
-          let colorRatio = (120 - 60 * game.minutes - game.seconds) / 1.2;
-          win.cvs.style.borderColor = `hsl(34, ${20 + 0.8 * colorRatio}%, ${20 +
-            0.5 * colorRatio}%)`;
+          // let colorRatio = (120 - 60 * game.minutes - game.seconds) / 1.2;
+          // win.cvs.style.borderColor = `hsl(34, ${20 + 0.8 * colorRatio}%, ${20 +
+          //   0.5 * colorRatio}%)`;
         }
         if (debug.enabled && game.seconds % 5 === 1) {
           game.pastSeconds = game.seconds;
@@ -1532,7 +1585,6 @@ export function gameLoop() {
         }
 
         if (debug.enabled === 1) {
-          // game.seconds--;
           game.frames -= 60;
         }
       }
@@ -1553,7 +1605,11 @@ export function gameLoop() {
       ) {
         // Speed the stack up every 20 seconds
 
-        if (game.frames > 0) {
+        if (
+          game.frames > 0 &&
+          game.frames !== arcadeEvents.overtimeStart &&
+          game.frames !== arcadeEvents.overtimeStart + 7200
+        ) {
           game.message = `Level ${game.level + 1}, speed increases...`;
           game.defaultMessage = game.message;
           game.messageChangeDelay = 120;
@@ -1563,6 +1619,7 @@ export function gameLoop() {
               announcer.timeTransitionIndexLastPicked,
               "timeTransition"
             );
+
           console.log(
             `gameTime = ${game.frames / 60}, realTime = ${
               perf.realTime
@@ -1575,6 +1632,7 @@ export function gameLoop() {
         if (game.level + 1 < preset.speedValues.length && game.frames > 0) {
           game.level++;
           updateLevelEvents(game.level);
+          game.holdItSoundAllowed = true;
         }
       }
 
@@ -1692,29 +1750,6 @@ export function gameLoop() {
           trySwappingBlocks(game.cursor.x, game.cursor.y);
           game.swapPressed = false;
         }
-        // else {
-        //   // for (let order in touch.moveOrderList) {
-        //   //   let [c, r] = [order[0], order[1]];
-        //   //   if (game.board[c][r].x < game.board[c][r].target.x) {
-        //   //     trySwappingBlocks(c, r);
-        //   //   } else if (game.board[c][r].x > game.board[c][r].target.x) {
-        //   //     trySwappingBlocks(c - 1, r);
-        //   //   } else {
-        //   //     game.board[c][r].swapOrders.active = false;
-        //   //   }
-        //   // }
-        //   // game.swapPressed = false;
-        //   if (touch.selectedBlock.x < touch.target.x) {
-        //     trySwappingBlocks(touch.selectedBlock.x, touch.selectedBlock.y);
-        //   } else if (touch.selectedBlock.x > touch.target.x) {
-        //     trySwappingBlocks(touch.selectedBlock.x - 1, touch.selectedBlock.y);
-        //   } else {
-        //     game.swapPressed = false;
-        //     touch.moveOrderExists = false; // block has reached target
-        //     // if (debug.enabled)
-        //     //   console.log("frame", game.frames, "target reached.");
-        //   }
-        // }
       } else if (game.boardHasTargets) {
         checkSwapTargets();
       } // end game.swapPressed being true
@@ -1803,43 +1838,6 @@ export function gameLoop() {
         secondsString =
           game.seconds < 10 ? `0${game.seconds}` : `${game.seconds}`;
       }
-      // if (game.mode === "training") {
-      //   if (game.minutes < 10) {
-      //     minutesString = `0${game.minutes}`;
-      //   } else {
-      //     minutesString = `${game.minutes}`;
-      //   }
-      //   if (game.seconds < 10) {
-      //     secondsString = `0${game.seconds}`;
-      //   } else {
-      //     secondsString = `${game.seconds}`;
-      //   }
-      // } else {
-      //   if (game.seconds === 0) {
-      //     minutesString = `0${2 - game.minutes}`;
-      //   } else if (game.minutes < 2) {
-      //     minutesString = `0${1 - game.minutes}`;
-      //   } else if (game.minutes < 10) {
-      //     minutesString = `0${game.minutes - 2}`;
-      //   } else {
-      //     minutesString = `${game.minutes - 2}`;
-      //   }
-      //   if (game.minutes < 2) {
-      //     if (game.seconds === 0) {
-      //       secondsString = "00";
-      //     } else if (game.seconds > 50) {
-      //       secondsString = `0${60 - game.seconds}`;
-      //     } else {
-      //       secondsString = `${60 - game.seconds}`;
-      //     }
-      //   } else {
-      //     if (game.seconds < 10) {
-      //       secondsString = `0${game.seconds}`;
-      //     } else {
-      //       secondsString = `${game.seconds}`;
-      //     }
-      //   }
-      // }
 
       game.timeString = `${minutesString}:${secondsString}`;
 
@@ -1866,10 +1864,9 @@ export function gameLoop() {
       // `hsl(0, ${50 +
       //   40 * Math.cos(2 * Math.pi * percentOfSecond)}%, ${30 +
       //   20 * Math.cos(2 * Math.pi * percentOfSecond)}%)`
-      if (game.level >= 6 && game.frameMod[6] === 0 && !game.over)
-        if (game.level > 6 || game.frames > arcadeEvents.tenSecondsRemain) {
-          win.cvs.style.borderColor = overtimeBorderColor(game.level);
-        }
+      if (game.frameMod[6] === 0 && !game.over) {
+        win.cvs.style.borderColor = canvasBorderColor(game.level);
+      }
 
       if (game.over) win.cvs.style.borderColor = "red";
       if (debug.enabled == 1) {
@@ -1904,20 +1901,6 @@ export function gameLoop() {
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.tutorialRunning) {
-        // if (tutorial.chainChallenge)
-        //   if (game.currentChain > 0) {
-        //     game.message = `${game.currentChain}x!`;
-        //   } else if (game.lastChain > 0 && game.lastChain < game.largestChain)
-        //     game.message = `${game.lastChain}x achieved. Try again!`;
-        //   else {
-        //     if (game.largestChain > 0 && game.largestChain < 9)
-        //       game.message = `Largest Chain Achieved: ${game.largestChain}`;
-        //     else if (game.largestChain === 9) {
-        //       game.message = "Congratulations, You Beat the Chain Challenge!";
-        //     } else
-        //       game.message =
-        //         "Chain Challenge! Can you clear the whole board in one combo?";
-        //   }
         if (!tutorial.chainChallenge) {
           game.message = tutorialMessages[tutorial.state][tutorial.msgIndex];
         }

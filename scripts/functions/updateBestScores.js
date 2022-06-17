@@ -56,13 +56,14 @@ export function updateBestScores(score) {
   if (game.timeControl === 10) highScores = bestScores.Marathon;
   let rank = 6;
   let confirmUpdate = true;
+  console.log("Scores:", score, highScores);
   if (score > highScores[0]) rank = 1;
   else if (score > highScores[1]) rank = 2;
   else if (score > highScores[2]) rank = 3;
   else if (score > highScores[3]) rank = 4;
   else if (score > highScores[4]) rank = 5;
 
-  if (leaderboard.reason === "debug" || cpu.enabled) return 6;
+  if (leaderboard.reason === "debug" || cpu.enabled) rank = 6;
 
   if (rank < 6) {
     if (leaderboard.reason === "slow") {
@@ -72,7 +73,7 @@ export function updateBestScores(score) {
       if (confirmUpdate) confirmUpdate = confirm("Are you sure?");
     }
     if (confirmUpdate) {
-      if (leaderboard.canPost && rank < 6) {
+      if (rank < 6) {
         highScores.splice(rank - 1, 0, score);
         highScores.pop();
         let highScoreType;

@@ -145,7 +145,9 @@ export function playAudio(
         audioList.indexOf(Sound.src)
       );
   } catch (error) {
-    console.log(`Audio play failed. File: ${file}`);
+    console.log(
+      `Audio play failed. File: ${file}, Error: ${error}, line: ${error.stack}`
+    );
     sound.AnnVoice = ["", new Audio()];
     sound.SFX0 = ["", new Audio()];
   }

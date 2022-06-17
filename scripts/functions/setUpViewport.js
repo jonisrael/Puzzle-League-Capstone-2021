@@ -25,23 +25,38 @@ export function createHeadsUpDisplay(mobile = false) {
   mobile ? createMobileDisplay() : createDesktopDisplay();
 }
 
-function setUpBestScoreDisplay(column) {
+export function setUpBestScoreDisplay(column, highScoresList, name) {
   let bestScoresDisplay = document.createElement("table");
   bestScoresDisplay.setAttribute("id", "best-scores-table");
+  let timeControlColor =
+    name == "Blitz" ? "red" : name == "Standard" ? "blue" : "yellow";
   let bestScoresString = `
   <tr>
-    <th>Rank</th>
-    <th>Best Scores</th>
+    <th colspan=2>
+      <span style="color: ${timeControlColor};">
+        ${name}
+      </span>
+      <br />
+      <span style="font-weight: normal;">
+        High Scores
+      </span>
+
+
+      </th>
+  </tr>
+  <tr>
+    <th style="font-weight: normal;"> Rank </th>
+    <th style="font-weight: normal;"> Score </th>
   </tr>`;
 
-  for (let i = 0; i < game.highScoresList.length; i++) {
+  for (let i = 0; i < highScoresList.length; i++) {
     bestScoresString += `
     <tr>
       <td>
       #${i + 1}
       </td>
       <td>
-        ${game.highScoresList[i]}
+        ${highScoresList[i]}
       </td>
     </tr>
     `;
@@ -109,18 +124,6 @@ function createDesktopDisplay() {
   infoRow.appendChild(win.scoreDisplay);
   infoRow.appendChild(win.levelDisplay);
   infoRow.appendChild(win.multiplierDisplay);
-  // win.gameInfoTable.innerHTML = `
-  //   <tr style="color:black">
-  //     <th>${win.timeHeader.innerHTML}</th>
-  //     <th>${win.scoreHeader.innerHTML}</th>
-  //     <th>${win.levelHeader.innerHTML}</th>
-  //   </tr>
-  //   <tr>
-  //     <td>${win.timeDisplay.innerHTML}</td>
-  //     <td>${win.scoreDisplay.innerHTML}</td>
-  //     <td>${win.levelDisplay.innerHTML}</td>
-  //   </tr>
-  // `;
 
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
@@ -250,7 +253,7 @@ function createDesktopDisplay() {
 
   // setUpQuickStatDisplay(column1);
   if (game.mode === "arcade") {
-    setUpBestScoreDisplay(column3);
+    setUpBestScoreDisplay(column3, game.highScoresList, game.timeControlName);
     // setUpGameLogDisplay(column3);
   } else if (game.mode === "training") {
     setUpTrainingMode(column3);

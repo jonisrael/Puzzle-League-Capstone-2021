@@ -594,8 +594,8 @@ iframe {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  color: hsl(0, 100%, 50%);
-  color: hsl(30, 100%, 50%);
+  color: #ff0000;
+  color: hsl(120, 100%, 50%);
 }
 
 canvas {

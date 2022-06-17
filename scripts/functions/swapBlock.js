@@ -204,7 +204,12 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         if (debug.enabled) console.log(game.frames, "checking sticky,", c, y);
         let stickyResult = stickyCheck(c, y);
         if (stickyResult) {
-          playAudio(audio.smartMatch);
+          if (game.stickyJingleAllowed) {
+            playAudio(audio.smartMatch); // to combat audio spam
+            game.stickyJingleAllowed = false;
+          } else {
+            game.stickyJingleAllowed = true; // reset it
+          }
           if (debug.enabled)
             console.log(
               game.frames,

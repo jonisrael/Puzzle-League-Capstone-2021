@@ -8,6 +8,8 @@ import {
   sound,
   resultsMusic,
   randInt,
+  win,
+  bestScores,
 } from "../global";
 import {
   deleteEntry,
@@ -24,6 +26,7 @@ import * as state from "../../store";
 import { checkCanUserPost } from "./checkCanUserPost";
 import { updateBestScores, getBestScores } from "./updateBestScores";
 import { validateForm } from "./validateForm";
+import { setUpBestScoreDisplay } from "./setUpViewport";
 
 export function afterGame() {
   console.log("run aftergame");
@@ -62,18 +65,18 @@ export function afterGame() {
   durationMessage.innerHTML = `Duration Survived: ${duration}`;
   div1.appendChild(durationMessage);
 
-  let dateMessage = document.createElement("h2");
-  dateMessage.setAttribute = ("id", "date-message");
-  dateMessage.className = "postgame-info";
-  dateMessage.innerHTML = `Date: ${api.data.month}/${api.data.day}/${api.data.year}`;
-  div1.appendChild(dateMessage);
+  // let dateMessage = document.createElement("h2");
+  // dateMessage.setAttribute = ("id", "date-message");
+  // dateMessage.className = "postgame-info";
+  // dateMessage.innerHTML = `Date: ${api.data.month}/${api.data.day}/${api.data.year}`;
+  // div1.appendChild(dateMessage);
 
-  let timeMessage = document.createElement("h2");
-  timeMessage.setAttribute = ("id", "time-message");
-  timeMessage.className = "postgame-info";
-  timeMessage.innerHTML = `Game Begin At: ${api.data.hour}:${api.data.minute} ${api.data.meridian}`;
-  div1.appendChild(timeMessage);
-  container.innerHTML += `<hr />`;
+  // let timeMessage = document.createElement("h2");
+  // timeMessage.setAttribute = ("id", "time-message");
+  // timeMessage.className = "postgame-info";
+  // timeMessage.innerHTML = `Game Begin At: ${api.data.hour}:${api.data.minute} ${api.data.meridian}`;
+  // div1.appendChild(timeMessage);
+  // container.innerHTML += `<hr />`;
 
   let success = checkCanUserPost();
   if (success || rank < 6) {
@@ -86,6 +89,8 @@ export function afterGame() {
   } else {
     playMusic(resultsMusic[randInt(resultsMusic.length, true)], 0.1, 3);
   }
+
+  showBestScoreList(container);
 
   let div2 = document.createElement("div");
   container.appendChild(div2);
@@ -222,4 +227,29 @@ export function extractTimeFromAPI(dateTimeString) {
     minute: minStr,
     meridian: meridian,
   };
+}
+
+function showBestScoreList(container) {
+  return;
+  if (win.mobile) {
+  } else {
+    let scoreContainer = document.createElement("div");
+    let highScoreTitle = document.createElement("h2");
+    highScoreTitle.innerHTML = "High Score List";
+    container.append(highScoreTitle);
+    scoreContainer.setAttribute("id", "game-container");
+    container.append(scoreContainer);
+    let column1 = document.createElement("div");
+    let column2 = document.createElement("div");
+    let column3 = document.createElement("div");
+    column1.setAttribute("id", "column1");
+    column2.setAttribute("id", "column2");
+    column3.setAttribute("id", "column3");
+    scoreContainer.appendChild(column1);
+    scoreContainer.appendChild(column2);
+    scoreContainer.appendChild(column3);
+    setUpBestScoreDisplay(column1, bestScores.Blitz, "Blitz");
+    setUpBestScoreDisplay(column2, bestScores.Standard, "Standard");
+    setUpBestScoreDisplay(column3, bestScores.Marathon, "Marathon");
+  }
 }

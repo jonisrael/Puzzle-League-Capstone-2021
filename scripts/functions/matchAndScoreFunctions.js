@@ -239,14 +239,15 @@ export function checkMatch() {
         if (game.combo > game.largestCombo) game.largestCombo = game.combo;
 
         // if stack is very high, determine when to say "hold it!"
-        if (game.highestRow === 1 || (game.highestRow < 4 && game.level > 5)) {
-          if (
-            game.level > 6 &&
-            !game.boardRiseDisabled &&
-            game.currentChain < 2
-          ) {
+        if (game.highestRow === 1 || (game.highestRow < 4 && game.level > 6)) {
+          if (!game.boardRiseDisabled && game.currentChain < 2) {
             // always say hold it in overtime
-            playAudio(hold_it, -1, "holdIt", 0.3, false);
+            if (game.holdItSoundAllowed) {
+              playAudio(hold_it[randInt(3)], 0.3, false, false);
+              game.holdItSoundAllowed = false; // prevent audio spam
+            } else {
+              game.holdItSoundAllowed = true; // reset it
+            }
           }
           // else if (
           //   game.raiseDelay === 0 &&
