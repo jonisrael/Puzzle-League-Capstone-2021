@@ -14,15 +14,20 @@ import {
   leaderboard,
   sound,
 } from "./scripts/global";
-import { defaultControls, savedControls } from "./scripts/controls";
+import {
+  defaultControls,
+  preselectControls,
+  saveControls,
+  savedControls,
+  setUpASCIIOptions,
+} from "./scripts/controls";
 import { startGame } from "./scripts/functions/startGame";
 import { extractTimeFromAPI } from "./scripts/functions/submitResults";
 import { populateLeaderboard } from "./scripts/functions/populateLeaderboard";
 import { showNotification } from "./scripts/functions/showNotification";
 import {
-  getNewKeyboardControls,
-  getNewGamePadControls,
-  setNewControls,
+  setNewKeyboardControls,
+  setNewGamepadControls,
 } from "./scripts/controls";
 import { tutorial } from "./scripts/tutorial/tutorialScript";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
@@ -32,6 +37,11 @@ export const router = new Navigo(window.location.origin);
 
 export function render(st) {
   console.log(st);
+  if (win.view === "Controls" && win.controlChangeWasMade) {
+    if (win.view !== st.view && confirm("Save Controls?")) {
+      saveControls();
+    }
+  }
   win.view = st.view;
   win.viewChanged = true;
   document.querySelector("#root").innerHTML = `
@@ -122,29 +132,47 @@ function addEventListeners(st) {
   }
   if (st.view === "Controls") {
     // if saved
-    checkPreselectedControls(savedControls);
+    // checkPreselectedControls(savedControls);
+    win.controlChangeWasMade = false;
+    for (let i = 1; i <= 6; i++) {
+      setUpASCIIOptions(
+        `#keyboard-controls-container > div:nth-child(${i}) > select`
+      );
+    }
+    setUpASCIIOptions("#swap-2");
+    setUpASCIIOptions("#raise-2");
+    preselectControls();
     document
       .getElementById("accept-game-controls")
       .addEventListener("click", function(event) {
         event.preventDefault();
-        savedControls.keyboard = getNewKeyboardControls(
-          document.getElementById("keyboard-controls")
-        );
-        savedControls.gamepad = getNewGamePadControls(
-          document.getElementById("gamepad-swap"),
-          document.getElementById("gamepad-raise")
-        );
-        localStorage.setItem("controls", JSON.stringify(savedControls));
-        render(state.Controls);
+        if (confirm("Save Controls?")) {
+          saveControls();
+          render(state.Controls);
+          displayMessage("Controls successfully saved!", false);
+        }
       });
     document
       .getElementById("restore-defaults")
       .addEventListener("click", function(event) {
-        savedControls.keyboard = defaultControls.keyboard;
-        savedControls.gamepad = defaultControls.gamepad;
-        localStorage.setItem("controls", JSON.stringify(savedControls));
-        render(state.Controls);
+        if (confirm("Reset your controls to default?")) {
+          savedControls.keyboard = defaultControls.keyboard;
+          savedControls.gamepad = defaultControls.gamepad;
+          localStorage.setItem("controls", JSON.stringify(savedControls));
+          if (st.view === "Controls") {
+            render(state.Controls);
+            displayMessage("Controls restored to default.", false);
+          }
+        } else {
+          event.preventDefault();
+        }
       });
+    document.querySelectorAll(".kb-controls").forEach((el) =>
+      el.addEventListener("click", () => {
+        win.controlChangeWasMade = true;
+        console.log("control change was made");
+      })
+    );
   }
 
   if (st.view === "Home") {
@@ -344,7 +372,7 @@ export function displayMessage(msg, err = true, scroll = true, timeout = 5000) {
 }
 
 export function checkPreselectedControls(controls) {
-  let keyboardControls = document.getElementById("keyboard-controls");
+  let keyboardControls = document.getElementById("keyboard-controls-container");
   // determine keyboard preselection
   keyboardControls[0].selected =
     controls.keyboard.up[0] === 38 && controls.keyboard.swap[1] === 88; // swap is x

@@ -72,46 +72,59 @@ export const savedControls =
 
 checkIfControlsExist(savedControls);
 
-export function setNewControls(keyboardLayout, swapInputs, raiseInputs) {
-  return {
-    keyboard: getNewKeyboardControls(keyboardLayout),
-    gamepad: getNewGamePadControls(swapInputs, raiseInputs),
-  };
+export function setNewKeyboardControls() {
+  let kb = { swap: [], raise: [] }; // add other inputs later
+  for (let i = 0; i < document.querySelectorAll(".kb-controls").length; i++) {
+    const el = document.querySelectorAll(".kb-controls")[i];
+    let charCode = String.fromCharCode(el.value)
+      .toUpperCase()
+      .charCodeAt();
+    if (el === document.querySelector("#left")) kb.left = [charCode];
+    if (el === document.querySelector("#up")) kb.up = [charCode];
+    if (el === document.querySelector("#down")) kb.down = [charCode];
+    if (el === document.querySelector("#right")) kb.right = [charCode];
+    if (el === document.querySelector("#swap-1")) kb.swap[0] = charCode;
+    if (el === document.querySelector("#swap-2")) kb.swap[1] = charCode;
+    if (el === document.querySelector("#raise-1")) kb.raise[0] = charCode;
+    if (el === document.querySelector("#raise-2")) kb.raise[1] = charCode;
+  }
+  console.log("KB Controls:", kb, document.querySelectorAll(".kb-controls"));
+  return kb;
 }
 
-export function getNewKeyboardControls(formInput) {
-  // set defaults
-  const keyboard = {
-    up: [38], // ArrowUp
-    left: [37], //ArrowLeft
-    down: [40], //ArrowDown
-    right: [39], //ArrowRight
-    swap: [83, 88], // s, x
-    raise: [82, 90], // r, z
-  };
-  if (formInput.selectedIndex === 1) {
-    keyboard.swap = [83, 90]; // s, z
-    keyboard.raise = [82, 88]; // r, x
-  }
-  if (formInput.selectedIndex > 1) {
-    keyboard.up = [87]; // w
-    keyboard.left = [65]; // a
-    keyboard.down = [83]; // s
-    keyboard.right = [68]; // d
-    if (formInput.selectedIndex === 2) {
-      keyboard.swap = [75, 100]; // k, numpad4
-      keyboard.raise = [76, 101]; // l, numpad5
-    }
-    if (formInput.selectedIndex === 3) {
-      keyboard.swap = [76, 101]; // l, numpad5
-      keyboard.raise = [75, 100]; // k, numpad4
-    }
-  }
+// export function setNewKeyboardControlsOld(formInput) {
+//   // set defaults
+//   const keyboard = {
+//     up: [38], // ArrowUp
+//     left: [37], //ArrowLeft
+//     down: [40], //ArrowDown
+//     right: [39], //ArrowRight
+//     swap: [83, 88], // s, x
+//     raise: [82, 90], // r, z
+//   };
+//   if (formInput.selectedIndex === 1) {
+//     keyboard.swap = [83, 90]; // s, z
+//     keyboard.raise = [82, 88]; // r, x
+//   }
+//   if (formInput.selectedIndex > 1) {
+//     keyboard.up = [87]; // w
+//     keyboard.left = [65]; // a
+//     keyboard.down = [83]; // s
+//     keyboard.right = [68]; // d
+//     if (formInput.selectedIndex === 2) {
+//       keyboard.swap = [75, 100]; // k, numpad4
+//       keyboard.raise = [76, 101]; // l, numpad5
+//     }
+//     if (formInput.selectedIndex === 3) {
+//       keyboard.swap = [76, 101]; // l, numpad5
+//       keyboard.raise = [75, 100]; // k, numpad4
+//     }
+//   }
 
-  return keyboard;
-}
+//   return keyboard;
+// }
 
-export function getNewGamePadControls(swapInputs, raiseInputs) {
+export function setNewGamepadControls(swapInputs, raiseInputs) {
   const gameController = {
     up: [12], // D-Pad Up
     left: [14], // D-Pad Left
@@ -132,6 +145,7 @@ export function checkIfControlsExist(controls) {
   // localStorage.removeItem("controls"); // USE ONLY FOR TESTING
   let storedControls = localStorage.getItem("controls");
   let controlsObject = JSON.parse(storedControls);
+  console.log(controlsObject);
   const defaultControls = {
     keyboard: {
       up: [38], // ArrowUp
@@ -157,7 +171,9 @@ export function checkIfControlsExist(controls) {
     try {
       if (
         !controlsObject.timeCreated ||
-        controlsObject.timeCreated < 1637108341492 // time before latest release
+        controlsObject.timeCreated < 1656865863014 || // time before latest release (July 3)
+        !controlsObject.keyboard ||
+        !controlsObject.gamepad
       ) {
         localStorage.setItem("controls", JSON.stringify(defaultControls));
         console.log("Controls invalid, do 11/16/2021 patch to fix.");
@@ -169,7 +185,7 @@ export function checkIfControlsExist(controls) {
     } catch (error) {
       localStorage.setItem("controls", JSON.stringify(defaultControls));
       console.log("Caught Undefined Error! Replacing broken controls...");
-      console.log("11/11/2021 patch to fix broken controls implemented");
+      console.log("07/03/2022 patch to fix broken controls implemented");
       return defaultControls;
     }
   }
@@ -449,4 +465,101 @@ function tutorialBreakInputs(input) {
   }
   Object.keys(action).forEach((btn) => (action[btn] = false));
   return input;
+}
+
+export function preselectControls() {
+  checkIfControlsExist();
+  let kb = JSON.parse(localStorage.getItem("controls")).keyboard;
+  console.log(
+    kb,
+    "list of elements:",
+    document.getElementById("left").value,
+    document.getElementById("up").value,
+    document.getElementById("right").value,
+    document.getElementById("down").value,
+    document.getElementById("swap-1").value,
+    document.getElementById("swap-2").value,
+    document.getElementById("raise-1").value,
+    document.getElementById("raise-2").value
+  );
+  console.log(kb);
+  document.getElementById("left").value = String.fromCharCode(kb.left[0])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("up").value = String.fromCharCode(kb.up[0])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("right").value = String.fromCharCode(kb.right[0])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("down").value = String.fromCharCode(kb.down[0])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("swap-1").value = String.fromCharCode(kb.swap[0])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("swap-2").value = String.fromCharCode(kb.swap[1])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("raise-1").value = String.fromCharCode(kb.raise[0])
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("raise-2").value = String.fromCharCode(kb.raise[1])
+    .toUpperCase()
+    .charCodeAt();
+
+  console.log(`${kb.swap[0]}`);
+  console.log(
+    "list of elements:",
+    document.getElementById("left").value,
+    document.getElementById("up").value,
+    document.getElementById("right").value,
+    document.getElementById("down").value,
+    document.getElementById("swap-1").value,
+    document.getElementById("swap-2").value,
+    document.getElementById("raise-1").value,
+    document.getElementById("raise-2").value
+  );
+
+  console.log(`${kb.swap[0] + 32}`, document.getElementById("swap-1").value);
+}
+
+export function setUpASCIIOptions(selector) {
+  const selectElement = document.querySelector(selector);
+  console.log("Setting up controls options");
+  let kb = JSON.parse(localStorage.getItem("controls")).keyboard;
+  for (let charCode = 32; charCode <= 90; charCode++) {
+    let key = String.fromCharCode(charCode).toUpperCase();
+    if (charCode === 32) key = "Space";
+    if (charCode === 37) key = "Left";
+    if (charCode === 38) key = "Up";
+    if (charCode === 39) key = "Right";
+    if (charCode === 40) key = "Down";
+    if (
+      charCode === 32 ||
+      (charCode >= 37 && charCode <= 40) ||
+      (charCode >= 65 && charCode <= 122)
+    ) {
+      let option = document.createElement("option");
+      option.value = charCode;
+      option.innerHTML = key;
+      if (charCode >= 97) {
+        option.value = charCode;
+        option.innerHTML = key;
+      }
+      if (charCode === 32) option.innerHTML = "Space";
+
+      selectElement.appendChild(option);
+    }
+  }
+}
+
+export function saveControls() {
+  savedControls.keyboard = setNewKeyboardControls();
+  savedControls.gamepad = setNewGamepadControls(
+    document.getElementById("gamepad-swap"),
+    document.getElementById("gamepad-raise")
+  );
+  console.log("new saved controls:", savedControls);
+  localStorage.setItem("controls", JSON.stringify(savedControls));
 }

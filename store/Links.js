@@ -1,6 +1,6 @@
 export default [
   { title: "Home", text: "Play Game" },
-  { title: "Controls", text: "Setup Controls & Gamepad" },
+  { title: "Controls", text: "Setup Keyboard & Gamepad Controls" },
   { title: "Tutorials", text: "Tutorials" },
   { title: "Leaderboard", text: "Leaderboard" },
   // { title: "Scoring", text: "Scoring" },

@@ -555,6 +555,23 @@ p {
   height: 71.5vh;
 }
 
+#keyboard-controls-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.choice-container {
+  display: block;
+  padding: 0px 1rem;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.choice-container select {
+  width: 5rem;
+}
+
 .column3 {
   /* outline: 1px white solid; */
 }
@@ -794,6 +811,10 @@ footer {
   }
 }
 
+.mobile-not-available-message {
+  display: none;
+}
+
 @media only screen and (max-width: 970px) {
   td,
   th {
@@ -942,6 +963,18 @@ footer {
     max-height: none !important;
     min-width: 0 !important;
     min-height: 0 !important;
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .mobile-not-available-message {
+    display: block;
+  }
+  #set-controls-container {
+    display: none;
+  }
+  ul li:nth-child(2) {
+    display: none;
   }
 }
 

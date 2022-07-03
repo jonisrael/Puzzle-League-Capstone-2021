@@ -1,5 +1,4 @@
 import { audio, audioKeys, audioList, sprite } from "./fileImports";
-import { checkIfControlsExist, setNewControls } from "./controls";
 import { displayMessage } from "..";
 import { pause } from "./functions/pauseFunctions";
 import { determineOSAndBrowser } from "./functions/determineOSBrowser";
