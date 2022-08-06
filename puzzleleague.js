@@ -734,8 +734,9 @@ export function drawGrid() {
   let arrowListArray = [];
   // let clearingBlockFound = false;
   win.ctx.fillStyle = "black";
-
   win.ctx.fillRect(0, 0, win.cvs.width, win.cvs.height);
+  // win.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
+  // win.ctx.fillRect(0, 0, win.cvs.width, win.cvs.height);
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
@@ -1483,7 +1484,7 @@ export function gameLoop() {
           win.focused = false;
         } else {
           if (Date.now() - perf.lostFocusTimeStamp >= 600000) {
-            win.running = false;
+            if (!debug.enabled) win.running = false;
           }
         }
       } else {
@@ -1663,7 +1664,13 @@ export function gameLoop() {
 
       if (!game.boardRiseSpeed)
         game.boardRiseSpeed = preset.speedValues[game.level];
-
+      if (game.raiseDelay > 0) {
+        if (game.currentChain === 0 && !game.boardHasAirborneBlock)
+          game.raiseDelay -= perf.gameSpeed;
+        if (game.raiseDelay < 0) game.raiseDelay = 0;
+        win.raiseDelayBar.style.width = `${100 *
+          (game.raiseDelay / game.raiseCap)}%`;
+      } else win.raiseDelayBar.style.width = "1%";
       if (
         game.mode !== "tutorial" &&
         game.frames % game.boardRiseSpeed == 0 &&
@@ -1683,14 +1690,9 @@ export function gameLoop() {
           game.pauseStack = false;
         }
         if (!game.boardRiseDisabled && !game.pauseStack && debug.freeze == 0) {
-          if (game.raiseDelay > 0) {
-            if (game.raiseDelay > 300) game.raiseDelay = 300;
-            game.raiseDelay -= game.boardRiseSpeed * perf.gameSpeed;
-            if (game.raiseDelay < 0) {
-              game.raiseDelay = 0;
-            }
-          } else if (
+          if (
             game.frames > 0 &&
+            game.raiseDelay === 0 &&
             !game.pauseStack &&
             !game.boardHasAirborneBlock
           ) {

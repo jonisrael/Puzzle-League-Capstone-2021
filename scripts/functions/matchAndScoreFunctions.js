@@ -257,22 +257,14 @@ export function checkMatch() {
           //   playAnnouncer(hold_it, -1, "holdIt", 0.3, false);
           // }
         }
-        if (game.combo > 3 || game.currentChain > 1) {
-          let potentialRaiseDelay =
-            6 * game.boardRiseSpeed +
-            30 * (game.currentChain - 1) +
-            10 * (game.combo - 4);
-          if (potentialRaiseDelay > game.raiseDelay)
-            game.raiseDelay = potentialRaiseDelay;
-          if (game.raiseDelay < 12) game.raiseDelay = 12;
-          if (game.raiseDelay > 180) game.raiseDelay = 180;
-          if (game.level > 6 && game.raiseDelay > 120) game.raiseDelay = 120;
-          if (debug.enabled) {
-            console.log(
-              `New Raise Delay = ${game.raiseDelay} = 6 * (${game.boardRiseSpeed}) + 6 * (${game.currentChain} - 1)))`
-            );
-          }
-        }
+        let potentialRaiseDelay = 0;
+        if (game.combo > 3) potentialRaiseDelay += 12 * game.combo - 12;
+        if (game.currentChain > 1 && add1ToChain) potentialRaiseDelay += 60;
+        game.raiseDelay = Math.min(
+          game.raiseCap,
+          game.raiseDelay + potentialRaiseDelay
+        );
+        if (debug.enabled) console.log("Raise Delay:", game.raiseDelay);
         // if (game.rise == 0) game.rise = 2; // Failsafe to prevent extra raise
       } // end if blocksCleared !== 0
       if (game.mode === "training") {

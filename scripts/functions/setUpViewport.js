@@ -74,8 +74,6 @@ function createDesktopDisplay() {
   //   document.getElementById("home-page").onselectstart = false;
   // }
 
-  let headerRow = document.createElement("tr");
-  let infoRow = document.createElement("tr");
   win.timeHeader = document.createElement("th");
   win.scoreHeader = document.createElement("th");
   win.levelHeader = document.createElement("th");
@@ -107,23 +105,7 @@ function createDesktopDisplay() {
   win.mainInfoDisplay.innerHTML = "";
   appContainer.appendChild(win.mainInfoDisplay);
 
-  let topSection = document.createElement("div");
-  topSection.setAttribute("id", "top-section");
-  appContainer.appendChild(topSection);
-
-  win.gameInfoTable = document.createElement("table");
-  win.gameInfoTable.setAttribute("id", "game-info-table");
-  win.gameInfoTable.appendChild(headerRow);
-  topSection.appendChild(win.gameInfoTable);
-  headerRow.appendChild(win.timeHeader);
-  headerRow.appendChild(win.scoreHeader);
-  headerRow.appendChild(win.levelHeader);
-  headerRow.appendChild(win.multiplierHeader);
-  win.gameInfoTable.appendChild(infoRow);
-  infoRow.appendChild(win.timeDisplay);
-  infoRow.appendChild(win.scoreDisplay);
-  infoRow.appendChild(win.levelDisplay);
-  infoRow.appendChild(win.multiplierDisplay);
+  createGameInfoTable(appContainer);
 
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
@@ -258,11 +240,11 @@ function createDesktopDisplay() {
   } else if (game.mode === "training") {
     setUpTrainingMode(column3);
   }
-
   createClickListeners();
 }
 
 function createMobileDisplay() {
+  console.log("Creating mobile display");
   game.cursor_type = "illegalCursorUp";
   let container = document.getElementById("container");
   container.innerHTML = ""; // Empties the home page
@@ -273,6 +255,8 @@ function createMobileDisplay() {
 
   let headerRow = document.createElement("tr");
   let infoRow = document.createElement("tr");
+  let pauseButton = document.createElement("button");
+
   win.timeHeader = document.createElement("th");
   win.scoreHeader = document.createElement("th");
   win.levelHeader = document.createElement("th");
@@ -308,35 +292,7 @@ function createMobileDisplay() {
   win.mainInfoDisplay.innerHTML = "";
   mainInfoContainer.appendChild(win.mainInfoDisplay);
 
-  let topSection = document.createElement("div");
-  topSection.setAttribute("id", "top-section");
-  appContainer.appendChild(topSection);
-
-  win.gameInfoTable = document.createElement("table");
-  win.gameInfoTable.setAttribute("id", "game-info-table");
-  win.gameInfoTable.appendChild(headerRow);
-  topSection.appendChild(win.gameInfoTable);
-  headerRow.appendChild(win.timeHeader);
-  headerRow.appendChild(win.scoreHeader);
-  headerRow.appendChild(win.levelHeader);
-  headerRow.appendChild(win.multiplierHeader);
-  win.gameInfoTable.appendChild(infoRow);
-  infoRow.appendChild(win.timeDisplay);
-  infoRow.appendChild(win.scoreDisplay);
-  infoRow.appendChild(win.levelDisplay);
-  infoRow.appendChild(win.multiplierDisplay);
-  // win.gameInfoTable.innerHTML = `
-  //   <tr style="color:black">
-  //     <th>${win.timeHeader.innerHTML}</th>
-  //     <th>${win.scoreHeader.innerHTML}</th>
-  //     <th>${win.levelHeader.innerHTML}</th>
-  //   </tr>
-  //   <tr>
-  //     <td>${win.timeDisplay.innerHTML}</td>
-  //     <td>${win.scoreDisplay.innerHTML}</td>
-  //     <td>${win.levelDisplay.innerHTML}</td>
-  //   </tr>
-  // `;
+  createGameInfoTable(appContainer);
 
   let gameContainer = document.createElement("div");
   gameContainer.setAttribute("id", "game-container");
@@ -397,61 +353,6 @@ function createMobileDisplay() {
   gameContainer.appendChild(win.cvs);
   win.highScoreDisplay = document.createElement("h3");
   win.highScoreDisplay.setAttribute("id", "high-score-display");
-  // column1.appendChild(win.highScoreDisplay);
-
-  // // Add invisible "Resume play" button, to be visible when game is paused
-  // let resumeButton = document.createElement("button");
-  // resumeButton.setAttribute("id", "resume-button");
-  // resumeButton.className = "default-button pause-buttons";
-  // resumeButton.style.display = "none";
-  // resumeButton.innerHTML = "<u>C</u>ontinue";
-  // gameContainer.appendChild(resumeButton);
-  // resumeButton.addEventListener("click", (event) => {
-  //   unpause();
-  // });
-
-  // // Add invisible "Main Menu" button, to be visible when game is paused
-  // let restartButton = document.createElement("button");
-  // restartButton.setAttribute("id", "restart-button");
-  // restartButton.className = "default-button pause-buttons";
-  // restartButton.style.display = "none";
-  // restartButton.innerHTML = "<u>R</u>estart";
-  // gameContainer.appendChild(restartButton);
-  // restartButton.addEventListener("click", (event) => {
-  //   win.running = false;
-  //   win.restartGame = true;
-  // });
-
-  // let mainMenuButton = document.createElement("button");
-  // mainMenuButton.setAttribute("id", "menu-button");
-  // mainMenuButton.className = "default-button pause-buttons";
-  // mainMenuButton.style.display = "none";
-  // mainMenuButton.innerHTML = "<u>M</u>enu";
-  // gameContainer.appendChild(mainMenuButton);
-  // mainMenuButton.addEventListener("click", (event) => {
-  //   win.running = false;
-  //   render(state.Home);
-  // });
-
-  let pauseButton = document.createElement("button");
-  pauseButton.setAttribute("id", "pause-button");
-  pauseButton.className = "default-button";
-  if (game.mode === "training") {
-    pauseButton.innerHTML = "Training Features";
-    pauseButton.style.fontSize = "0.8rem";
-  } else if (game.mode === "tutorial") {
-    pauseButton.innerHTML = "Advance";
-  } else {
-    pauseButton.innerHTML = "Pause";
-  }
-
-  pauseButton.addEventListener("click", (event) => {
-    game.tutorialRunning && !tutorial.chainChallenge
-      ? nextDialogue(tutorial.msgIndex)
-      : game.paused
-      ? unpause()
-      : pause();
-  });
 
   document
     .getElementById("game-info-table")
@@ -487,13 +388,76 @@ function createMobileDisplay() {
   // } else if (game.mode === "training") {
   //   setUpTrainingMode(gameContainer);
   // }
-  if (game.mode === "tutorial") {
-    topSection.append(pauseButton);
-    pauseButton.innerHTML = "Advance";
-  } else {
-    topSection.append(pauseButton);
-  }
   createClickListeners();
+}
+
+function createGameInfoTable(appContainer) {
+  let topSection = document.createElement("div");
+  let headerRow = document.createElement("tr");
+  let infoRow = document.createElement("tr");
+  let raiseDelayBarRow = document.createElement("tr");
+  let raiseDelayBarSection = document.createElement("td");
+  let raiseDelayBarOutline = document.createElement("div");
+  win.raiseDelayBar = document.createElement("div");
+  win.gameInfoTable = document.createElement("table");
+  topSection.setAttribute("id", "top-section");
+  raiseDelayBarRow.setAttribute("id", "raise-delay-info");
+  topSection.setAttribute("id", "top-section");
+  win.gameInfoTable.setAttribute("id", "game-info-table");
+  raiseDelayBarSection.id = "raise-delay-section";
+  raiseDelayBarOutline.id = "raise-delay-outline";
+  win.raiseDelayBar.id = "raise-delay-bar";
+  win.gameInfoTable.appendChild(headerRow);
+  topSection.appendChild(win.gameInfoTable);
+  headerRow.appendChild(win.timeHeader);
+  headerRow.appendChild(win.scoreHeader);
+  headerRow.appendChild(win.levelHeader);
+  headerRow.appendChild(win.multiplierHeader);
+  win.gameInfoTable.appendChild(infoRow);
+  infoRow.appendChild(win.timeDisplay);
+  infoRow.appendChild(win.scoreDisplay);
+  infoRow.appendChild(win.levelDisplay);
+  infoRow.appendChild(win.multiplierDisplay);
+  raiseDelayBarOutline.appendChild(win.raiseDelayBar);
+  raiseDelayBarSection.setAttribute("colspan", "4");
+  raiseDelayBarSection.appendChild(raiseDelayBarOutline);
+  // raiseDelayBarOutline.innerHTML = "____________________"; // 20
+  raiseDelayBarRow.appendChild(raiseDelayBarSection);
+  win.gameInfoTable.appendChild(document.createElement("tr"));
+  win.gameInfoTable.appendChild(raiseDelayBarRow);
+  appContainer.appendChild(topSection);
+
+  if (win.mobile) {
+    let pauseButton = document.createElement("button");
+    pauseButton.id = "pause-button";
+    pauseButton.className = "default-button pause-buttons";
+    pauseButton.innerHTML = "Pause";
+    if (game.mode === "tutorial") {
+      topSection.append(pauseButton);
+      pauseButton.innerHTML = "Advance";
+    } else {
+      topSection.append(pauseButton);
+    }
+    pauseButton.setAttribute("id", "pause-button");
+    pauseButton.className = "default-button";
+    if (game.mode === "training") {
+      pauseButton.innerHTML = "Training Features";
+      pauseButton.style.fontSize = "0.8rem";
+    } else if (game.mode === "tutorial") {
+      pauseButton.innerHTML = "Advance";
+    } else {
+      pauseButton.innerHTML = "Pause";
+    }
+
+    pauseButton.addEventListener("click", (event) => {
+      console.log("pause pushed");
+      game.tutorialRunning && !tutorial.chainChallenge
+        ? nextDialogue(tutorial.msgIndex)
+        : game.paused
+        ? unpause()
+        : pause();
+    });
+  }
 }
 
 function setUpGameLogDisplay(parentElement) {

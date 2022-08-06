@@ -28,6 +28,11 @@ import { arcadeEvents } from "./timeEvents";
 export function pause(lostFocus = false, message = "Pause") {
   // document.getElementById("fps-display").style.display = "none";
   game.paused = true;
+  try {
+    printDebugInfo();
+  } catch (error) {
+    console.error(error, error.stack);
+  }
   document.getElementById("pause-button").innerHTML = "Unpause";
   document.getElementById("pause-button").fontSize = "1.5rem";
   //   "win:",
@@ -66,7 +71,6 @@ export function pause(lostFocus = false, message = "Pause") {
     win.cvs.height = (grid.ROWS + 2) * grid.SQ;
     drawGrid();
   }
-  printDebugInfo();
 }
 
 export function unpause() {

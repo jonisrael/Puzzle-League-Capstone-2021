@@ -170,17 +170,17 @@ export const grid = {
 // multValues: [1, 1, 1.25, 1.5, 2, 2.25, 2.5, 3, 3.25, 3.5, 4],
 // controlsDefaultMessage: "",
 
-export const preset5Levels = {
-  //            00, 00, 30, 60, 90,120,150,180,210,240,270
-  // old speed values
-  speedValues: [120, 58, 46, 34, 22, 10, 4, 4, 2, 2, 1],
-  clearValues: [180, 100, 90, 80, 70, 60, 50, 40, 30, 20, 16],
-  blinkValues: [110, 60, 54, 48, 42, 36, 30, 24, 18, 12, 8],
-  faceValues: [70, 40, 36, 32, 28, 24, 20, 16, 12, 8, 8],
-  popMultiplier: [16, 10, 10, 10, 8, 8, 6, 6, 6, 6, 6],
-  stallValues: [20, 20, 18, 16, 14, 14, 12, 12, 10, 10, 8],
-  multValues: [1, 1, 1.15, 1.3, 1.45, 1.6, 2, 2.25, 2.5, 2.75, 3],
-};
+// export const preset5Levels = {
+//   //            00, 00, 30, 60, 90,120,150,180,210,240,270
+//   // old speed values
+//   speedValues: [120, 58, 46, 34, 22, 10, 4, 4, 2, 2, 1],
+//   clearValues: [180, 100, 90, 80, 70, 60, 50, 40, 30, 20, 16],
+//   blinkValues: [110, 60, 54, 48, 42, 36, 30, 24, 18, 12, 8],
+//   faceValues: [70, 40, 36, 32, 28, 24, 20, 16, 12, 8, 8],
+//   popMultiplier: [16, 10, 10, 10, 8, 8, 6, 6, 6, 6, 6],
+//   stallValues: [20, 20, 18, 16, 14, 14, 12, 12, 10, 10, 8],
+//   multValues: [1, 1, 1.15, 1.3, 1.45, 1.6, 2, 2.25, 2.5, 2.75, 3],
+// };
 
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
@@ -219,6 +219,7 @@ export const win = {
   borderColor: "burlywood",
   cvs: null,
   ctx: null,
+  raiseDelayBar: null,
   gameLogDisplay: null,
   mainInfoDisplay: null,
   gameInfoTable: null,
@@ -386,6 +387,7 @@ export let game = {
   boardRiseRestarter: 0,
   deathTimer: 100,
   raiseDelay: 0,
+  raiseCap: 180,
   frames: -180,
   finalTime: 0,
   seconds: 0,

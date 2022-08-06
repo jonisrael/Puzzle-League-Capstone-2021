@@ -1,0 +1,35 @@
+tutorial_functions
+  runTutorialScript
+  createTutorialBoard
+  goToDialogue
+  loadTutorialPhase
+
+  
+
+scoring_tutorial_basic
+    phase 1
+	01_howToSwap -- text
+	02_match 3 or more -- text
+	03_select red block -- control
+	04_clear_3 -- control
+	05_blocks_clearing -- wait
+	06_clear_4 -- control
+	07_blocks_clearing -- wait
+	08_clear_5 -- control
+	09_blocks_clearing -- wait
+	10_clear 8 -- control
+	11_blocks_clearing -- wait
+	12_transition
+    phase 2
+	01_can you make set -- control
+	02_blocks clearing -- wait
+	transition
+	F1_out of moves -- wait for reset
+	F2_clear too small -- wait for reset
+
+arcade_tutorial_basic
+chains_tutorial_int
+surviving_tutorial_int
+buffering_swap_tutorial
+smart_match_tutorial
+using_multiple_move_orders
