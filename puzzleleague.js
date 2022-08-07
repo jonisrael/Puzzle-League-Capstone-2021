@@ -1387,7 +1387,7 @@ export function updateLevelEvents(level) {
   game.blockStallTime = preset.stallValues[level];
   game.blockPopMultiplier = preset.popMultiplier[level];
   game.panicIndex =
-    game.level <= 3 ? 1 : game.level <= 6 ? 2 : game.level <= 9 ? 3 : 5;
+    game.level <= 3 ? 1 : game.level <= 6 ? 2 : game.level <= 12 ? 3 : 5;
   if (game.level <= 6 && overtimeMusic.includes(sound.Music[0])) {
     playMusic(music[randInt(music.length, true)]);
   } else if (

@@ -851,7 +851,7 @@ export function removeFromOrderList(TargetSquare) {
 }
 
 export function randomPiece(level) {
-  if (level < 3) return PIECES[randInt(PIECES.length - 1)];
+  // if (level < 3) return PIECES[randInt(PIECES.length - 1)];
   return PIECES[randInt(PIECES.length)];
 }
 
