@@ -522,7 +522,7 @@ export const saveState = {
 export const cpu = {
   enabled: 0,
   control: 0,
-  cursorSpeedDivisor: 4,
+  cursorSpeedDivisor: 2,
   showInfo: 0,
   showFakeCursorPosition: false,
   up: false,

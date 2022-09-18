@@ -58,7 +58,7 @@ function advanceState(newMessage, newType) {
 function runEvents() {
   if (tutorial.phase === 1) eventsPhase1();
   else if (tutorial.phase === 2) eventsPhase2();
-  else if (tutorial.phase === 3) eventsPhase3();
+  // else if (tutorial.phase === 3) eventsPhase3();
 }
 
 function eventsPhase1() {

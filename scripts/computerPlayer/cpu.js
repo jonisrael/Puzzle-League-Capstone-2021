@@ -20,6 +20,7 @@ import {
 } from "../tutorial/tutorialScript";
 import { updateLevelEvents } from "../../puzzleleague";
 import { doCpuTouchInputs, updateCPUMouse } from "../clickControls";
+import { tryToAvoidDeath } from "./tryToAvoidDeath";
 
 // hole check order, prioritizing center
 const default_hole_check_order = [2, 1, 3, 0, 4, 5];
@@ -121,9 +122,13 @@ export function cpuAction(input, createHint = false, controlType = "digital") {
   let dir =
     game.highestCols[0] < 3 ? [0, grid.COLS - 1, 1] : [grid.COLS - 1, 0, -1];
 
-  // if (game.highestRow < 5 && game.boardRiseSpeed < 6)
-  //   coordinates = flattenStack();
+  if (game.highestRow < 5 && game.boardRiseSpeed < 6)
+    coordinates = flattenStack();
 
+  if (game.highestRow <= 1) {
+    cpu.randomInputCounter = 0;
+    coordinates = tryToAvoidDeath();
+  }
   if (!createHint && cpu.randomInputCounter > 0) {
     return randomAction(input);
   }

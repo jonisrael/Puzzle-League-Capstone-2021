@@ -854,10 +854,13 @@ export function endChain(potentialSecondarySuccessor) {
   cpu.matchList.length = 0;
   cpu.matchStrings.length = 0;
   // check for all clear bonus by checking bottom row for a non-vacant block
-  for (let x = 0; x < grid.COLS; x++) {
-    if (game.board[x][grid.ROWS - 1].color !== "vacant") break;
-    if (x === grid.COLS - 1) awardAllClearBonus = true;
+  if (!game.tutorialRunning) {
+    for (let x = 0; x < grid.COLS; x++) {
+      if (game.board[x][grid.ROWS - 1].color !== "vacant") break;
+      if (x === grid.COLS - 1) awardAllClearBonus = true;
+    }
   }
+
   if (game.currentChain > 8 || awardAllClearBonus) {
     playAudio(audio.fanfare5, 0.25);
     playAnnouncer(
@@ -1018,7 +1021,7 @@ function canvasBorderColor(level) {
   if (game.level === 4) [color, hue1, hue2] = ["#00FF00", 120, 60];
   if (game.level === 5) [color, hue1, hue2] = ["yellow", 50, 30];
   if (game.level === 6) [color, hue1, hue2] = ["orange", 30, 0];
-  if (game.mode === "training") return "color";
+  if (game.mode === "training") return color;
 
   let framesUntilLevelUp =
     arcadeEvents.levelUpIncrement -

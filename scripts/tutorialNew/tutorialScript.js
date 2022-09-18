@@ -13,7 +13,7 @@ import {
 } from "../global";
 import { newBlock, updateLevelEvents } from "../../puzzleleague";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
-import { createTutorialBoard, tutorialBoards } from "./tutorialBoards";
+import { tutorialBoards } from "./tutorialBoards";
 import { tutorialMessages } from "./tutorialMessages";
 import { loadTutorialState, tutorialInputs } from "./tutorialEvents";
 import { audio } from "../fileImports";
@@ -49,6 +49,27 @@ export const tutorial = {
 };
 
 console.log(tutorial);
+
+export function createTutorialBoard(colorLocations, blocksSelectable = false) {
+  for (let c = 0; c < COLS; c++) {
+    for (let r = 0; r < ROWS + 2; r++) {
+      game.board[c][r].tutorialSelectable = blocksSelectable;
+      if (r > ROWS - 1) {
+        game.board[c][r].color = randomPiece(game.level);
+        game.board[c][r].type = blockType.DARK;
+      } else {
+        for (let i in colorLocations) {
+          let [locX, locY, definedColor, timer] = colorLocations[i];
+          if (c === locX && r === locY) {
+            game.board[c][r].color = definedColor;
+            if (timer !== undefined) game.board[c][r].timer = timer;
+          }
+        }
+      }
+    }
+  }
+  fixNextDarkStack();
+}
 
 export function nextDialogue(index) {
   console.log(

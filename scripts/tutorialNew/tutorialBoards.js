@@ -97,7 +97,7 @@ export function runTutorialScript(input, frame) {
   return input;
 }
 
-export function createTutorialBoard(colorLocations, blocksSelectable = false) {
+function createTutorialBoard(colorLocations, blocksSelectable = false) {
   for (let c = 0; c < COLS; c++) {
     for (let r = 0; r < ROWS + 2; r++) {
       game.board[c][r].tutorialSelectable = blocksSelectable;
