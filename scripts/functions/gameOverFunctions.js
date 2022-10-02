@@ -71,6 +71,7 @@ export function isGameOver() {
     !game.boardIsClearing &&
     !game.boardHasSwappingBlock &&
     !game.pauseStack &&
+    !game.boardHasAirborneBlock &&
     game.raiseDelay === 0
   ) {
     game.deathTimer -= perf.gameSpeed;
