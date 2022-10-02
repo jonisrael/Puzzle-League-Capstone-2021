@@ -412,6 +412,7 @@ export let game = {
   lastChain: 0,
   previousChain: 0,
   largestChain: 0,
+  speedUpTimers: false,
   largestChainScore: 0,
   largestCombo: 0,
   totalClears: 0,
@@ -428,6 +429,7 @@ export let game = {
   disableSwap: false,
   disableRaise: false,
   currentlyQuickRaising: false,
+  flashDangerColumns: false, // 10-2-22 used to warn player not to kill self
   swapPressed: false,
   raisePressed: false,
   readyForNewRow: false,
@@ -532,7 +534,6 @@ export const cpu = {
   swap: false,
   inputType: "digital",
   swapSuccess: false,
-  quickRaise: false,
   pause: false,
   prevTargetX: 5,
   prevTargetY: 5,

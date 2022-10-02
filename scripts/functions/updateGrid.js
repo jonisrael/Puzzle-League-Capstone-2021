@@ -31,6 +31,12 @@ export function updateGrid(frameAdvance = false) {
   game.pauseStack = false;
   game.highestCols = [];
   if (game.drawScoreTimeout > 0) game.drawScoreTimeout--;
+  if (game.flashDangerColumns > 0) {
+    game.flashDangerColumns--;
+    if (game.currentChain === 0 && game.cursor_type[0] === "d") {
+      game.flashDangerColumns = 0;
+    }
+  }
   if (touch.doubleClickTimer > 0) {
     touch.doubleClickTimer -= 1;
     if (touch.doubleClickTimer === 0) touch.doubleClickCounter = 0;
@@ -127,7 +133,7 @@ export function updateGrid(frameAdvance = false) {
         Square.timer -= 1;
         if (Square.type !== "swapping") {
           Square.swapDirection = 0;
-          game.boardRiseDisabled = true;
+          // game.boardRiseDisabled = true;
         }
       }
 
@@ -170,7 +176,6 @@ export function updateGrid(frameAdvance = false) {
         Square.targetX = Square.previewX = undefined;
         Square.lightTimer = 0;
         game.pauseStack = true;
-        game.boardRiseDisabled = true;
         // console.log(x, y, Square);
         switch (Square.timer) {
           case Square.switchToPoppedFrame + 2:
@@ -203,7 +208,8 @@ export function updateGrid(frameAdvance = false) {
                 } else break;
               }
             }
-            game.boardRiseDisabled = false;
+            game.pauseStack = false;
+            // game.boardRiseDisabled = false; // comment out 10-2-22
             for (let j = y - 1; j >= 0; j--) {
               // create chain available blocks above current
               // If clearing piece detected, break loop since no more chainable blocks.
@@ -234,8 +240,14 @@ export function updateGrid(frameAdvance = false) {
       } else {
         if (Square.type === "panicking") Square.type = "normal";
       }
+
+      // 10-2-2022: adding block clear speed up function
+      if (game.speedUpTimers && Square.type !== "swapping") {
+        Square.timer = Math.floor(Square.timer / 2);
+      }
     } // end x
   } // end y
+  if (game.speedUpTimers) game.speedUpTimers = false;
   if (touch.removePreviews) touch.removePreviews = false;
   else if (numberOfPreviews > 1) touch.removePreviews = true;
 }

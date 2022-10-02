@@ -243,8 +243,15 @@ class Block {
 
   drawGridLines() {
     let filename = "grid_line";
-    if (this.y === 0) filename = "grid_line_red";
-    else if (
+    // if (this.y === 0 && (!game.flashDangerColumns || game.frames % 12 < 6)) {
+    //   filename = "grid_line_red";
+    // }
+    if (
+      this.y === 0 ||
+      (0 !== 0 && game.highestRow <= 1 && game.highestCols.includes(this.x))
+    ) {
+      filename = "grid_line_red";
+    } else if (
       this.lightTimer != 0 &&
       (!this.lightBlink || game.frameMod[60] < 30)
     ) {
@@ -611,6 +618,20 @@ class Block {
     }
   }
 
+  drawWarningColumns() {
+    let filename = "gridLineWarnMid";
+    if (this.y === 0) return;
+    if (this.y === 1) filename = "gridLineWarnTop";
+    if (this.y === grid.ROWS - 1) filename = "gridLineWarnBot";
+    if (game.frames % 15 < 8) {
+      win.ctx.drawImage(
+        loadedSprites[filename],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
+    }
+  }
+
   draw() {
     let animationIndex = -1;
     switch (this.type) {
@@ -763,19 +784,19 @@ export function drawGrid() {
         Square.drawGridLines();
       }
 
-      // if (
-      //   cpu.matchList.length !== 0 &&
-      //   cpu.matchList[1][0] === x &&
-      //   cpu.matchList[1][1] === y &&
-      //   helpPlayer.timer === 0
-      // ) {
-      //   Square.drawHint();
-      // }
       if (helpPlayer.timer === 0 && cpu.matchStrings.includes([x, y].join())) {
         Square.drawHint();
       }
-    }
-  }
+
+      if (
+        game.highestRow <= 1 &&
+        game.highestCols.includes(x) &&
+        game.flashDangerColumns
+      ) {
+        Square.drawWarningColumns();
+      }
+    } // end check y
+  } // end check x
 
   swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
   arrowListArray.forEach((Square) => Square.drawArrows());
@@ -941,7 +962,7 @@ export function createNewRow() {
     return;
   }
 
-  if (game.pauseStack || game.boardRiseDisabled || debug.freeze == 1) {
+  if (debug.freeze == 1) {
     return;
   }
 
@@ -1641,7 +1662,7 @@ export function gameLoop() {
       }
 
       if (game.currentlyQuickRaising) {
-        game.disableSwap = true;
+        // game.disableSwap = true;
         game.message = "Quick-Raise Initiated";
         game.messageChangeDelay = 1000;
         win.mainInfoDisplay.style.color = "black";
@@ -1689,15 +1710,13 @@ export function gameLoop() {
           game.boardRiseRestarter = 0;
           touch.doubleClickCounter = 0;
           touch.doubleClickTimer = 0;
-          game.boardRiseDisabled = false;
           game.pauseStack = false;
         }
-        if (!game.boardRiseDisabled && !game.pauseStack && debug.freeze == 0) {
+
+        if (game.frames > 0) {
           if (
-            game.frames > 0 &&
-            game.raiseDelay === 0 &&
-            !game.pauseStack &&
-            !game.boardHasAirborneBlock
+            (!game.pauseStack && game.raiseDelay === 0) ||
+            game.currentlyQuickRaising
           ) {
             game.rise = (game.rise + 2) % 32;
             if (game.cursor.y === 0 && game.rise !== 0) game.cursor.y += 1;
@@ -1709,6 +1728,7 @@ export function gameLoop() {
             }
           }
         }
+
         if (game.rise >= 28) game.readyForNewRow = true;
         if (
           game.readyForNewRow &&
@@ -1725,6 +1745,8 @@ export function gameLoop() {
       if (!game.over && isGameOver(game.score)) {
         game.finalTime = (game.frames / 60).toFixed(1);
         game.frames = 0;
+        game.raiseDelay = -2;
+        game.pauseStack = true;
         game.over = true;
         gameOverBoard();
         drawGrid();
@@ -1742,12 +1764,14 @@ export function gameLoop() {
       if (game.raisePressed) {
         if (game.frames < -2) game.frames = -2;
         else game.raisePressed = false;
-        if (!game.boardRiseDisabled) {
-          if (!cpu.enabled || (cpu.enabled && game.highestRow > 1)) {
-            if (game.rise == 0) game.rise = 2;
-            game.currentlyQuickRaising = true;
-            game.raiseDelay = 0;
-          }
+        if (game.currentChain === 0 || game.highestRow > 1) {
+          if (game.rise == 0) game.rise = 2; // quick start game
+          game.pauseStack = false;
+          // game.speedUpTimers = true;
+          game.currentlyQuickRaising = true;
+          if (game.currentChain === 0) game.raiseDelay = 0;
+        } else if (game.highestRow === 1) {
+          game.flashDangerColumns = 50;
         }
       }
       if (game.swapPressed) {

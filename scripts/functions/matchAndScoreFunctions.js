@@ -240,7 +240,7 @@ export function checkMatch() {
 
         // if stack is very high, determine when to say "hold it!"
         if (game.highestRow === 1 || (game.highestRow < 4 && game.level > 6)) {
-          if (!game.boardRiseDisabled && game.currentChain < 2) {
+          if (!game.pauseStack && game.currentChain < 2) {
             // always say hold it in overtime
             if (game.holdItSoundAllowed) {
               playAudio(hold_it[randInt(3)], 0.3, false, false);

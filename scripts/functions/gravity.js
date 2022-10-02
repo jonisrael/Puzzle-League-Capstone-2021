@@ -25,7 +25,8 @@ export function doGravity(gameSpeed) {
       game.board[c][grid.ROWS - 1].timer == 0
     ) {
       game.board[c][grid.ROWS - 1].type = blockType.NORMAL;
-      game.boardRiseDisabled = false;
+      // game.boardRiseDisabled = false;
+      game.pauseStack = true; // 10-2-22
     }
 
     //
@@ -53,8 +54,8 @@ export function doGravity(gameSpeed) {
         INTERACTIVE_TYPES.includes(game.board[c][r].type)
       ) {
         // if normal block, fall one unit
-        game.boardRiseDisabled = false;
-        game.pauseStack = true;
+        // game.boardRiseDisabled = false; 10-2-22 comment out
+        // game.pauseStack = true; 10-2-22 comment out
         // When a block is ready to fall
         if (game.board[c][r].timer == 0) {
           transferProperties(game.board[c][r], game.board[c][r + 1], "to");

@@ -70,7 +70,7 @@ export function isGameOver() {
     game.currentChain === 0 &&
     !game.boardIsClearing &&
     !game.boardHasSwappingBlock &&
-    !game.boardRiseDisabled &&
+    !game.pauseStack &&
     game.raiseDelay === 0
   ) {
     game.deathTimer -= perf.gameSpeed;
@@ -118,12 +118,12 @@ export function isGameOver() {
       //     game.board[x][y].type = blockType.NORMAL;
       //   }
       // }
-
       return false;
-    } // end non-arcade game over
-    endGame();
-    game.rise = 0;
-    return true;
+    } else {
+      endGame();
+      game.rise = 0;
+      return true;
+    }
   }
   return false;
 }
@@ -142,7 +142,7 @@ export function gameOverBoard() {
   if (game.frames == 4) {
     playAudio(audio.topout);
   }
-  game.boardRiseDisabled = true;
+  game.pauseStack = true;
   game.rise = 0;
   let deathRow = Math.floor(game.frames / 2);
   for (let i = 0; i < grid.COLS; i++) {

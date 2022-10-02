@@ -11,6 +11,9 @@ import MOVING_CURSOR from ".././assets/Sprites/cursors/selectable_cursor_pink.pn
 import UNSELECTABLE_CURSOR from ".././assets/Sprites/cursors/unselectable_cursor.png";
 import GRID_LINE from ".././assets/Sprites/grid_line.png";
 import GRID_LINE_RED from ".././assets/Sprites/grid_line_red.png";
+import GRID_WARNING_TOP from ".././assets/Sprites/grid_warning_top.png";
+import GRID_WARNING_MID from ".././assets/Sprites/grid_warning_middle.png";
+import GRID_WARNING_BOT from ".././assets/Sprites/grid_warning_bottom.png";
 import ROW_LIGHT_LEFT from ".././assets/Sprites/row_light_left.png";
 import ROW_LIGHT_MID from ".././assets/Sprites/row_light_mid.png";
 import ROW_LIGHT_RIGHT from ".././assets/Sprites/row_light_right.png";
@@ -325,6 +328,9 @@ const sprite = {
   movingCursor: MOVING_CURSOR,
   grid_line: GRID_LINE,
   grid_line_red: GRID_LINE_RED,
+  gridLineWarnTop: GRID_WARNING_TOP,
+  gridLineWarnMid: GRID_WARNING_MID,
+  gridLineWarnBot: GRID_WARNING_BOT,
   rowLightLeft: ROW_LIGHT_LEFT,
   rowLightMid: ROW_LIGHT_MID,
   rowLightRight: ROW_LIGHT_RIGHT,

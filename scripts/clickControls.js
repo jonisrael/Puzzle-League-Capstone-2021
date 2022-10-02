@@ -143,10 +143,13 @@ export function doMouseDown(e, virtualX, virtualY) {
 
     if (
       !game.disableRaise &&
-      game.board[game.cursor.x][game.cursor.y].color === "vacant" &&
-      game.highestRow > 1
+      game.board[game.cursor.x][game.cursor.y].color === "vacant"
     ) {
-      game.raisePressed = true;
+      if (game.highestRow > 1) {
+        game.raisePressed = true;
+      } else {
+        game.flashDangerColumns = 50;
+      }
     }
   }
   if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
