@@ -50,7 +50,9 @@ export function checkTutorialEvents(state) {
 export function loadTutorialState(state, index = 0, allSelectable = false) {
   tutorial.state = state;
   tutorial.msgIndex = index;
-  game.frames = 0;
+  game.frames = 62;
+  game.score = game.minutes = game.seconds = 0;
+
   if (tutorial.state == tutorial.board.length) {
     tutorial.state = tutorial.board.length - 1;
     console.log("tutorial complete");
@@ -66,13 +68,12 @@ export function loadTutorialState(state, index = 0, allSelectable = false) {
   changeAllBlockProperties({ color: "vacant" });
   console.log(tutorialBoards[state], tutorial.state, allSelectable);
   if (tutorial.chainChallenge) {
-    createTutorialBoard(tutorial.board[4], true);
+    createTutorialBoard(tutorial.board[3], true);
     updateLevelEvents(0);
+    tutorial.failCount = 0;
   } else {
     createTutorialBoard(tutorial.board[state], allSelectable);
   }
-
-  game.frames = game.score = game.minutes = game.seconds = 0;
 
   if (state === 0) {
     game.cursor.y = -1;

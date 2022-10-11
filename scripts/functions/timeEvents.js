@@ -105,7 +105,8 @@ export function checkTime() {
       if (!game.over && !debug.enabled && game.mode !== "tutorial")
         playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
       game.messagePriority = "";
-      game.defaultMessage = "X to swap Z to lift the stack!";
+      game.defaultMessage =
+        "Arrow Keys and S/R to play, or use a Touch Screen!";
       game.message = game.defaultMessage;
       break;
     case arcadeEvents.tenSecondsRemain:

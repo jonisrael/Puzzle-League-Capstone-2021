@@ -12,6 +12,9 @@ export default (st) => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul> -->
       <hr />
+      <br />
+      <p style="text-align: center;">Play on a touch screen or on keyboard!</p>
+      <hr />
       <div id="start-options">
         <button id="arcade-button" class="default-button start-buttons">
           Play Game!

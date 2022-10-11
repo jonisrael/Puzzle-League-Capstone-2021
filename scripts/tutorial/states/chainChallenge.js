@@ -1,4 +1,5 @@
 import { updateLevelEvents } from "../../../puzzleleague";
+import { pause } from "../../functions/pauseFunctions";
 import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
 import { debug, game, grid, touch, win } from "../../global";
@@ -8,6 +9,11 @@ import {
   deselectAllBlocks,
   tutorial,
 } from "../tutorialScript";
+
+// action timer definitions:
+// action.timer === -2 means the board is currently waiting for a clear to occur.
+// action.timer === -3 means the board is waiting for clear to end.
+// action.timer > 0 means the board is waiting, and at 0, it will restart.
 
 export function chainChallengeEvents() {
   let action = game.board[0][grid.ROWS]; // off screen hidden block used for reference
@@ -47,9 +53,11 @@ export function chainChallengeEvents() {
     }
     createTutorialBoard(tutorial.board[4], true);
     allBlocksAreSelectable(true);
-  }
+    if (tutorial.failCount > 0) {
+      pause(false, game.message, false, true); // does not stop music and hides restart
+    }
+  } // end actionTimer === 0
   if (action.timer === -2 && game.currentChain > 0) {
-    console.log("chain has started");
     action.timer = -3;
   }
 
@@ -57,16 +65,17 @@ export function chainChallengeEvents() {
     // action timer is set to -3 upon ending chain in endChain() function
     deselectAllBlocks();
     touch.moveOrderExists = false;
-    action.timer = 90;
+    action.timer = 30;
+    tutorial.failCount++;
     game.message = `${game.lastChain}x achieved. `;
     if (game.lastChain < 3) game.message += `Try again!`;
-    else if (game.lastChain < 5) game.message += `Good!`;
-    else if (game.lastChain < 7) game.message += `Excellent!`;
-    else if (game.lastChain < 9) game.message += `Very close!`;
+    else if (game.lastChain < 5) game.message += `Good! Can you get to 5?`;
+    else if (game.lastChain < 7) game.message += `Excellent! Can you get 7?`;
+    else if (game.lastChain < 9) game.message += `Very close! Can you get 9?`;
     else game.message = "Congratulations, you beat the Chain Challenge!";
   }
 
   if (game.largestChain === 9 && action.timer < 2) {
-    action.timer === 300;
+    win.running = false;
   }
 }

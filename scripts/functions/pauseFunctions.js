@@ -25,7 +25,12 @@ import { drawGrid } from "../../puzzleleague";
 import { previous } from "./playbackGame";
 import { arcadeEvents } from "./timeEvents";
 
-export function pause(lostFocus = false, message = "Pause") {
+export function pause(
+  lostFocus = false,
+  message = "Pause",
+  pauseMusic = true,
+  hideRestart = false
+) {
   // document.getElementById("fps-display").style.display = "none";
   game.paused = true;
   try {
@@ -55,12 +60,21 @@ export function pause(lostFocus = false, message = "Pause") {
   else win.mainInfoDisplay.innerHTML = message;
   // sound.Music[1].volume *= 0.25;
   if (!debug.enabled) {
-    playAudio(audio.pause, 0.1);
-    sound.Music[1].pause();
+    if (pauseMusic) {
+      playAudio(audio.pause, 0.1);
+      sound.Music[1].pause();
+    }
+
     // still show board during debug mode
     win.mainInfoDisplay.style.color = "black";
     win.cvs.style.display = "none";
     addPauseContent();
+    if (hideRestart) {
+      document.querySelector("#resume-button").textContent = "Retry";
+      document.querySelector("#restart-button").style.display = "none";
+      document.querySelector("#menu-button").textContent = "Menu";
+      win.mainInfoDisplay.textContent = message;
+    }
     // document.getElementById("fps-display").style.display = "none";
     // document.getElementById("resume-button").style.display = "flex";
     // document.getElementById("restart-button").style.display = "flex";

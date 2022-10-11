@@ -1443,7 +1443,8 @@ export function gameLoop() {
   if (!win.running || win.view !== "Home") {
     // document.getElementById("page-body").style.maxHeight = "none";
     // document.getElementById("page-body").style.maxWidth = "95vh";
-    console.log("GAME NOT RUNNING");
+    console.log("Closing game...");
+    tutorial.chainChallenge = false;
     closeGame(game.over);
     if (win.restartGame) {
       startGame(perf.gameSpeed);

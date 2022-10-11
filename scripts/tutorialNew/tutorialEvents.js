@@ -50,7 +50,7 @@ export function checkTutorialEvents(state) {
 export function loadTutorialState(state, index = 0, allSelectable = false) {
   tutorial.state = state;
   tutorial.msgIndex = index;
-  game.frames = 0;
+  game.frames = 62;
   if (tutorial.state == tutorial.board.length) {
     tutorial.state = tutorial.board.length - 1;
     console.log("tutorial complete");

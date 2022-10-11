@@ -23,8 +23,6 @@ export function chainChallengeEvents() {
     action.timer = 120;
   }
 
-  // if ()
-
   if (game.largestChain === 9 && action.timer === 0) {
     win.running = false;
   }
@@ -37,7 +35,7 @@ export function chainChallengeEvents() {
         "Chain Challenge! Can you clear the whole board in one chain?";
     game.currentChain = 0;
     game.lastChain = 0;
-    game.frames = 0;
+    game.frames = 62;
     action.timer = -2;
     for (let x = 0; x < grid.COLS; x++) {
       for (let y = 0; y < grid.ROWS; y++) {

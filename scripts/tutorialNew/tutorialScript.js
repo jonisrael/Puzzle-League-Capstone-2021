@@ -48,8 +48,6 @@ export const tutorial = {
   failCount: 0,
 };
 
-console.log(tutorial);
-
 export function createTutorialBoard(colorLocations, blocksSelectable = false) {
   for (let c = 0; c < COLS; c++) {
     for (let r = 0; r < ROWS + 2; r++) {
@@ -83,7 +81,7 @@ export function nextDialogue(index) {
     tutorialMessages.length
   );
 
-  game.frames = 0;
+  game.frames = 62;
   if (index < tutorialMessages[tutorial.state].length - 1) {
     console.log("go to next text box");
     tutorial.msgIndex++;
