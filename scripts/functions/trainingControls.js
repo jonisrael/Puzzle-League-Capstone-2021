@@ -1,4 +1,4 @@
-import { updateLevelEvents } from "../../puzzleleague";
+import { updateLevelEvents } from "../../mainGame";
 import { cpuAction } from "../computerPlayer/cpu";
 import {
   cpu,

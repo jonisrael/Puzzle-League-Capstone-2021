@@ -27,7 +27,7 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;
-  console.log("game completed normally:", gameFinished);
+  console.log("game not aborted:", gameFinished);
   if (!gameFinished) {
     sound.Music[1].pause();
     render(state.Home);
@@ -81,7 +81,10 @@ export function isGameOver() {
     // if debug, do not game over.
     if (debug.enabled || game.mode === "training" || game.score < 100) {
       game.score = game.currentChain = 0;
-      if (game.mode === "arcade" && !debug.enabled) {
+      if (
+        (game.mode === "arcade" || game.mode === "cpu-play") &&
+        !debug.enabled
+      ) {
         game.frames = game.minutes = game.seconds = 0;
         win.restartGame = true;
         sound.Music[1].pause();

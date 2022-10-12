@@ -1,5 +1,5 @@
 import { blockType, cpu, game, PIECES, randInt, randomPiece } from "../global";
-import { newBlock, updateLevelEvents } from "../../puzzleleague";
+import { newBlock, updateLevelEvents } from "../../mainGame";
 import { fixNextDarkStack } from "../functions/startGame";
 import { tutorialBoards } from "./tutorialBoards";
 import { tutorialInputs } from "./tutorialInputs";

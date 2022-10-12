@@ -1,6 +1,7 @@
 import { audio } from "../fileImports";
 import {
   announcer,
+  arbiter,
   bestScores,
   debug,
   game,
@@ -118,10 +119,13 @@ export function checkTime() {
       else arcadeEvents.nextText = "super-overtime";
       if (game.frames < arcadeEvents.overtimeStart)
         game.messagePriority = `10 seconds before ${arcadeEvents.nextText}!`;
+      // playAudio(audio.arbiterOvertimeWarning);
       playAnnouncer(
         announcer.hurryUpDialogue,
         announcer.hurryUpIndexLastPicked,
-        "hurryUp"
+        "hurryUp",
+        0.2,
+        true
       );
       break;
     case arcadeEvents.resetMessagePriority1:
@@ -170,9 +174,13 @@ export function checkTime() {
       playAnnouncer(
         announcer.overtimeDialogue,
         announcer.overtimeIndexLastPicked,
-        "overtime"
+        "overtime",
+        0.2,
+        true
       );
       defineTimeEvents(game.timeControl, false); // beforeOvertime is false
+      break;
+    case arcadeEvents.nextOvertime + 140:
       break;
     case arcadeEvents.resetMessagePriority2:
       if (game.mode === "training") break;

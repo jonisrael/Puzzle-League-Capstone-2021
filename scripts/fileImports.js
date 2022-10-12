@@ -288,6 +288,27 @@ import ANN_YOU_DONT_SEE_MOVES from ".././assets/Audio/Announcer/you don-t see mo
 import ANN_MAKE_NO_MISTAKE from ".././assets/Audio/Announcer/make no mistake there is no doubt.mp3";
 import ANN_DECISIVE_STRENGTH from ".././assets/Audio/Announcer/decisive strength.mp3";
 
+import ARBITER_LEVEL_1 from ".././assets/Audio/Arbiter/level_1.mp3";
+import ARBITER_LEVEL_2 from ".././assets/Audio/Arbiter/level_2.mp3";
+import ARBITER_LEVEL_3 from ".././assets/Audio/Arbiter/level_3.mp3";
+import ARBITER_LEVEL_4 from ".././assets/Audio/Arbiter/level_4.mp3";
+import ARBITER_LEVEL_5 from ".././assets/Audio/Arbiter/level_5.mp3";
+import ARBITER_LEVEL_6 from ".././assets/Audio/Arbiter/level_6.mp3";
+import ARBITER_LEVEL_7 from ".././assets/Audio/Arbiter/level_7.mp3";
+import ARBITER_LEVEL_8 from ".././assets/Audio/Arbiter/level_8.mp3";
+import ARBITER_LEVEL_9 from ".././assets/Audio/Arbiter/level_9.mp3";
+import ARBITER_LEVEL_10 from ".././assets/Audio/Arbiter/level_10.mp3";
+import ARBITER_LEVEL_11 from ".././assets/Audio/Arbiter/level_11.mp3";
+import ARBITER_LEVEL_12 from ".././assets/Audio/Arbiter/level_12.mp3";
+import ARBITER_LEVEL_13 from ".././assets/Audio/Arbiter/level_13.mp3";
+import ARBITER_LEVEL_14 from ".././assets/Audio/Arbiter/level_14.mp3";
+import ARBITER_LEVEL_15 from ".././assets/Audio/Arbiter/level_15.mp3";
+import ARBITER_CLEAR_SPEED_INC from ".././assets/Audio/Arbiter/clear_speed_increased.mp3";
+import ARBITER_OVERTIME_WARNING from ".././assets/Audio/Arbiter/overtime_warning.mp3";
+import ARBITER_S_OVERTIME_WARNING from ".././assets/Audio/Arbiter/super_overtime_warning.mp3";
+import ARBITER_OVERTIME from ".././assets/Audio/Arbiter/overtime_start.mp3";
+import ARBITER_S_OVERTIME from ".././assets/Audio/Arbiter/super_overtime_start.mp3";
+
 import HOLD_IT_1 from ".././assets/Audio/holdIt1.mp3";
 import HOLD_IT_2 from ".././assets/Audio/holdIt2.mp3";
 import HOLD_IT_3 from ".././assets/Audio/holdIt3.mp3";
@@ -613,6 +634,28 @@ const audio = {
   announcerWhereComeFrom: ANN_WHERE_COME_FROM,
   announcerDeservePraise: ANN_DESERVE_PRAISE,
   announcerMovesLikeThat: ANN_YOU_DONT_SEE_MOVES,
+
+  arbiterLevel_1: ARBITER_LEVEL_1,
+  arbiterLevel_2: ARBITER_LEVEL_2,
+  arbiterLevel_3: ARBITER_LEVEL_3,
+  arbiterLevel_4: ARBITER_LEVEL_4,
+  arbiterLevel_5: ARBITER_LEVEL_5,
+  arbiterLevel_6: ARBITER_LEVEL_6,
+  arbiterLevel_7: ARBITER_LEVEL_7,
+  arbiterLevel_8: ARBITER_LEVEL_8,
+  arbiterLevel_9: ARBITER_LEVEL_9,
+  arbiterLevel_10: ARBITER_LEVEL_10,
+  arbiterLevel_11: ARBITER_LEVEL_11,
+  arbiterLevel_12: ARBITER_LEVEL_12,
+  arbiterLevel_13: ARBITER_LEVEL_13,
+  arbiterLevel_14: ARBITER_LEVEL_14,
+  arbiterLevel_15: ARBITER_LEVEL_15,
+  arbiterOvertimeStart: ARBITER_OVERTIME,
+  arbiterSuperOvertimeStart: ARBITER_S_OVERTIME,
+  arbiterOvertimeWarning: ARBITER_OVERTIME_WARNING,
+  arbiterSuperOvertimeWarning: ARBITER_S_OVERTIME_WARNING,
+  arbiterClearSpeedIncreased: ARBITER_CLEAR_SPEED_INC,
+
   popcornMusic: POPCORN_SONG,
   trainingMusic: TRAINING_SONG,
   popcornExtendedMusic: POPCORN_SONG_EXTENDED,

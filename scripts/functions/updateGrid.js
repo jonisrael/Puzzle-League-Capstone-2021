@@ -37,9 +37,9 @@ export function updateGrid(frameAdvance = false) {
       game.flashDangerColumns = 0;
     }
   }
-  if (touch.doubleClickTimer > 0) {
-    touch.doubleClickTimer -= 1;
-    if (touch.doubleClickTimer === 0) touch.doubleClickCounter = 0;
+  if (touch.multiClickTimer > 0) {
+    touch.multiClickTimer -= 1;
+    if (touch.multiClickTimer === 0) touch.multiClickCounter = 0;
   }
   if (!game.tutorialRunning && !game.currentChain) game.boardRiseRestarter++; // Failsafe to restart stack rise
   for (let y = 0; y < grid.ROWS + 2; y++) {

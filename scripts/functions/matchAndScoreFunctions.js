@@ -206,8 +206,7 @@ export function checkMatch() {
             announcer.comboDialogue,
             announcer.comboIndexLastPicked,
             "combo",
-            0.2,
-            false
+            0.2
           );
       }
       game.scoreEarned = updateScore(

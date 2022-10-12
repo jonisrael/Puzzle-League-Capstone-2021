@@ -18,7 +18,7 @@ import { tutorialEventsAtState_1 } from "./states/state1";
 import { tutorialEventsAtState_2 } from "./states/state2";
 import { tutorialEventsAtState_3 } from "./states/state3";
 import { tutorialEventsAtState_4 } from "./states/state4";
-import { updateLevelEvents } from "../../puzzleleague";
+import { updateLevelEvents } from "../../mainGame";
 import { chainChallengeEvents } from "./states/chainChallenge";
 import { render } from "../..";
 import * as st from "../../store";

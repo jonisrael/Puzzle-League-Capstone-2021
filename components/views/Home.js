@@ -12,8 +12,10 @@ export default (st) => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul> -->
       <hr />
-      <br />
-      <p style="text-align: center;">Play on a touch screen or on keyboard!</p>
+      <p style="text-align: center;">
+        Play on a touch screen, or if you're at a computer, use the arrow keys
+        to move the cursor and S/R to swap and raise.
+      </p>
       <hr />
       <div id="start-options">
         <button id="arcade-button" class="default-button start-buttons">
@@ -36,27 +38,28 @@ export default (st) => html`
       <h1>How to play</h1>
       <p>
         <strong
-          >Clear blocks by matching 3 or more blocks vertically or
-          horizontally.</strong
+          >Swap blocks left andClear blocks and score points by matching 3 or
+          more blocks vertically or horizontally.</strong
         >
-        This is a <strong>combo</strong>, and is the basic way to score points.
-        If you create a combo of 4 or more, you will get a small bonus depending
-        on its size.
+        You can do this by swapping blocks horizontally. If you match more than
+        3, and you'll get a slight bonus based on the size of the clear.
       </p>
       <p>
-        The more advanced way score points is to create a
+        You can also score points by creating a
         <strong>chain</strong>. You can create a chain by setting up a second
         combo on top of a recently cleared combo such that when the blocks hit
-        the ground, they match with other blocks. Chains will get you points
-        much faster than single combos on their own. and the larger they are,
-        the better bonus you get. More information is in the "Tutorials"
-        section.
+        the ground, they match with other blocks. This is visually explained in
+        the tutorial above. Chains are the best way to score points.
       </p>
       <p>
-        The game ends when the stack reaches the top. The stack rise speed will
-        get faster every 20 seconds, which also increases the multiplier amount
-        of score earned. More information in the "Scoring" section.
+        The game ends when the stack reaches the top. The speed of the game will
+        increase in incremental levels, along with the score you earn for clears
+        and chains. At the end of the time control (usually two minutes),
+        "Overtime" occurs, and the stack speed will significantly increase until
+        you lose. However, the score you earn here will be at least doubled, and
+        you'll also gain points based on how long you survive.
       </p>
+
       <p>
         After the game ends, you can submit your scores to the leaderboard. The
         <a href="https://www.youtube.com/watch?v=oVI8MO4220w&ab_channel=Duke2go"
@@ -65,7 +68,15 @@ export default (st) => html`
         will be watching and cheering you on, so be sure to give it your best
         shot!
       </p>
-      <!--   -->
+      <hr />
+      <p>
+        This game is inspired by the "Puzzle League" series and plays in a
+        similar way. However, this is my own program that uses its own code. I
+        have developed unique mechanics and control systems not in the original
+        games, as well as a more simplified scoring system. You can check out
+        more information in the "Tutorials" section (many tutorials are still in
+        development).
+      </p>
     </div>
   </section>
 `;

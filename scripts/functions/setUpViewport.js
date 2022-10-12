@@ -1,5 +1,5 @@
 import { render } from "../..";
-import { checkIfHelpPlayer, updateLevelEvents } from "../../puzzleleague";
+import { checkIfHelpPlayer, updateLevelEvents } from "../../mainGame";
 import * as state from "../../store";
 import { createClickListeners } from "../clickControls";
 import { cpuAction } from "../computerPlayer/cpu";

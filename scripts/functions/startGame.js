@@ -35,12 +35,7 @@ import {
   getWorldTimeAPI,
   render,
 } from "../../index";
-import {
-  Cursor,
-  gameLoop,
-  newBlock,
-  updateLevelEvents,
-} from "../../puzzleleague";
+import { Cursor, gameLoop, newBlock, updateLevelEvents } from "../../mainGame";
 import { pause, unpause } from "./pauseFunctions";
 import { action } from "../controls";
 import { createClickListeners } from "../clickControls";
@@ -55,7 +50,7 @@ import {
 import { createHeadsUpDisplay } from "./setUpViewport";
 import { showNotification } from "./showNotification";
 import { createBoard, previous, saveCurrentBoard } from "./playbackGame";
-// import { newBlock2, puzzleLeagueLoop } from "./experimentalFunctions";
+// import { newBlock2, mainGameLoop } from "./experimentalFunctions";
 
 export function startGame(selectedGameSpeed = 1) {
   // Object.keys(game).forEach(key => (game[key] = newGame[key]));

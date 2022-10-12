@@ -38,7 +38,7 @@ export function playAnnouncer(
   lastPicked,
   arrType,
   volume = 0.2,
-  playbackImportant = true
+  playbackImportant = false
 ) {
   try {
     if (game.mode === "tutorial" && !tutorial.chainChallenge) return;

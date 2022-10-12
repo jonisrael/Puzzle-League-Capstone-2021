@@ -11,7 +11,7 @@ import {
   touch,
   win,
 } from "../global";
-import { newBlock, updateLevelEvents } from "../../puzzleleague";
+import { newBlock, updateLevelEvents } from "../../mainGame";
 import { fixNextDarkStack, generateOpeningBoard } from "../functions/startGame";
 import { tutorialBoards } from "./tutorialBoards";
 import { tutorialMessages } from "./tutorialMessages";

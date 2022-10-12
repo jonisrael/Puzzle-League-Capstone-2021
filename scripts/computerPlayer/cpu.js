@@ -18,7 +18,7 @@ import {
   runTutorialScript,
   tutorial,
 } from "../tutorial/tutorialScript";
-import { updateLevelEvents } from "../../puzzleleague";
+import { updateLevelEvents } from "../../mainGame";
 import { doCpuTouchInputs, updateCPUMouse } from "../clickControls";
 import { tryToAvoidDeath } from "./tryToAvoidDeath";
 

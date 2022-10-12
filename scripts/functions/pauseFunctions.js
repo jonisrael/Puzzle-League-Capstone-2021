@@ -21,7 +21,7 @@ import { tutorial } from "../tutorial/tutorialScript";
 import { render } from "../../index";
 import * as state from "../../store";
 import { setUpTrainingMode } from "./trainingControls";
-import { drawGrid } from "../../puzzleleague";
+import { drawGrid } from "../../mainGame";
 import { previous } from "./playbackGame";
 import { arcadeEvents } from "./timeEvents";
 

@@ -67,7 +67,7 @@ export const announcer = {
     audio.announcerIHopeReady,
     audio.announcerFireworks,
     audio.announcerLetsGetStarted,
-    audio.announcerBraceYourself,
+    audio.announcerAnymoreIntenseThanThis,
     // audio.announcerBattleOfEndurance
   ],
   endgameDialogue: [
@@ -89,6 +89,10 @@ export const announcer = {
   panicIndexLastPicked: -1,
   overtimeIndexLastPicked: -1,
   endgameIndexLastPicked: -1,
+};
+
+export const arbiter = {
+  overtime: audio.arbiterOvertime,
 };
 
 export const hold_it = [
@@ -263,16 +267,16 @@ determineOSAndBrowser(navigator.userAgent);
 
 export const music = [
   audio.popcornMusic,
-  // audio.trainingMusic,
+  audio.trainingMusic,
   // audio.popcornExtendedMusic,
-  audio.ryuMusic,
-  audio.lipMusic,
+  // audio.ryuMusic,
+  // audio.lipMusic,
   audio.physicsMusic,
   audio.cub3dMusic,
   audio.collapsedRegMusic,
   // audio.scatmanMusic,
-  // audio.rashidMusic,
-  // audio.hugoMusic,
+  audio.rashidMusic,
+  audio.hugoMusic,
 ];
 
 export const touch = {
@@ -294,8 +298,8 @@ export const touch = {
   arrowPointer: { x: 2, y: 6 },
   removeAllArrows: false,
   swapOrderPrepared: false,
-  doubleClickCounter: 0,
-  doubleClickTimer: 0,
+  multiClickCounter: 0,
+  multiClickTimer: 0,
   lastCursorPos: { x: 2, y: 6 },
   lastXMoused: 2,
   mouseChangedX: false,

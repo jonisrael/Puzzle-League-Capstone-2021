@@ -110,11 +110,11 @@ export function doMouseDown(e, virtualX, virtualY) {
   touch.moveOrderExists = false;
   touch.mouse.clicked = true;
   if (!game.disableRaise) {
-    touch.doubleClickCounter++;
-    touch.doubleClickTimer += 20;
+    touch.multiClickCounter++;
+    touch.multiClickTimer += 20;
   } else {
-    touch.doubleClickCounter = 0;
-    touch.doubleClickTimer = 0;
+    touch.multiClickCounter = 0;
+    touch.multiClickTimer = 0;
   }
   if (virtualX !== undefined) {
     touch.mouse.x = virtualX;
@@ -130,14 +130,20 @@ export function doMouseDown(e, virtualX, virtualY) {
     touch.mouse.y = virtualY;
   }
   if (
-    touch.doubleClickCounter === 2 &&
+    touch.multiClickCounter >= 2 &&
     Math.abs(touch.mouse.x - game.cursor.x) < 2 &&
     Math.abs(touch.mouse.y - game.cursor.y) < 2
   ) {
-    touch.doubleClickCounter = 0;
-    for (let x = 0; x < grid.COLS; x++) {
-      for (let y = 0; y < grid.ROWS; y++) {
-        removeFromOrderList(game.board[x][y]);
+    if (touch.multiClickCounter === 3) {
+      console.log(
+        "Multi Click clicked 3 times. current timer:",
+        touch.multiClickTimer
+      );
+      touch.multiClickCounter = 0;
+      for (let x = 0; x < grid.COLS; x++) {
+        for (let y = 0; y < grid.ROWS; y++) {
+          removeFromOrderList(game.board[x][y]);
+        }
       }
     }
 
@@ -152,8 +158,8 @@ export function doMouseDown(e, virtualX, virtualY) {
       }
     }
   }
-  if (touch.doubleClickTimer > 31) touch.doubleClickTimer = 31;
-  if (touch.doubleClickTimer === 0) touch.doubleClickTimer = 31;
+  if (touch.multiClickTimer > 31) touch.multiClickTimer = 31;
+  if (touch.multiClickTimer === 0) touch.multiClickTimer = 31;
   selectBlock(touch.mouse.x, touch.mouse.y);
   if (!game.paused && !game.playRecording)
     replay.mouseInputs.push([game.frames, true, touch.mouse.x, touch.mouse.y]);

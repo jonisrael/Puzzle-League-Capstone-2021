@@ -201,7 +201,6 @@ class Block {
     swapDirection = 0,
     lightTimer = 0,
     lightBlink = false,
-    swapOrders = JSON.parse(JSON.stringify(TouchOrder)),
     targetX = undefined,
     previewX = undefined,
     helpX = undefined,
@@ -233,7 +232,6 @@ class Block {
     this.swapDirection = swapDirection;
     this.lightTimer = lightTimer;
     this.lightBlink = lightBlink;
-    this.swapOrders = swapOrders;
     this.targetX = targetX;
     this.previewX = previewX;
     this.helpX = helpX;
@@ -1004,7 +1002,8 @@ export function createNewRow() {
     playAnnouncer(
       announcer.panicDialogue,
       announcer.panicIndexLastPicked,
-      "panic"
+      "panic",
+      0.2
     );
   }
   // score gained for new row passed
@@ -1021,11 +1020,12 @@ function canvasBorderColor(level) {
   if (game.over) return "red";
   if (game.tutorialRunning || game.frames < arcadeEvents.levelUpIncrement - 180)
     return "#hsl(30, 100%, 70%)";
-  if (game.frames > arcadeEvents.tenSecondsRemain) {
+  if (game.frames >= arcadeEvents.tenSecondsRemain || game.level >= 7) {
     // game is in close to or at overtime
     let [hueDesired, cnst] = [0, 0];
     if (level < 7) [hueDesired, cnst] = [30, 20];
-    let mult = level <= 7 ? 2 : level <= 10 ? 3 : level <= 13 ? 4 : 5;
+    let mult =
+      level === 6 ? 1 : level < 10 ? 2 : level < 12 ? 3 : level === 12 ? 4 : 5;
     let satDesired = cnst + 50 + 40 * Math.cos(mult * game.frames);
     let lightnessDesired = 30 + 20 * Math.cos(mult * game.frames);
     // let mult = game.minutes < 3 ? 1 : 2;
@@ -1643,7 +1643,9 @@ export function gameLoop() {
             playAnnouncer(
               announcer.timeTransitionDialogue,
               announcer.timeTransitionIndexLastPicked,
-              "timeTransition"
+              "timeTransition",
+              0.2,
+              true
             );
 
           console.log(
@@ -1709,8 +1711,8 @@ export function gameLoop() {
           if (debug.enabled)
             console.log("restarting rise, delay remaining:", game.raiseDelay);
           game.boardRiseRestarter = 0;
-          touch.doubleClickCounter = 0;
-          touch.doubleClickTimer = 0;
+          touch.multiClickCounter = 0;
+          touch.multiClickTimer = 0;
           game.pauseStack = false;
         }
 

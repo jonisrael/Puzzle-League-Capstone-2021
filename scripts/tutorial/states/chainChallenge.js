@@ -1,4 +1,4 @@
-import { updateLevelEvents } from "../../../puzzleleague";
+import { updateLevelEvents } from "../../../mainGame";
 import { pause } from "../../functions/pauseFunctions";
 import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";

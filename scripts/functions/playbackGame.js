@@ -1,4 +1,4 @@
-import { newBlock } from "../../puzzleleague";
+import { newBlock } from "../../mainGame";
 import { doMouseDown, doMouseUp } from "../clickControls";
 import { action } from "../controls";
 import { blockType, game, grid, randomPiece, replay, touch } from "../global";

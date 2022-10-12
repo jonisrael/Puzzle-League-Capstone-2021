@@ -1,4 +1,4 @@
-import { updateLevelEvents } from "../../../puzzleleague";
+import { updateLevelEvents } from "../../../mainGame";
 import { audio } from "../../fileImports";
 import { playAudio } from "../../functions/audioFunctions";
 import { closeGame } from "../../functions/gameOverFunctions";

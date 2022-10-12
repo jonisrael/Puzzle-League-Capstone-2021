@@ -13,7 +13,7 @@ import {
 
 import { checkMatch } from "./matchAndScoreFunctions";
 import { updateGrid } from "./updateGrid";
-import { isChainActive } from "../../puzzleleague";
+import { isChainActive } from "../../mainGame";
 import { SelectedBlock } from "./stickyFunctions";
 
 export function doGravity(gameSpeed) {
