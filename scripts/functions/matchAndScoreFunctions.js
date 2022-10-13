@@ -325,12 +325,19 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
   }
 }
 
+// updateScore before 10/13/2022
+// let blockBonus = 0;
+// for (let i = blocksCleared; i > 2; i--) {
+//   if (blocksCleared < 7) blockBonus += 30;
+//   else blockBonus += (i - 2) * 10;
+// }
+
 export function updateScore(blocksCleared, chain, multiplier, earnsChainBonus) {
-  let blockBonus = 0;
-  for (let i = blocksCleared; i > 2; i--) {
-    if (blocksCleared < 7) blockBonus += 30;
-    else blockBonus += (i - 2) * 10;
-  }
+  let blockBonus;
+  if (blocksCleared === 3) blockBonus = 0;
+  else if (blocksCleared === 4) blockBonus = 20;
+  else blockBonus = 40 * blocksCleared - 150;
+
   let chainBonus = 0;
   if (earnsChainBonus) {
     chainBonus += (chain - 1) * 100;
@@ -340,77 +347,85 @@ export function updateScore(blocksCleared, chain, multiplier, earnsChainBonus) {
   return scoreAdded;
 }
 
-export function updateScoreOld(blocksCleared, currentChain, partOfChain) {
-  let blockBonus = 10 * blocksCleared;
-  let comboBonus = 0;
-  let chainBonus = 0;
-  let isChain = partOfChain && game.currentChain > 1;
+// export function updateScoreOld(blocksCleared, currentChain, partOfChain) {
+//   let blockBonus = 10 * blocksCleared;
+//   let comboBonus = 0;
+//   let chainBonus = 0;
+//   let isChain = partOfChain && game.currentChain > 1;
 
-  if (blocksCleared === 3) comboBonus = 0;
-  else if (blocksCleared < 6) comboBonus = blockBonus - 20;
-  else if (blocksCleared < 10) comboBonus = blockBonus - 10;
-  else comboBonus = 10 * blocksCleared + 30 * (blocksCleared - 10);
+//   // if (blocksCleared === 3) comboBonus = 0;
+//   // else if (blocksCleared < 6) comboBonus = blockBonus - 20;
+//   // else if (blocksCleared < 10) comboBonus = blockBonus - 10;
+//   // else comboBonus = 10 * blocksCleared + 30 * (blocksCleared - 10);
 
-  if (currentChain == 1) {
-    chainBonus = 0;
-  } else if (currentChain == 2) {
-    chainBonus = 50;
-  } else if (currentChain == 3) {
-    chainBonus = 80;
-  } else if (currentChain == 4) {
-    chainBonus = 150;
-  } else if (currentChain <= 6) {
-    chainBonus = 300 + 100 * (currentChain - 5);
-  } else if (currentChain <= 11) {
-    chainBonus = 500 + 200 * (currentChain - 7);
-  } else {
-    chainBonus = 1500 + 300 * (currentChain - 12);
-  }
+//   if (blocksCleared === 3) comboBonus = 0;
+//   else if (blocksCleared === 4) comboBonus = 20;
+//   // 60
+//   else comboBonus = 40 * blocksCleared - 150;
+//   // else if (blocksCleared === 5) comboBonus = 50; // 100
+//   // else if (blocksCleared === 6) comboBonus = 90; // 150
+//   // else if (blocksCleared === 7) comboBonus = 130; // 200
 
-  let addToScore = comboBonus + chainBonus;
-  let scoreMult = game.scoreMultiplier;
-  let matchString = `MATCH: ${padInt(blocksCleared)} Clear`;
-  let bonusString = `ADD: `;
-  if (isChain) {
-    bonusString += `${scoreMult} * (${padInt(
-      comboBonus,
-      3
-    )}) Chain & Clear Bonus`;
-    matchString += `, Chain ${padInt(currentChain)}`;
-  } else {
-    bonusString += `${scoreMult} * (${padInt(comboBonus, 3)}) Clear Bonus`;
-  }
+//   if (currentChain == 1) {
+//     chainBonus = 0;
+//   } else if (currentChain == 2) {
+//     chainBonus = 50;
+//   } else if (currentChain == 3) {
+//     chainBonus = 80;
+//   } else if (currentChain == 4) {
+//     chainBonus = 150;
+//   } else if (currentChain <= 6) {
+//     chainBonus = 300 + 100 * (currentChain - 5);
+//   } else if (currentChain <= 11) {
+//     chainBonus = 500 + 200 * (currentChain - 7);
+//   } else {
+//     chainBonus = 1500 + 300 * (currentChain - 12);
+//   }
 
-  game.scoreEarned = Math.round(addToScore * game.scoreMultiplier);
-  game.chainScoreAdded += game.scoreEarned;
-  game.score += game.scoreEarned;
-  if (game.log.length < 500) {
-    let loggedScore = [
-      `TIME ${game.minutes}:${padInt(game.seconds)}
-      `,
-      `MATCH: ${padInt(blocksCleared)}${
-        isChain ? ", Chain " + currentChain : ""
-      }`,
-      `CHAIN: ${padInt(currentChain)} || BONUS: ${chainBonus * scoreMult}`,
-      `CLEAR: ${padInt(blocksCleared)} || BONUS: ${comboBonus * scoreMult}`,
-      `TOTAL: ${padInt(game.scoreEarned, 4)}`,
-      `NEW SCORE: ${game.score}`,
-      `--------------------`,
-    ];
-    // let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreEarned}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
-    game.log.push(loggedScore);
-    // if (win.gameLogDisplay) {
-    //   let div = document.createElement("div");
-    //   div.className = "game-log-entry";
-    //   game.log[game.log.length - 1].forEach((line) => {
-    //     let p = document.createElement("p");
-    //     p.className = "game-log-entry-text";
-    //     p.innerHTML += line;
-    //     div.appendChild(p);
-    //   });
-    //   win.gameLogDisplay.appendChild(div);
+//   let addToScore = comboBonus + chainBonus;
+//   let scoreMult = game.scoreMultiplier;
+//   let matchString = `MATCH: ${padInt(blocksCleared)} Clear`;
+//   let bonusString = `ADD: `;
+//   if (isChain) {
+//     bonusString += `${scoreMult} * (${padInt(
+//       comboBonus,
+//       3
+//     )}) Chain & Clear Bonus`;
+//     matchString += `, Chain ${padInt(currentChain)}`;
+//   } else {
+//     bonusString += `${scoreMult} * (${padInt(comboBonus, 3)}) Clear Bonus`;
+//   }
 
-    //   win.gameLogDisplay.scrollTop = win.gameLogDisplay.scrollHeight;
-    // }
-  }
-}
+//   game.scoreEarned = Math.round(addToScore * game.scoreMultiplier);
+//   game.chainScoreAdded += game.scoreEarned;
+//   game.score += game.scoreEarned;
+//   if (game.log.length < 500) {
+//     let loggedScore = [
+//       `TIME ${game.minutes}:${padInt(game.seconds)}
+//       `,
+//       `MATCH: ${padInt(blocksCleared)}${
+//         isChain ? ", Chain " + currentChain : ""
+//       }`,
+//       `CHAIN: ${padInt(currentChain)} || BONUS: ${chainBonus * scoreMult}`,
+//       `CLEAR: ${padInt(blocksCleared)} || BONUS: ${comboBonus * scoreMult}`,
+//       `TOTAL: ${padInt(game.scoreEarned, 4)}`,
+//       `NEW SCORE: ${game.score}`,
+//       `--------------------`,
+//     ];
+//     // let loggedScore = `Time: ${game.timeString}, Earned = ${game.scoreEarned}, Total: ${game.score} || ${game.currentChain}x chain, ${blocksCleared} combo`;
+//     game.log.push(loggedScore);
+//     // if (win.gameLogDisplay) {
+//     //   let div = document.createElement("div");
+//     //   div.className = "game-log-entry";
+//     //   game.log[game.log.length - 1].forEach((line) => {
+//     //     let p = document.createElement("p");
+//     //     p.className = "game-log-entry-text";
+//     //     p.innerHTML += line;
+//     //     div.appendChild(p);
+//     //   });
+//     //   win.gameLogDisplay.appendChild(div);
+
+//     //   win.gameLogDisplay.scrollTop = win.gameLogDisplay.scrollHeight;
+//     // }
+//   }
+// }

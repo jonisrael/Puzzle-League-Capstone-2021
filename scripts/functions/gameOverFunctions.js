@@ -68,7 +68,7 @@ export function isGameOver() {
   if (
     game.highestRow === 0 &&
     game.currentChain === 0 &&
-    !game.boardIsClearing &&
+    !game.boardHasClearingBlock &&
     !game.boardHasSwappingBlock &&
     !game.pauseStack &&
     !game.boardHasAirborneBlock &&

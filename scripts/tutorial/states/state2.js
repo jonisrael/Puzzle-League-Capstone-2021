@@ -51,7 +51,7 @@ export function tutorialEventsAtState_2() {
   // failure case 1: out of moves
   if (
     tutorial.movesMade === 5 &&
-    !game.boardIsClearing &&
+    !game.boardHasClearingBlock &&
     game.board[1][grid.ROWS].timer === 0
   ) {
     // 5th move made and no clear is occurring
@@ -60,7 +60,7 @@ export function tutorialEventsAtState_2() {
     tutorial.msgIndex = 1; // msg: out of moves
   }
 
-  if (game.boardIsClearing) {
+  if (game.boardHasClearingBlock) {
     // success
     if (
       CLEARING_TYPES.includes(game.board[2][grid.ROWS - 5].type) &&

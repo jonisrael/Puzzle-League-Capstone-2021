@@ -14,27 +14,27 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs,
+  audioSrcs
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch,
+  checkMatch
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables,
+  resetGameVariables
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks,
+  trySwappingBlocks
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne,
+  isBlockAirborne
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import { cpuAction, cpuClick } from "./scripts/computerPlayer/cpu";
@@ -43,23 +43,23 @@ import {
   actionHeld,
   actionUp,
   savedControls,
-  playerAction,
+  playerAction
 } from "./scripts/controls";
 import {
   pause,
   printDebugInfo,
-  unpause,
+  unpause
 } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic,
+  playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard,
+  gameOverBoard
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -103,13 +103,13 @@ import {
   touchInputs,
   saveState,
   replay,
-  getRow,
+  getRow
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match,
+  match
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { arcadeEvents, checkTime } from "./scripts/functions/timeEvents";
@@ -120,23 +120,23 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard,
+  tutorialBoard
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction, rewind } from "./scripts/functions/trainingControls";
 import {
   determineScoreColor,
   drawChainMessage,
-  drawScoreEarnedMessage,
+  drawScoreEarnedMessage
 } from "./scripts/functions/drawCanvasShapesAndText";
 import {
   playbackInputs,
   previous,
-  saveCurrentBoard,
+  saveCurrentBoard
 } from "./scripts/functions/playbackGame";
 import {
   checkTutorialEvents,
-  loadTutorialState,
+  loadTutorialState
 } from "./scripts/tutorial/tutorialEvents";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
 // import {
@@ -212,7 +212,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined,
+      solidGroundArray: undefined
     }
   ) {
     this.x = x;
@@ -241,6 +241,11 @@ class Block {
 
   drawGridLines() {
     let filename = "grid_line";
+    let chainable = false;
+    // let chainable =
+    //   this.availForPrimaryChain &&
+    //   this.color !== "vacant" &&
+    //   !CLEARING_TYPES.includes(this.type);
     // if (this.y === 0 && (!game.flashDangerColumns || game.frames % 12 < 6)) {
     //   filename = "grid_line_red";
     // }
@@ -250,8 +255,8 @@ class Block {
     ) {
       filename = "grid_line_red";
     } else if (
-      this.lightTimer != 0 &&
-      (!this.lightBlink || game.frameMod[60] < 30)
+      chainable ||
+      (this.lightTimer != 0 && (!this.lightBlink || game.frameMod[60] < 30))
     ) {
       filename = "light_up";
     } else if (this.y === game.cursor.y) {
@@ -259,11 +264,13 @@ class Block {
       filename +=
         this.x === 0 ? "Left" : this.x === grid.COLS - 1 ? "Right" : "Mid";
     }
+    // if (chainable) win.ctx.globalAlpha = 0.5;
     win.ctx.drawImage(
       loadedSprites[filename],
       grid.SQ * this.x,
       grid.SQ * this.y - game.rise
     );
+    // win.ctx.globalAlpha = 1;
   }
 
   drawSwappingBlocks() {
@@ -443,12 +450,13 @@ class Block {
     if (this.timer < this.switchToFaceFrame + 8) {
       win.ctx.globalAlpha = (this.timer - this.switchToFaceFrame) / 8;
     }
-    win.ctx.fillText(`+${scoreEarned}`, pixelX, pixelY);
-    win.ctx.strokeText(`+${scoreEarned}`, pixelX, pixelY);
+    let futureNetScoreEarned = scoreEarned + 10 * game.combo;
+    win.ctx.fillText(`+${futureNetScoreEarned}`, pixelX, pixelY);
+    win.ctx.strokeText(`+${futureNetScoreEarned}`, pixelX, pixelY);
     if (game.currentChain > 1) {
       win.ctx.fillStyle = determineScoreColor(scoreEarned, "small");
       win.ctx.fillText(`${game.currentChain}x`, pixelX, pixelY - grid.SQ);
-      win.ctx.strokeText(`+${scoreEarned}`, pixelX, pixelY);
+      win.ctx.strokeText(`+${futureNetScoreEarned}`, pixelX, pixelY);
     }
 
     win.ctx.globalAlpha = 1;
@@ -796,8 +804,8 @@ export function drawGrid() {
     } // end check y
   } // end check x
 
-  swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
-  arrowListArray.forEach((Square) => Square.drawArrows());
+  swappingBlocksArray.forEach(Square => Square.drawSwappingBlocks());
+  arrowListArray.forEach(Square => Square.drawArrows());
 
   if (cpu.showInfo || debug.show) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
@@ -1716,18 +1724,20 @@ export function gameLoop() {
           game.pauseStack = false;
         }
 
-        if (game.frames > 0) {
-          if (
-            (!game.pauseStack && game.raiseDelay === 0) ||
-            game.currentlyQuickRaising
-          ) {
-            game.rise = (game.rise + 2) % 32;
-            if (game.cursor.y === 0 && game.rise !== 0) game.cursor.y += 1;
-            game.boardRiseRestarter = 0; // restart failsafe timer
-            if (perf.gameSpeed == 2 && game.rise != 0) {
-              if (game.currentlyQuickRaising || game.boardRiseSpeed === 1) {
-                game.rise = (game.rise + 2) % 32;
-              }
+        if (
+          game.frames > 0 &&
+          ((!game.pauseStack && game.raiseDelay === 0) ||
+            game.currentlyQuickRaising)
+        ) {
+          game.rise = (game.rise + 2) % 32;
+          game.boardRiseRestarter = 0; // restart failsafe timer
+          if (game.rise !== 0) {
+            if (game.cursor.y === 0) game.cursor.y += 1;
+            if (
+              perf.gameSpeed === 2 &&
+              (game.currentlyQuickRaising || game.boardRiseSpeed === 1)
+            ) {
+              game.rise = (game.rise + 2) % 32; // add an extra for 30fps play
             }
           }
         }
@@ -1794,7 +1804,7 @@ export function gameLoop() {
             helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach((coord) => {
+          cpu.matchList.forEach(coord => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.hintVisible = false;

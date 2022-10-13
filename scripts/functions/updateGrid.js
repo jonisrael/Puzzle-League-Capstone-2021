@@ -21,11 +21,13 @@ import { trySwappingBlocks } from "./swapBlock";
 
 export function updateGrid(frameAdvance = false) {
   game.panicking = game.highestRow <= game.panicIndex;
-  game.boardIsClearing = false;
   game.boardHasTargets = false;
   let numberOfPreviews = 0;
   game.boardHasAirborneBlock = false;
   game.boardHasSwappingBlock = false;
+  game.boardHasClearingBlock = false;
+  game.boardHasStallingBlock = false;
+  game.boardHasLandingBlock = false;
   // touch.moveOrderExists = false;
   let highestRowFound = false;
   game.pauseStack = false;
@@ -46,9 +48,6 @@ export function updateGrid(frameAdvance = false) {
     for (let x = 0; x < grid.COLS; x++) {
       let Square = game.board[x][y];
       Square.airborne = isBlockAirborne(Square);
-      if (Square.airborne) {
-        game.boardHasAirborneBlock = true;
-      }
 
       if (touch.removePreviews) Square.previewX = undefined;
 
@@ -68,7 +67,6 @@ export function updateGrid(frameAdvance = false) {
         Square.previewX = Square.targetX = undefined;
       }
 
-      if (Square.type === "swapping") game.boardHasSwappingBlock = true;
       if (
         !Square.airborne &&
         Square.type !== "landing" &&
@@ -97,7 +95,6 @@ export function updateGrid(frameAdvance = false) {
       }
       // Check to see if a block is still legally in a landing animation
       if (Square.type === "landing") {
-        game.pauseStack = true;
         if (Square.timer < 8) {
           Square.addToPrimaryChain = false;
           Square.addToSecondaryChain = false;
@@ -175,7 +172,6 @@ export function updateGrid(frameAdvance = false) {
       ) {
         Square.targetX = Square.previewX = undefined;
         Square.lightTimer = 0;
-        game.pauseStack = true;
         // console.log(x, y, Square);
         switch (Square.timer) {
           case Square.switchToPoppedFrame + 2:
@@ -232,7 +228,6 @@ export function updateGrid(frameAdvance = false) {
             Square.type = "popped";
             break;
         }
-        if (CLEARING_TYPES.includes(Square.type)) game.boardIsClearing = true;
       }
 
       if (game.panicking && game.highestCols.includes(x)) {
@@ -241,12 +236,24 @@ export function updateGrid(frameAdvance = false) {
         if (Square.type === "panicking") Square.type = "normal";
       }
 
+      if (CLEARING_TYPES.includes(Square.type))
+        game.boardHasClearingBlock = true;
+      if (Square.airborne) game.boardHasAirborneBlock = true;
+      if (Square.type === "swapping") game.boardHasSwappingBlock = true;
+      if (Square.type === "stalling") game.boardHasStallingBlock = true;
+      if (Square.type === "landing") game.boardHasLandingBlock = true;
+
       // 10-2-2022: adding block clear speed up function
       if (game.speedUpTimers && Square.type !== "swapping") {
         Square.timer = Math.floor(Square.timer / 2);
       }
     } // end x
   } // end y
+  game.pauseStack =
+    game.boardHasClearingBlock ||
+    game.boardHasAirborneBlock ||
+    game.boardHasLandingBlock ||
+    game.boardHasStallingBlock;
   if (game.speedUpTimers) game.speedUpTimers = false;
   if (touch.removePreviews) touch.removePreviews = false;
   else if (numberOfPreviews > 1) touch.removePreviews = true;
