@@ -14,52 +14,56 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs
+  audioSrcs,
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch
+  checkMatch,
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables
+  resetGameVariables,
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks
+  trySwappingBlocks,
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne
+  isBlockAirborne,
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
-import { cpuAction, cpuClick } from "./scripts/computerPlayer/cpu";
+import {
+  cpuAction,
+  cpuClick,
+  isAllowedToSwap,
+} from "./scripts/computerPlayer/cpu";
 import {
   action,
   actionHeld,
   actionUp,
   savedControls,
-  playerAction
+  playerAction,
 } from "./scripts/controls";
 import {
   pause,
   printDebugInfo,
-  unpause
+  unpause,
 } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic
+  playMusic,
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard
+  gameOverBoard,
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -103,13 +107,13 @@ import {
   touchInputs,
   saveState,
   replay,
-  getRow
+  getRow,
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match
+  match,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import { arcadeEvents, checkTime } from "./scripts/functions/timeEvents";
@@ -120,23 +124,23 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard
+  tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction, rewind } from "./scripts/functions/trainingControls";
 import {
   determineScoreColor,
   drawChainMessage,
-  drawScoreEarnedMessage
+  drawScoreEarnedMessage,
 } from "./scripts/functions/drawCanvasShapesAndText";
 import {
   playbackInputs,
   previous,
-  saveCurrentBoard
+  saveCurrentBoard,
 } from "./scripts/functions/playbackGame";
 import {
   checkTutorialEvents,
-  loadTutorialState
+  loadTutorialState,
 } from "./scripts/tutorial/tutorialEvents";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
 // import {
@@ -212,7 +216,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined
+      solidGroundArray: undefined,
     }
   ) {
     this.x = x;
@@ -776,7 +780,8 @@ export function drawGrid() {
         Square.previewX !== undefined ||
         Square.helpX !== undefined
       ) {
-        if (game.cursor_type[0] !== "d") arrowListArray.push(Square);
+        // if (game.cursor_type[0] !== "d") arrowListArray.push(Square);
+        arrowListArray.push(Square);
       }
       // blocksAreSwapping = true;
 
@@ -804,8 +809,8 @@ export function drawGrid() {
     } // end check y
   } // end check x
 
-  swappingBlocksArray.forEach(Square => Square.drawSwappingBlocks());
-  arrowListArray.forEach(Square => Square.drawArrows());
+  swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
+  arrowListArray.forEach((Square) => Square.drawArrows());
 
   if (cpu.showInfo || debug.show) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
@@ -1229,8 +1234,8 @@ function KEYBOARD_CONTROL(event) {
         // s
         cpu.showInfo = (cpu.showInfo + 1) % 2;
       }
-      if (event.keyCode === 75) {
-        // k
+      if (event.keyCode === 222) {
+        // '
         game.finalTime = (game.frames / 60).toFixed(1);
         game.frames = 0;
         game.over = true;
@@ -1343,8 +1348,8 @@ function KEYBOARD_CONTROL(event) {
           if (perf.gameSpeed === 2 && game.frameMod[2] === 1) game.frames++;
           perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
-        if (event.keyCode === 73) {
-          // i   starts the tutorial
+        if (event.keyCode === 189) {
+          // -   starts the tutorial
           startTutorial();
           debug.enabled = false;
           debug.show = false;
@@ -1360,8 +1365,8 @@ function KEYBOARD_CONTROL(event) {
           console.log(`Computer AI: ${cpu.enabled ? "On" : "Off"}`);
           if (cpu.enabled === 0) cpu.control = 0;
         }
-        if (event.keyCode == 75) {
-          // k
+        if (event.keyCode == 222) {
+          // '
           game.finalTime = (game.frames / 60).toFixed(1);
           game.frames = 0;
           game.over = true;
@@ -1788,11 +1793,19 @@ export function gameLoop() {
         }
       }
       if (game.swapPressed) {
-        if (!touch.enabled || !touch.moveOrderExists) {
-          trySwappingBlocks(game.cursor.x, game.cursor.y);
-          game.swapPressed = false;
+        let [x, y] = [game.cursor.x, game.cursor.y];
+        if (game.board[x][y].targetX !== undefined) {
+          game.board[x][y].targetX = undefined;
+        } else if (game.board[x + 1][y].targetX !== undefined) {
+          game.board[x + 1][y].targetX = undefined;
+        } else if (!blockVacOrClearing(game.board[x][y])) {
+          game.board[x][y].targetX = x + 1;
+        } else if (!blockVacOrClearing(game.board[x + 1][y])) {
+          game.board[x + 1][y].targetX = x;
         }
-      } else if (game.boardHasTargets) {
+        game.swapPressed = false;
+      }
+      if (game.boardHasTargets) {
         checkSwapTargets();
       } // end game.swapPressed being true
 
@@ -1804,7 +1817,7 @@ export function gameLoop() {
             helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach(coord => {
+          cpu.matchList.forEach((coord) => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.hintVisible = false;

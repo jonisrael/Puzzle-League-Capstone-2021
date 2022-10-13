@@ -222,10 +222,16 @@ function addEventListeners(st) {
         if (i === 2) {
           game.mode = "tutorial";
           tutorial.chainChallenge = true;
+          startGame();
         }
-        if (i === 3) game.mode = "training";
-        if (i === 4) game.mode = "cpu-play";
-        if (i > 1) startGame();
+        if (i === 3) {
+          game.mode = "training";
+        }
+        if (i === 4) {
+          game.mode = "cpu-play";
+          game.cursor_type = "defaultCursor";
+          middleMenuSetup("setAISpeed");
+        }
         // startGame(); // USE WHEN DISABLING MIDDLE MENUS
       });
     }

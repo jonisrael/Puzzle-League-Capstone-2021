@@ -17,7 +17,6 @@ import {
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { isBlockAirborne } from "./gravity";
-import { trySwappingBlocks } from "./swapBlock";
 
 export function updateGrid(frameAdvance = false) {
   game.panicking = game.highestRow <= game.panicIndex;

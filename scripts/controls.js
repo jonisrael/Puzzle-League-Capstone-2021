@@ -3,7 +3,6 @@ import { win, game, cpu, debug, grid, perf, replay } from "./global";
 import { cpuAction } from "./computerPlayer/cpu";
 import { pause, unpause } from "./functions/pauseFunctions";
 import { playAudio } from "./functions/audioFunctions";
-import { trySwappingBlocks } from "./functions/swapBlock";
 import { displayMessage } from "..";
 import { render } from "..";
 import * as state from "../store";

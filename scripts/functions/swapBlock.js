@@ -27,7 +27,7 @@ import { updateTrainingButtons } from "./trainingControls";
 
 export function trySwappingBlocks(x, y, rightSwap = true) {
   if (game.disableSwap || game.frames < 0 || x + 2 > grid.COLS || game.over) {
-    if (game.frames >= 0 && game.cursor_type[0] !== "d") {
+    if (game.frames >= 0) {
       removeFromOrderList(game.board[x][y]);
       if (x + 1 < grid.COLS) removeFromOrderList(game.board[x + 1][y]);
     }
@@ -59,8 +59,20 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     // game.messageChangeDelay = 60;
   }
 
-  // Do not swap if not on a clearing block and a vacant block is detected.
+  // do not swap if a block has a fall timer
+  // if (
+  //   (LeftBlock.timer !== 0 && INTERACTIVE_TYPES.includes(LeftBlock.type)) ||
+  //   (RightBlock.timer !== 0 && INTERACTIVE_TYPES.includes(RightBlock.type))
+  // ) {
+  //   legalSwapFailReason = "block has a busy timer on it";
+  // }
+
+  if (LeftBlock.type === "stalling" || RightBlock.type === "stalling") {
+    legalSwapFailReason = "block is stalling";
+  }
+
   if (y < 11) {
+    // Do not swap if not on a clearing block and a vacant block is detected.
     for (let j = y; j < grid.ROWS; j++) {
       if (
         (LeftBlock.color != blockColor.VACANT &&
@@ -106,7 +118,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         updateTrainingButtons();
       }
     }
-    if (touch.enabled && touch.moveOrderExists) {
+    if (touch.enabled && touch.moveOrderExists && game.cursor_type[0] !== "d") {
       touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
       game.cursor.x = touch.selectedBlock.x;
       game.cursor.y = touch.selectedBlock.y;
@@ -115,7 +127,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     cpu.swapSuccess = true;
     playAudio(audio.select);
     transferProperties(LeftBlock, RightBlock, "between");
-    // if landing, shorten timer to end the landing animation next frame.
+    // if landing, switch to swapping animation
     LeftBlock.timer = RightBlock.timer = game.swapTimer;
     if (game.mode !== "tutorial")
       LeftBlock.lightTimer = RightBlock.lightTimer = 0;
@@ -240,20 +252,37 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
       // stickyCheck(game.cursor.x + 1, game.cursor.y);
     }
   } else if (!legalSwap) {
-    if (game.cursor_type[0] === "d") {
-      removeFromOrderList(game.board[x][y]);
-    } else if (legalSwapFailReason !== "non-interactive block") {
+    // if (game.cursor_type[0] === "d") {
+    //   removeFromOrderList(game.board[x][y]);
+    // } else if
+    if (
+      legalSwapFailReason !== "non-interactive block" &&
+      legalSwapFailReason !== "airborne block"
+    ) {
+      touch.moveOrderExists = false;
+      game.swapPressed = false;
       if (game.board[x][y].targetX !== undefined) {
+        removeFromOrderList(game.board[game.board[x][y].targetX][y]);
+        game.board[x][y].targetX = undefined;
         if (debug.enabled)
           console.log(
             game.frames,
+            [x, y],
             "remove from order list, reason:",
             legalSwapFailReason
           );
-        removeFromOrderList(game.board[game.board[x][y].targetX][y]);
       }
-      touch.moveOrderExists = false;
-      game.swapPressed = false;
+      if (game.board[x + 1][y].targetX !== undefined) {
+        removeFromOrderList(game.board[game.board[x + 1][y].targetX][y]);
+        game.board[x + 1][y].targetX = undefined;
+        if (debug.enabled)
+          console.log(
+            game.frames,
+            [x + 1, y],
+            "remove from order list, reason:",
+            legalSwapFailReason
+          );
+      }
     }
     win.mainInfoDisplay.style.color = "purple";
     cpu.swapSuccess = false;

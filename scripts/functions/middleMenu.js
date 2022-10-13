@@ -1,6 +1,6 @@
 import { render } from "../..";
 import * as state from "../../store";
-import { game, win } from "../global";
+import { cpu, game, win } from "../global";
 import { startTutorial, tutorial } from "../tutorial/tutorialScript";
 import { startGame } from "./startGame";
 import { defineTimeEvents } from "./timeEvents";
@@ -83,6 +83,18 @@ export const menus = {
     },
     buttonFunction: "nextTutorial",
   },
+
+  setAISpeed: {
+    question: { text: "How Fast Should the AI Cursor Speed Be?" },
+    buttonFunction: `setAISpeed`,
+    buttons: [
+      { text: `30 actions per second` },
+      { text: `20 actions per second` },
+      { text: `10 actions per second` },
+      { text: `4 actions per second` },
+      { text: `2 actions per second` },
+    ],
+  },
 };
 menus.nextTutorial.buttons = [
   { text: "I believe in myself, let's play!", fontSize: "2.5rem" },
@@ -123,6 +135,15 @@ function setTimeControl(option) {
       document.getElementById("tutorial-mode").click();
   }
   if (option < 4) startGame();
+}
+
+function setAISpeed(option) {
+  if (option === 1) cpu.cursorSpeedDivisor = 2;
+  if (option === 2) cpu.cursorSpeedDivisor = 3;
+  if (option === 3) cpu.cursorSpeedDivisor = 6;
+  if (option === 4) cpu.cursorSpeedDivisor = 15;
+  if (option === 5) cpu.cursorSpeedDivisor = 30;
+  startGame();
 }
 
 function firstGameTutorialQuestion(option) {
@@ -203,6 +224,9 @@ export function middleMenuSetup(key, nextTutorialIndex = undefined) {
         }
         if (key.includes("nextTutorial")) {
           nextTutorial(option, nextTutorialIndex);
+        }
+        if (key.includes("setAISpeed")) {
+          setAISpeed(option);
         }
       });
       if (
