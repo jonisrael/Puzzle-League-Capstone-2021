@@ -191,18 +191,28 @@ export const grid = {
 // blinkValues: [120, 60, 54, 48, 42, 36, 30, 24, 22, 20, 18, 16, 14, 14],
 // faceValues: [80, 40, 36, 32, 28, 24, 20, 16, 14, 12, 10, 8, 6, 6],
 
+// Clear Values Until 10-14-2022
+// clearValues: [200, 120, 108, 96, 84, 72, 60, 40, 36, 32, 30, 24, 20, 20],
+// blinkValues: [120, 72, 64, 58, 50, 44, 36, 24, 22, 20, 18, 14, 12, 12],
+// faceValues: [80, 48, 44, 38, 34, 28, 24, 16, 14, 12, 12, 10, 8, 8],
+
 export const preset = {
   //            00, 00, 30, 60, 90,120,150,180,210,240,270
   speedValues: [120, 48, 36, 24, 12, 8, 6, 2, 2, 2, 2, 2, 2, 1],
-  clearValues: [200, 100, 90, 80, 70, 60, 50, 40, 36, 32, 28, 24, 20, 20],
-  blinkValues: [120, 60, 54, 48, 42, 36, 30, 24, 22, 20, 18, 16, 14, 14],
-  faceValues: [80, 40, 36, 32, 28, 24, 20, 16, 14, 12, 10, 8, 6, 6],
+  clearValues: [200, 120, 108, 96, 84, 72, 60, 40, 36, 32, 30, 24, 20, 20],
+  blinkValues: [120, 72, 64, 58, 50, 44, 36, 24, 22, 20, 18, 14, 12, 12],
+  faceValues: [80, 48, 44, 38, 34, 28, 24, 16, 14, 12, 12, 10, 8, 8],
   popMultiplier: [20, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 6],
-  stallValues: [20, 14, 14, 14, 12, 12, 12, 10, 10, 10, 10, 10, 10, 10],
+  stallValues: [20, 14, 14, 14, 12, 12, 12, 10, 10, 10, 10, 10, 10, 8],
   multValues: [1, 1, 1.15, 1.3, 1.45, 1.6, 1.75, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 3],
 };
 
-console.log(preset);
+for (let i = 0; i < preset.clearValues.length; i++) {
+  preset.blinkValues[i] = Math.floor(0.6 * preset.clearValues[i]);
+  if (preset.blinkValues[i] % 2 === 1) preset.blinkValues[i]++;
+  preset.faceValues[i] = preset.clearValues[i] - preset.blinkValues[i];
+}
+console.log("preset:", preset);
 
 if (!localStorage.getItem("games-completed"))
   localStorage.setItem("games-completed", "0");
@@ -273,15 +283,27 @@ determineOSAndBrowser(navigator.userAgent);
 export const music = [
   audio.popcornMusic,
   audio.trainingMusic,
+  audio.sorBarSong,
   // audio.popcornExtendedMusic,
   // audio.ryuMusic,
   // audio.lipMusic,
   audio.physicsMusic,
-  audio.cub3dMusic,
+  // audio.cub3dMusic,
   audio.collapsedRegMusic,
   // audio.scatmanMusic,
   audio.rashidMusic,
   audio.hugoMusic,
+];
+
+export const overtimeMusic = [
+  audio.strikersMusic,
+  audio.grimMusic,
+  audio.edgeworthMusic,
+  audio.collapsedOTMusic,
+  audio.expresswaySong,
+  audio.wreckingBallSong,
+  // audio.gioMusic,
+  // audio.surgeMusic
 ];
 
 export const touch = {
@@ -309,17 +331,6 @@ export const touch = {
   lastXMoused: 2,
   mouseChangedX: false,
 };
-
-export const overtimeMusic = [
-  audio.strikersMusic,
-  audio.grimMusic,
-  audio.edgeworthMusic,
-  audio.collapsedOTMusic,
-  audio.expresswaySong,
-  audio.wreckingBallSong,
-  // audio.gioMusic,
-  // audio.surgeMusic
-];
 
 export const resultsMusic = [audio.results1Music, audio.results2Music];
 

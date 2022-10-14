@@ -950,7 +950,6 @@ export function endChain(potentialSecondarySuccessor) {
   }
   // if another chain is currently clearing, chain is 1. Otherwise, chain is 0.
   game.currentChain = potentialSecondarySuccessor ? 1 : 0;
-  game.combo = 0;
   // If a potential secondary successor is detected, run this loop...
   if (potentialSecondarySuccessor) {
     for (let x = 0; x < grid.COLS; x++) {
@@ -1430,7 +1429,8 @@ export function updateLevelEvents(level) {
   } else if (
     game.level > 6 &&
     music.includes(sound.Music[0]) &&
-    !sound.Music[0].includes("collapsed") // don't interrupt final fantasy music!!!
+    !sound.Music[0].includes("collapsed") && // don't interrupt ff7 music!!!
+    !sound.Music[0].includes("sorBar") // don't interrupt sor music!!!
   ) {
     playMusic(overtimeMusic[randInt(overtimeMusic.length)]);
   }

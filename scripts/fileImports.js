@@ -208,6 +208,7 @@ import SCATMAN_SONG from ".././assets/Audio/Music/Themes/scatman.mp3";
 import COLLAPSED_REG_SONG from ".././assets/Audio/Music/Themes/collapsedReg.mp3";
 import HUGO_SONG from ".././assets/Audio/Music/Themes/hugo.mp3";
 import LIP_SONG from ".././assets/Audio/Music/Themes/lipTheme.mp3";
+import BAR_SONG from ".././assets/Audio/Music/Themes/sorBar.mp3";
 
 import STRIKERS_SONG from ".././assets/Audio/Music/Overtime Themes/strikers.mp3";
 import GIO_SONG from ".././assets/Audio/Music/Overtime Themes/gio.mp3";
@@ -668,6 +669,7 @@ const audio = {
   cub3dMusic: CUB3D_SONG,
   collapsedRegMusic: COLLAPSED_REG_SONG,
   expresswaySong: EXPRESSWAY_SONG,
+  sorBarSong: BAR_SONG,
   wreckingBallSong: WRECKING_BALL_SONG,
   collapsedOTMusic: COLLAPSED_OT_SONG,
   strikersMusic: STRIKERS_SONG,
