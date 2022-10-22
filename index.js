@@ -226,6 +226,7 @@ function addEventListeners(st) {
         }
         if (i === 3) {
           game.mode = "training";
+          startGame();
         }
         if (i === 4) {
           game.mode = "cpu-play";
