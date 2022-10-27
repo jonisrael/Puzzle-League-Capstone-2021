@@ -35,7 +35,7 @@ export function checkCanUserPost() {
   }
   let container = document.getElementById("container");
   if (!leaderboard.canPost) {
-    container.innerHTML += `<h2 style="color:black">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
+    container.innerHTML += `<h2 style="color:black" id="cannot-post-msg">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
     if (leaderboard.reason == "slow") {
       container.innerHTML += `<p>This is because the in-game clock time was at least six seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:black; font-weight:bold">but the actual real time of the game was ${perf.realTime} seconds.</span></p><br />`;
       container.innerHTML += `
@@ -114,16 +114,18 @@ export function checkCanUserPost() {
     }
 
     if (leaderboard.reason === "get-good") {
-      container.innerHTML += `<p>This is because your score is less than or equal to the last leaderboard spot. Depending on popularity, leaderboard size may increase. Your score is ${
-        game.score
-      }, while the <strong>#${
-        leaderboard.data.length
-      } spot on the leaderboard is "${
-        leaderboard.data[leaderboard.data.length - 1].name
-      }" with a score of ${
-        leaderboard.data[leaderboard.data.length - 1].score
-      }.</strong> Keep practicing and try again!</p>`;
+      document.querySelector("#cannot-post-msg").remove();
       return false;
+      //   container.innerHTML += `<p>This is because your score is less than or equal to the last leaderboard spot. Depending on popularity, leaderboard size may increase. Your score is ${
+      //     game.score
+      //   }, while the <strong>#${
+      //     leaderboard.data.length
+      //   } spot on the leaderboard is "${
+      //     leaderboard.data[leaderboard.data.length - 1].name
+      //   }" with a score of ${
+      //     leaderboard.data[leaderboard.data.length - 1].score
+      //   }.</strong> Keep practicing and try again!</p>`;
+      //   return false;
     }
   }
 

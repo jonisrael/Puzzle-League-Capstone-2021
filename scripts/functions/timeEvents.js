@@ -107,7 +107,7 @@ export function checkTime() {
         playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
       game.messagePriority = "";
       game.defaultMessage =
-        "Arrow Keys and S/R to play, or use a Touch Screen!";
+        "Play with S/R and Arrow Keys, or use a Touch Screen!";
       game.message = game.defaultMessage;
       break;
     case arcadeEvents.tenSecondsRemain:

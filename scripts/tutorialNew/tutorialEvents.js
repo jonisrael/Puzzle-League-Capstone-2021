@@ -66,7 +66,7 @@ export function loadTutorialState(state, index = 0, allSelectable = false) {
   changeAllBlockProperties({ color: "vacant" });
   document.querySelector(
     "#main-info"
-  ).innerHTML = `Aug 6, 2022: Tutorial and Chain Challenge are undergoing maintenance currently and are unavailable at this time! Please click "Play Game" to return to menu.`;
+  ).innerHTML = `Aug 6, 2022: Tutorial and Chain Puzzle are undergoing maintenance currently and are unavailable at this time! Please click "Play Game" to return to menu.`;
   document.querySelector("#pause-button").disabled = true;
   console.log(tutorialBoards[state], tutorial.state, allSelectable);
   if (tutorial.chainChallenge) {

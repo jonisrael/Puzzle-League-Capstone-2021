@@ -65,7 +65,7 @@ export const menus = {
       { text: "Arcade Mode Rules (COMING SOON)", disabled: true },
       { text: "Maximizing Your Score (Intermediate)" },
       { text: "Survival Techniques (COMING SOON)", disabled: true },
-      { text: "Can You Solve the Chain Challenge? (Advanced)" },
+      { text: "Can You Solve the Chain Puzzle? (Advanced)" },
       { text: "Touch Screen Only Special Techniques", notAButton: true },
       { text: "Buffering Swaps (COMING SOON)", disabled: true },
       { text: "Using Multiple Move Orders (COMING SOON)", disabled: true },
@@ -97,7 +97,7 @@ export const menus = {
   },
 };
 menus.nextTutorial.buttons = [
-  { text: "I believe in myself, let's play!", fontSize: "2.5rem" },
+  { text: "Let's play!", fontSize: "2.5rem" },
 ].concat(JSON.parse(JSON.stringify(menus.selectTutorial.buttons)));
 
 function selectTutorial(option) {

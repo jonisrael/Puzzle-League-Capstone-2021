@@ -3,7 +3,7 @@ import html from "html-literal";
 export default (st) => html`
   <section id="home-page">
     <div id="container">
-      <h1 id="welcome">Welcome to Blockle!</h1>
+      <h1 id="welcome">Welcome to Puzzle League Arcade!</h1>
       <h2 id="author-name">Created by Jonathan Israel</h2>
       <!-- <h1>Controls</h1>
       <ul id="controls">
@@ -25,7 +25,7 @@ export default (st) => html`
           Tutorials
         </button>
         <button id="chain-challenge-mode" class="default-button start-buttons">
-          Chain Challenge
+          Chain Puzzle
         </button>
         <button id="training-mode" class="default-button start-buttons">
           Endless Mode

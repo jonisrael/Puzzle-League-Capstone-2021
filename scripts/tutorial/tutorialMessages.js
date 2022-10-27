@@ -16,7 +16,7 @@ export const tutorialMessages = [
     "Try clearing 4 at once by moving this block.",
     "Beautiful! 60 points!",
     "Now see if you can create a 5 set. But which cyan block should you move first?",
-    "There it is! 90 points!",
+    "There it is! 100 points!",
     "Can you figure out how to create a clear 8?",
     "And there's the payoff! Look at all those points! Now for a challenge...",
   ],
@@ -60,7 +60,7 @@ export const tutorialMessages = [
     "Incredible Technique! 720 points!",
     "You can see that with each extra chain, the points grow exponentially.",
     "We ran out of moves here, but it is possible to clear this whole board in one chain.",
-    `See if you can do it in the "Chain Challenge!"`,
+    `See if you can do it in the "Chain Puzzle!"`,
   ],
   // [
   //   "BUFFERED SWAP DEMONSTRATION",

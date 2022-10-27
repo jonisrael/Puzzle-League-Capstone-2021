@@ -60,7 +60,7 @@ export const tutorialMessages = [
     "Incredible Technique! 720 points!",
     "You can see that with each extra chain, the points grow exponentially.",
     "We ran out of moves here, but it is possible to clear this whole board in one chain.",
-    `See if you can do it in the "Chain Challenge!"`,
+    `See if you can do it in the "Chain Puzzle!"`,
   ],
   // [
   //   "BUFFERED SWAP DEMONSTRATION",

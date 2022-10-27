@@ -137,7 +137,12 @@ export function addPauseContent() {
       } else if (i === 1) {
         btn.addEventListener("click", () => {
           win.running = false;
-          win.restartGame = true;
+          if (!tutorial.chainChallenge) {
+            win.restartGame = true;
+          } else {
+            document.querySelector("#menu-button").click();
+            document.querySelector("#chain-challenge-mode").click();
+          }
         });
       } else if (i === 2) {
         btn.addEventListener("click", () => {

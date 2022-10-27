@@ -25,7 +25,7 @@ export function chainChallengeEvents() {
         : "Can you make a 9 chain to clear the board?";
   }
   if (game.currentChain === 9) {
-    game.message = "Congratulations, you beat the Chain Challenge!";
+    game.message = "Congratulations, you beat the Chain Puzzle!";
     action.timer = 120;
   }
 
@@ -40,7 +40,7 @@ export function chainChallengeEvents() {
     document.getElementById("pause-button").innerHTML = "Pause/Retry";
     if (game.largestChain === 0)
       game.message =
-        "Chain Challenge! Can you clear the whole board in one chain?";
+        "Chain Puzzle! Can you clear the whole board in one chain?";
     game.currentChain = 0;
     game.lastChain = 0;
     game.frames = 0;
@@ -72,7 +72,7 @@ export function chainChallengeEvents() {
     else if (game.lastChain < 5) game.message += `Good! Can you get to 5?`;
     else if (game.lastChain < 7) game.message += `Excellent! Can you get 7?`;
     else if (game.lastChain < 9) game.message += `Very close! Can you get 9?`;
-    else game.message = "Congratulations, you beat the Chain Challenge!";
+    else game.message = "Congratulations, you beat the Chain Puzzle!";
   }
 
   if (game.largestChain === 9 && action.timer < 2) {

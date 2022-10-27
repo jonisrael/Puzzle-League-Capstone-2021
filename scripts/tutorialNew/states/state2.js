@@ -34,7 +34,6 @@ export function tutorialEventsAtState_2() {
     game.board[0][grid.ROWS].timer = -2;
     tutorial.msgIndex = 0;
     tutorial.movesMade = 0;
-    tutorial.failCount = 0;
     let advanceButton = document.getElementById("pause-button");
     advanceButton.disabled = true;
     updateLevelEvents(5);

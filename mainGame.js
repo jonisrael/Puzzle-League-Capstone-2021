@@ -733,7 +733,7 @@ export function newBlock(c, r, vacant = false) {
 export function checkIfHelpPlayer() {
   if (helpPlayer.forceHint) helpPlayer.timer = 0;
   if (
-    ((game.score < 500 && game.mode !== "tutorial" && !debug.show) ||
+    ((game.score < 1000 && game.mode !== "tutorial" && !debug.show) ||
       helpPlayer.forceHint) &&
     game.frames > 0 &&
     game.frames < arcadeEvents.overtimeStart &&
@@ -881,7 +881,7 @@ export function endChain(potentialSecondarySuccessor) {
   game.stickyJingleAllowed = true;
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
-  helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 600;
+  helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 360;
   helpPlayer.hintVisible = false;
   cpu.matchList.length = 0;
   cpu.matchStrings.length = 0;
@@ -1199,7 +1199,12 @@ function KEYBOARD_CONTROL(event) {
       // r
       playAudio(audio.select);
       win.running = false;
-      win.restartGame = true;
+      if (!tutorial.chainChallenge) {
+        win.restartGame = true;
+      } else {
+        document.querySelector("#menu-button").click();
+        document.querySelector("#chain-challenge-mode").click();
+      }
     }
     if (event.keyCode == 77 && !debug.enabled) {
       // m
@@ -1392,6 +1397,7 @@ function KEYBOARD_CONTROL(event) {
 }
 
 export function updateLevelEvents(level) {
+  console.log(`Updating Level Events to level ${level}`);
   game.level = level;
   if (game.level > preset.speedValues.length - 1) {
     game.level--;
@@ -1834,20 +1840,24 @@ export function gameLoop() {
         );
         if (
           perf.realTimeDiff >= 3 &&
-          perf.gameSpeed !== 2 &&
+          perf.drawDivisor !== 2 &&
           game.mode !== "cpu-play" &&
+          game.mode !== "tutorial" &&
           !leaderboard.reason
         ) {
-          // switch to 30fps game since running slow
-          if (game.frameMod[2] === 1) game.frames += 1; // make sure frame count is even
-          perf.gameSpeed = 2;
-          perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
+          // draw only 30 times per second since game running slow
+          perf.drawDivisor = 2;
+          // // switch to 30fps game since running slow
+          // if (game.frameMod[2] === 1) game.frames += 1; // make sure frame count is even
+          // perf.gameSpeed = 2;
+          // perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
         if (
           perf.realTimeDiff >= 15 &&
           game.mode !== "cpu-play" &&
           !leaderboard.reason
         ) {
+          perf.drawDivisor = 2;
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
           perf.unrankedReason = `leaderboard posting disabled, behind real clock by
@@ -1946,8 +1956,12 @@ export function gameLoop() {
       win.scoreDisplay.innerHTML = scoreString;
       win.multiplierDisplay.innerHTML = `${game.scoreMultiplier.toFixed(2)}x`;
 
-      win.fpsDisplay.innerHTML = `${perf.fps} fps${
-        leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
+      win.fpsDisplay.innerHTML = `${
+        perf.drawDivisor === 1 ? perf.fps : Math.floor(perf.fps / 2)
+      } fps${
+        game.mode !== "arcade" || leaderboard.canPost
+          ? ""
+          : ` unranked -- ${perf.unrankedReason}`
       }`;
       if (game.over) {
         win.fpsDisplay.innerHTML = `Real Time: ${perf.realTime -

@@ -46,6 +46,8 @@ export const tutorial = {
   state: 0,
   movesMade: 0,
   failCount: 0,
+  hintLevel: 0,
+  failOnNextFrame: false,
 };
 
 console.log(tutorial);
@@ -213,6 +215,15 @@ export function deselectAllBlocks() {
       game.board[x][y].tutorialSelectable = false;
       game.board[x][y].helpX = undefined;
       game.board[x][y].targetX = undefined;
+    }
+  }
+}
+
+export function setValuesOfAllBlocksProperties(property, value) {
+  console.log(`setting all block properties "${property}" to value "${value}"`);
+  for (let x = 0; x < grid.COLS; x++) {
+    for (let y = 0; y < grid.ROWS; y++) {
+      game.board[x][y][property] = value;
     }
   }
 }

@@ -18,6 +18,11 @@ export function chainChallengeEvents() {
         ? `Largest Chain: ${game.largestChain}x.`
         : "Can you make a 9 chain to clear the board?";
   }
+
+  if (game.currentChain === 8) {
+    updateLevelEvents(7);
+  }
+
   if (game.currentChain === 9) {
     game.message = "Congratulations, you beat the Chain Challenge!";
     action.timer = 120;
@@ -54,14 +59,18 @@ export function chainChallengeEvents() {
   if (action.timer === -3 && game.lastChain > 0) {
     // action timer is set to -3 upon ending chain in endChain() function
     deselectAllBlocks();
+    updateLevelEvents(0);
     touch.moveOrderExists = false;
-    action.timer = 90;
+    action.timer = 180;
     game.message = `${game.lastChain}x achieved. `;
     if (game.lastChain < 3) game.message += `Try again!`;
     else if (game.lastChain < 5) game.message += `Good!`;
     else if (game.lastChain < 7) game.message += `Excellent!`;
     else if (game.lastChain < 9) game.message += `Very close!`;
-    else game.message = "Congratulations, you beat the Chain Challenge!";
+    else {
+      game.message = "Congratulations, you beat the Chain Challenge!";
+      action.timer = 180;
+    }
   }
 
   if (game.largestChain === 9 && action.timer < 2) {

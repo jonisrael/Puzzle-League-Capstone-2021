@@ -69,7 +69,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(5, grid.ROWS - 2, 3);
   }
   if (
-    game.board[5][grid.ROWS - 1].timer === 108 &&
+    game.board[5][grid.ROWS - 1].timer === 129 &&
     game.board[5][grid.ROWS - 1].color === "yellow"
   ) {
     // yellow match started
@@ -103,7 +103,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(0, grid.ROWS - 2); // deselect
     makeBlockSelectable(1, grid.ROWS - 3, 0); // select cyan make 5
   }
-  if (game.board[0][grid.ROWS - 1].timer === 118) {
+  if (game.board[0][grid.ROWS - 1].timer === 143) {
     // cyan match created
     tutorial.msgIndex++;
     tutorial.savedIndex = tutorial.msgIndex;
@@ -148,7 +148,7 @@ export function tutorialEventsAtState_1() {
     makeBlockSelectable(5, grid.ROWS - 2, 4);
     makeBlockSelectable(4, grid.ROWS - 2, 5);
   }
-  if (game.board[5][grid.ROWS - 4].timer === 148) {
+  if (game.board[5][grid.ROWS - 4].timer === 178) {
     // 8 blocks have just started clearing.
     playAudio(audio.announcerPayoff);
     tutorial.msgIndex++;
