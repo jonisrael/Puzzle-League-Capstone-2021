@@ -13,9 +13,9 @@ export function tryToAvoidDeath() {
         if (blockIsSolid(game.board[c][r])) {
           if (c >= 1 && game.board[c - 1][r].color === "vacant") {
             if (game.mode === "cpu-play") {
-              game.messagePriority = `Avoid losing! Flattening tower on the ${
+              game.messagePriority = `Avoid losing! Flattening ${
                 c < grid.COLS / 2 ? "left" : "right"
-              }.`;
+              } tower.`;
             }
             cpu.targetColor = sprite.debugPink;
             cpu.blockToSelect = [c - 1, r];

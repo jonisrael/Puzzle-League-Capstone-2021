@@ -36,7 +36,7 @@ export function checkTutorialEvents(state) {
       document.getElementById("tutorial-mode").click();
     return;
   }
-  if (state === 0) tutorialEventsAtState_0();
+  if (state === 0) tutorialEventsAtState_0(); // not used
   if (state === 1) tutorialEventsAtState_1();
   if (state === 2) tutorialEventsAtState_2();
   if (state === 3) tutorialEventsAtState_3();

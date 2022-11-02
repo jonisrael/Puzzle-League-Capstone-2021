@@ -28,6 +28,7 @@ const messageList = [
 ];
 
 export function tutorialEventsAtState_2() {
+  game.boardRiseSpeed = -2;
   if (game.board[0][grid.ROWS].timer === 0) {
     // set tutorial starting point
     console.log("tutorial start point established");
@@ -139,7 +140,7 @@ export function tutorialEventsAtState_2() {
 function countTheMove() {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
-      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirection) {
+      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirectionX) {
         // count a block that is swapping as 1
         return [x, y];
       }

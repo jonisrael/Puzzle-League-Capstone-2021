@@ -455,6 +455,7 @@ export let game = {
   readyForNewRow: false,
   highestRow: 11,
   highestCols: [0, 1, 2, 3, 4, 5],
+  nextBlockIdNum: 1,
   frameMod: {},
   panicIndex: 1,
   panicAnimate: {},
@@ -811,8 +812,8 @@ export function spawnSquare(digit) {
 
 export function transferProperties(FirstBlock, SecondBlock, type) {
   // do not transfer x, y, or targetX
-  let FirstKeys = Object.keys(FirstBlock).splice(2); // dont change x and y
-  let SecondKeys = Object.keys(SecondBlock).splice(2); // dont change x and y
+  let FirstKeys = Object.keys(FirstBlock).splice(2); // dont change x, y, num
+  let SecondKeys = Object.keys(SecondBlock).splice(2); // dont change x y, num
   let TempBlock;
 
   if (type === "between") {

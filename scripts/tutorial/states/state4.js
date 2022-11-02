@@ -64,6 +64,8 @@ export const tutorialMessages4 = [
 
 export function tutorialEventsAtState_4() {
   const rows = grid.ROWS;
+  game.boardRiseSpeed = -2;
+
   let action = game.board[0][rows]; // off screen hidden block used for reference
   if (action.timer === 0) {
     game.humanCanPlay = false;

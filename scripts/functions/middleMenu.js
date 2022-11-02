@@ -9,7 +9,7 @@ export const menus = {
   firstGameTutorialQuestion: {
     question: {
       text:
-        "I noticed this is your first time playing. Would you like to learn how to play with a quick tutorial?",
+        "It looks like this is your first time playing. Would you like to learn how to play with a quick tutorial?",
     },
 
     buttonFunction: `firstGameTutorialQuestion`,
@@ -27,6 +27,27 @@ export const menus = {
     ],
   },
 
+  coupleGamesTutorialQuestion: {
+    question: {
+      text:
+        "Looks like you are getting the hang of things! Would you like to learn ways on how to improve your score?",
+    },
+
+    buttonFunction: `coupleGamesTutorialQuestion`,
+    buttons: [
+      {
+        text: "Yes, teach me how to improve my score!",
+        bgImage: "none",
+        bgColor: "yellow",
+        fontSize: "x-large",
+      },
+      {
+        text: "No thanks, I want to play again",
+        fontSize: "x-large",
+      },
+    ],
+  },
+
   timeControl: {
     question: {
       text: "What time control would you like to play?",
@@ -38,10 +59,13 @@ export const menus = {
         bgImage: "linear-gradient(to bottom right, gold, yellow);",
       },
       {
-        text: "Standard (5 minutes, No Leaderboard)",
+        text: "Standard (5 Minutes)",
         lockedText: "Standard",
       },
-      { text: "Marathon (10 minutes, No Leaderboard)", lockedText: "Marathon" },
+      {
+        text: "Marathon (10 Minutes)",
+        lockedText: "Marathon",
+      },
       {
         text: "Teach me how to play first!",
         bgImage: "revert",
@@ -143,6 +167,7 @@ function setAISpeed(option) {
   if (option === 3) cpu.cursorSpeedDivisor = 6;
   if (option === 4) cpu.cursorSpeedDivisor = 15;
   if (option === 5) cpu.cursorSpeedDivisor = 30;
+  defineTimeEvents(2);
   startGame();
 }
 
@@ -151,7 +176,7 @@ function firstGameTutorialQuestion(option) {
     render(state.Home);
     if (document.getElementById("tutorial-mode")) {
       document.getElementById("tutorial-mode").click();
-      document.getElementById("button_1").click(); // go to first tutorial
+      document.getElementById("button_1").click(); // go to basics tutorial
     }
   }
   if (option === 2) {
@@ -161,6 +186,21 @@ function firstGameTutorialQuestion(option) {
       // immediately skip to playing 2 minute game
       document.getElementById("button_1").click();
     }
+  }
+}
+
+function coupleGamesTutorialQuestion(option) {
+  if (option === 1) {
+    render(state.Home);
+    if (document.getElementById("tutorial-mode")) {
+      document.getElementById("tutorial-mode").click();
+      document.getElementById("button_3").click(); // go to maximizing score tutorial
+    }
+  }
+  if (option === 2) {
+    game.mode = "arcade";
+    middleMenuSetup("timeControl");
+    document.getElementById("button_1").click();
   }
 }
 
@@ -221,6 +261,9 @@ export function middleMenuSetup(key, nextTutorialIndex = undefined) {
         }
         if (key.includes("firstGameTutorialQuestion")) {
           firstGameTutorialQuestion(option);
+        }
+        if (key.includes("coupleGamesTutorialQuestion")) {
+          coupleGamesTutorialQuestion(option);
         }
         if (key.includes("nextTutorial")) {
           nextTutorial(option, nextTutorialIndex);

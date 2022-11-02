@@ -20,6 +20,7 @@ import {
 export function tutorialEventsAtState_1() {
   let advanceButton = document.getElementById("pause-button");
   game.humanCanPlay = tutorial.msgIndex > 2;
+  game.boardRiseSpeed = -2;
   advanceButton.disabled = game.humanCanPlay;
   if (tutorial.msgIndex === 2 && game.cursor.x !== 0) {
     [game.cursor.x, game.cursor.y] = [grid.COLS / 2 - 1, grid.ROWS / 2 - 1];

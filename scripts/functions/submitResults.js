@@ -27,6 +27,7 @@ import { checkCanUserPost } from "./checkCanUserPost";
 import { updateBestScores, getBestScores } from "./updateBestScores";
 import { validateForm } from "./validateForm";
 import { setUpBestScoreDisplay } from "./setUpViewport";
+import { middleMenuSetup } from "./middleMenu";
 
 export function afterGame() {
   console.log("run aftergame");
@@ -109,7 +110,11 @@ export function afterGame() {
   restartGame.addEventListener("click", (event) => {
     // game.humanCanPlay = false;
     // game.playRecording = true;
-    startGame();
+    if (win.gamesCompleted === 2) {
+      middleMenuSetup("coupleGamesTutorialQuestion");
+    } else {
+      startGame();
+    }
   });
 
   deleteScores.addEventListener("click", (event) => {

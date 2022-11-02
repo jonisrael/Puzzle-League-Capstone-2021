@@ -210,6 +210,8 @@ function addEventListeners(st) {
           game.mode = "arcade";
           if (win.gamesCompleted === 0) {
             middleMenuSetup("firstGameTutorialQuestion");
+          } else if (win.gamesCompleted === 2) {
+            middleMenuSetup("coupleGamesTutorialQuestion");
           } else {
             middleMenuSetup("timeControl");
           }

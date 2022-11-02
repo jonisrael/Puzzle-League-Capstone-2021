@@ -113,7 +113,7 @@ export function checkCanUserPost() {
       return false;
     }
 
-    if (leaderboard.reason === "get-good") {
+    if (leaderboard.reason === "get-good" || cpu.enabled) {
       document.querySelector("#cannot-post-msg").remove();
       return false;
       //   container.innerHTML += `<p>This is because your score is less than or equal to the last leaderboard spot. Depending on popularity, leaderboard size may increase. Your score is ${

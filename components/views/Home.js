@@ -37,9 +37,9 @@ export default (st) => html`
       <hr />
       <h1>How to play</h1>
       <p>
-        <strong
-          >Swap blocks left andClear blocks and score points by matching 3 or
-          more blocks vertically or horizontally.</strong
+        <strong>
+          Clear blocks and score points by matching 3 or more blocks vertically
+          or horizontally.</strong
         >
         You can do this by swapping blocks horizontally. If you match more than
         3, and you'll get a slight bonus based on the size of the clear.
@@ -70,7 +70,7 @@ export default (st) => html`
       </p>
       <hr />
       <p>
-        This game is inspired by the "Puzzle League" series and plays in a
+        This game is inspired by the 90's "Puzzle League" series and plays in a
         similar way. However, this is my own program that uses its own code. I
         have developed unique mechanics and control systems not in the original
         games, as well as a more simplified scoring system. You can check out

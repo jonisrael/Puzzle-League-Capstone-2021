@@ -27,9 +27,9 @@ import { displayMessage, render, router, getLeaderboardData } from "../..";
 
 export function closeGame(gameFinished) {
   win.running = false;
+  sound.Music[1].pause();
   console.log("game not aborted:", gameFinished);
   if (!gameFinished) {
-    sound.Music[1].pause();
     render(state.Home);
   }
   if (win.loopCounter > 999) {
@@ -46,13 +46,7 @@ export function closeGame(gameFinished) {
   //   document.getElementById("home-page").onselectstart = true;
   // }
 
-  if (gameFinished && !cpu.enabled) {
-    // if (cpu.enabled) {
-    //   win.restartGame = true;
-    //   return;
-    // }
-    sound.Music[1].pause();
-
+  if (gameFinished) {
     afterGame();
   }
 }

@@ -21,7 +21,7 @@ export const tutorialMessages = [
     "And there's the payoff! Look at all those points! Now for a challenge...",
   ],
   [
-    "Can you make a 10 set within 5 moves?", // 0
+    "Can you make a 10 set within 3 moves?", // 0
     "Out of moves! Try again!",
     "Clear too small, you must clear 10 at the same time!",
     "You can enable a hint to help solve this puzzle.",

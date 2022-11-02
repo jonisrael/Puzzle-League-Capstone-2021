@@ -126,6 +126,7 @@ export function runTutorialScript(input, frame) {
 }
 
 export function createTutorialBoard(colorLocations, blocksSelectable = false) {
+  game.nextBlockIdNum = 1;
   for (let c = 0; c < COLS; c++) {
     for (let r = 0; r < ROWS + 2; r++) {
       game.board[c][r].tutorialSelectable = blocksSelectable;
@@ -137,6 +138,8 @@ export function createTutorialBoard(colorLocations, blocksSelectable = false) {
           let [locX, locY, definedColor, timer] = colorLocations[i];
           if (c === locX && r === locY) {
             game.board[c][r].color = definedColor;
+            game.board[c][r].num = game.nextBlockIdNum;
+            game.nextBlockIdNum++;
             if (timer !== undefined) game.board[c][r].timer = timer;
           }
         }

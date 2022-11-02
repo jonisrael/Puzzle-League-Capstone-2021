@@ -116,7 +116,11 @@ import {
   match,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
-import { arcadeEvents, checkTime } from "./scripts/functions/timeEvents";
+import {
+  arcadeEventes,
+  arcadeEvents,
+  checkTime,
+} from "./scripts/functions/timeEvents";
 import {
   allBlocksAreSelectable,
   createTutorialBoard,
@@ -143,15 +147,6 @@ import {
   loadTutorialState,
 } from "./scripts/tutorial/tutorialEvents";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
-// import {
-//   analyzeBoard,
-//   checkMatches,
-//   drawSquare,
-//   gravity,
-//   increaseStackHeight,
-//   resetBoardStateVars,
-//   updateBoardState
-// } from "./scripts/functions/experimentalFunctions";
 
 if (localStorage.getItem("highScore") === null) {
   localStorage.setItem("highScore", "1000");
@@ -190,6 +185,7 @@ class Block {
   constructor(
     x,
     y,
+    num = 0,
     color = "vacant",
     type = "normal",
     timer = 0,
@@ -221,6 +217,7 @@ class Block {
   ) {
     this.x = x;
     this.y = y;
+    this.num = num;
     this.color = color;
     this.type = type;
     this.timer = timer;
@@ -300,7 +297,6 @@ class Block {
     if (this.color === "vacant" || this.type !== "panicking") return;
     win.ctx.fillStyle = this.color;
     if (this.color === "green") win.ctx.fillStyle = "rgb(0,255,0)";
-    // win.ctx.fillStyle = "white";
     win.ctx.globalAlpha =
       0.25 +
       (preset.faceValues[game.level] - game.deathTimer) /
@@ -733,7 +729,7 @@ export function newBlock(c, r, vacant = false) {
 export function checkIfHelpPlayer() {
   if (helpPlayer.forceHint) helpPlayer.timer = 0;
   if (
-    ((game.score < 1000 && game.mode !== "tutorial" && !debug.show) ||
+    ((game.score < 500 && game.mode !== "tutorial" && !debug.show) ||
       helpPlayer.forceHint) &&
     game.frames > 0 &&
     game.frames < arcadeEvents.overtimeStart &&
@@ -881,7 +877,7 @@ export function endChain(potentialSecondarySuccessor) {
   game.stickyJingleAllowed = true;
   if (debug.enabled) console.log("board raise delay granted:", game.raiseDelay);
   game.lastChain = game.currentChain;
-  helpPlayer.timer = helpPlayer.timer <= 120 ? 120 : 360;
+  helpPlayer.timer = helpPlayer.timer <= 240 ? 240 : 420;
   helpPlayer.hintVisible = false;
   cpu.matchList.length = 0;
   cpu.matchStrings.length = 0;
@@ -1685,10 +1681,8 @@ export function gameLoop() {
 
       if (game.currentlyQuickRaising) {
         // game.disableSwap = true;
-        game.message = "Quick-Raise Initiated";
-        game.messageChangeDelay = 1000;
         win.mainInfoDisplay.style.color = "black";
-        if (game.rise == 0) {
+        if (game.rise == 0 || game.boardRiseSpeed < 0) {
           game.disableSwap = false;
           game.currentlyQuickRaising = false;
           game.message = "Quick-Raise Complete";
@@ -1697,6 +1691,8 @@ export function gameLoop() {
           game.raiseDelay = 0;
           game.boardRiseSpeed = preset.speedValues[game.level];
         } else {
+          game.message = "Quick-Raise Initiated";
+          game.messageChangeDelay = 1000;
           game.boardRiseSpeed = 1;
         }
       }
@@ -1717,11 +1713,7 @@ export function gameLoop() {
         win.raiseDelayBar.style.width = `${100 *
           (game.raiseDelay / game.raiseCap)}%`;
       } else win.raiseDelayBar.style.width = "1%";
-      if (
-        game.mode !== "tutorial" &&
-        game.frames % game.boardRiseSpeed == 0 &&
-        game.boardRiseSpeed > 0
-      ) {
+      if (game.frames % game.boardRiseSpeed == 0 && game.boardRiseSpeed > 0) {
         if (
           game.boardRiseRestarter >= 180 ||
           (game.boardRiseRestarter >= 60 &&
