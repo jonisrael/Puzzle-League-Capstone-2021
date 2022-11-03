@@ -22,7 +22,7 @@ export default (st) => html`
           Play Game!
         </button>
         <button id="tutorial-mode" class="default-button start-buttons">
-          Tutorials
+          Interactive Tutorials (2022)
         </button>
         <button id="chain-challenge-mode" class="default-button start-buttons">
           Chain Puzzle

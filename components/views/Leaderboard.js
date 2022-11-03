@@ -12,7 +12,7 @@ export default (st) => html`
       Refresh Leaderboard
     </button>
 
-    <div class="tab">
+    <div class="tab" style="display: none;">
       <button class="tab-links active">
         Blitz
       </button>
