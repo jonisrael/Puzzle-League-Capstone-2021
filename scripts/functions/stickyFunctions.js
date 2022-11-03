@@ -376,7 +376,7 @@ function checkSideMatch(Square, single = false, dir) {
       smartMatch.thirdCoord = [SideBlock_1.x, SideBlock_1.y];
       // If swapping with same block and already paired, cancel redundant sticky
       // if (MainBlock.x === Square.x) return false;
-      // if (MainBlock.x !== Square.x && MainBlock.swapDirection === -dir)
+      // if (MainBlock.x !== Square.x && MainBlock.swapDirectionX === -dir)
       //   return false;
       let s = dir === -1 ? "L" : "R";
       let t = dir === -1 ? "R" : "L";

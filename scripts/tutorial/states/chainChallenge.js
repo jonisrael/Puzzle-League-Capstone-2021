@@ -93,7 +93,7 @@ function checkChainChallengeHints() {
 function countTheMove() {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
-      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirection) {
+      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirectionX) {
         // count a block that is swapping as 1
         return [x, y];
       }

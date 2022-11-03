@@ -128,7 +128,7 @@ export function updateGrid(frameAdvance = false) {
       } else if (Square.timer > 0) {
         Square.timer -= 1;
         if (Square.type !== "swapping") {
-          Square.swapDirection = 0;
+          Square.swapDirectionX = 0;
           // game.boardRiseDisabled = true;
         }
       }
@@ -143,7 +143,7 @@ export function updateGrid(frameAdvance = false) {
 
       if (Square.type === "swapping" && Square.timer === 0) {
         Square.type = "normal";
-        Square.swapDirection = 0;
+        Square.swapDirectionX = 0;
         if (Square.airborne) {
           Square.type = "stalling";
           if (Square.targetX !== undefined) {

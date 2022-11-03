@@ -1,6 +1,3 @@
-import { action } from "./controls";
-import { SelectedBlock } from "./functions/stickyFunctions";
-import { trySwappingBlocks } from "./functions/swapBlock";
 import {
   blockIsSolid,
   CLEARING_TYPES,
@@ -92,6 +89,25 @@ export function moveBlockByRelease(x, y, targetX) {
     touch.mouse.y >= touch.selectedBlock.y - 20 &&
     (targetX !== touch.selectedBlock.x ||
       touch.mouse.y !== touch.selectedBlock.y)
+  ) {
+    touch.moveOrderExists = true;
+  }
+  touch.thereIsABlockCurrentlySelected = false;
+}
+
+export function moveBlockByReleaseNew(x, y, targetX, targetY = y) {
+  if (cpu.control) return;
+  let Square = game.board[x][y];
+  if (Square.x === targetX && Square.y === targetY) return;
+  Square.targetX = targetX; // move to x--coordinate
+  Square.targetY = targetY; // move to y--coordinate
+  touch.moveOrderList.push([Square.targetX, Square.targetY]);
+  touch.mouse.clicked = false;
+  if (
+    touch.mouse.y <= touch.selectedBlock.y + 20 &&
+    touch.mouse.y >= touch.selectedBlock.y - 20 &&
+    targetX !== touch.selectedBlock.x &&
+    targetY !== touch.selectedBlock.y
   ) {
     touch.moveOrderExists = true;
   }
@@ -195,6 +211,7 @@ export function doMouseUp(e, virtualX, virtualY) {
   if (!game.humanCanPlay) return;
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
+  // virtualX used by replays and AI
   virtualX === undefined
     ? updateMousePosition(win.cvs, e)
     : ([touch.mouse.x, touch.mouse.y] = [virtualX, virtualY]);
@@ -208,7 +225,12 @@ export function doMouseUp(e, virtualX, virtualY) {
   if (touch.thereIsABlockCurrentlySelected && !touch.moveOrderExists) {
     const SelectedBlock =
       game.board[touch.selectedBlock.x][touch.selectedBlock.y];
-    moveBlockByRelease(SelectedBlock.x, SelectedBlock.y, touch.mouse.x);
+    moveBlockByRelease(
+      SelectedBlock.x,
+      SelectedBlock.y,
+      touch.mouse.x,
+      touch.mouse.y
+    );
     SelectedBlock.previewX = undefined;
   }
   touch.thereIsABlockCurrentlySelected = false;

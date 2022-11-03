@@ -29,7 +29,6 @@ import {
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks,
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
@@ -191,19 +190,22 @@ class Block {
     timer = 0,
     message = "",
     msgTimer = 1,
-    startingClearFrame = 0,
     switchToFaceFrame = 0,
     switchToPoppedFrame = 0,
     airborne = false,
     touched = false,
     availForPrimaryChain = false,
     availForSecondaryChain = false,
-    swapDirection = 0,
+    swapDirectionX = 0,
+    swapDirectionY = 0,
     lightTimer = 0,
     lightBlink = false,
     targetX = undefined,
+    targetY = undefined,
     previewX = undefined,
+    previewY = undefined,
     helpX = undefined,
+    helpY = undefined,
     tutorialSelectable = true,
     smartMatch = {
       lowestKeyCoord: undefined,
@@ -230,12 +232,16 @@ class Block {
     this.touched = touched;
     this.availForPrimaryChain = availForPrimaryChain; // When disappear, chain ends
     this.availForSecondaryChain = availForSecondaryChain;
-    this.swapDirection = swapDirection;
+    this.swapDirectionX = swapDirectionX;
+    this.swapDirectionY = swapDirectionY;
     this.lightTimer = lightTimer;
     this.lightBlink = lightBlink;
     this.targetX = targetX;
+    this.targetY = targetY;
     this.previewX = previewX;
+    this.previewY = previewY;
     this.helpX = helpX;
+    this.helpY = helpY;
     this.tutorialSelectable = tutorialSelectable;
     this.smartMatch = smartMatch;
   }
@@ -275,12 +281,12 @@ class Block {
   }
 
   drawSwappingBlocks() {
-    let xOffset = (grid.SQ * (this.timer - 1)) / (game.swapTimer - 1);
+    let offset = (grid.SQ * (this.timer - 1)) / (game.swapTimer - 1);
     // let url = this.color[0] === "u" ? "unmatchable" : `${this.color}_normal`;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
-      grid.SQ * this.x + xOffset * this.swapDirection,
-      grid.SQ * this.y - game.rise
+      grid.SQ * this.x + offset * this.swapDirectionX,
+      grid.SQ * this.y + offset * this.swapDirectionY - game.rise
     );
   }
 
@@ -699,7 +705,7 @@ class Block {
     );
 
     // if (this.type === blockType.SWAPPING) {
-    // let xOffset = (grid.SQ * this.swapDirection*(1 - this.timer)) / 4;
+    // let xOffset = (grid.SQ * this.swapDirectionX*(1 - this.timer)) / 4;
     //   win.ctx.drawImage(
     //     loadedSprites[`${this.color}_normal`],
     //     grid.SQ * this.x + xOffset,
@@ -768,7 +774,7 @@ export function drawGrid() {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
-      if (Square.swapDirection && Square.timer > 0) {
+      if (Square.swapDirectionX && Square.timer > 0) {
         swappingBlocksArray.push(Square);
       }
       if (

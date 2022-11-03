@@ -313,8 +313,9 @@ export const touch = {
     clicked: false,
     x: 2, // actual mouse loc, updates while mouse is down
     y: 6, // actual mouse loc, updates while mouse is down
+    lastClicked: { x: 2, y: 6 },
+    lastBlock: { x: 2, y: 6 }, //
   },
-  mouseStart: { x: 2, y: 6 },
   selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
   moveOrderExists: false,
   moveOrderList: [],
