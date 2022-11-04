@@ -134,8 +134,8 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     LeftBlock.type = RightBlock.type = blockType.SWAPPING;
     LeftBlock.airborne = isBlockAirborne(LeftBlock);
     RightBlock.airborne = isBlockAirborne(RightBlock);
-    LeftBlock.swapDirection = 1;
-    RightBlock.swapDirection = -1;
+    LeftBlock.swapDirectionX = 1;
+    RightBlock.swapDirectionX = -1;
     LeftBlock.touched = RightBlock.touched = true;
     LeftBlock.availForPrimaryChain = RightBlock.availForPrimaryChain = false;
     LeftBlock.availForSecondaryChain = RightBlock.availForSecondaryChain = false;

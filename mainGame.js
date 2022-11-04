@@ -14,56 +14,56 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs,
+  audioSrcs
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch,
+  checkMatch
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables,
+  resetGameVariables
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks,
+  trySwappingBlocks
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne,
+  isBlockAirborne
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import {
   cpuAction,
   cpuClick,
-  isAllowedToSwap,
+  isAllowedToSwap
 } from "./scripts/computerPlayer/cpu";
 import {
   action,
   actionHeld,
   actionUp,
   savedControls,
-  playerAction,
+  playerAction
 } from "./scripts/controls";
 import {
   pause,
   printDebugInfo,
-  unpause,
+  unpause
 } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic,
+  playMusic
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard,
+  gameOverBoard
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -107,19 +107,19 @@ import {
   touchInputs,
   saveState,
   replay,
-  getRow,
+  getRow
 } from "./scripts/global.js";
 import { updateMousePosition } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match,
+  match
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import {
   arcadeEventes,
   arcadeEvents,
-  checkTime,
+  checkTime
 } from "./scripts/functions/timeEvents";
 import {
   allBlocksAreSelectable,
@@ -128,23 +128,23 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard,
+  tutorialBoard
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction, rewind } from "./scripts/functions/trainingControls";
 import {
   determineScoreColor,
   drawChainMessage,
-  drawScoreEarnedMessage,
+  drawScoreEarnedMessage
 } from "./scripts/functions/drawCanvasShapesAndText";
 import {
   playbackInputs,
   previous,
-  saveCurrentBoard,
+  saveCurrentBoard
 } from "./scripts/functions/playbackGame";
 import {
   checkTutorialEvents,
-  loadTutorialState,
+  loadTutorialState
 } from "./scripts/tutorial/tutorialEvents";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
 
@@ -198,12 +198,16 @@ class Block {
     touched = false,
     availForPrimaryChain = false,
     availForSecondaryChain = false,
-    swapDirection = 0,
+    swapDirectionX = 0,
+    swapDirectionY = 0,
     lightTimer = 0,
     lightBlink = false,
     targetX = undefined,
+    targetY = undefined,
     previewX = undefined,
+    previewY = undefined,
     helpX = undefined,
+    helpY = undefined,
     tutorialSelectable = true,
     smartMatch = {
       lowestKeyCoord: undefined,
@@ -212,7 +216,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined,
+      solidGroundArray: undefined
     }
   ) {
     this.x = x;
@@ -223,19 +227,23 @@ class Block {
     this.timer = timer;
     this.message = message;
     this.msgTimer = msgTimer;
-    this.startingClearFrame;
+    this.startingClearFrame = startingClearFrame;
     this.switchToFaceFrame = switchToFaceFrame;
     this.switchToPoppedFrame = switchToPoppedFrame;
     this.airborne = airborne;
     this.touched = touched;
     this.availForPrimaryChain = availForPrimaryChain; // When disappear, chain ends
     this.availForSecondaryChain = availForSecondaryChain;
-    this.swapDirection = swapDirection;
+    this.swapDirectionX = swapDirectionX;
+    this.swapDirectionY = swapDirectionY;
     this.lightTimer = lightTimer;
     this.lightBlink = lightBlink;
     this.targetX = targetX;
+    this.targetY = targetY;
     this.previewX = previewX;
+    this.previewY = previewY;
     this.helpX = helpX;
+    this.helpY = helpY;
     this.tutorialSelectable = tutorialSelectable;
     this.smartMatch = smartMatch;
   }
@@ -279,7 +287,7 @@ class Block {
     // let url = this.color[0] === "u" ? "unmatchable" : `${this.color}_normal`;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
-      grid.SQ * this.x + xOffset * this.swapDirection,
+      grid.SQ * this.x + xOffset * this.swapDirectionX,
       grid.SQ * this.y - game.rise
     );
   }
@@ -699,7 +707,7 @@ class Block {
     );
 
     // if (this.type === blockType.SWAPPING) {
-    // let xOffset = (grid.SQ * this.swapDirection*(1 - this.timer)) / 4;
+    // let xOffset = (grid.SQ * this.swapDirectionX*(1 - this.timer)) / 4;
     //   win.ctx.drawImage(
     //     loadedSprites[`${this.color}_normal`],
     //     grid.SQ * this.x + xOffset,
@@ -768,7 +776,7 @@ export function drawGrid() {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
-      if (Square.swapDirection && Square.timer > 0) {
+      if (Square.swapDirectionX && Square.timer > 0) {
         swappingBlocksArray.push(Square);
       }
       if (
@@ -805,8 +813,8 @@ export function drawGrid() {
     } // end check y
   } // end check x
 
-  swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
-  arrowListArray.forEach((Square) => Square.drawArrows());
+  swappingBlocksArray.forEach(Square => Square.drawSwappingBlocks());
+  arrowListArray.forEach(Square => Square.drawArrows());
 
   if (cpu.showInfo || debug.show) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
@@ -1815,7 +1823,7 @@ export function gameLoop() {
             helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach((coord) => {
+          cpu.matchList.forEach(coord => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.hintVisible = false;
