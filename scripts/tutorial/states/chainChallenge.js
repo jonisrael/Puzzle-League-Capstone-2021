@@ -1,8 +1,9 @@
 import { updateLevelEvents } from "../../../mainGame";
+import { touch } from "../../clickControls";
 import { pause } from "../../functions/pauseFunctions";
 import { saveCurrentBoard } from "../../functions/playbackGame";
 import { generateOpeningBoard } from "../../functions/startGame";
-import { CLEARING_TYPES, debug, game, grid, touch, win } from "../../global";
+import { CLEARING_TYPES, debug, game, grid, win } from "../../global";
 import { createTutorialBoard } from "../tutorialBoards";
 import {
   allBlocksAreSelectable,

@@ -14,7 +14,6 @@ import {
   newGame,
   leaderboard,
   cpu,
-  touch,
   helpPlayer,
   detectInfiniteLoop,
   saveState,
@@ -38,7 +37,7 @@ import {
 import { Cursor, gameLoop, newBlock, updateLevelEvents } from "../../mainGame";
 import { pause, unpause } from "./pauseFunctions";
 import { action } from "../controls";
-import { createClickListeners } from "../clickControls";
+import { createClickListeners, touch } from "../clickControls";
 import {
   createTutorialBoard,
   loadTutorialState,

@@ -2,6 +2,7 @@ import { audio, audioKeys, audioList, sprite } from "./fileImports";
 import { displayMessage } from "..";
 import { pause } from "./functions/pauseFunctions";
 import { determineOSAndBrowser } from "./functions/determineOSBrowser";
+import { touch } from "./clickControls";
 
 // checkIfControlsExist(savedControls);
 
@@ -305,32 +306,6 @@ export const overtimeMusic = [
   // audio.gioMusic,
   // audio.surgeMusic
 ];
-
-export const touch = {
-  enabled: true,
-  thereIsABlockCurrentlySelected: false,
-  mouse: {
-    clicked: false,
-    x: 2, // actual mouse loc, updates while mouse is down
-    y: 6, // actual mouse loc, updates while mouse is down
-  },
-  mouseStart: { x: 2, y: 6 },
-  selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
-  moveOrderExists: false,
-  moveOrderList: [],
-  arrowLists: [],
-  arrowMoveTypes: [],
-  target: { x: 2, y: 6 }, // swap until target is reached
-  keySquare: { x: 2, y: 6 },
-  arrowPointer: { x: 2, y: 6 },
-  removeAllArrows: false,
-  swapOrderPrepared: false,
-  multiClickCounter: 0,
-  multiClickTimer: 0,
-  lastCursorPos: { x: 2, y: 6 },
-  lastXMoused: 2,
-  mouseChangedX: false,
-};
 
 export const resultsMusic = [audio.results1Music, audio.results2Music];
 

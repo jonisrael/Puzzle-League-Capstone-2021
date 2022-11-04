@@ -14,56 +14,55 @@ import {
   audio,
   loadedSprites,
   audioKeys,
-  audioSrcs
+  audioSrcs,
 } from "./scripts/fileImports";
 import {
   legalMatch,
-  checkMatch
+  checkMatch,
 } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
   startGame,
-  resetGameVariables
+  resetGameVariables,
 } from "./scripts/functions/startGame";
 import {
   checkBlockTargets,
   checkSwapTargets,
-  trySwappingBlocks
 } from "./scripts/functions/swapBlock";
 import {
   doGravity,
   areAllBlocksGrounded,
-  isBlockAirborne
+  isBlockAirborne,
 } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
 import {
   cpuAction,
   cpuClick,
-  isAllowedToSwap
+  isAllowedToSwap,
 } from "./scripts/computerPlayer/cpu";
 import {
   action,
   actionHeld,
   actionUp,
   savedControls,
-  playerAction
+  playerAction,
 } from "./scripts/controls";
 import {
   pause,
   printDebugInfo,
-  unpause
+  unpause,
 } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
-  playMusic
+  playMusic,
 } from "./scripts/functions/audioFunctions.js";
 import {
   closeGame,
   isGameOver,
-  gameOverBoard
+  gameOverBoard,
 } from "./scripts/functions/gameOverFunctions";
 
 import {
@@ -86,7 +85,6 @@ import {
   padInt,
   music,
   overtimeMusic,
-  touch,
   CLEARING_TYPES,
   blockIsSolid,
   blockVacOrClearing,
@@ -107,19 +105,19 @@ import {
   touchInputs,
   saveState,
   replay,
-  getRow
+  getRow,
 } from "./scripts/global.js";
-import { updateMousePosition } from "./scripts/clickControls";
+import { updateMousePosition, touch } from "./scripts/clickControls";
 import {
   TouchOrder,
   TouchOrders,
-  match
+  match,
 } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
 import {
   arcadeEventes,
   arcadeEvents,
-  checkTime
+  checkTime,
 } from "./scripts/functions/timeEvents";
 import {
   allBlocksAreSelectable,
@@ -128,23 +126,23 @@ import {
   runTutorialScript,
   startTutorial,
   tutorial,
-  tutorialBoard
+  tutorialBoard,
 } from "./scripts/tutorial/tutorialScript";
 import { tutorialMessages } from "./scripts/tutorial/tutorialMessages";
 import { doTrainingAction, rewind } from "./scripts/functions/trainingControls";
 import {
   determineScoreColor,
   drawChainMessage,
-  drawScoreEarnedMessage
+  drawScoreEarnedMessage,
 } from "./scripts/functions/drawCanvasShapesAndText";
 import {
   playbackInputs,
   previous,
-  saveCurrentBoard
+  saveCurrentBoard,
 } from "./scripts/functions/playbackGame";
 import {
   checkTutorialEvents,
-  loadTutorialState
+  loadTutorialState,
 } from "./scripts/tutorial/tutorialEvents";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
 
@@ -191,7 +189,6 @@ class Block {
     timer = 0,
     message = "",
     msgTimer = 1,
-    startingClearFrame = 0,
     switchToFaceFrame = 0,
     switchToPoppedFrame = 0,
     airborne = false,
@@ -216,7 +213,7 @@ class Block {
       thirdCoord: undefined,
       pair: undefined,
       clearLine: undefined,
-      solidGroundArray: undefined
+      solidGroundArray: undefined,
     }
   ) {
     this.x = x;
@@ -227,7 +224,7 @@ class Block {
     this.timer = timer;
     this.message = message;
     this.msgTimer = msgTimer;
-    this.startingClearFrame = startingClearFrame;
+    this.startingClearFrame;
     this.switchToFaceFrame = switchToFaceFrame;
     this.switchToPoppedFrame = switchToPoppedFrame;
     this.airborne = airborne;
@@ -283,12 +280,12 @@ class Block {
   }
 
   drawSwappingBlocks() {
-    let xOffset = (grid.SQ * (this.timer - 1)) / (game.swapTimer - 1);
+    let offset = (grid.SQ * (this.timer - 1)) / (game.swapTimer - 1);
     // let url = this.color[0] === "u" ? "unmatchable" : `${this.color}_normal`;
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
-      grid.SQ * this.x + xOffset * this.swapDirectionX,
-      grid.SQ * this.y - game.rise
+      grid.SQ * this.x + offset * this.swapDirectionX,
+      grid.SQ * this.y + offset * this.swapDirectionY - game.rise
     );
   }
 
@@ -776,7 +773,10 @@ export function drawGrid() {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
-      if (Square.swapDirectionX && Square.timer > 0) {
+      if (
+        (Square.swapDirectionX || Square.swapDirectionY) &&
+        Square.timer > 0
+      ) {
         swappingBlocksArray.push(Square);
       }
       if (
@@ -813,8 +813,8 @@ export function drawGrid() {
     } // end check y
   } // end check x
 
-  swappingBlocksArray.forEach(Square => Square.drawSwappingBlocks());
-  arrowListArray.forEach(Square => Square.drawArrows());
+  swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
+  arrowListArray.forEach((Square) => Square.drawArrows());
 
   if (cpu.showInfo || debug.show) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
@@ -1823,7 +1823,7 @@ export function gameLoop() {
             helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach(coord => {
+          cpu.matchList.forEach((coord) => {
             let [x, y] = coord;
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.hintVisible = false;

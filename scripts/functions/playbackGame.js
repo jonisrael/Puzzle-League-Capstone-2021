@@ -1,7 +1,7 @@
 import { newBlock } from "../../mainGame";
-import { doMouseDown, doMouseUp } from "../clickControls";
+import { doMouseDown, doMouseUp, touch } from "../clickControls";
 import { action } from "../controls";
-import { blockType, game, grid, randomPiece, replay, touch } from "../global";
+import { blockType, game, grid, randomPiece, replay } from "../global";
 import { tutorial } from "../tutorial/tutorialScript";
 import { fixNextDarkStack } from "./startGame";
 

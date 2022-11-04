@@ -7,7 +7,6 @@ import {
   blockType,
   win,
   cpu,
-  touch,
   hold_it,
   randInt,
   CLEARING_TYPES,
@@ -24,8 +23,9 @@ import { TouchOrders, match, pair, stickyCheck } from "./stickyFunctions";
 import { pause } from "./pauseFunctions";
 import { isBlockAirborne } from "./gravity";
 import { updateTrainingButtons } from "./trainingControls";
+import { touch } from "../clickControls";
 
-export function trySwappingBlocks(x, y, rightSwap = true) {
+export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
   if (game.disableSwap || game.frames < 0 || x + 2 > grid.COLS || game.over) {
     if (game.frames >= 0) {
       removeFromOrderList(game.board[x][y]);
@@ -34,77 +34,153 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     return;
   }
 
-  const LeftBlock = game.board[x][y];
-  const RightBlock = game.board[x + 1][y];
+  const FirstBlock = game.board[x][y];
+  const SecondBlock =
+    swapType === "h" ? game.board[x + 1][y] : game.board[x][y + 1];
   let legalSwap = true;
   let legalSwapFailReason = "";
 
-  // Make sure both blocks aren't blockColor.VACANT
-  if (
-    LeftBlock.color == blockColor.VACANT &&
-    RightBlock.color == blockColor.VACANT
-  ) {
-    legalSwapFailReason = "both blocks vacant";
-    // game.message = "Swap Failed: Both Squares Empty";
-    // game.messageChangeDelay = 60;
-  }
+  if (swapType === "h") {
+    const LeftBlock = FirstBlock;
+    const RightBlock = SecondBlock;
+    // Make sure both blocks aren't blockColor.VACANT
+    if (
+      LeftBlock.color == blockColor.VACANT &&
+      RightBlock.color == blockColor.VACANT
+    ) {
+      legalSwapFailReason = "both blocks vacant";
+      // game.message = "Swap Failed: Both Squares Empty";
+      // game.messageChangeDelay = 60;
+    }
 
-  // Check if blocks are clearing
-  if (
-    !INTERACTIVE_TYPES.includes(LeftBlock.type) ||
-    !INTERACTIVE_TYPES.includes(RightBlock.type)
-  ) {
-    legalSwapFailReason = "non-interactive block";
-    // game.message = "Swap Failed: Clearing Block";
-    // game.messageChangeDelay = 60;
-  }
+    // Check if blocks are clearing
+    if (
+      !INTERACTIVE_TYPES.includes(LeftBlock.type) ||
+      !INTERACTIVE_TYPES.includes(RightBlock.type)
+    ) {
+      legalSwapFailReason = "non-interactive block";
+      // game.message = "Swap Failed: Clearing Block";
+      // game.messageChangeDelay = 60;
+    }
 
-  // do not swap if a block has a fall timer
-  // if (
-  //   (LeftBlock.timer !== 0 && INTERACTIVE_TYPES.includes(LeftBlock.type)) ||
-  //   (RightBlock.timer !== 0 && INTERACTIVE_TYPES.includes(RightBlock.type))
-  // ) {
-  //   legalSwapFailReason = "block has a busy timer on it";
-  // }
+    // do not swap if a block has a fall timer
+    // if (
+    //   (LeftBlock.timer !== 0 && INTERACTIVE_TYPES.includes(LeftBlock.type)) ||
+    //   (RightBlock.timer !== 0 && INTERACTIVE_TYPES.includes(RightBlock.type))
+    // ) {
+    //   legalSwapFailReason = "block has a busy timer on it";
+    // }
 
-  if (LeftBlock.type === "stalling" || RightBlock.type === "stalling") {
-    legalSwapFailReason = "block is stalling";
-  }
+    if (LeftBlock.type === "stalling" || RightBlock.type === "stalling") {
+      legalSwapFailReason = "block is stalling";
+    }
 
-  if (y < 11) {
-    // Do not swap if not on a clearing block and a vacant block is detected.
-    for (let j = y; j < grid.ROWS; j++) {
+    if (y < 11) {
+      // Do not swap if not on a clearing block and a vacant block is detected.
+      for (let j = y; j < grid.ROWS; j++) {
+        if (
+          (LeftBlock.color != blockColor.VACANT &&
+            INTERACTIVE_TYPES.includes(LeftBlock.type) &&
+            INTERACTIVE_TYPES.includes(game.board[x][y + 1].type) &&
+            game.board[x][j].color === blockColor.VACANT) ||
+          (RightBlock.color !== blockColor.VACANT &&
+            INTERACTIVE_TYPES.includes(RightBlock.type) &&
+            INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
+            game.board[x + 1][j].color === blockColor.VACANT)
+        ) {
+          legalSwapFailReason = "airborne block";
+          // game.message = "Swap Failed: Airborne Block";
+          // game.messageChangeDelay = 90;
+          break;
+        }
+      }
+    }
+    // Do not swap if a falling block is one unit ABOVE the cursor
+    if (y > 0) {
       if (
-        (LeftBlock.color != blockColor.VACANT &&
-          INTERACTIVE_TYPES.includes(LeftBlock.type) &&
-          INTERACTIVE_TYPES.includes(game.board[x][y + 1].type) &&
-          game.board[x][j].color === blockColor.VACANT) ||
-        (RightBlock.color !== blockColor.VACANT &&
-          INTERACTIVE_TYPES.includes(RightBlock.type) &&
-          INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
-          game.board[x + 1][j].color === blockColor.VACANT)
+        (blockIsSolid(game.board[x][y - 1]) &&
+          game.board[x][y - 1].color != blockColor.VACANT &&
+          LeftBlock.color == blockColor.VACANT) ||
+        (blockIsSolid(game.board[x + 1][y - 1]) &&
+          game.board[x + 1][y - 1].color != blockColor.VACANT &&
+          RightBlock.color == blockColor.VACANT)
       ) {
-        legalSwapFailReason = "airborne block";
-        // game.message = "Swap Failed: Airborne Block";
+        legalSwapFailReason = "below stalling block";
+        // game.message = "Swap Failed: Below an Airborne Block";
         // game.messageChangeDelay = 90;
-        break;
       }
     }
   }
-  // Do not swap if a falling block is one unit ABOVE the cursor
-  if (y > 0) {
-    if (
-      (blockIsSolid(game.board[x][y - 1]) &&
-        game.board[x][y - 1].color != blockColor.VACANT &&
-        LeftBlock.color == blockColor.VACANT) ||
-      (blockIsSolid(game.board[x + 1][y - 1]) &&
-        game.board[x + 1][y - 1].color != blockColor.VACANT &&
-        RightBlock.color == blockColor.VACANT)
-    ) {
-      legalSwapFailReason = "below stalling block";
-      // game.message = "Swap Failed: Below an Airborne Block";
-      // game.messageChangeDelay = 90;
+  if (swapType === "v") {
+    const TopBlock = FirstBlock;
+    const BottomBlock = SecondBlock;
+    // Make sure both blocks aren't blockColor.VACANT
+    if (TopBlock.color === "vacant" || BottomBlock.color === "vacant") {
+      legalSwapFailReason = "vertical swap fail, a block is vacant";
     }
+
+    // Check if blocks are clearing
+    if (
+      !INTERACTIVE_TYPES.includes(TopBlock.type) ||
+      !INTERACTIVE_TYPES.includes(BottomBlock.type)
+    ) {
+      legalSwapFailReason = "vertical swap fail, non-interactive block";
+      // game.message = "Swap Failed: Clearing Block";
+      // game.messageChangeDelay = 60;
+    }
+
+    // do not swap if a block has a fall timer
+    // if (
+    //   (LeftBlock.timer !== 0 && INTERACTIVE_TYPES.includes(LeftBlock.type)) ||
+    //   (RightBlock.timer !== 0 && INTERACTIVE_TYPES.includes(RightBlock.type))
+    // ) {
+    //   legalSwapFailReason = "block has a busy timer on it";
+    // }
+
+    if (TopBlock.type === "stalling")
+      legalSwapFailReason = "top block is stalling";
+    if (BottomBlock.type === "stalling")
+      legalSwapFailReason = "bottom block is stalling";
+
+    if (TopBlock.airborne) legalSwapFailReason = "top block is airborne";
+    if (BottomBlock.airborne) legalSwapFailReason = "bottom block is airborne";
+
+    // UNCOMMENT EVENTUALLY
+    // if (y < 11) {
+    //   // Do not swap if not on a clearing block and a vacant block is detected.
+    //   for (let j = y; j < grid.ROWS; j++) {
+    //     if (
+    //       (LeftBlock.color != blockColor.VACANT &&
+    //         INTERACTIVE_TYPES.includes(LeftBlock.type) &&
+    //         INTERACTIVE_TYPES.includes(game.board[x][y + 1].type) &&
+    //         game.board[x][j].color === blockColor.VACANT) ||
+    //       (RightBlock.color !== blockColor.VACANT &&
+    //         INTERACTIVE_TYPES.includes(RightBlock.type) &&
+    //         INTERACTIVE_TYPES.includes(game.board[x + 1][y + 1].type) &&
+    //         game.board[x + 1][j].color === blockColor.VACANT)
+    //     ) {
+    //       legalSwapFailReason = "airborne block";
+    //       // game.message = "Swap Failed: Airborne Block";
+    //       // game.messageChangeDelay = 90;
+    //       break;
+    //     }
+    //   }
+    // }
+    // // Do not swap if a falling block is one unit ABOVE the cursor
+    // if (y > 0) {
+    //   if (
+    //     (blockIsSolid(game.board[x][y - 1]) &&
+    //       game.board[x][y - 1].color != blockColor.VACANT &&
+    //       LeftBlock.color == blockColor.VACANT) ||
+    //     (blockIsSolid(game.board[x + 1][y - 1]) &&
+    //       game.board[x + 1][y - 1].color != blockColor.VACANT &&
+    //       RightBlock.color == blockColor.VACANT)
+    //   ) {
+    //     legalSwapFailReason = "below stalling block";
+    //     // game.message = "Swap Failed: Below an Airborne Block";
+    //     // game.messageChangeDelay = 90;
+    //   }
+    // }
   }
 
   legalSwap = !legalSwapFailReason;
@@ -126,22 +202,26 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
     }
     cpu.swapSuccess = true;
     playAudio(audio.select);
-    transferProperties(LeftBlock, RightBlock, "between");
+    transferProperties(FirstBlock, SecondBlock, "between");
     // if landing, switch to swapping animation
-    LeftBlock.timer = RightBlock.timer = game.swapTimer;
+    FirstBlock.timer = SecondBlock.timer = game.swapTimer;
     if (game.mode !== "tutorial")
-      LeftBlock.lightTimer = RightBlock.lightTimer = 0;
-    LeftBlock.type = RightBlock.type = blockType.SWAPPING;
-    LeftBlock.airborne = isBlockAirborne(LeftBlock);
-    RightBlock.airborne = isBlockAirborne(RightBlock);
-    LeftBlock.swapDirectionX = 1;
-    RightBlock.swapDirectionX = -1;
-    LeftBlock.touched = RightBlock.touched = true;
-    LeftBlock.availForPrimaryChain = RightBlock.availForPrimaryChain = false;
-    LeftBlock.availForSecondaryChain = RightBlock.availForSecondaryChain = false;
+      FirstBlock.lightTimer = SecondBlock.lightTimer = 0;
+    FirstBlock.type = SecondBlock.type = blockType.SWAPPING;
+    FirstBlock.airborne = isBlockAirborne(FirstBlock);
+    SecondBlock.airborne = isBlockAirborne(SecondBlock);
+    swapType === "h"
+      ? (FirstBlock.swapDirectionX = 1)
+      : (FirstBlock.swapDirectionY = 1);
+    swapType === "h"
+      ? (SecondBlock.swapDirectionX = -1)
+      : (SecondBlock.swapDirectionY = -1);
+    FirstBlock.touched = SecondBlock.touched = true;
+    FirstBlock.availForPrimaryChain = SecondBlock.availForPrimaryChain = false;
+    FirstBlock.availForSecondaryChain = SecondBlock.availForSecondaryChain = false;
     if (cpu.control && cpu.inputType === "touch") {
-      if (game.cursor.x === LeftBlock.x) game.cursor.x = RightBlock.x;
-      else if (game.cursor.x === RightBlock.x) game.cursor.x = LeftBlock.x;
+      if (game.cursor.x === FirstBlock.x) game.cursor.x = SecondBlock.x;
+      else if (game.cursor.x === SecondBlock.x) game.cursor.x = FirstBlock.x;
       if (game.boardHasSwappingBlock) game.cursor_type = "movingCursor";
       else game.cursor_type = "legalCursorUp";
     }
@@ -173,7 +253,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
       // Check to see if there are blocks above a vacant block
       // Check left column
       if (
-        LeftBlock.color == blockColor.VACANT &&
+        FirstBlock.color == blockColor.VACANT &&
         game.board[x][y - 1].color != blockColor.VACANT &&
         INTERACTIVE_TYPES.includes(game.board[x][y - 1].type)
       ) {
@@ -181,8 +261,8 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         game.board[x][y - 1].timer = game.blockStallTime + game.swapTimer;
         for (let j = y - 1; j >= 0; j--) {
           game.board[x][j].touched = true;
-          LeftBlock.availForPrimaryChain = false;
-          LeftBlock.availForSecondaryChain = false;
+          FirstBlock.availForPrimaryChain = false;
+          FirstBlock.availForSecondaryChain = false;
           if (
             game.board[x][j].color === "vacant" ||
             !INTERACTIVE_TYPES.includes(game.board[x][j])
@@ -192,7 +272,7 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
       }
       // Check right column
       if (
-        RightBlock.color == blockColor.VACANT &&
+        SecondBlock.color == blockColor.VACANT &&
         game.board[x + 1][y - 1].color != blockColor.VACANT &&
         INTERACTIVE_TYPES.includes(game.board[x + 1][y - 1].type)
       ) {
@@ -200,8 +280,8 @@ export function trySwappingBlocks(x, y, rightSwap = true) {
         game.board[x + 1][y - 1].timer = game.blockStallTime + game.swapTimer; // Default 12 frames
         for (let j = y - 1; j >= 0; j--) {
           game.board[x + 1][j].touched = true;
-          RightBlock.availForPrimaryChain = false;
-          RightBlock.availForSecondaryChain = false;
+          SecondBlock.availForPrimaryChain = false;
+          SecondBlock.availForSecondaryChain = false;
           if (
             game.board[x + 1][j].color === "vacant" ||
             !INTERACTIVE_TYPES.includes(game.board[x + 1][j])

@@ -11,11 +11,36 @@ import {
   INTERACTIVE_TYPES,
   removeFromOrderList,
   replay,
-  touch,
   touchInputs,
   win,
 } from "./global";
 import { nextDialogue, tutorial } from "./tutorial/tutorialScript";
+
+export const touch = {
+  enabled: true,
+  thereIsABlockCurrentlySelected: false,
+  mouse: {
+    clicked: false,
+    x: 2, // actual mouse loc, updates while mouse is down
+    y: 6, // actual mouse loc, updates while mouse is down
+  },
+  mouseStart: { x: 2, y: 6 },
+  selectedBlock: { x: 2, y: 6 }, // starts at click location until swap or drop},
+  moveOrderExists: false,
+  moveOrderList: [],
+  arrowLists: [],
+  arrowMoveTypes: [],
+  target: { x: 2, y: 6 }, // swap until target is reached
+  keySquare: { x: 2, y: 6 },
+  arrowPointer: { x: 2, y: 6 },
+  removeAllArrows: false,
+  swapOrderPrepared: false,
+  multiClickCounter: 0,
+  multiClickTimer: 0,
+  lastCursorPos: { x: 2, y: 6 },
+  lastXMoused: 2,
+  mouseChangedX: false,
+};
 
 export function updateMousePosition(canvas, e) {
   if (!touch.enabled || cpu.control || game.playRecording) return;

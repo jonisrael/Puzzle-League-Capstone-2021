@@ -28,6 +28,9 @@ export const tutorialMessages = [
     "Fantastic! You have now mastered how to create large matches!",
     "Nicely done, let's move on.",
     "Nicely done, let's move on.",
+    "Here is a hint -- try swapping these blocks here.",
+    "Next -- swap these blocks here.",
+    "Finally, clear all the blocks with this swap!",
   ],
   [
     "CHAINS PART 1/2",

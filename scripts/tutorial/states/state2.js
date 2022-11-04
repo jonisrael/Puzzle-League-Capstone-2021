@@ -25,6 +25,9 @@ const messageList = [
   "Clear too small, you must clear 10 at the same time!",
   "You can enable a hint to help solve this puzzle.",
   "Fantastic! You have now mastered how to create large matches!",
+  "Here is a hint -- start with swapping these here.",
+  "Next-- swap these blocks here.",
+  "Finally, finish the swap here!",
 ];
 
 export function tutorialEventsAtState_2() {
@@ -59,7 +62,6 @@ export function tutorialEventsAtState_2() {
       CLEARING_TYPES.includes(game.board[3][3].type) &&
       CLEARING_TYPES.includes(game.board[3][7].type)
     ) {
-      console.log("Loop, timer is ", game.board[2][7].timer);
       if (game.board[2][7].timer === 158) {
         playAudio(audio.announcerFantasticCombo);
         tutorial.msgIndex = 4;
@@ -115,11 +117,14 @@ export function tutorialEventsAtState_2() {
   if (tutorial.hintLevel > 0 && !game.boardHasSwappingBlock) {
     if (tutorial.movesMade === 0) {
       game.board[2][3].helpX = 3;
+      tutorial.msgIndex = 7;
     } else if (tutorial.movesMade === 1) {
       if (game.board[2][3].color === "purple" && tutorial.hintLevel === 2) {
         game.board[3][7].helpX = 2;
         game.board[2][3].helpX = undefined;
+        tutorial.msgIndex = 8;
       } else {
+        tutorial.msgIndex = 0;
         tutorial.hintLevel = 0;
         setValuesOfAllBlocksProperties("helpX", undefined);
         console.log(game.frames, game.board[2][3], "turning off hint");
@@ -127,8 +132,10 @@ export function tutorialEventsAtState_2() {
     } else if (tutorial.movesMade === 2) {
       if (game.board[2][7].color === "purple" && tutorial.hintLevel === 2) {
         game.board[2][5].helpX = 3;
+        tutorial.msgIndex = 9;
         game.board[3][7].helpX = undefined;
       } else {
+        tutorial.msgIndex = 0;
         tutorial.hintLevel = 0;
         setValuesOfAllBlocksProperties("helpX", undefined);
         console.log(game.frames, game.board[2][3], "turning off hint");
@@ -140,7 +147,7 @@ export function tutorialEventsAtState_2() {
 function countTheMove() {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
-      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirectionXX) {
+      if (game.board[x][y].timer === 1 && game.board[x][y].swapDirectionX) {
         // count a block that is swapping as 1
         return [x, y];
       }

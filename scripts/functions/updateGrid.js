@@ -1,4 +1,4 @@
-import { selectBlock } from "../clickControls";
+import { selectBlock, touch } from "../clickControls";
 import { cpuAction } from "../computerPlayer/cpu";
 import { findVerticalMatches } from "../computerPlayer/findVerticalMatches";
 import { audio } from "../fileImports";
@@ -12,7 +12,6 @@ import {
   INTERACTIVE_TYPES,
   perf,
   removeFromOrderList,
-  touch,
   win,
 } from "../global";
 import { playAudio } from "./audioFunctions";

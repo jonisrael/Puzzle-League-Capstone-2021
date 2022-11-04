@@ -14,6 +14,7 @@ import {
   flipLightsOnRow,
   flipLightSwitch,
   makeBlockSelectable,
+  setValuesOfAllBlocksProperties,
   tutorial,
 } from "../tutorialScript";
 
@@ -22,20 +23,34 @@ export function tutorialEventsAtState_1() {
   game.humanCanPlay = tutorial.msgIndex > 2;
   game.boardRiseSpeed = -2;
   advanceButton.disabled = game.humanCanPlay;
-  if (tutorial.msgIndex === 2 && game.cursor.x !== 0) {
+  if (
+    tutorial.msgIndex === 2 &&
+    game.cursor.x !== 0 &&
+    game.board[0][7].type !== "dark"
+  ) {
     [game.cursor.x, game.cursor.y] = [grid.COLS / 2 - 1, grid.ROWS / 2 - 1];
     flipLightOnBlocksWithNegativeTimer(false);
-    makeBlockSelectable(0, grid.ROWS - 2, 1);
+    setValuesOfAllBlocksProperties("type", "dark");
+    game.board[0][6].type = "normal";
+    game.board[1][5].type = "normal";
+    game.board[1][7].type = "normal";
+    makeBlockSelectable(0, 6);
     // flipLightSwitch(0, grid.ROWS - 2, "on", true, true);
   }
-  if (tutorial.msgIndex === 3 && game.cursor.y === -1) {
+  if (tutorial.msgIndex === 3 && !game.board[0][6].lightBlink) {
     // user will now select blinking light
     flipAllLightsOff();
+    // setValuesOfAllBlocksProperties("type", "dark");
+    game.board[0][6].type = "normal";
+    makeBlockSelectable(0, 6, 1);
     flipLightSwitch(0, 6, "on", true);
-    makeBlockSelectable(0, grid.ROWS - 2, 1);
+    flipLightSwitch(1, 5, "on", false);
+    flipLightSwitch(1, 7, "on", false);
+    game.cursor.y = 4;
   }
   if (tutorial.msgIndex === 3 && game.cursor.x === 0 && game.cursor.y === 6) {
     tutorial.msgIndex++;
+    setValuesOfAllBlocksProperties("type", "normal");
     advanceButton.disabled = game.humanCanPlay;
   }
   // if (tutorial.msgIndex === 3 && game.board[1][grid.ROWS - 1].timer === -2) {

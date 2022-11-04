@@ -1,4 +1,5 @@
 import { updateLevelEvents } from "../../mainGame";
+import { touch } from "../clickControls";
 import { cpuAction } from "../computerPlayer/cpu";
 import {
   cpu,
@@ -9,7 +10,6 @@ import {
   saveState,
   preset,
   win,
-  touch,
 } from "../global";
 import { unpause } from "./pauseFunctions";
 

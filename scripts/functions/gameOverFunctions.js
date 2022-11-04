@@ -14,7 +14,6 @@ import {
   perf,
   helpPlayer,
   sound,
-  touch,
   preset,
 } from "../global";
 
@@ -24,6 +23,7 @@ import { submitResults, afterGame } from "./submitResults";
 import * as state from "../../store";
 import { playAudio, playMusic } from "./audioFunctions";
 import { displayMessage, render, router, getLeaderboardData } from "../..";
+import { touch } from "../clickControls";
 
 export function closeGame(gameFinished) {
   win.running = false;
