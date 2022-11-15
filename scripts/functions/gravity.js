@@ -5,7 +5,6 @@ import {
   game,
   INTERACTIVE_TYPES,
   debug,
-  touch,
   transferProperties,
   CLEARING_TYPES,
   helpPlayer,

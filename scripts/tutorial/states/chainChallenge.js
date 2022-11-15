@@ -87,7 +87,7 @@ export function chainChallengeEvents() {
 
 function checkChainChallengeHints() {
   if (tutorial.movesMade === 0) {
-    game.board[4][6].helpX = 3;
+    game.board[4][6].helpCoord = 3;
   }
 }
 

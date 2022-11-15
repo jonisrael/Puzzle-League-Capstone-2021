@@ -3,7 +3,6 @@ import {
   win,
   perf,
   debug,
-  touch,
   helpPlayer,
   cpu,
   sound,
@@ -24,6 +23,7 @@ import { setUpTrainingMode } from "./trainingControls";
 import { drawGrid } from "../../mainGame";
 import { previous } from "./playbackGame";
 import { arcadeEvents } from "./timeEvents";
+import { touch } from "../clickControls";
 
 export function pause(
   lostFocus = false,
@@ -195,6 +195,12 @@ export function addPauseContent() {
 
 export function printDebugInfo() {
   tutorial.action = game.board[0][grid.ROWS].timer;
+  try {
+    game.board[game.cursor.x][game.cursor.y];
+  } catch (error) {
+    console.log("Original game cursor:", game.cursor.x, game.cursor.y);
+    game.cursor.x = game.cursor.y = 0;
+  }
   console.log(
     `FRAME ${game.frames}`,
     "\ngame:",

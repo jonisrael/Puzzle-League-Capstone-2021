@@ -265,6 +265,7 @@ export const win = {
   muteSFX: document.getElementById("mute-sfx"),
   audioLoaded: false,
   loopCounter: 0,
+  gameLoopCompleted: true,
   browser: "Unknown",
   os: "Unknown",
   mobile: false,
@@ -361,7 +362,7 @@ export let game = {
   cursor: { x: 2, y: 6 },
   cursor_type: "legalCursorDown",
   humanCanPlay: true,
-  swapTimer: 5,
+  swapTimer: 3,
   rise: 0,
   board: [],
   mute: 0,
@@ -535,7 +536,7 @@ export const cpu = {
   pause: false,
   prevTargetX: 5,
   prevTargetY: 5,
-  targetX: 0,
+  targetCoord: 0,
   targetY: 0,
   directionToMove: 1,
   destination: [],
@@ -786,7 +787,7 @@ export function spawnSquare(digit) {
 }
 
 export function transferProperties(FirstBlock, SecondBlock, type) {
-  // do not transfer x, y, or targetX
+  // do not transfer x, y, or targetCoord
   let FirstKeys = Object.keys(FirstBlock).splice(2); // dont change x, y, num
   let SecondKeys = Object.keys(SecondBlock).splice(2); // dont change x y, num
   let TempBlock;
@@ -801,9 +802,12 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
     FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
   } else if (type === "between") {
     FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
-    if (FirstBlock.targetX > FirstBlock.x) {
+    if (
+      (FirstBlock.swapType === "h" && FirstBlock.targetCoord > FirstBlock.x) ||
+      (FirstBlock.swapType === "v" && FirstBlock.targetCoord > FirstBlock.y)
+    ) {
       console.log("preventing infinite swap loop");
-      FirstBlock.targetX = undefined;
+      FirstBlock.targetCoord = undefined;
     }
   }
 
@@ -824,12 +828,24 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
 }
 
 export function removeFromOrderList(TargetSquare) {
-  for (let c = 0; c < grid.COLS; c++) {
-    if (game.board[c][TargetSquare.y].targetX === TargetSquare.x) {
-      game.board[c][TargetSquare.y].targetX = undefined;
-      break;
+  if (TargetSquare.swapType === "h") {
+    for (let c = 0; c < grid.COLS; c++) {
+      if (game.board[c][TargetSquare.y].targetCoord === TargetSquare.x) {
+        game.board[c][TargetSquare.y].targetCoord = undefined;
+        game.board[c][TargetSquare.y].swapType = "";
+        break;
+      }
+    }
+  } else if (TargetSquare.swapType === "v") {
+    for (let r = 0; r < grid.ROWS; r++) {
+      if (game.board[TargetSquare.x][r].targetCoord === TargetSquare.y) {
+        game.board[TargetSquare.x][r].targetCoord = undefined;
+        game.board[TargetSquare.x][r].swapType = "";
+        break;
+      }
     }
   }
+
   for (let i = 0; i < touch.moveOrderList.length; i++) {
     let order = touch.moveOrderList[i];
     if (TargetSquare.x === order[0] && TargetSquare.y === order[1]) {

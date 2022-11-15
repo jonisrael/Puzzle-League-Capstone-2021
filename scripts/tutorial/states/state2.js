@@ -116,28 +116,28 @@ export function tutorialEventsAtState_2() {
   // execute hints if fail count at 2 or more
   if (tutorial.hintLevel > 0 && !game.boardHasSwappingBlock) {
     if (tutorial.movesMade === 0) {
-      game.board[2][3].helpX = 3;
+      game.board[2][3].helpCoord = 3;
       tutorial.msgIndex = 7;
     } else if (tutorial.movesMade === 1) {
       if (game.board[2][3].color === "purple" && tutorial.hintLevel === 2) {
-        game.board[3][7].helpX = 2;
-        game.board[2][3].helpX = undefined;
+        game.board[3][7].helpCoord = 2;
+        game.board[2][3].helpCoord = undefined;
         tutorial.msgIndex = 8;
       } else {
         tutorial.msgIndex = 0;
         tutorial.hintLevel = 0;
-        setValuesOfAllBlocksProperties("helpX", undefined);
+        setValuesOfAllBlocksProperties("helpCoord", undefined);
         console.log(game.frames, game.board[2][3], "turning off hint");
       }
     } else if (tutorial.movesMade === 2) {
       if (game.board[2][7].color === "purple" && tutorial.hintLevel === 2) {
-        game.board[2][5].helpX = 3;
+        game.board[2][5].helpCoord = 3;
         tutorial.msgIndex = 9;
-        game.board[3][7].helpX = undefined;
+        game.board[3][7].helpCoord = undefined;
       } else {
         tutorial.msgIndex = 0;
         tutorial.hintLevel = 0;
-        setValuesOfAllBlocksProperties("helpX", undefined);
+        setValuesOfAllBlocksProperties("helpCoord", undefined);
         console.log(game.frames, game.board[2][3], "turning off hint");
       }
     }

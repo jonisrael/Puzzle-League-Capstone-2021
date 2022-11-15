@@ -123,12 +123,12 @@ export function startTutorial(state = 1) {
 
 // export function playScript(touchInput) {
 //   if (touchInput === undefined) return;
-//   let [x, y, name, targetX] = touchInput;
+//   let [x, y, name, targetCoord] = touchInput;
 //   if (name === "move") {
-//     moveBlockByRelease(x, y, targetX);
+//     moveBlockByRelease(x, y, targetCoord);
 //   }
 //   if (name === "premove") {
-//     game.board[touch.selectedBlock.x][touch.selectedBlock.y].previewX = targetX;
+//     game.board[touch.selectedBlock.x][touch.selectedBlock.y].previewCoord = targetCoord;
 //   }
 //   if (name === "select") {
 //     selectBlock(x, y);
@@ -178,8 +178,8 @@ export function flipAllLightsOff(alsoDeselectBlocks = "") {
       game.board[x][y].lightBlink = false;
       if (alsoDeselectBlocks) {
         game.board[x][y].tutorialSelectable = false;
-        game.board[x][y].helpX = undefined;
-        game.board[x][y].targetX = undefined;
+        game.board[x][y].helpCoord = undefined;
+        game.board[x][y].targetCoord = undefined;
       }
     }
   }
@@ -198,13 +198,13 @@ export function flipLightSwitch(x, y, type, blink = false) {
   }
 }
 
-export function makeBlockSelectable(x, y, helpX, showArrow = true) {
-  if (helpX !== undefined) {
+export function makeBlockSelectable(x, y, helpCoord, showArrow = true) {
+  if (helpCoord !== undefined) {
     game.board[x][y].tutorialSelectable = true;
-    if (showArrow) game.board[x][y].helpX = helpX;
+    if (showArrow) game.board[x][y].helpCoord = helpCoord;
   } else {
     game.board[x][y].tutorialSelectable = false;
-    game.board[x][y].helpX = undefined;
+    game.board[x][y].helpCoord = undefined;
   }
 }
 
@@ -213,8 +213,8 @@ export function deselectAllBlocks() {
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
       game.board[x][y].tutorialSelectable = false;
-      game.board[x][y].helpX = undefined;
-      game.board[x][y].targetX = undefined;
+      game.board[x][y].helpCoord = undefined;
+      game.board[x][y].targetCoord = undefined;
     }
   }
 }
@@ -234,8 +234,8 @@ export function allBlocksAreSelectable(lightsOff = false) {
     for (let y = 0; y < grid.ROWS; y++) {
       game.board[x][y].tutorialSelectable = true;
       if (lightsOff) {
-        game.board[x][y].helpX = undefined;
-        game.board[x][y].targetX = undefined;
+        game.board[x][y].helpCoord = undefined;
+        game.board[x][y].targetCoord = undefined;
         game.board[x][y].lightTimer = 0; // turn off
         game.board[x][y].lightBlink = false;
       }

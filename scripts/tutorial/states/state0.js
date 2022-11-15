@@ -35,7 +35,7 @@ export function tutorialEventsAtState_0() {
   // //   flipLightOnBlocksWithNegativeTimer();
   // //   tutorial.msgIndex++;
   // // }
-  // if (tutorial.msgIndex === 4 && !game.board[0][grid.ROWS - 2].helpX) {
+  // if (tutorial.msgIndex === 4 && !game.board[0][grid.ROWS - 2].helpCoord) {
   //   // have user match now
   //   flipAllLightsOff();
   //   flipLightsOnCol(1, [5, 7], "on");

@@ -26,7 +26,6 @@ export function updateGrid(frameAdvance = false) {
   game.boardHasClearingBlock = false;
   game.boardHasStallingBlock = false;
   game.boardHasLandingBlock = false;
-  // touch.moveOrderExists = false;
   let highestRowFound = false;
   game.pauseStack = false;
   game.highestCols = [];
@@ -41,28 +40,41 @@ export function updateGrid(frameAdvance = false) {
     touch.multiClickTimer -= 1;
     if (touch.multiClickTimer === 0) touch.multiClickCounter = 0;
   }
+
+  if (touch.moveOrderExists === false) touch.moveOrderList.length = 0;
+  if (touch.moveOrderList.length === 0) touch.moveOrderExists = false;
+
   if (!game.tutorialRunning && !game.currentChain) game.boardRiseRestarter++; // Failsafe to restart stack rise
   for (let y = 0; y < grid.ROWS + 2; y++) {
     for (let x = 0; x < grid.COLS; x++) {
       let Square = game.board[x][y];
       Square.airborne = isBlockAirborne(Square);
 
-      if (touch.removePreviews) Square.previewX = undefined;
+      if (touch.removePreviews) Square.previewCoord = undefined;
 
-      if (Square.targetX !== undefined) {
-        if (Square.targetX === Square.x) {
+      if (Square.targetCoord !== undefined) {
+        if (
+          (Square.swapType === "h" && Square.targetCoord === Square.x) ||
+          (Square.swapType === "v" && Square.targetCoord === Square.y)
+        ) {
           removeFromOrderList(Square);
+          Square.targetCoord = undefined;
+          Square.swapType = undefined;
         } else {
           game.boardHasTargets = true;
         }
       }
 
-      if (Square.previewX !== undefined) {
+      if (!Square.swapType) {
+        Square.targetCoord = Square.previewCoord = undefined;
+      }
+
+      if (Square.previewCoord !== undefined) {
         numberOfPreviews++;
       }
 
       if (touch.removeAllArrows) {
-        Square.previewX = Square.targetX = undefined;
+        Square.previewCoord = Square.targetCoord = undefined;
       }
 
       if (
@@ -78,9 +90,9 @@ export function updateGrid(frameAdvance = false) {
         Square.availForPrimaryChain = false;
         Square.availForSecondaryChain = false;
         Square.touched = false;
-        Square.targetX = undefined;
-        Square.previewX = undefined;
-        Square.helpX = undefined;
+        Square.targetCoord = undefined;
+        Square.previewCoord = undefined;
+        Square.helpCoord = undefined;
         Square.lightTimer = 0;
         Square.timer = 0;
       }
@@ -145,8 +157,8 @@ export function updateGrid(frameAdvance = false) {
         Square.swapDirectionX = 0;
         if (Square.airborne) {
           Square.type = "stalling";
-          if (Square.targetX !== undefined) {
-            removeFromOrderList(game.board[Square.targetX][Square.y]);
+          if (Square.targetCoord !== undefined) {
+            removeFromOrderList(game.board[Square.targetCoord][Square.y]);
           }
           Square.timer = game.blockStallTime;
           Square.touched = true;
@@ -168,7 +180,7 @@ export function updateGrid(frameAdvance = false) {
           Square.type === "face" ||
           Square.type === "popped")
       ) {
-        Square.targetX = Square.previewX = undefined;
+        Square.targetCoord = Square.previewCoord = undefined;
         Square.lightTimer = 0;
         // console.log(x, y, Square);
         switch (Square.timer) {

@@ -24,7 +24,7 @@ export function rewind(gameState) {
       Object.keys(game.board[x][y]).forEach(
         (key) => (game.board[x][y][key] = gameState.board[x][y][key])
       );
-      game.board[x][y].targetX = undefined;
+      game.board[x][y].targetCoord = undefined;
     }
   }
 }

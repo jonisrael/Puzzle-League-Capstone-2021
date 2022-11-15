@@ -99,7 +99,9 @@ export function isGameOver() {
       if (game.cursor.y >= grid.ROWS) game.cursor.y = 6;
       for (let x = 0; x < grid.COLS; x++) {
         for (let y = grid.ROWS - 1; y >= 0; y--) {
-          game.board[x][y].targetX = game.board[x][y].previewX = undefined;
+          game.board[x][y].targetCoord = game.board[x][
+            y
+          ].previewCoord = undefined;
           if (y > 4) {
             game.board[x][y].color = blockColor.VACANT;
             game.board[x][y].type = blockType.NORMAL;

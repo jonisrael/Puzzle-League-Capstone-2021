@@ -15,8 +15,6 @@ import {
   helpPlayer,
   detectInfiniteLoop,
   saveState,
-  padInt,
-  touch,
   removeFromOrderList,
   changeAllBlockProperties,
 } from "../global";
@@ -274,7 +272,7 @@ export function checkMatch() {
       }
 
       if (helpPlayer.hintVisible && game.mode !== "tutorial") {
-        changeAllBlockProperties({ helpX: undefined });
+        changeAllBlockProperties({ helpCoord: undefined });
       }
     } else {
       done = true; // Needs to end if confirm clear fails
@@ -296,9 +294,11 @@ function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {
     let Square = game.board[c][r];
 
     Square.type = blockType.BLINKING;
-    if (Square.targetX !== undefined) {
+    if (Square.targetCoord !== undefined) {
       console.log(game.frames, c, r, "block became clearing");
-      removeFromOrderList(game.board[Square.targetX][r]);
+      Square.swapType === "h"
+        ? removeFromOrderList(game.board[Square.targetCoord][r])
+        : removeFromOrderList(game.board[c][Square.targetCoord]);
     }
     Square.timer = blinkTime + initialFaceTime + totalPopTime;
     Square.startingClearFrame = Square.timer;

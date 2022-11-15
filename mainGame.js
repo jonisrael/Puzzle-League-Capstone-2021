@@ -179,6 +179,25 @@ export class Cursor {
   }
 }
 
+export class Mouse {
+  constructor(x, y, mouseDown = false) {
+    this.x = x;
+    this.y = y;
+    this.mouseDown = mouseDown;
+  }
+
+  drawMouse() {
+    let dotColor = "Orange";
+    let img = loadedSprites[`debug${dotColor}`];
+    let size = 2 / 3;
+    let mouseX = this.x - (size * grid.SQ) / 2; // to put dot at the actual mouse
+    let mouseY = this.y - (size * grid.SQ) / 2; // to put dot at the actual mouse
+    win.ctx.globalAlpha = touch.mouse.clicked ? 1 : 0.7;
+    win.ctx.drawImage(img, mouseX, mouseY, size * img.width, size * img.height);
+    win.ctx.globalAlpha = 1;
+  }
+}
+
 class Block {
   constructor(
     x,
@@ -197,14 +216,12 @@ class Block {
     availForSecondaryChain = false,
     swapDirectionX = 0,
     swapDirectionY = 0,
+    swapType = undefined, // either "h" or "v"
     lightTimer = 0,
     lightBlink = false,
-    targetX = undefined,
-    targetY = undefined,
-    previewX = undefined,
-    previewY = undefined,
-    helpX = undefined,
-    helpY = undefined,
+    targetCoord = undefined,
+    previewCoord = undefined,
+    helpCoord = undefined,
     tutorialSelectable = true,
     smartMatch = {
       lowestKeyCoord: undefined,
@@ -233,21 +250,19 @@ class Block {
     this.availForSecondaryChain = availForSecondaryChain;
     this.swapDirectionX = swapDirectionX;
     this.swapDirectionY = swapDirectionY;
+    this.swapType = swapType;
     this.lightTimer = lightTimer;
     this.lightBlink = lightBlink;
-    this.targetX = targetX;
-    this.targetY = targetY;
-    this.previewX = previewX;
-    this.previewY = previewY;
-    this.helpX = helpX;
-    this.helpY = helpY;
+    this.targetCoord = targetCoord;
+    this.previewCoord = previewCoord;
+    this.helpCoord = helpCoord;
     this.tutorialSelectable = tutorialSelectable;
     this.smartMatch = smartMatch;
   }
 
   drawGridLines() {
     let filename = "grid_line";
-    let chainable = false;
+    // let chainable = false;
     // let chainable =
     //   this.availForPrimaryChain &&
     //   this.color !== "vacant" &&
@@ -261,21 +276,18 @@ class Block {
     ) {
       filename = "grid_line_red";
     } else if (
-      chainable ||
-      (this.lightTimer != 0 && (!this.lightBlink || game.frameMod[60] < 30))
+      this.lightTimer != 0 &&
+      (!this.lightBlink || game.frameMod[60] < 30)
     ) {
       filename = "light_up";
-    } else if (this.y === game.cursor.y) {
-      filename = "rowLight";
-      filename +=
-        this.x === 0 ? "Left" : this.x === grid.COLS - 1 ? "Right" : "Mid";
     }
-    // if (chainable) win.ctx.globalAlpha = 0.5;
-    win.ctx.drawImage(
-      loadedSprites[filename],
-      grid.SQ * this.x,
-      grid.SQ * this.y - game.rise
-    );
+    9 /
+      // if (chainable) win.ctx.globalAlpha = 0.5;
+      win.ctx.drawImage(
+        loadedSprites[filename],
+        grid.SQ * this.x,
+        grid.SQ * this.y - game.rise
+      );
     // win.ctx.globalAlpha = 1;
   }
 
@@ -312,40 +324,55 @@ class Block {
 
   drawArrows(type = "Move") {
     if (game.over) return;
+    let coord, gridSize, dir;
+    let moveToCoord =
+      this.targetCoord !== undefined
+        ? this.targetCoord
+        : this.previewCoord !== undefined
+        ? this.previewCoord
+        : this.helpCoord;
+    if (this.swapType === "v") {
+      coord = this.y;
+      gridSize = grid.ROWS;
+      dir = moveToCoord < coord ? "Up" : "Down";
+    } else {
+      coord = this.x;
+      gridSize = grid.COLS;
+      dir = moveToCoord < coord ? "Left" : "Right";
+    }
 
-    let moveToX =
-      this.targetX !== undefined
-        ? this.targetX
-        : this.previewX !== undefined
-        ? this.previewX
-        : this.helpX;
-    if (moveToX === this.x) return;
+    if (moveToCoord === coord) return;
     let filename;
-    let inc = moveToX < this.x ? -1 : 1;
-    let dir = moveToX < this.x ? "Left" : "Right";
+    let incr = moveToCoord < coord ? -1 : 1;
     let bufferDetected = false;
     let previewDetected = false;
     let helpDetected = false;
     win.loopCounter = 0;
 
-    for (let i = this.x; i >= 0 && i < grid.COLS; i += inc) {
+    for (let i = coord; i >= 0 && i < gridSize; i += incr) {
       win.loopCounter++;
+      let CurrentBlock =
+        this.swapType === "h" ? game.board[i][this.y] : game.board[this.x][i];
+      // let NextBlock =
+      //   this.swapType === "h"
+      //     ? game.board[i][this.y + 1]
+      //     : game.board[this.x + 1][i];
       if (detectInfiniteLoop("drawArrows", win.loopCounter)) break;
-      if (!helpDetected && moveToX === this.helpX) {
+      if (!helpDetected && moveToCoord === this.helpCoord) {
         helpDetected = true;
         type = "Advice";
-        i = this.x;
-      } else if (!previewDetected && moveToX === this.previewX) {
+        i = coord;
+      } else if (!previewDetected && moveToCoord === this.previewCoord) {
         previewDetected = true;
         type = "Buffer";
-        i = this.x;
+        i = coord;
       } else if (
         !bufferDetected &&
-        CLEARING_TYPES.includes(game.board[i][this.y].type)
+        CLEARING_TYPES.includes(CurrentBlock.type)
       ) {
         bufferDetected = true;
         type = "Buffer"; // change to buffer arrow
-        i = this.x; // repaint earlier arrows to be pink
+        i = coord; // repaint earlier arrows to be pink
       }
       let color;
       if (type === "Move") color = "Orange";
@@ -353,56 +380,57 @@ class Block {
       if (type === "Advice") color = "Grey";
 
       if (type !== "Advice" || game.frameMod[60] < 30) {
-        if (
-          0 == 0 ||
-          this.y === grid.ROWS - 1 ||
-          game.board[i][this.y + 1].color !== "vacant"
-        ) {
+        if (0 === 0 || coord === gridSize - 1 || NextBlock.color !== "vacant") {
           // If block below is not vacant, do not draw down arrows
           // block below is not vacant, draw normal arrows
-          if (i === this.x) {
+          if (i === coord) {
             filename = `arrow${dir}Start${color}`;
-          } else if (i === moveToX) {
+          } else if (i === moveToCoord) {
             filename = `arrow${dir}End${color}`;
           } else {
-            filename = `arrowMid${color}`;
+            filename = `arrow${dir}Mid${color}`;
           }
+          let [xCoord, yCoord] =
+            this.swapType === "v" ? [this.x, i] : [i, this.y];
+
+          let lazyOffset = filename.includes("UpMid") ? 1 : 0; // fix image lineup issue
           win.ctx.drawImage(
             loadedSprites[filename],
-            grid.SQ * i,
-            grid.SQ * this.y - game.rise
+            grid.SQ * xCoord + lazyOffset,
+            grid.SQ * yCoord - game.rise
           );
-        } else {
-          // block below is vacant, so draw downward arrows
-          win.ctx.drawImage(
-            loadedSprites[filename],
-            grid.SQ * i,
-            grid.SQ * this.y - game.rise
-          );
-          // check for more vacant blocks
-          let arrowHitsGround = false;
-          for (let j = this.y + 1; j < grid.ROWS; j++) {
-            if (
-              j + 1 === grid.ROWS - 1 ||
-              game.board[i][j + 1].color !== "vacant"
-            ) {
-              filename = `arrowDownEnd${color}`;
-              arrowHitsGround = true; // the block will land here
-            } else {
-              filename = `arrowDownMid${color}`;
-            }
-            win.ctx.drawImage(
-              loadedSprites[filename],
-              grid.SQ * i,
-              grid.SQ * j - game.rise
-            );
-            console.log("filename to draw:", filename, game.frames, i, j);
-            if (arrowHitsGround) break;
-          }
         }
+        // else {
+        //   // block below is vacant, so draw downward arrows
+        //   win.ctx.drawImage(
+        //     loadedSprites[filename],
+        //     grid.SQ * i,
+        //     grid.SQ * this.y - game.rise
+        //   );
+        //   // check for more vacant blocks
+        //   let arrowHitsGround = false;
+        //   for (let j = this.y + 1; j < grid.ROWS; j++) {
+        //     if (
+        //       j + 1 === grid.ROWS - 1 ||
+        //       game.board[i][j + 1].color !== "vacant"
+        //     ) {
+        //       filename = `arrowDownEnd${color}`;
+        //       arrowHitsGround = true; // the block will land here
+        //     } else {
+        //       filename = `arrowDownMid${color}`;
+        //     }
+        //     win.ctx.drawImage(
+        //       loadedSprites[filename],
+        //       grid.SQ * i,
+        //       grid.SQ * j - game.rise
+        //     );
+        //     console.log("filename to draw:", filename, game.frames, i, j);
+        //     if (arrowHitsGround) break;
+        //   }
+        // }
       }
 
-      if (i === moveToX) break;
+      if (i === moveToCoord) break;
     }
   }
 
@@ -513,7 +541,7 @@ class Block {
       );
     }
 
-    if (this.targetX !== undefined) {
+    if (this.targetCoord !== undefined) {
       win.ctx.drawImage(
         loadedSprites["debugBlue"],
         grid.SQ * this.x,
@@ -521,7 +549,7 @@ class Block {
       );
       win.ctx.drawImage(
         loadedSprites["debugRed"],
-        grid.SQ * this.targetX,
+        grid.SQ * this.targetCoord,
         grid.SQ * this.y - game.rise
       );
     }
@@ -576,6 +604,43 @@ class Block {
           grid.SQ * this.y - game.rise
         );
       }
+
+      // if (
+      //   touch.selectedBlock.x === this.x &&
+      //   touch.selectedBlock.y === this.y
+      // ) {
+      //   win.ctx.drawImage(
+      //     loadedSprites["debugPink"],
+      //     grid.SQ * this.x,
+      //     grid.SQ * this.y - game.rise
+      //   );
+      // }
+
+      // if (touch.mouse.x === this.x && touch.mouse.y === this.y) {
+      //   win.ctx.drawImage(
+      //     loadedSprites["debugBlue"],
+      //     grid.SQ * this.x,
+      //     grid.SQ * this.y - game.rise
+      //   );
+      // }
+
+      // touch.mouse.oldCoords.forEach(([x, y]) => {
+      //   if (x === this.x && y === this.y) {
+      //     win.ctx.drawImage(
+      //       loadedSprites["debugRed"],
+      //       grid.SQ * this.x,
+      //       grid.SQ * this.y - game.rise
+      //     );
+      //   }
+      // });
+
+      // if (touch.mouse.oldX === this.x && touch.mouse.oldY === this.y) {
+      //   win.ctx.drawImage(
+      //     loadedSprites["debugRed"],
+      //     grid.SQ * this.x,
+      //     grid.SQ * this.y - game.rise
+      //   );
+      // }
     }
   }
 
@@ -725,6 +790,9 @@ class Block {
 }
 
 game.VacantBlock = new Block(-2, -2);
+game.Mouse = new Mouse(0, 0, false);
+game.LastBlockHovered = new Mouse(0, 0, false);
+game.LastBlockClicked = new Mouse(0, 0, false);
 
 export function newBlock(c, r, vacant = false) {
   let block = new Block(c, r);
@@ -773,16 +841,13 @@ export function drawGrid() {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
-      if (
-        (Square.swapDirectionX || Square.swapDirectionY) &&
-        Square.timer > 0
-      ) {
+      if (Square.type === "swapping" && Square.timer > 0) {
         swappingBlocksArray.push(Square);
       }
       if (
-        Square.targetX !== undefined ||
-        Square.previewX !== undefined ||
-        Square.helpX !== undefined
+        Square.targetCoord !== undefined ||
+        Square.previewCoord !== undefined ||
+        Square.helpCoord !== undefined
       ) {
         // if (game.cursor_type[0] !== "d") arrowListArray.push(Square);
         arrowListArray.push(Square);
@@ -831,6 +896,14 @@ export function drawGrid() {
     let [x, y] = JSON.parse(game.clearingSets.coord[i]);
     let Square = game.board[x][y];
     Square.drawScoreEarned(scoreEarned);
+  }
+
+  if (debug.show) {
+    game.Mouse.x = touch.mouse.pixelX;
+    game.Mouse.y = touch.mouse.pixelY;
+    game.Mouse.mouseDown = touch.mouse.clicked;
+    game.Mouse.color = "Orange";
+    game.Mouse.drawMouse();
   }
 
   // drawChainMessage();
@@ -1449,6 +1522,16 @@ export function updateLevelEvents(level) {
 // GAME HERE
 let cnt;
 export function gameLoop() {
+  if (win.gameLoopCompleted === false) {
+    debug.enabled = true;
+    debug.show = true;
+    pause();
+    win.mainInfoDisplay.innerHTML = `Game Crash Occured!<br>Please check developer console for details by pressing F12, and email the error at jonisrael45@gmail.com. A snapshot of the board state is below. Please reload website to continue!`;
+    win.mainInfoDisplay.style.color = "red";
+    document.querySelector("#pause-button").style.display = "none";
+    return;
+  }
+  win.gameLoopCompleted = false; // set it to off, will become true at end of loop
   cnt++;
   if (win.running && !game.paused && !debug.show) {
     document.getElementById("header").style.display = "none";
@@ -1800,14 +1883,16 @@ export function gameLoop() {
       }
       if (game.swapPressed) {
         let [x, y] = [game.cursor.x, game.cursor.y];
-        if (game.board[x][y].targetX !== undefined) {
-          game.board[x][y].targetX = undefined;
-        } else if (game.board[x + 1][y].targetX !== undefined) {
-          game.board[x + 1][y].targetX = undefined;
+        if (game.board[x][y].targetCoord !== undefined) {
+          game.board[x][y].targetCoord = undefined;
+        } else if (game.board[x + 1][y].targetCoord !== undefined) {
+          game.board[x + 1][y].targetCoord = undefined;
         } else if (!blockVacOrClearing(game.board[x][y])) {
-          game.board[x][y].targetX = x + 1;
+          game.board[x][y].targetCoord = x + 1;
+          game.board[x][y].swapType = "h";
         } else if (!blockVacOrClearing(game.board[x + 1][y])) {
-          game.board[x + 1][y].targetX = x;
+          game.board[x + 1][y].targetCoord = x;
+          game.board[x + 1][y].swapType = "h";
         }
         game.swapPressed = false;
       }
@@ -1946,9 +2031,11 @@ export function gameLoop() {
       if (debug.show) {
         win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
           game.seconds} sec<br />Real Time: ${perf.realTime.toFixed(1)} sec`;
-        win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}]<br>
-        Score Multiplier: ${game.scoreMultiplier}<br>
-        Highest Row: ${game.highestRow}`;
+        win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}, ${
+          game.board[game.cursor.x][game.cursor.y].color
+        }]<br>
+        Touch Order List: [${touch.moveOrderList}]<br>
+        Touch Move Exists: ${touch.moveOrderExists}`;
       } else {
         win.timeDisplay.innerHTML = game.timeString;
         win.levelDisplay.innerHTML = `${game.level > 0 ? game.level : "PR"}`;
@@ -2069,4 +2156,5 @@ export function gameLoop() {
   }
   // update realtime variables
   perf.then = perf.now - (perf.delta % perf.fpsInterval);
+  win.gameLoopCompleted = true;
 }

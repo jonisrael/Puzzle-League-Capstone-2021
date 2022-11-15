@@ -7,7 +7,6 @@ import {
   cpu,
   win,
   randInt,
-  touch,
 } from "../global";
 import { sprite } from "../fileImports";
 import { findHorizontalMatches } from "./findHorizontalMatches";
@@ -157,7 +156,7 @@ export function cpuAction(input, createHint = false, controlType = "digital") {
     for (let i in cpu.matchList) {
       let pointHintToThisXCoordinate = cpu.matchList[1][0];
       let [c, r] = cpu.matchList[i];
-      game.board[c][r].helpX = pointHintToThisXCoordinate;
+      game.board[c][r].helpCoord = pointHintToThisXCoordinate;
     }
     return cpu.matchList;
   }

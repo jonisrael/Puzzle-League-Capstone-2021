@@ -57,6 +57,7 @@ export function startGame(selectedGameSpeed = 1) {
   getWorldTimeAPI();
   getLeaderboardData();
   win.running = true;
+  win.gameLoopCompleted = true;
   win.gamepadPort = false;
   for (let i = 0; i < 4; i++) {
     if (navigator.getGamepads()[i]) {
@@ -96,7 +97,6 @@ export function startGame(selectedGameSpeed = 1) {
   win.multiplierDisplay.innerHTML = "1.00x";
   touch.thereIsABlockCurrentlySelected = false;
   touch.moveOrderExists = false;
-  touch.arrowLists.length = 0;
   game.tutorialRunning = false;
   // document.getElementById("game-info-table").style.display = "inline";
   if (!game.playRecording) {

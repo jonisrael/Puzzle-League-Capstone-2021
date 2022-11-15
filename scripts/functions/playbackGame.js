@@ -36,9 +36,9 @@ function cpuClick(arr) {
   touch.selectedBlock.x = x;
   touch.selectedBlock.y = y;
   if (type === "Preview") {
-    game.board[x][y].previewX = moveToX;
+    game.board[x][y].previewCoord = moveToX;
   } else {
-    game.board[x][y].targetX = moveToX;
+    game.board[x][y].targetCoord = moveToX;
   }
 }
 

@@ -26,11 +26,17 @@ import { updateTrainingButtons } from "./trainingControls";
 import { touch } from "../clickControls";
 
 export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
-  if (game.disableSwap || game.frames < 0 || x + 2 > grid.COLS || game.over) {
-    if (game.frames >= 0) {
-      removeFromOrderList(game.board[x][y]);
-      if (x + 1 < grid.COLS) removeFromOrderList(game.board[x + 1][y]);
-    }
+  if (
+    game.disableSwap ||
+    game.frames < 0 ||
+    game.over ||
+    (swapType === "h" && x + 2 > grid.COLS) ||
+    (swapType === "v" && y + 2 > grid.ROWS)
+  ) {
+    // if (game.frames >= 0) {
+    //   removeFromOrderList(game.board[x][y]);
+    //   if (x + 1 < grid.COLS) removeFromOrderList(game.board[x + 1][y]);
+    // }
     return;
   }
 
@@ -43,6 +49,8 @@ export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
   if (swapType === "h") {
     const LeftBlock = FirstBlock;
     const RightBlock = SecondBlock;
+
+    LeftBlock.swapDirectionY = RightBlock.swapDirectionY = 0;
     // Make sure both blocks aren't blockColor.VACANT
     if (
       LeftBlock.color == blockColor.VACANT &&
@@ -114,6 +122,8 @@ export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
   if (swapType === "v") {
     const TopBlock = FirstBlock;
     const BottomBlock = SecondBlock;
+    TopBlock.swapDirectionX = BottomBlock.swapDirectionX = 0;
+
     // Make sure both blocks aren't blockColor.VACANT
     if (TopBlock.color === "vacant" || BottomBlock.color === "vacant") {
       legalSwapFailReason = "vertical swap fail, a block is vacant";
@@ -195,10 +205,15 @@ export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
       }
     }
     if (touch.enabled && touch.moveOrderExists && game.cursor_type[0] !== "d") {
-      touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
+      if (swapType === "h") {
+        touch.selectedBlock.x = touch.selectedBlock.x === x ? x + 1 : x;
+        touch.selectedBlock.y = y;
+      } else {
+        touch.selectedBlock.x = x;
+        touch.selectedBlock.y = touch.selectedBlock.y === y ? y + 1 : y;
+      }
       game.cursor.x = touch.selectedBlock.x;
       game.cursor.y = touch.selectedBlock.y;
-      // if (touch.arrowLists.length) touch.arrowLists.shift();
     }
     cpu.swapSuccess = true;
     playAudio(audio.select);
@@ -310,8 +325,12 @@ export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
               "Smart Match stops order",
               stickyResult
             );
-          removeFromOrderList(game.board[game.board[c][y].targetX][y]);
-          game.board[c][y].targetX = undefined;
+          let [xToRemove, yToRemove] =
+            game.board[c][y].swapType === "h"
+              ? [game.board[c][y].targetCoord, y]
+              : [x, game.board[c][y].targetCoord];
+          removeFromOrderList(game.board[xToRemove][yToRemove]);
+          game.board[c][y].targetCoord = undefined;
           game.board[c][y].lightTimer = 65;
           let [x2, y2] = game.board[c][y].smartMatch.secondCoord;
           game.board[x2][y2].lightTimer = 65;
@@ -336,29 +355,37 @@ export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
     //   removeFromOrderList(game.board[x][y]);
     // } else if
     if (
-      legalSwapFailReason !== "non-interactive block" &&
-      legalSwapFailReason !== "airborne block"
+      !legalSwapFailReason.includes("non-interactive block") &&
+      !legalSwapFailReason.includes("airborne block")
     ) {
       touch.moveOrderExists = false;
       game.swapPressed = false;
-      if (game.board[x][y].targetX !== undefined) {
-        removeFromOrderList(game.board[game.board[x][y].targetX][y]);
-        game.board[x][y].targetX = undefined;
+      if (FirstBlock.targetCoord !== undefined) {
+        let [xToRemove, yToRemove] =
+          FirstBlock.swapType === "h"
+            ? [FirstBlock.targetCoord, y]
+            : [x, FirstBlock.targetCoord];
+        removeFromOrderList(game.board[xToRemove][yToRemove]);
+        FirstBlock.targetCoord = undefined;
         if (debug.enabled)
           console.log(
             game.frames,
-            [x, y],
+            [FirstBlock.x, FirstBlock.y],
             "remove from order list, reason:",
             legalSwapFailReason
           );
       }
-      if (game.board[x + 1][y].targetX !== undefined) {
-        removeFromOrderList(game.board[game.board[x + 1][y].targetX][y]);
-        game.board[x + 1][y].targetX = undefined;
+      if (SecondBlock.targetCoord !== undefined) {
+        let [xToRemove, yToRemove] =
+          SecondBlock.swapType === "h"
+            ? [SecondBlock.targetCoord, y]
+            : [x, SecondBlock.targetCoord];
+        removeFromOrderList(game.board[xToRemove][yToRemove]);
+        SecondBlock.targetCoord = undefined;
         if (debug.enabled)
           console.log(
             game.frames,
-            [x + 1, y],
+            [SecondBlock.x, SecondBlock.y],
             "remove from order list, reason:",
             legalSwapFailReason
           );
@@ -379,7 +406,7 @@ export function checkSwapTargets() {
   for (let c = 0; c < grid.COLS; c++) {
     for (let r = 0; r < grid.ROWS; r++) {
       const Square = game.board[c][r];
-      if (Square.targetX !== undefined) {
+      if (Square.targetCoord !== undefined) {
         game.boardHasTargets = true;
         // console.log(
         //   game.frames,
@@ -387,20 +414,33 @@ export function checkSwapTargets() {
         //   c,
         //   r,
         //   "has a target at ",
-        //   Square.targetX,
+        //   Square.targetCoord,
         // );
-        if (Square.x < Square.targetX) {
+        if (
+          (Square.swapType === "h" && Square.x < Square.targetCoord) ||
+          (Square.swapType === "v" && Square.y < Square.targetCoord)
+        ) {
           // console.log(
           //   game.frames,
           //   "swapping right",
           //   Square.x,
           //   Square.y,
           //   "target is",
-          //   Square.targetX
+          //   Square.targetCoord
           // );
-          trySwappingBlocks(Square.x, Square.y);
-        } else if (c > 0 && Square.x > Square.targetX) {
-          trySwappingBlocks(Square.x - 1, Square.y, false);
+          trySwappingBlocks(Square.x, Square.y, true, Square.swapType);
+        } else if (
+          Square.swapType === "h" &&
+          c > 0 &&
+          Square.x > Square.targetCoord
+        ) {
+          trySwappingBlocks(Square.x - 1, Square.y, false, "h");
+        } else if (
+          Square.swapType === "v" &&
+          r > 0 &&
+          Square.y > Square.targetCoord
+        ) {
+          trySwappingBlocks(Square.x, Square.y - 1, false, "v");
         }
       }
       // now check if block needs to reset target
