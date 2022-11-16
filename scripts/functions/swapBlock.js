@@ -16,6 +16,7 @@ import {
   saveState,
   removeFromOrderList,
   preset,
+  funcTimestamps,
 } from "../global";
 import { playAudio } from "./audioFunctions";
 import { audio } from "../fileImports";
@@ -26,6 +27,7 @@ import { updateTrainingButtons } from "./trainingControls";
 import { touch } from "../clickControls";
 
 export function trySwappingBlocks(x, y, rightSwap = true, swapType = "h") {
+  funcTimestamps.swapBlock.begin = Date.now();
   if (
     game.disableSwap ||
     game.frames < 0 ||
@@ -446,4 +448,7 @@ export function checkSwapTargets() {
       // now check if block needs to reset target
     }
   }
+  funcTimestamps.swapBlock.end = Date.now();
+  funcTimestamps.swapBlock.thisGameFrameSpeed =
+    funcTimestamps.swapBlock.end - funcTimestamps.swapBlock.begin;
 }

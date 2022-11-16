@@ -16,10 +16,7 @@ import {
   audioKeys,
   audioSrcs,
 } from "./scripts/fileImports";
-import {
-  legalMatch,
-  checkMatch,
-} from "./scripts/functions/matchAndScoreFunctions";
+import { checkMatch } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
   fixNextDarkStack,
@@ -106,6 +103,8 @@ import {
   saveState,
   replay,
   getRow,
+  updateFunctionMaxMinTimestamps,
+  funcTimestamps,
 } from "./scripts/global.js";
 import { updateMousePosition, touch } from "./scripts/clickControls";
 import {
@@ -651,7 +650,7 @@ class Block {
       (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
     ) {
       win.ctx.drawImage(
-        loadedSprites[""],
+        loadedSprites["debugRed"],
         grid.SQ * this.x,
         grid.SQ * this.y - game.rise
       );
@@ -828,6 +827,7 @@ export function checkIfHelpPlayer() {
 }
 
 export function drawGrid() {
+  funcTimestamps.drawGrid.begin = Date.now();
   // console.time(`${game.frames}`);
   if (game.frames % perf.drawDivisor === 1) return;
   let swappingBlocksArray = [];
@@ -878,8 +878,16 @@ export function drawGrid() {
     } // end check y
   } // end check x
 
-  swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
-  arrowListArray.forEach((Square) => Square.drawArrows());
+  // swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
+  // arrowListArray.forEach((Square) => Square.drawArrows());
+  for (let i = 0; i < swappingBlocksArray.length; i++) {
+    let Square = swappingBlocksArray[i];
+    Square.drawSwappingBlocks();
+  }
+  for (let i = 0; i < arrowListArray.length; i++) {
+    let Square = arrowListArray[i];
+    Square.drawArrows();
+  }
 
   if (cpu.showInfo || debug.show) {
     for (let x = grid.COLS - 1; x >= 0; x--) {
@@ -927,10 +935,15 @@ export function drawGrid() {
     if (!game.humanCanPlay && !cpu.control) return;
     game.cursor.draw();
   }
+  funcTimestamps.drawGrid.end = Date.now();
+  funcTimestamps.drawGrid.lastFrameCompletionSpeed =
+    funcTimestamps.drawGrid.end - funcTimestamps.drawGrid.begin;
   // console.timeEnd(`${game.frames}`);
 }
 
 export function isChainActive() {
+  funcTimestamps.isChainActive.begin = Date.now();
+
   let potentialSecondarySuccessor = false;
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS; y++) {
@@ -943,6 +956,11 @@ export function isChainActive() {
   }
   // Test failed, so ending chain. Proceed with new code.
   endChain(potentialSecondarySuccessor);
+
+  funcTimestamps.isChainActive.end = Date.now();
+  funcTimestamps.isChainActive.lastFrameCompletionSpeed =
+    funcTimestamps.isChainActive.end - funcTimestamps.isChainActive.begin;
+
   return false;
 }
 
@@ -1044,6 +1062,8 @@ export function endChain(potentialSecondarySuccessor) {
 }
 
 export function createNewRow() {
+  funcTimestamps.createNewRow.begin = Date.now();
+
   if (game.highestRow < 1) {
     game.deathTimer = 0; // game over on next frame
     return;
@@ -1103,6 +1123,10 @@ export function createNewRow() {
     );
   }
   if (game.highestRow === 1) game.deathTimer = preset.faceValues[game.level];
+
+  funcTimestamps.createNewRow.end = Date.now();
+  funcTimestamps.createNewRow.lastFrameCompletionSpeed =
+    funcTimestamps.createNewRow.end - funcTimestamps.createNewRow.begin;
 }
 
 function canvasBorderColor(level) {
@@ -1295,7 +1319,7 @@ function KEYBOARD_CONTROL(event) {
   }
   // Game Controls
   if (win.running && (!game.over || game.tutorialRunning)) {
-    if (!game.paused || debug.enabled) {
+    if ((!game.paused && !cpu.control) || debug.enabled) {
       if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
       if (savedControls.keyboard.down.includes(event.keyCode)) {
         action.down = true;
@@ -1607,8 +1631,9 @@ export function gameLoop() {
 
     if (game.paused) {
       playerAction(action);
-      if (debug.enabled)
+      if (debug.enabled) {
         win.mainInfoDisplay.innerHTML = `Pause -- Frame ${game.frames}`;
+      }
       if (leaderboard.canPost && !document.hasFocus()) {
         if (win.focused) {
           perf.lostFocusTimeStamp = Date.now();
@@ -1908,13 +1933,13 @@ export function gameLoop() {
             helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
           }
-          cpu.matchList.forEach((coord) => {
-            let [x, y] = coord;
+          for (let i = 0; i < cpu.matchList.length; i++) {
+            let [x, y] = cpu.matchList[i];
             if (game.board[x][y].color !== colorToMatch) {
               helpPlayer.hintVisible = false;
               console.log("colors are not matching, redo cpuMatch");
             }
-          });
+          }
           if (!helpPlayer.hintVisible) {
             cpu.matchList.length = cpu.matchStrings.length = 0;
             console.log("needed to correct cpuMatch");
@@ -2072,7 +2097,7 @@ export function gameLoop() {
       }
 
       // win.highScoreDisplay.innerHTML = `High Score:<br>${game.highScore}`;
-      if (!document.hasFocus() && leaderboard.canPost) {
+      if (!document.hasFocus() && leaderboard.canPost && !cpu.enabled) {
         pause(true);
         win.focused = false;
         perf.lostFocusTimeStamp = Date.now();
@@ -2152,7 +2177,8 @@ export function gameLoop() {
         }
       }
     }
-    // outside unpause loop
+    updateFunctionMaxMinTimestamps();
+    // outside unpause loop, inside game loop
   }
   // update realtime variables
   perf.then = perf.now - (perf.delta % perf.fpsInterval);

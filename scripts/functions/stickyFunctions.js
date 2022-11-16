@@ -122,7 +122,12 @@ export function stickyCheck(x, y) {
 
   const Square = game.board[x][y];
   const smartMatch = Square.smartMatch;
-  Object.keys(smartMatch).forEach((key) => (smartMatch[key] = undefined));
+  const smartMatchKeys = Object.keys(smartMatch);
+  for (let i = 0; i < smartMatchKeys.length; i++) {
+    let key = smartMatchKeys[i];
+    smartMatch[key] = undefined;
+  }
+  // Object.keys(smartMatch).forEach((key) => (smartMatch[key] = undefined));
   // ? match[0] = [x, y];
   // ? match[1] = [-1, -1];
   // ? match[2] = [-1, -1];
@@ -483,8 +488,8 @@ function findClearLine(Square, stopAfterCheckingBelow = false) {
 
   // check both sides, two squares.
   for (let dir = -1; dir <= 1; dir += dir === -1 ? 2 : 1) {
-    // One-time While loop used for quick breakage
-    while (true) {
+    // One-time for loop used for quick breakage
+    for (let oneTimeLoop = 0; oneTimeLoop === 0; oneTimeLoop++) {
       // end loop if out of x range, block is solid, or block below is vacant
       if (x + dir < 0 || x + dir >= grid.COLS) break;
 

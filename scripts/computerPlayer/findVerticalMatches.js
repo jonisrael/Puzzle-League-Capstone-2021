@@ -48,10 +48,15 @@ export function findVerticalMatches(middleRowIndex, dir) {
         }
         // console.log(desiredColor, cpu.matchList);
         cpu.targetColor = sprite.debugRed;
-        matchLocations.forEach((coord) => {
+        for (let i = 0; i < matchLocations.length; i++) {
+          let coord = matchLocations[i];
           cpu.matchList.push(coord);
           cpu.matchStrings.push(`${coord}`);
-        });
+        }
+        // matchLocations.forEach((coord) => {
+        //   cpu.matchList.push(coord);
+        //   cpu.matchStrings.push(`${coord}`);
+        // });
         return startVerticalSwapping(matchLocations);
       }
     }

@@ -12,6 +12,7 @@ import {
   randInt,
   overtimeMusic,
   leaderboard,
+  funcTimestamps,
 } from "../global";
 import { audio } from "../fileImports";
 import { playAudio, playMusic } from "./audioFunctions";
@@ -231,6 +232,8 @@ export function printDebugInfo() {
     replay,
     "\nperf",
     perf,
+    "\nfuncTimestamps",
+    funcTimestamps,
     game.cursor_type[0] === "d"
       ? game.board[game.cursor.x + 1][game.cursor.y]
       : "",

@@ -134,7 +134,7 @@ export function createTutorialBoard(colorLocations, blocksSelectable = false) {
         game.board[c][r].color = randomPiece(game.level);
         game.board[c][r].type = blockType.DARK;
       } else {
-        for (let i in colorLocations) {
+        for (let i = 0; i < colorLocations.length; i++) {
           let [locX, locY, definedColor, timer] = colorLocations[i];
           if (c === locX && r === locY) {
             game.board[c][r].color = definedColor;

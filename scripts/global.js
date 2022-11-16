@@ -362,7 +362,7 @@ export let game = {
   cursor: { x: 2, y: 6 },
   cursor_type: "legalCursorDown",
   humanCanPlay: true,
-  swapTimer: 3,
+  swapTimer: 5,
   rise: 0,
   board: [],
   mute: 0,
@@ -503,6 +503,32 @@ export const perf = {
   lostFocusTimeStamp: 0,
 };
 
+export const funcTimestamps = {
+  drawGrid: {},
+  swapBlock: {},
+  checkMatch: {},
+  updateGrid: {},
+  gravity: {},
+  createNewRow: {},
+  isChainActive: {},
+};
+
+export const funcTimestampList = Object.values(funcTimestamps);
+
+funcTimestampList.forEach((funcTimestamp) => {
+  funcTimestamp.begin = 0;
+  funcTimestamp.end = 0;
+  funcTimestamp.lastFrameCompletionSpeed = 0;
+  funcTimestamp.fastestFrame = {
+    completionSpeed: 1000000,
+    theFrame: -1000,
+  };
+  funcTimestamp.slowestFrame = {
+    completionSpeed: 0,
+    theFrame: -1000,
+  };
+});
+
 export const debug = {
   enabled: 0,
   clickCounter: 0,
@@ -572,7 +598,7 @@ export let audioLoadedPercentage = 0;
 // Preload all audios, then play them at zero volume.
 export function checkIfAudioLoaded(audioFileList) {
   let preloadedAudios = 0;
-  for (let i in loadedAudios) {
+  for (let i = 0; i < loadedAudios.length; i++) {
     let audioObj = loadedAudios[i];
     if (audioObj.readyState == 4 && i < audioFileList.length) {
       preloadedAudios++;
@@ -589,7 +615,7 @@ export function checkIfAudioLoaded(audioFileList) {
 
 export function loadAudios(numOfEssentialAudioFiles) {
   // let [indexStart, indexEnd] = [0, audioList.length];
-  for (let i in audioList) {
+  for (let i = 0; i < audioList.length; i++) {
     let sfx = new Audio();
     sfx.src = audioList[i];
     sfx.preload = "auto";
@@ -797,11 +823,23 @@ export function transferProperties(FirstBlock, SecondBlock, type) {
   }
 
   // always transfer 1st block to second block
-  SecondKeys.forEach((key) => (SecondBlock[key] = FirstBlock[key]));
+  // SecondKeys.forEach((key) => (SecondBlock[key] = FirstBlock[key]));
+  for (let i = 0; i < SecondKeys.length; i++) {
+    let key = SecondKeys[i];
+    SecondBlock[key] = FirstBlock[key];
+  }
   if (type === "to") {
-    FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
+    // FirstKeys.forEach((key) => (FirstBlock[key] = game.VacantBlock[key]));
+    for (let i = 0; i < FirstKeys.length; i++) {
+      let key = FirstKeys[i];
+      FirstBlock[key] = game.VacantBlock[key];
+    }
   } else if (type === "between") {
-    FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
+    // FirstKeys.forEach((key) => (FirstBlock[key] = TempBlock[key]));
+    for (let i = 0; i < FirstKeys.length; i++) {
+      let key = FirstKeys[i];
+      FirstBlock[key] = TempBlock[key];
+    }
     if (
       (FirstBlock.swapType === "h" && FirstBlock.targetCoord > FirstBlock.x) ||
       (FirstBlock.swapType === "v" && FirstBlock.targetCoord > FirstBlock.y)
@@ -868,6 +906,23 @@ export function removeFromOrderList(TargetSquare) {
 export function randomPiece(level) {
   // if (level < 3) return PIECES[randInt(PIECES.length - 1)];
   return PIECES[randInt(PIECES.length)];
+}
+
+export function updateFunctionMaxMinTimestamps() {
+  funcTimestampList.forEach((funcObj) => {
+    if (
+      funcObj.lastFrameCompletionSpeed < funcObj.fastestFrame.completionSpeed
+    ) {
+      funcObj.fastestFrame.completionSpeed = funcObj.lastFrameCompletionSpeed;
+      funcObj.fastestFrame.theFrame = game.frames;
+    }
+    if (
+      funcObj.lastFrameCompletionSpeed > funcObj.slowestFrame.completionSpeed
+    ) {
+      funcObj.slowestFrame.completionSpeed = funcObj.lastFrameCompletionSpeed;
+      funcObj.slowestFrame.theFrame = game.frames;
+    }
+  });
 }
 
 // // Transfer everything except x and y coordinates

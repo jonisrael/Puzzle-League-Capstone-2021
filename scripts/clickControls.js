@@ -167,7 +167,7 @@ export function doMouseDown(e, virtualX, virtualY) {
     return;
   }
 
-  if (!touch.enabled || cpu.control) return;
+  if (!touch.enabled || (cpu.control && !debug.enabled)) return;
   touch.moveOrderExists = false;
   touch.mouse.clicked = true;
   if (!game.disableRaise) {
@@ -227,7 +227,7 @@ export function doMouseDown(e, virtualX, virtualY) {
 }
 
 function doMouseMove(e, virtual = false) {
-  if (!game.humanCanPlay) return;
+  if (!game.humanCanPlay && !debug.enabled) return;
   if (!touch.enabled) return;
   if (!virtual) updateMousePosition(win.cvs, e);
   if (touch.mouse.clicked) {
@@ -264,7 +264,7 @@ function doMouseMove(e, virtual = false) {
 }
 
 export function doMouseUp(e, virtualX, virtualY) {
-  if (!game.humanCanPlay) return;
+  if (!game.humanCanPlay && !debug.enabled) return;
   if (!touch.enabled) return;
   touch.mouse.clicked = false;
   virtualX === undefined

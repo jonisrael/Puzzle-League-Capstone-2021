@@ -153,7 +153,7 @@ export function cpuAction(input, createHint = false, controlType = "digital") {
   }
 
   if (createHint) {
-    for (let i in cpu.matchList) {
+    for (let i = 0; i < cpu.matchList.length; i++) {
       let pointHintToThisXCoordinate = cpu.matchList[1][0];
       let [c, r] = cpu.matchList[i];
       game.board[c][r].helpCoord = pointHintToThisXCoordinate;

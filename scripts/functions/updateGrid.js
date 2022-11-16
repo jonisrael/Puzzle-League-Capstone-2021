@@ -6,6 +6,7 @@ import {
   blockVacOrClearing,
   CLEARING_TYPES,
   debug,
+  funcTimestamps,
   game,
   grid,
   helpPlayer,
@@ -18,6 +19,8 @@ import { playAudio } from "./audioFunctions";
 import { isBlockAirborne } from "./gravity";
 
 export function updateGrid(frameAdvance = false) {
+  funcTimestamps.updateGrid.begin = Date.now();
+
   game.panicking = game.highestRow <= game.panicIndex;
   game.boardHasTargets = false;
   let numberOfPreviews = 0;
@@ -267,4 +270,8 @@ export function updateGrid(frameAdvance = false) {
   if (game.speedUpTimers) game.speedUpTimers = false;
   if (touch.removePreviews) touch.removePreviews = false;
   else if (numberOfPreviews > 1) touch.removePreviews = true;
+
+  funcTimestamps.updateGrid.end = Date.now();
+  funcTimestamps.updateGrid.thisGameFrameSpeed =
+    funcTimestamps.updateGrid.end - funcTimestamps.updateGrid.begin;
 }

@@ -30,10 +30,15 @@ export function findHorizontalMatches(r) {
         }
       }
       if (matchLocations.length > 2) {
-        matchLocations.forEach((coord) => {
+        for (let i = 0; i < matchLocations.length; i++) {
+          let coord = matchLocations[i];
           cpu.matchList.push(coord);
           cpu.matchStrings.push(`${coord}`);
-        });
+        }
+        // matchLocations.forEach((coord) => {
+        //   cpu.matchList.push(coord);
+        //   cpu.matchStrings.push(`${coord}`);
+        // });
         // begin swap sequence
         return startHorizontalSwapping(matchLocations);
       }

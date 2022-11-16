@@ -20,6 +20,8 @@ export const action = {
   pause: false,
 };
 
+export const [actionKeys, actions] = Object.entries(action);
+
 export const holdTime = JSON.parse(JSON.stringify(action));
 export const pressed = JSON.parse(JSON.stringify(action));
 export const heldFrames = JSON.parse(JSON.stringify(action));
@@ -198,14 +200,14 @@ export function checkIfControlsExist(controls) {
 export function playerAction(input) {
   input.byCPU = false;
   if (game.tutorialRunning && (!game.humanCanPlay || debug.enabled)) {
-    if (Object.values(action).includes(true)) {
+    if (actions.includes(true)) {
       input = tutorialBreakInputs(input);
-      Object.keys(action).forEach((btn) => (action[btn] = false));
+      actionKeys.forEach((btn) => (action[btn] = false));
     } else if (win.gamepadPort !== false) {
       // check gamepad inputs
       input = gamepadInput(input);
     }
-    // Object.keys(action).forEach((btn) => (action[btn] = false));
+
     if (Object.values(input).includes(true) && !input.pause) {
       return input;
     }
@@ -216,10 +218,10 @@ export function playerAction(input) {
   }
 
   if (!game.humanCanPlay && !debug.enabled) {
-    Object.keys(action).forEach((btn) => (action[btn] = false));
+    actionKeys.forEach((btn) => (action[btn] = false));
   }
 
-  // let inputsActive = Object.keys(action).filter(key => action[key] === true);
+  // let inputsActive = actionKeys.filter(key => action[key] === true);
   // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
     if (game.board[game.cursor.x][game.cursor.y].type === "swapping") return;
@@ -336,11 +338,11 @@ export function playerAction(input) {
     game.paused ? unpause() : pause();
   }
 
-  // Object.keys(action).forEach((btn) => (action[btn] = false));
+  // actionKeys.forEach((btn) => (action[btn] = false));
 
   // NOT REMOVED
   // reset all keys
-  // Object.keys(action).forEach(key => {
+  // actionKeys.forEach(key => {
   //   action[key] = false;
   // });
 }
@@ -401,7 +403,7 @@ function gamepadInput(input) {
   action.raise ? (holdTime.raise += perf.gameSpeed) : (holdTime.raise = 0);
   action.pause ? (holdTime.pause += perf.gameSpeed) : (holdTime.pause = 0);
 
-  // Object.keys(action).forEach((btn) => (action[btn] = false));
+  // actionKeys.forEach((btn) => (action[btn] = false));
   if (game.tutorialRunning && action.swap && holdTime.swap > 1) {
     input.swap = false;
   }
@@ -462,7 +464,7 @@ function tutorialBreakInputs(input) {
     // win.running = false;
     // win.restartGame = true;
   }
-  Object.keys(action).forEach((btn) => (action[btn] = false));
+  actionKeys.forEach((btn) => (action[btn] = false));
   return input;
 }
 

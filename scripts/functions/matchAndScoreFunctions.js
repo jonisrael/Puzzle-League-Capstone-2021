@@ -17,6 +17,7 @@ import {
   saveState,
   removeFromOrderList,
   changeAllBlockProperties,
+  funcTimestamps,
 } from "../global";
 
 import { playChainSFX, playAudio, playAnnouncer } from "./audioFunctions";
@@ -52,6 +53,7 @@ export function legalMatch(clearLocations) {
 }
 
 export function checkMatch() {
+  funcTimestamps.checkMatch.begin = Date.now();
   // Vertical Case, starting from top block
   let done = false;
   let checkAgain = false;
@@ -278,6 +280,9 @@ export function checkMatch() {
       done = true; // Needs to end if confirm clear fails
     }
   } // end while
+  funcTimestamps.checkMatch.end = Date.now();
+  funcTimestamps.checkMatch.lastFrameCompletionSpeed =
+    funcTimestamps.checkMatch.end - funcTimestamps.checkMatch.begin;
 }
 
 function assignClearTimers(matchLocations, blinkTime, initialFaceTime) {

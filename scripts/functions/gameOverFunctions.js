@@ -24,6 +24,7 @@ import * as state from "../../store";
 import { playAudio, playMusic } from "./audioFunctions";
 import { displayMessage, render, router, getLeaderboardData } from "../..";
 import { touch } from "../clickControls";
+import { printDebugInfo } from "./pauseFunctions";
 
 export function closeGame(gameFinished) {
   win.running = false;
@@ -45,6 +46,8 @@ export function closeGame(gameFinished) {
   //   document.getElementById("home-page").onmousedown = true;
   //   document.getElementById("home-page").onselectstart = true;
   // }
+
+  printDebugInfo();
 
   if (gameFinished) {
     afterGame();
