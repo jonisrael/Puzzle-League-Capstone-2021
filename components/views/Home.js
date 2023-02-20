@@ -13,15 +13,17 @@ export default (st) => html`
       </ul> -->
       <hr />
       <p style="text-align: center;">
-        Play on a touch screen, or if you're at a computer, use the arrow keys
-        to move the cursor and S/R to swap and raise.
+        This game can be played both on a computer and a mobile device! You can
+        use a touch screen which uses my own control system, or if you're at a
+        computer, use classic Puzzle League controls with the arrow keys to move
+        the cursor and S/R to swap and raise.
       </p>
       <hr />
       <p style="text-align: center;">
-        Februrary 2023 UPDATE: Heroku, the server that I hosted the leaderboard
-        on, is now a paid service, so the leaderboard is currently down. I will
-        redeploying to a new server eventually, but in the mean time, I made a
-        quick function where you can use your own local high scores!
+        <strong>Februrary 2023 UPDATE:</strong> Heroku, the server that I hosted
+        the leaderboard on, is now a paid service, meaning I have to redeploy to
+        a new server. In the mean time, the game still works at keeping track of
+        your local high scores!
       </p>
       <hr />
       <h1>How to play</h1>
