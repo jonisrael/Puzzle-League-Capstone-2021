@@ -36,8 +36,8 @@ export function getBestScores(clearScores) {
   for (let i = 1; i <= 5; i++) {
     let types = ["", "_Standard", "_Marathon"];
     let timeMultipliers = [2, 5, 10];
-    let baseScores = [2500, 1500, 1000, 500, 250];
-    for (let j = 0; j < 3; j++) {
+    let baseScores = [5000, 2500, 500, 250, 50];
+    for (let j = 0; j <= 2; j++) {
       let type = types[j];
       let timeMultiplier = timeMultipliers[j];
       let baseScore = baseScores[i - 1] * timeMultiplier;

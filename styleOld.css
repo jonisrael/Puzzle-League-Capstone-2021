@@ -277,7 +277,7 @@ header {
   color: blueviolet;
 }
 
-#best-scores-table {
+.best-scores-table {
   /* display: none; */
   max-width: 75%;
   margin: 0 auto;

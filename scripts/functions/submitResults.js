@@ -31,6 +31,12 @@ import { middleMenuSetup } from "./middleMenu";
 
 export function afterGame() {
   console.log("run aftergame");
+  let timeControlName =
+    game.timeControl == 2
+      ? "Blitz"
+      : game.timeControl == 5
+      ? "Standard"
+      : "Marathon";
   let duration = "";
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
   else duration = `${game.minutes}:${game.seconds}`;
@@ -45,26 +51,39 @@ export function afterGame() {
   console.log(game.log);
   console.log(leaderboard.data[leaderboard.data.length - 1]);
   let rank = updateBestScores(game.score);
-  let gameOver = document.createElement("h2");
+  let gameOver = document.createElement("h1");
   gameOver.setAttribute("id", "game-over");
+  gameOver.setAttribute("style", "color: red");
   gameOver.className = "postgame-info";
-  rank > 5
-    ? (gameOver.innerHTML = "Game Over!")
-    : `You've got a New High Score!<br>Rank ${rank}`;
+  gameOver.innerHTML =
+    rank > 5 ? "Game Over!" : `YOU GOT A NEW HIGH SCORE<br />`;
+  div1.appendChild(gameOver);
+  div1.appendChild(document.createElement("hr"));
 
-  let scoreMessage = document.createElement("h2");
+  let timeControlMessage = document.createElement("h1");
+  timeControlMessage.setAttribute = ("id", "time-control-name");
+  timeControlMessage.className = "postgame-info";
+  timeControlMessage.style.color = "black";
+  timeControlMessage.innerHTML = `Time Control:<br /> ${timeControlName}<br />`;
+  div1.appendChild(timeControlMessage);
+
+  let scoreMessage = document.createElement("h1");
   scoreMessage.setAttribute = ("id", "score-message");
   scoreMessage.className = "postgame-info";
   scoreMessage.style.color = "black";
-  scoreMessage.innerHTML = `Final Score: ${game.score}`;
-  scoreMessage.style.color = leaderboard.canPost ? "black" : "black";
+  scoreMessage.innerHTML = `Final Score: <br />${game.score}<br />`;
   div1.appendChild(scoreMessage);
 
-  let durationMessage = document.createElement("h2");
+  let durationMessage = document.createElement("h1");
   durationMessage.setAttribute = ("id", "duration-message");
   durationMessage.className = "postgame-info";
-  durationMessage.innerHTML = `Duration Survived: ${duration}`;
+  durationMessage.innerHTML = `Duration Survived: <br />${duration}<br />`;
   div1.appendChild(durationMessage);
+
+  div1.appendChild(document.createElement("hr"));
+
+  let div2 = document.createElement("div");
+  container.appendChild(div2);
 
   // let dateMessage = document.createElement("h2");
   // dateMessage.setAttribute = ("id", "date-message");
@@ -93,18 +112,18 @@ export function afterGame() {
 
   showBestScoreList(container);
 
-  let div2 = document.createElement("div");
-  container.appendChild(div2);
+  let div3 = document.createElement("div");
+  container.appendChild(div3);
   let restartGame = document.createElement("button");
   restartGame.setAttribute("id", "restart-arcade");
   restartGame.className = "default-button";
   restartGame.innerHTML = leaderboard.canPost
     ? "Restart Game Without Posting Scores"
     : "Play Again";
-  div2.appendChild(restartGame);
+  div3.appendChild(restartGame);
 
   let deleteScores = document.createElement("button");
-  div2.appendChild(deleteScores);
+  div3.appendChild(deleteScores);
   deleteScores.innerHTML = "Delete Personal Best Scores";
 
   restartGame.addEventListener("click", (event) => {
@@ -235,26 +254,27 @@ export function extractTimeFromAPI(dateTimeString) {
 }
 
 function showBestScoreList(container) {
-  return;
-  if (win.mobile) {
-  } else {
-    let scoreContainer = document.createElement("div");
-    let highScoreTitle = document.createElement("h2");
-    highScoreTitle.innerHTML = "High Score List";
-    container.append(highScoreTitle);
-    scoreContainer.setAttribute("id", "game-container");
-    container.append(scoreContainer);
-    let column1 = document.createElement("div");
-    let column2 = document.createElement("div");
-    let column3 = document.createElement("div");
-    column1.setAttribute("id", "column1");
-    column2.setAttribute("id", "column2");
-    column3.setAttribute("id", "column3");
-    scoreContainer.appendChild(column1);
-    scoreContainer.appendChild(column2);
-    scoreContainer.appendChild(column3);
-    setUpBestScoreDisplay(column1, bestScores.Blitz, "Blitz");
-    setUpBestScoreDisplay(column2, bestScores.Standard, "Standard");
-    setUpBestScoreDisplay(column3, bestScores.Marathon, "Marathon");
-  }
+  let scoreContainer = document.createElement("div");
+  let highScoreTitle = document.createElement("h1");
+  highScoreTitle.innerHTML = "High Score List";
+  container.append(highScoreTitle);
+  scoreContainer.setAttribute("id", "game-container");
+  scoreContainer.setAttribute("class", "final-score-list");
+  scoreContainer.setAttribute(
+    "style",
+    "min-height: 0%; justify-content: center;"
+  );
+  container.append(scoreContainer);
+  let column1 = document.createElement("div");
+  let column2 = document.createElement("div");
+  let column3 = document.createElement("div");
+  column1.setAttribute("id", "column1");
+  column2.setAttribute("id", "column2");
+  column3.setAttribute("id", "column3");
+  scoreContainer.appendChild(column1);
+  scoreContainer.appendChild(column2);
+  scoreContainer.appendChild(column3);
+  setUpBestScoreDisplay(column1, bestScores.Blitz, "Blitz");
+  setUpBestScoreDisplay(column2, bestScores.Standard, "Standard");
+  setUpBestScoreDisplay(column3, bestScores.Marathon, "Marathon");
 }

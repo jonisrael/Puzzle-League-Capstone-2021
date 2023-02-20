@@ -7,7 +7,7 @@
 */
 
 import html from "html-literal";
-import { displayMessage, render, router } from "./index";
+import { displayMessage, render } from "./index";
 import * as state from "./store";
 import {
   sprite,
@@ -117,6 +117,7 @@ import {
   arcadeEventes,
   arcadeEvents,
   checkTime,
+  updateFPS,
 } from "./scripts/functions/timeEvents";
 import {
   allBlocksAreSelectable,
@@ -761,11 +762,13 @@ class Block {
       urlKey = `${this.color}_normal`;
     if (this.type === "swapping") return; // make behind swapping blocks look vacant
     // if (this.color[0] === "u") urlKey = "unmatchable";
+    // if (game.frames % 60 == 0) console.time(`(${this.x}, ${this.y})`);
     win.ctx.drawImage(
       loadedSprites[urlKey],
       grid.SQ * this.x,
       grid.SQ * this.y - game.rise
     );
+    // if (game.frames % 60 == 0) console.timeEnd(`(${this.x}, ${this.y})`);
 
     // if (this.type === blockType.SWAPPING) {
     // let xOffset = (grid.SQ * this.swapDirectionX*(1 - this.timer)) / 4;
@@ -799,7 +802,7 @@ export function newBlock(c, r, vacant = false) {
 }
 
 export function checkIfHelpPlayer() {
-  if (helpPlayer.forceHint) helpPlayer.timer = 0;
+  if (helpPlayer.forceHint === true) helpPlayer.timer = 0;
   if (
     ((game.score < 500 && game.mode !== "tutorial" && !debug.show) ||
       helpPlayer.forceHint) &&
@@ -828,18 +831,23 @@ export function checkIfHelpPlayer() {
 
 export function drawGrid() {
   funcTimestamps.drawGrid.begin = Date.now();
-  // console.time(`${game.frames}`);
+
   if (game.frames % perf.drawDivisor === 1) return;
   let swappingBlocksArray = [];
   let arrowListArray = [];
   // let clearingBlockFound = false;
+  // if (game.frames % 60 === 0) console.time("ctxFill");
   win.ctx.fillStyle = "black";
   win.ctx.fillRect(0, 0, win.cvs.width, win.cvs.height);
+  // if (game.frames % 60 === 0) console.timeEnd("ctxFill");
+
   // win.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
   // win.ctx.fillRect(0, 0, win.cvs.width, win.cvs.height);
+  // if (game.frames % 60 === 0) console.time("drawSquares");
   for (let x = 0; x < grid.COLS; x++) {
     for (let y = 0; y < grid.ROWS + 2; y++) {
       let Square = game.board[x][y];
+
       if (Square.color !== "vacant" && Square.type !== "popped") Square.draw();
       if (Square.type === "swapping" && Square.timer > 0) {
         swappingBlocksArray.push(Square);
@@ -877,6 +885,7 @@ export function drawGrid() {
       }
     } // end check y
   } // end check x
+  // if (game.frames % 60 === 0) console.timeEnd("drawSquares");
 
   // swappingBlocksArray.forEach((Square) => Square.drawSwappingBlocks());
   // arrowListArray.forEach((Square) => Square.drawArrows());
@@ -915,8 +924,7 @@ export function drawGrid() {
   }
 
   // drawChainMessage();
-
-  if (!game.over) {
+  if (game.over === false) {
     if (game.cursor_type[0] !== "d") {
       if (touch.moveOrderExists) game.cursor_type = "movingCursor";
       else if (
@@ -935,10 +943,10 @@ export function drawGrid() {
     if (!game.humanCanPlay && !cpu.control) return;
     game.cursor.draw();
   }
+
   funcTimestamps.drawGrid.end = Date.now();
   funcTimestamps.drawGrid.lastFrameCompletionSpeed =
     funcTimestamps.drawGrid.end - funcTimestamps.drawGrid.begin;
-  // console.timeEnd(`${game.frames}`);
 }
 
 export function isChainActive() {
@@ -1311,10 +1319,7 @@ function KEYBOARD_CONTROL(event) {
       // m
       playAudio(audio.select);
       win.running = false;
-      // console.log(state.Home.view);
-      // console.log(router);
       render(state.Home);
-      // router.navigate("/Home");
     }
   }
   // Game Controls
@@ -1450,6 +1455,7 @@ function KEYBOARD_CONTROL(event) {
         if (event.keyCode === 186) {
           // ;
           perf.gameSpeed = perf.gameSpeed === 1 ? 2 : 1; // switch to 30 fps
+          perf.frameTarget = 60 / perf.gameSpeed;
           if (perf.gameSpeed === 2 && game.frameMod[2] === 1) game.frames++;
           perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
@@ -1546,6 +1552,7 @@ export function updateLevelEvents(level) {
 // GAME HERE
 let cnt;
 export function gameLoop() {
+  // if (game.frames % 60 === 2) console.time("Start of game loop");
   if (win.gameLoopCompleted === false) {
     debug.enabled = true;
     debug.show = true;
@@ -1590,7 +1597,10 @@ export function gameLoop() {
   perf.delta = perf.now - perf.then;
   let runtime;
   if (perf.delta > perf.fpsInterval) {
-    if (game.frames == 0) {
+    // run single game frame here
+    // updateFPS();
+
+    if (game.frames === 0) {
       perf.gameStartTime = Date.now();
       perf.sumOfPauseTimes = 0;
     }
@@ -1650,6 +1660,8 @@ export function gameLoop() {
 
     // Big Game Loop
     if (!game.paused && win.audioLoaded) {
+      // if (game.frames % 60 === 0)
+      //   console.time("Loop Calculation Completion Time:");
       game.frames += 1 * perf.gameSpeed;
       updateFrameMods(game.frames);
       // if (
@@ -1813,12 +1825,22 @@ export function gameLoop() {
         }
       }
       // game.pauseStack = areAllBlocksGrounded();
+      // if (game.frames % 60 === 0) console.time("gravity");
       doGravity(perf.gameSpeed); // may need to run twice
+      // if (game.frames % 60 === 0) console.timeEnd("gravity");
+      // if (game.frames % 60 === 0) console.time("checkMatch");
       checkMatch();
+      // if (game.frames % 60 === 0) console.timeEnd("checkMatch");
+      // if (game.frames % 60 === 0) console.time("updateGrid");
       updateGrid();
+      // if (game.frames % 60 === 0) console.timeEnd("updateGrid");
+      // if (game.frames % 60 === 0) console.time("isChainActive");
       isChainActive();
+      // if (game.frames % 60 === 0) console.timeEnd("isChainActive");
 
+      // if (game.frames % 60 === 0) console.time("checkIfHelpPlayer");
       checkIfHelpPlayer();
+      // if (game.frames % 60 === 0) console.timeEnd("checkIfHelpPlayer");
 
       if (!game.boardRiseSpeed)
         game.boardRiseSpeed = preset.speedValues[game.level];
@@ -1888,10 +1910,14 @@ export function gameLoop() {
         drawGrid();
       }
 
+      // if (game.frames % 60 === 0) console.time(`${game.seconds} | drawGrid`);
       drawGrid();
+      // if (game.frames % 60 === 0) console.timeEnd(`${game.seconds} | drawGrid`);
 
       if (game.playRecording) playbackInputs();
+      // if (game.frames % 60 === 0) console.time("playerAction");
       playerAction(action);
+      // if (game.frames % 60 === 0) console.timeEnd("playerAction");
 
       if (game.raisePressed) {
         if (game.frames < -2) game.frames = -2;
@@ -1921,9 +1947,12 @@ export function gameLoop() {
         }
         game.swapPressed = false;
       }
+
+      // if (game.frames % 60 === 0) console.time("checkSwapTargets");
       if (game.boardHasTargets) {
         checkSwapTargets();
       } // end game.swapPressed being true
+      // if (game.frames % 60 === 0) console.timeEnd("checkSwapTargets");
 
       if (game.frames > 0 && !game.over) {
         if (helpPlayer.hintVisible && cpu.matchList.length) {
@@ -1957,10 +1986,10 @@ export function gameLoop() {
         ) {
           // draw only 30 times per second since game running slow
           perf.drawDivisor = 2;
-          // // switch to 30fps game since running slow
-          // if (game.frameMod[2] === 1) game.frames += 1; // make sure frame count is even
-          // perf.gameSpeed = 2;
-          // perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
+          // // // switch to 30fps game since running slow
+          // // if (game.frameMod[2] === 1) game.frames += 1; // make sure frame count is even
+          // // perf.gameSpeed = 2;
+          // // perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
         if (
           perf.realTimeDiff >= 15 &&
@@ -1991,6 +2020,7 @@ export function gameLoop() {
       }
       if (perf.fps === 27) perf.fps = 30; // hard-coded correction
       if (perf.fps === 55) perf.fps = 60; // hard-coded correction
+
       let minutesString = "";
       let secondsString = "";
       let scoreString = "";
@@ -2039,9 +2069,11 @@ export function gameLoop() {
       // `hsl(0, ${50 +
       //   40 * Math.cos(2 * Math.pi * percentOfSecond)}%, ${30 +
       //   20 * Math.cos(2 * Math.pi * percentOfSecond)}%)`
+      // if (game.frames % 60 === 0) console.time("canvasBorderColor");
       if (game.frameMod[6] === 0 && !game.over) {
         win.cvs.style.borderColor = canvasBorderColor(game.level);
       }
+      // if (game.frames % 60 === 0) console.timeEnd("canvasBorderColor");
 
       if (game.over) win.cvs.style.borderColor = "red";
       if (debug.enabled == 1) {
@@ -2176,11 +2208,16 @@ export function gameLoop() {
           win.controlsDisplay.innerHTML = preset.controlsDefaultMessage;
         }
       }
-    }
+      // if (game.frames % 60 === 1)
+      // console.timeEnd("Loop Calculation Completion Time:");
+    } // end !game.paused
+
     updateFunctionMaxMinTimestamps();
     // outside unpause loop, inside game loop
   }
   // update realtime variables
   perf.then = perf.now - (perf.delta % perf.fpsInterval);
+  // if (game.frames % 60 === 3) console.timeEnd("Start of game loop");
+
   win.gameLoopCompleted = true;
 }

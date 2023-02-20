@@ -7,6 +7,7 @@ import {
   game,
   lastIndex,
   music,
+  perf,
   randInt,
   sound,
   win,
@@ -186,5 +187,17 @@ export function checkTime() {
       if (game.mode === "training") break;
       game.messagePriority = "";
       break;
+  }
+}
+
+export function updateFPS() {
+  perf.secondsPerLoop = Date.now() - perf.startingLoopTime;
+  perf.startingLoopTime = Date.now();
+
+  // frame target is either 60 or 30
+  if (game.frames % perf.frameTarget === 0) {
+    perf.frameTargetTimeEnd = Date.now() - perf.frameTargetTimeStart;
+    perf.frameTargetTimeStart = Date.now();
+    perf.fps = (perf.frameTarget * perf.frameTargetTimeEnd) / 1000;
   }
 }

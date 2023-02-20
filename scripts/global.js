@@ -487,6 +487,7 @@ export const perf = {
   fps: 0,
   prev: 0,
   secondsPerLoop: 1,
+  startingLoopTime: 0,
   slowdownTracker: 0,
   drawsPerSecond: 60, // not used yet
   drawDivisor: 1,
@@ -496,6 +497,9 @@ export const perf = {
   pauseTimeout: 0,
   sumOfPauseTimes: 0,
   fpsInterval: 1000 / 60,
+  frameTarget: 60,
+  frameTargetTimeStart: 0,
+  frameTargetTimeEnd: 0,
   then: 0,
   now: 0,
   delta: 0,

@@ -27,7 +27,10 @@ export function createHeadsUpDisplay(mobile = false) {
 
 export function setUpBestScoreDisplay(column, highScoresList, name) {
   let bestScoresDisplay = document.createElement("table");
-  bestScoresDisplay.setAttribute("id", "best-scores-table");
+  bestScoresDisplay.setAttribute(
+    "class",
+    `best-scores-table ${name} end-of-game`
+  );
   let timeControlColor =
     name == "Blitz" ? "red" : name == "Standard" ? "blue" : "yellow";
   let bestScoresString = `

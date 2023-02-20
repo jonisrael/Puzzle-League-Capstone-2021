@@ -601,13 +601,17 @@ p {
   /* outline: 1px white solid; */
 }
 
-#best-scores-table {
+.best-scores-table {
   /* display: none; */
   margin: 0 auto;
   padding: 2rem;
   /* padding-left: 1em;
   padding-right: 1em;
   padding-top: 1em; */
+}
+
+.end-of-game {
+  display: flex !important;
 }
 
 table {
@@ -902,7 +906,7 @@ footer {
     font-size: 150%;
   }
 
-  #best-scores-table {
+  .best-scores-table {
     display: none;
   }
 

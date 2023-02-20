@@ -356,6 +356,7 @@ import FANFARE3 from ".././assets/Audio/fanfare3.mp3";
 import FANFARE4 from ".././assets/Audio/fanfare4.mp3";
 import FANFARE5 from ".././assets/Audio/fanfare5.mp3";
 import TOPOUT from ".././assets/Audio/topout.mp3";
+import { win } from "./global";
 
 // Images
 const sprite = {
@@ -773,6 +774,14 @@ for (let i = 0; i < imageKeys.length; i++) {
   let img = new Image();
   img.src = imageList[i];
   loadedSprites[imageKeys[i]] = img;
+}
+
+export function loadAllImagesOffScreen() {
+  let spriteList = Object.values(loadedSprites);
+  console.log(spriteList);
+  spriteList.forEach((theSprite) => {
+    win.ctx.drawImage(theSprite, 0, 0);
+  });
 }
 
 export { sprite, audio, loadedSprites };

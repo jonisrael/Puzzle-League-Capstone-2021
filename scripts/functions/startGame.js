@@ -26,7 +26,7 @@ import {
 import html from "html-literal";
 import * as state from "../../store";
 import { playMusic } from "./audioFunctions";
-import { audio, loadedAudios } from "../fileImports";
+import { audio, loadAllImagesOffScreen, loadedAudios } from "../fileImports";
 import {
   displayMessage,
   getLeaderboardData,
@@ -110,9 +110,14 @@ export function startGame(selectedGameSpeed = 1) {
   leaderboard.canPost = true;
   debug.enabled = false;
   debug.show = false;
+  // perf.gameSpeed = 2; // currently for debug
   perf.gameSpeed = selectedGameSpeed;
   perf.drawDivisor = 1;
   perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
+  // perf.frameTarget = 30;
+  // perf.frameTargetTimeStart = Date.now();
+  // perf.frameTargetTimeEnd = Date.now();
+  // perf.startingLoopTime = Date.now();
   perf.then = Date.now();
   perf.gameStartTime = perf.then;
   perf.sumOfPauseTimes = 0;
@@ -141,6 +146,7 @@ export function startGame(selectedGameSpeed = 1) {
     game.startingBoard = saveCurrentBoard(game.board, true);
   }
   window.scrollTo(0, 0);
+  // loadAllImagesOffScreen();
   requestAnimationFrame(gameLoop);
 }
 

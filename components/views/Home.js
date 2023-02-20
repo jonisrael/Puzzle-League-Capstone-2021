@@ -17,24 +17,6 @@ export default (st) => html`
         to move the cursor and S/R to swap and raise.
       </p>
       <hr />
-      <div id="start-options">
-        <button id="arcade-button" class="default-button start-buttons">
-          Play Game!
-        </button>
-        <button id="tutorial-mode" class="default-button start-buttons">
-          Interactive Tutorials (2022)
-        </button>
-        <button id="chain-challenge-mode" class="default-button start-buttons">
-          Chain Puzzle
-        </button>
-        <button id="training-mode" class="default-button start-buttons">
-          Endless Mode
-        </button>
-        <button id="ai-plays-button" class="default-button start-buttons">
-          See My AI Play!
-        </button>
-      </div>
-      <hr />
       <h1>How to play</h1>
       <p>
         <strong>
@@ -77,6 +59,24 @@ export default (st) => html`
         more information in the "Tutorials" section (many tutorials are still in
         development).
       </p>
+      <hr />
+      <div id="start-options">
+        <button id="arcade-button" class="default-button start-buttons">
+          Play Game!
+        </button>
+        <button id="tutorial-mode" class="default-button start-buttons">
+          Interactive Tutorials (2022)
+        </button>
+        <button id="chain-challenge-mode" class="default-button start-buttons">
+          Chain Puzzle
+        </button>
+        <button id="training-mode" class="default-button start-buttons">
+          Endless Mode
+        </button>
+        <button id="ai-plays-button" class="default-button start-buttons">
+          See My AI Play!
+        </button>
+      </div>
     </div>
   </section>
 `;

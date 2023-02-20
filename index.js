@@ -353,9 +353,11 @@ export function getLeaderboardData(populate = false) {
     .catch((error) => {
       leaderboard.reason = "no-leaderboard";
       console.log("Failed to fetch Leaderboard Data from home page:", error);
-      displayMessage(
-        `Failed to access leaderboard database from heroku server. ${error}`
-      );
+      if (!win.running) {
+        displayMessage(
+          `Failed to access leaderboard database from heroku server. ${error}`
+        );
+      }
     });
 }
 
