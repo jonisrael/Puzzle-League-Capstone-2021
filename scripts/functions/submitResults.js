@@ -56,7 +56,7 @@ export function afterGame() {
   gameOver.setAttribute("style", "color: red");
   gameOver.className = "postgame-info";
   gameOver.innerHTML =
-    rank > 5 ? "Game Over!" : `YOU GOT A NEW HIGH SCORE<br />`;
+    rank > 5 ? "Game Over!" : `YOU GOT A NEW HIGH SCORE!<br />`;
   div1.appendChild(gameOver);
   div1.appendChild(document.createElement("hr"));
 
@@ -64,13 +64,13 @@ export function afterGame() {
   timeControlMessage.setAttribute = ("id", "time-control-name");
   timeControlMessage.className = "postgame-info";
   timeControlMessage.style.color = "black";
-  timeControlMessage.innerHTML = `Time Control:<br /> ${timeControlName}<br />`;
+  timeControlMessage.innerHTML = `Time Control:<br /> ${timeControlName}`;
   div1.appendChild(timeControlMessage);
 
   let scoreMessage = document.createElement("h1");
   scoreMessage.setAttribute = ("id", "score-message");
   scoreMessage.className = "postgame-info";
-  scoreMessage.style.color = "black";
+  scoreMessage.style.color = "red";
   scoreMessage.innerHTML = `Final Score: <br />${game.score}<br />`;
   div1.appendChild(scoreMessage);
 
