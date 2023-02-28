@@ -2,7 +2,7 @@ export default [
   { title: "Home", text: "Play Game" },
   { title: "Controls", text: "Setup Keyboard & Gamepad Controls" },
   { title: "Tutorials", text: "Video Tutorials (2021)" },
-  { title: "Leaderboard", text: "Leaderboard (Currently Unavailable)" },
+  { title: "Leaderboard", text: "Leaderboard" },
   // { title: "Scoring", text: "Scoring" },
   // { title: "History", text: "History" },
   // { title: "Credits", text: "Credits" },
