@@ -2,7 +2,7 @@ export default {
   header: "Leaderboard",
   view: "Leaderboard",
   games: [],
-  markup: "Fetching Ranked Data from Heroku..."
+  markup: "Fetching Ranked Data from Render.com...",
 };
 
 // underneath view

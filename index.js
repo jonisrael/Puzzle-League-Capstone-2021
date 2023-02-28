@@ -331,7 +331,7 @@ export function sendData(requestData) {
 
 export function getLeaderboardData(populate = false) {
   axios
-    .get("https://puzzle-league-blitz.herokuapp.com/games")
+    .get("https://puzzle-league-arcade.onrender.com/games")
     .then((response) => {
       leaderboard.data = response.data.sort((a, b) =>
         parseInt(a.score) < parseInt(b.score) ? 1 : -1
@@ -419,7 +419,7 @@ router.hooks({
         document.getElementById("leaderboard-page").style =
           "color:black; font-size:large; text-align: center; padding: 10px;";
         axios
-          .get("https://puzzle-league-blitz.herokuapp.com/games")
+          .get("https://puzzle-league-arcade.onrender.com/games")
           .then((response) => {
             leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1

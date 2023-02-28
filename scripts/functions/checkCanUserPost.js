@@ -35,7 +35,7 @@ export function checkCanUserPost() {
   }
   let container = document.getElementById("container");
   if (!leaderboard.canPost) {
-    return false; // since leaderbard on heroku not available right now
+    // return false; // since leaderbard on render not available right now
     container.innerHTML += `<h2 style="color:black" id="cannot-post-msg">Unfortunately this score cannot be posted to the ranked leaderboards.</h2>`;
     if (leaderboard.reason == "slow") {
       container.innerHTML += `<p>This is because the in-game clock time was at least six seconds behind the real clock time.  Your game ended after <strong>${game.finalTime} in-game seconds,</strong> <span style="color:black; font-weight:bold">but the actual real time of the game was ${perf.realTime} seconds.</span></p><br />`;

@@ -1,6 +1,6 @@
 import html from "html-literal";
 
-export default st => html`
+export default (st) => html`
   <section id="sound-credits-page">
     <body>
       <h1 id="sound-credits-page-header">Credits</h1>
@@ -50,7 +50,7 @@ export default st => html`
         <a href="https://www.netlify.com/">Netlify</a>, get datetime information
         from <a href="https://worldtimeapi.org/">WorldTimeAPI</a>, and use a
         <a href="https://cloud.mongodb.com/">Mongo-DB</a> database to host the
-        leaderboard information on <a href="heroku.com">Heroku</a>.
+        leaderboard information on <a href="onrender.com">Render.com</a>.
       </p>
     </body>
   </section>

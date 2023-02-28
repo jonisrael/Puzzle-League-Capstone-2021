@@ -1,6 +1,6 @@
 import html from "html-literal";
 
-export default st => html`
+export default (st) => html`
   <section id="about-page">
     <body>
       <div>
@@ -49,8 +49,8 @@ export default st => html`
           information is used to postmark the date and time the user played the
           game. Finally, I needed to utilize a MongoDB cloud database and upload
           that data it to a
-          <a href="https://puzzle-league-blitz.herokuapp.com/games"
-            >Heroku server</a
+          <a href="https://puzzle-league-arcade.onrender.com/games"
+            >Render server</a
           >
           -- so I made a Leaderboard page, which retrieves the list from this
           server, sorts the data by score, and prints a view containing
