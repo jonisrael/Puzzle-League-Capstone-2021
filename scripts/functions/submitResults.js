@@ -16,9 +16,9 @@ import {
   getLeaderboardData,
   render,
   router,
-  sendData,
   updateEntry,
   getWorldTimeAPI,
+  postEntry,
 } from "../../index";
 import { audio } from "../fileImports";
 import { playAnnouncer, playMusic } from "./audioFunctions";
@@ -41,8 +41,10 @@ export function afterGame() {
   if (game.seconds < 10) duration = `${game.minutes}:0${game.seconds}`;
   else duration = `${game.minutes}:${game.seconds}`;
   let homePage = document.getElementById("home-page");
-  let container = document.getElementById("container");
+  let container =
+    document.getElementById("container") || document.createElement("div");
   container.innerHTML = "";
+  container.id = "container";
   homePage.appendChild(container);
 
   let div1 = document.createElement("div");
@@ -211,7 +213,8 @@ export function submitResults() {
         meridian: api.data.meridian,
         gameLog: game.log,
       };
-      updateEntry(newData, indexToReplace);
+      // updateEntry(newData, indexToReplace);
+      postEntry(newData, indexToReplace);
       leaderboard.userPostedName = nameInput.value;
       leaderboard.userPostedScore = finalScore;
       router.navigate("/Leaderboard");

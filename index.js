@@ -35,6 +35,9 @@ dotenv.config();
 
 export const router = new Navigo(window.location.origin);
 
+export const oldDatabaseName = "games";
+export const databaseName = "games2023";
+
 export function render(st) {
   console.log(st);
   if (win.view === "Controls" && win.controlChangeWasMade) {
@@ -283,7 +286,7 @@ export function getWorldTimeAPI() {
 
 export function deleteEntry(_id) {
   axios
-    .delete(`${process.env.API}/games/${_id}`) // process.env.API accesses API
+    .delete(`${process.env.API}/${databaseName}/${_id}`) // process.env.API accesses API
     .then((response) => {
       console.log(`Deletion Successful.`);
     })
@@ -299,7 +302,7 @@ export function updateEntry(newData, indexToReplace) {
   console.log("index:", indexToReplace);
   axios
     .put(
-      `${process.env.API}/games/${leaderboard.data[indexToReplace]._id}`,
+      `${process.env.API}/${databaseName}/${leaderboard.data[indexToReplace]._id}`,
       newData
     ) // process.env.API accesses API
     .then((response) => {
@@ -315,10 +318,10 @@ export function updateEntry(newData, indexToReplace) {
     });
 }
 
-export function sendData(requestData) {
+export function postEntry(requestData) {
   console.log("Posting data...");
   axios
-    .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
+    .post(`${process.env.API}/${databaseName}`, requestData) // process.env.API accesses API
     .then((response) => {
       console.log("Posted!");
     })
@@ -331,7 +334,7 @@ export function sendData(requestData) {
 
 export function getLeaderboardData(populate = false) {
   axios
-    .get("https://puzzle-league-arcade.onrender.com/games")
+    .get(`https://puzzle-league-arcade.onrender.com/${databaseName}`)
     .then((response) => {
       leaderboard.data = response.data.sort((a, b) =>
         parseInt(a.score) < parseInt(b.score) ? 1 : -1
@@ -419,7 +422,7 @@ router.hooks({
         document.getElementById("leaderboard-page").style =
           "color:black; font-size:large; text-align: center; padding: 10px;";
         axios
-          .get("https://puzzle-league-arcade.onrender.com/games")
+          .get(`https://puzzle-league-arcade.onrender.com/${databaseName}`)
           .then((response) => {
             leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
@@ -432,9 +435,7 @@ router.hooks({
             console.log("Failed to fetch Leaderboard Data:", error);
             // render(state.Home);
             // router.navigate("/Home");
-            displayMessage(
-              `Failed to fetch leaderboard data. Returned to Home Page. ${error}`
-            );
+            displayMessage(`Failed to fetch leaderboard data. ${error}`);
           });
         break;
       default:

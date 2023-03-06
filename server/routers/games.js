@@ -1,10 +1,11 @@
 const { Router } = require("express");
+const { databaseName } = require("../..");
 const game = require("../models/game");
 
 const router = Router();
 
 // Create record in MongoDB
-router.post("/games", (request, response) => {
+router.post(databaseName, (request, response) => {
   const newGame = new game.model(request.body);
   console.log("request", request);
   console.log("response", response);
@@ -15,7 +16,7 @@ router.post("/games", (request, response) => {
 });
 
 // Get all game records
-router.get("/games", (request, response) => {
+router.get(databaseName, (request, response) => {
   game.model.find({}, (error, data) => {
     if (error) return res.sendStatus(500).json(error);
     return response.json(data);
@@ -23,7 +24,7 @@ router.get("/games", (request, response) => {
 });
 
 // Get a game by ID
-router.get("/games/:id", (request, response) => {
+router.get(`${databaseName}/:id`, (request, response) => {
   game.model.findById(request.params.id, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
@@ -31,7 +32,7 @@ router.get("/games/:id", (request, response) => {
 });
 
 // Delete a game by ID
-router.delete("/games/:id", (request, response) => {
+router.delete(`${databaseName}/:id`, (request, response) => {
   game.model.findByIdAndRemove(request.params.id, {}, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
@@ -39,7 +40,7 @@ router.delete("/games/:id", (request, response) => {
 });
 
 // Update a game by ID
-router.put("/games/:id", (request, response) => {
+router.put(`${databaseName}/:id`, (request, response) => {
   const body = request.body;
   game.model.findByIdAndUpdate(
     request.params.id,
@@ -56,8 +57,8 @@ router.put("/games/:id", (request, response) => {
         hour: body.hour,
         minute: body.minute,
         meridian: body.meridian,
-        gamelog: body.gameLog
-      }
+        gamelog: body.gameLog,
+      },
     },
     (error, data) => {
       if (error) return response.sendStatus(500).json(error);

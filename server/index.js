@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const games = require("./routers/games.js");
+const games = require("./routers/games2023.js");
 
 dotenv.config();
 

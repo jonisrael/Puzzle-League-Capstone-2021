@@ -19,13 +19,6 @@ export default (st) => html`
         the cursor and S/R to swap and raise.
       </p>
       <hr />
-      <p style="text-align: center;">
-        <strong>Februrary 2023 UPDATE:</strong> Heroku, the server that I hosted
-        the leaderboard on, is now a paid service, meaning I have to redeploy to
-        a new server. In the mean time, the game still works at keeping track of
-        your local high scores!
-      </p>
-      <hr />
       <h1>How to play</h1>
       <p>
         <strong>

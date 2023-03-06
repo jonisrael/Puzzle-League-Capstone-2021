@@ -176,10 +176,10 @@ function endGame() {
     leaderboard.canPost = false;
     leaderboard.reason = "no-available-leaderboard";
   }
-  sendData("Anon", game.score, game.minutes, game.seconds);
+  postEntry("Anon", game.score, game.minutes, game.seconds);
 }
 
-function sendData(name = "Anon", score, minutes, seconds) {
+function postEntry(name = "Anon", score, minutes, seconds) {
   if (seconds < 10) seconds = `0${seconds}`;
   else seconds = `${seconds}`;
   let duration = `${minutes}:${seconds}`;
