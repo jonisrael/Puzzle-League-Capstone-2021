@@ -36,7 +36,8 @@ dotenv.config();
 export const router = new Navigo(window.location.origin);
 
 export const oldDatabaseName = "games";
-export const databaseName = "games2023";
+// export const databaseName = "games2023";
+export const databaseName = "games";
 
 export function render(st) {
   console.log(st);

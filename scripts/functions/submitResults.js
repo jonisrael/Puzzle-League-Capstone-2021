@@ -212,6 +212,7 @@ export function submitResults() {
         minute: api.data.minute,
         meridian: api.data.meridian,
         gameLog: game.log,
+        accessCode: api.accessCode,
       };
       // updateEntry(newData, indexToReplace);
       postEntry(newData, indexToReplace);

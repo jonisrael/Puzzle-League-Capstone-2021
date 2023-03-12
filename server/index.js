@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const { databaseName } = require("..");
 
-const games = require("./routers/games2023.js");
+const games = require(`./routers/${databaseName}.js`);
 
 dotenv.config();
 
@@ -49,7 +50,8 @@ const cors = (req, res, next) => {
 app.use(cors);
 app.use(express.json());
 app.use(logging);
-app.use(games);
+app.use("games", games);
+app.use("games2023", games);
 
 app
   .route("/")
