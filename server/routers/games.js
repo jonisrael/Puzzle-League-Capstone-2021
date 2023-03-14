@@ -6,7 +6,7 @@ const router = Router();
 const databaseDirectory = "/games";
 
 // Create record in MongoDB
-router.post(databaseDirectory, (request, response) => {
+router.post("/games", (request, response) => {
   const newGame = new game.model(request.body);
   console.log("request", request);
   console.log("response", response);
@@ -17,7 +17,7 @@ router.post(databaseDirectory, (request, response) => {
 });
 
 // Get all game records
-router.get(databaseDirectory, (request, response) => {
+router.get("/games", (request, response) => {
   game.model.find({}, (error, data) => {
     if (error) return res.sendStatus(500).json(error);
     return response.json(data);
@@ -25,7 +25,7 @@ router.get(databaseDirectory, (request, response) => {
 });
 
 // Get a game by ID
-router.get(`${databaseDirectory}/:id`, (request, response) => {
+router.get(`/games/:id`, (request, response) => {
   game.model.findById(request.params.id, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
@@ -33,7 +33,7 @@ router.get(`${databaseDirectory}/:id`, (request, response) => {
 });
 
 // Delete a game by ID
-router.delete(`${databaseDirectory}/:id`, (request, response) => {
+router.delete(`/games/:id`, (request, response) => {
   game.model.findByIdAndRemove(request.params.id, {}, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
@@ -41,7 +41,7 @@ router.delete(`${databaseDirectory}/:id`, (request, response) => {
 });
 
 // Update a game by ID
-router.put(`${databaseDirectory}/:id`, (request, response) => {
+router.put(`/games/:id`, (request, response) => {
   const body = request.body;
   game.model.findByIdAndUpdate(
     request.params.id,

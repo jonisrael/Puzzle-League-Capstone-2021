@@ -35,8 +35,6 @@ dotenv.config();
 
 export const router = new Navigo(window.location.origin);
 
-export const oldDatabaseName = "games";
-// export const databaseName = "games2023";
 export const databaseName = "games";
 
 export function render(st) {
@@ -359,7 +357,7 @@ export function getLeaderboardData(populate = false) {
       console.log("Failed to fetch Leaderboard Data from home page:", error);
       if (!win.running) {
         displayMessage(
-          `Failed to access leaderboard database from heroku server. ${error}`
+          `Failed to access leaderboard database from render server. ${error}`
         );
       }
     });
@@ -436,7 +434,12 @@ router.hooks({
             console.log("Failed to fetch Leaderboard Data:", error);
             // render(state.Home);
             // router.navigate("/Home");
-            displayMessage(`Failed to fetch leaderboard data. ${error}`);
+            if (document.querySelector("#leaderboard-page")) {
+              document.querySelector("#leaderboard-page").style.color = "red";
+              document.querySelector(
+                "#leaderboard-page"
+              ).textContent = `Failed to access leaderboard database from render server. ${error}`;
+            }
           });
         break;
       default:
