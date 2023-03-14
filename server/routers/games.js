@@ -3,7 +3,7 @@ const game = require("../models/game");
 
 const router = Router();
 
-const databaseName = "games";
+const databaseName = "/games";
 
 // Create record in MongoDB
 router.post(databaseName, (request, response) => {
