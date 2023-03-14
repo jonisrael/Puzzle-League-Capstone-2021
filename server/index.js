@@ -50,8 +50,8 @@ const cors = (req, res, next) => {
 app.use(cors);
 app.use(express.json());
 app.use(logging);
-app.use("games", games);
-app.use("games2023", games);
+app.use(databaseName, games);
+// app.use("games2023", games);
 
 app
   .route("/")
