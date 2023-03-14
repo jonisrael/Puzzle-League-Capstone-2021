@@ -153,8 +153,8 @@ export const SOLID_TYPES = [
 export const CLEARING_TYPES = ["blinking", "face", "popped"];
 
 export const grid = {
-  COLS: 5,
-  ROWS: 8,
+  COLS: 6,
+  ROWS: 12,
   SQ: 32,
 };
 
@@ -478,7 +478,6 @@ export const api = {
     hour: "",
     minute: "",
     meridian: "",
-    accessCode: 1234,
   },
 };
 

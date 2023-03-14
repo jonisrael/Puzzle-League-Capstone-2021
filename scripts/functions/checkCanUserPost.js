@@ -48,7 +48,7 @@ export function checkCanUserPost() {
           Use Microsoft Edge (Sadly, I'm serious)
         </li>
         <li>
-          Do NOT use Firefox (It is incompatible with this game on a lot of hardware)
+          Do NOT use Firefox (It murders this game)
         </li>
         <li>
           Close all other applications and tabs

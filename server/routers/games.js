@@ -3,8 +3,6 @@ const game = require("../models/game");
 
 const router = Router();
 
-const databaseDirectory = "/games";
-
 // Create record in MongoDB
 router.post("/games", (request, response) => {
   const newGame = new game.model(request.body);
@@ -25,7 +23,7 @@ router.get("/games", (request, response) => {
 });
 
 // Get a game by ID
-router.get(`/games/:id`, (request, response) => {
+router.get("/games/:id", (request, response) => {
   game.model.findById(request.params.id, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
@@ -33,7 +31,7 @@ router.get(`/games/:id`, (request, response) => {
 });
 
 // Delete a game by ID
-router.delete(`/games/:id`, (request, response) => {
+router.delete("/games/:id", (request, response) => {
   game.model.findByIdAndRemove(request.params.id, {}, (error, data) => {
     if (error) return response.sendStatus(500).json(error);
     return response.json(data);
@@ -41,7 +39,7 @@ router.delete(`/games/:id`, (request, response) => {
 });
 
 // Update a game by ID
-router.put(`/games/:id`, (request, response) => {
+router.put("/games/:id", (request, response) => {
   const body = request.body;
   game.model.findByIdAndUpdate(
     request.params.id,
@@ -58,8 +56,8 @@ router.put(`/games/:id`, (request, response) => {
         hour: body.hour,
         minute: body.minute,
         meridian: body.meridian,
-        gamelog: body.gameLog,
-      },
+        gamelog: body.gameLog
+      }
     },
     (error, data) => {
       if (error) return response.sendStatus(500).json(error);

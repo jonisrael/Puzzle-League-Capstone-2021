@@ -35,8 +35,6 @@ dotenv.config();
 
 export const router = new Navigo(window.location.origin);
 
-export const databaseName = "games";
-
 export function render(st) {
   console.log(st);
   if (win.view === "Controls" && win.controlChangeWasMade) {
@@ -285,7 +283,7 @@ export function getWorldTimeAPI() {
 
 export function deleteEntry(_id) {
   axios
-    .delete(`${process.env.API}/${databaseName}/${_id}`) // process.env.API accesses API
+    .delete(`${process.env.API}/games/${_id}`) // process.env.API accesses API
     .then((response) => {
       console.log(`Deletion Successful.`);
     })
@@ -301,7 +299,7 @@ export function updateEntry(newData, indexToReplace) {
   console.log("index:", indexToReplace);
   axios
     .put(
-      `${process.env.API}/${databaseName}/${leaderboard.data[indexToReplace]._id}`,
+      `${process.env.API}/games/${leaderboard.data[indexToReplace]._id}`,
       newData
     ) // process.env.API accesses API
     .then((response) => {
@@ -317,10 +315,10 @@ export function updateEntry(newData, indexToReplace) {
     });
 }
 
-export function postEntry(requestData) {
+export function sendData(requestData) {
   console.log("Posting data...");
   axios
-    .post(`${process.env.API}/${databaseName}`, requestData) // process.env.API accesses API
+    .post(`${process.env.API}/games`, requestData) // process.env.API accesses API
     .then((response) => {
       console.log("Posted!");
     })
@@ -333,7 +331,7 @@ export function postEntry(requestData) {
 
 export function getLeaderboardData(populate = false) {
   axios
-    .get(`https://puzzle-league-arcade.onrender.com/${databaseName}`)
+    .get("https://puzzle-league-arcade.onrender.com/games")
     .then((response) => {
       leaderboard.data = response.data.sort((a, b) =>
         parseInt(a.score) < parseInt(b.score) ? 1 : -1
@@ -357,7 +355,7 @@ export function getLeaderboardData(populate = false) {
       console.log("Failed to fetch Leaderboard Data from home page:", error);
       if (!win.running) {
         displayMessage(
-          `Failed to access leaderboard database from render server. ${error}`
+          `Failed to access leaderboard database from heroku server. ${error}`
         );
       }
     });
@@ -421,7 +419,7 @@ router.hooks({
         document.getElementById("leaderboard-page").style =
           "color:black; font-size:large; text-align: center; padding: 10px;";
         axios
-          .get(`https://puzzle-league-arcade.onrender.com/${databaseName}`)
+          .get("https://puzzle-league-arcade.onrender.com/games")
           .then((response) => {
             leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
@@ -434,12 +432,9 @@ router.hooks({
             console.log("Failed to fetch Leaderboard Data:", error);
             // render(state.Home);
             // router.navigate("/Home");
-            if (document.querySelector("#leaderboard-page")) {
-              document.querySelector("#leaderboard-page").style.color = "red";
-              document.querySelector(
-                "#leaderboard-page"
-              ).textContent = `Failed to access leaderboard database from render server. ${error}`;
-            }
+            displayMessage(
+              `Failed to fetch leaderboard data. Returned to Home Page. ${error}`
+            );
           });
         break;
       default:
