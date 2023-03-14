@@ -1,8 +1,9 @@
 const { Router } = require("express");
-const { databaseName } = require("../..");
 const game = require("../models/game");
 
 const router = Router();
+
+const databaseName = "games2023";
 
 // Create record in MongoDB
 router.post(databaseName, (request, response) => {
