@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-export const databaseName = "games";
+const databaseName = "games";
 
 const games = require(`./routers/${databaseName}.js`);
 
