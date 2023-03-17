@@ -309,9 +309,12 @@ export function updateEntry(newData, indexToReplace) {
     .catch((error) => {
       leaderboard.reason = "no-leaderboard";
       displayMessage(
-        `Failed to Update Leaderboard at Rank ${indexToReplace + 1}. ${error}`
+        `Failed to Update Leaderboard at Rank ${indexToReplace + 1}. ${error}`,
+        true,
+        0,
+        10000
       );
-      console.log("Update Failed, index ${indexToReplace)", error);
+      console.log(`Update Failed, index ${indexToReplace}`, error);
     });
 }
 
@@ -361,7 +364,7 @@ export function getLeaderboardData(populate = false) {
     });
 }
 
-export function displayMessage(msg, err = true, scroll = true, timeout = 5000) {
+export function displayMessage(msg, err = true, scroll = true, timeout = 9000) {
   if (document.getElementById("app-message"))
     document.getElementById("app-message").remove();
   let appMessageDisplay = document.createElement("div");
@@ -449,3 +452,5 @@ router
     ":page": (params) => render(state[capitalize(params.page)]),
   })
   .resolve();
+
+getLeaderboardData(false); // will wake up collection server

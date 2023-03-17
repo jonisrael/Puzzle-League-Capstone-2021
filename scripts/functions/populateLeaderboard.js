@@ -15,6 +15,7 @@ export function populateLeaderboard() {
       if (leaderboard.data[rank].score == leaderboard.userPostedScore)
         fullMatchIndex = rank;
     }
+    if (leaderboard.data[rank].name === "[EMPTY]") break;
     markup += `
       <tr style='
       ${
