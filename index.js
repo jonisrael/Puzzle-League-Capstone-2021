@@ -261,6 +261,13 @@ function addEventListeners(st) {
         document.getElementById("mute-sfx").checked
       );
     });
+    if (window.location.host.includes("localhost")) {
+      // just to remind me that I am in development mode when website is not live
+      document.querySelector("#container").className = `localhost-dev-mode`;
+      document.querySelector(
+        "#container"
+      ).style.backgroundColor = `palegoldenrod`;
+    }
   }
 }
 
@@ -303,7 +310,7 @@ export function updateEntry(newData, indexToReplace) {
       newData
     ) // process.env.API accesses API
     .then((response) => {
-      console.log(`Update Successful. Setting username to ${newData.name}`);
+      console.log(`Update Successful! Setting username to ${newData.name}`);
       localStorage.setItem("username", newData.name);
     })
     .catch((error) => {
@@ -314,7 +321,10 @@ export function updateEntry(newData, indexToReplace) {
         0,
         10000
       );
-      console.log(`Update Failed, index ${indexToReplace}`, error);
+      console.log(
+        `Update Request Failed, index ${indexToReplace}. Error Msg:`,
+        error
+      );
     });
 }
 
@@ -358,7 +368,7 @@ export function getLeaderboardData(populate = false) {
       console.log("Failed to fetch Leaderboard Data from home page:", error);
       if (!win.running) {
         displayMessage(
-          `Failed to access leaderboard database from heroku server. ${error}`
+          `Failed to access leaderboard database from render server. ${error}`
         );
       }
     });

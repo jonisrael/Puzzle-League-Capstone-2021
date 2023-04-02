@@ -1337,6 +1337,9 @@ function KEYBOARD_CONTROL(event) {
         action.swap = true; // s or x
       if (savedControls.keyboard.raise.includes(event.keyCode))
         action.raise = true; // r or z
+      if (savedControls.keyboard.turn.includes(event.keyCode)) {
+        action.turn = true;
+      }
     }
 
     if (game.mode === "cpu-play" && !debug.enabled) {

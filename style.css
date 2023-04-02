@@ -508,7 +508,8 @@ th {
   width: 60%;
 }
 
-form label {
+form label,
+form input {
   font-size: large;
 }
 

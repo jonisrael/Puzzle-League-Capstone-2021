@@ -168,7 +168,7 @@ export function submitResults() {
   nameInput.setAttribute("minlength", "3");
   nameInput.setAttribute("maxlength", "15");
   // nameInput.setAttribute("pattern", RegExp("w"));
-  nameInput.setAttribute("placeholder", `Enter Name Here`);
+  // nameInput.setAttribute("placeholder", `Enter Name Here`);
   if (game.mode === "cpu-play") {
     nameInput.value = "GiefKid-AI-v1.0";
     nameInput.readOnly = true;
@@ -178,6 +178,32 @@ export function submitResults() {
   nameInput.autofocus = true;
   form.appendChild(nameInput);
 
+  form.appendChild(document.createElement("br"));
+
+  let passcodeLabel = document.createElement("label");
+  passcodeLabel.setAttribute("for", "player-name");
+  passcodeLabel.setAttribute("id", "enter-name");
+  passcodeLabel.innerHTML = `Enter a 4-digit passcode to protect your score: `;
+  form.append(passcodeLabel);
+
+  let passcodeInput = document.createElement("input");
+  passcodeInput.setAttribute("type", "password");
+  passcodeInput.setAttribute("name", "passcode");
+  passcodeInput.setAttribute("id", "passcode");
+  // passcodeInput.setAttribute("value", "1234");
+  passcodeInput.setAttribute("pattern", "[0-9]*");
+  passcodeInput.setAttribute("inputmode", "numeric");
+  passcodeInput.setAttribute("minlength", "4");
+  passcodeInput.setAttribute("maxlength", "4");
+  passcodeInput.addEventListener("keypress", (evt) => {
+    if (!/^\d+$/.test(evt.key) && evt.key !== "Enter" && evt.key !== `Tab`) {
+      evt.preventDefault();
+    }
+  });
+  form.appendChild(passcodeInput);
+
+  form.appendChild(document.createElement("br"));
+
   let submitForm = document.createElement("input");
   submitForm.setAttribute("id", "submit-name");
   submitForm.setAttribute("type", "submit");
@@ -185,7 +211,7 @@ export function submitResults() {
   submitForm.required = true;
   submitForm.setAttribute(
     "value",
-    `Submit Name${leaderboard.canPost ? " " : " (Unranked)"}`
+    `Submit Score${leaderboard.canPost ? " " : " (Unranked)"}`
   );
   submitForm.style.color = leaderboard.canPost ? "black" : "black";
   submitForm.className = "default-button";
@@ -193,7 +219,11 @@ export function submitResults() {
 
   document.querySelector("form").addEventListener("submit", (event) => {
     event.preventDefault();
-    let indexToReplace = validateForm(nameInput.value, finalScore);
+    let indexToReplace = validateForm(
+      nameInput.value,
+      finalScore,
+      passcodeInput.value
+    );
     console.log("index", indexToReplace);
     // if action is not empty
     if (indexToReplace !== -1) {
@@ -209,6 +239,7 @@ export function submitResults() {
         hour: api.data.hour,
         minute: api.data.minute,
         meridian: api.data.meridian,
+        kc: passcodeInput.value,
         gameLog: game.log,
       };
       updateEntry(newData, indexToReplace);

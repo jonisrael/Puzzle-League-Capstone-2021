@@ -62,7 +62,7 @@ export function checkCanUserPost() {
       </ul>
       <br />
       <p>
-        If this message continues to pop up, unfortunately your hardware may not be fast enough to run the game at its full speed. This perf checker is meant to stop leaderboard scores that may have been easier to obtain due to a slower-running game. I will periodically still be updating this game through 2022, and it is likely that game efficiency and perf will improve. And of course, you can still play locally and try to beat your own best scores!
+        If this message continues to pop up, unfortunately your device may not be fast enough to run the game at its full speed. This perf checker is meant to stop leaderboard scores that may give the player an unfair advantage to obtain due to a slower-running game. I will periodically still be updating this game through 2023, and it is likely that game efficiency and performance will improve. And of course, you can still play locally and try to beat your own best scores!
       </p>
       `;
       return false;

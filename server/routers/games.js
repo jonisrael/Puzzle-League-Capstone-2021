@@ -56,8 +56,9 @@ router.put("/games/:id", (request, response) => {
         hour: body.hour,
         minute: body.minute,
         meridian: body.meridian,
-        gamelog: body.gameLog
-      }
+        kc: body.kc,
+        gamelog: body.gameLog,
+      },
     },
     (error, data) => {
       if (error) return response.sendStatus(500).json(error);

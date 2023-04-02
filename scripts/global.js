@@ -478,6 +478,7 @@ export const api = {
     hour: "",
     minute: "",
     meridian: "",
+    kc: "",
   },
 };
 

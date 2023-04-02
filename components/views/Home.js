@@ -12,18 +12,16 @@ export default (st) => html`
         <li>Press R or Z to <strong>raise</strong> the stack one row.</li>
       </ul> -->
       <hr />
+      <h1>Controls</h1>
       <p style="text-align: center;">
-        This game can be played both on a computer and a mobile device! You can
-        use a touch screen which uses my own control system, or if you're at a
-        computer, use classic Puzzle League controls with the arrow keys to move
-        the cursor and S/R to swap and raise.
-      </p>
-      <hr />
-      <p style="text-align: center;">
-        <strong>Februrary 2023 UPDATE:</strong> Heroku, the server that I hosted
-        the leaderboard on, is now a paid service, meaning I have to redeploy to
-        a new server. In the mean time, the game still works at keeping track of
-        your local high scores!
+        This game can be played both on a computer and a mobile device!
+        <br /><strong>Mobile: </strong>You can use a touch screen to order
+        blocks to move horizontally or vertically. <br /><strong
+          >Desktop:</strong
+        >
+        Use classic Puzzle League controls with the arrow keys to move the
+        cursor, X or S to swap blocks, and Z or R to raise the stack. New to my
+        game, you can press C or T to turn the cursor 90 degrees.
       </p>
       <hr />
       <h1>How to play</h1>
@@ -60,15 +58,6 @@ export default (st) => html`
         shot!
       </p>
       <hr />
-      <p>
-        This game is inspired by the 90's "Puzzle League" series and plays in a
-        similar way. However, this is my own program that uses its own code. I
-        have developed unique mechanics and control systems not in the original
-        games, as well as a more simplified scoring system. You can check out
-        more information in the "Tutorials" section (many tutorials are still in
-        development).
-      </p>
-      <hr />
       <div id="start-options">
         <button id="arcade-button" class="default-button start-buttons">
           Play Game!
@@ -86,6 +75,16 @@ export default (st) => html`
           See My AI Play!
         </button>
       </div>
+      <hr />
+      <p>
+        This game is inspired by the 90's "Puzzle League" series and plays in a
+        similar way. However, this is my own program that uses its own code
+        built from scratch using pure Javascript. I have developed unique
+        mechanics and control systems not in the original games, as well as a
+        more simplified scoring system. You can check out more information in
+        the "Tutorials" section (many tutorials are still in development).
+      </p>
+      <hr />
     </div>
   </section>
 `;

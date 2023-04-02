@@ -13,12 +13,13 @@ const gameSchema = new mongoose.Schema({
   hour: String,
   minute: String,
   meridian: String,
-  gameLog: Array
+  k: String,
+  gameLog: Array,
 });
 
 const Game = mongoose.model("Game", gameSchema);
 
 module.exports = {
   model: Game,
-  schema: gameSchema
+  schema: gameSchema,
 };

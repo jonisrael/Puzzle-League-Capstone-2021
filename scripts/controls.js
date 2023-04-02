@@ -53,6 +53,7 @@ export const defaultControls = {
     down: [40], //ArrowDown
     right: [39], //ArrowRight
     swap: [83, 88], // s, x
+    turn: [84, 67], // t, c
     raise: [82, 90], // r, z
   },
   gamepad: {
