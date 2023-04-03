@@ -98,6 +98,8 @@ export function startGame(selectedGameSpeed = 1) {
   touch.thereIsABlockCurrentlySelected = false;
   touch.moveOrderExists = false;
   game.tutorialRunning = false;
+  game.cursor_type = win.mobile ? "legalCursorDown" : "defaultCursor";
+  game.cursor.orientation = "R";
   // document.getElementById("game-info-table").style.display = "inline";
   if (!game.playRecording) {
     console.log("reset replay arrays");
@@ -260,7 +262,7 @@ export function fixNextDarkStack() {
 
 export function generateOpeningBoard(blockNumber = 40, stackSize = 6) {
   if (game.timeControl !== 2) [blockNumber, stackSize] = [32, 6];
-  game.cursor = new Cursor(2, 6);
+  game.cursor = new Cursor(2, 6, "R");
   game.cursor.x = 2;
   game.cursor.y = 6;
   let block;

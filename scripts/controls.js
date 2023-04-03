@@ -53,8 +53,9 @@ export const defaultControls = {
     down: [40], //ArrowDown
     right: [39], //ArrowRight
     swap: [83, 88], // s, x
-    turn: [84, 67], // t, c
     raise: [82, 90], // r, z
+    turn_clockwise: [84, 67], // t, c
+    turn_cc: [71, 86], // g, v
   },
   gamepad: {
     up: [12], // D-Pad Up
@@ -87,8 +88,14 @@ export function setNewKeyboardControls() {
     if (el === document.querySelector("#right")) kb.right = [charCode];
     if (el === document.querySelector("#swap-1")) kb.swap[0] = charCode;
     if (el === document.querySelector("#swap-2")) kb.swap[1] = charCode;
-    if (el === document.querySelector("#raise-1")) kb.raise[0] = charCode;
-    if (el === document.querySelector("#raise-2")) kb.raise[1] = charCode;
+    if (el === document.querySelector("#turn-clockwise-1"))
+      kb.turn_clockwise[0] = charCode;
+    if (el === document.querySelector("#turn-clockwise-2"))
+      kb.turn_clockwise[1] = charCode;
+    if (el === document.querySelector("#turn-counter-clockwise-1"))
+      kb.turn_cc[0] = charCode;
+    if (el === document.querySelector("#turn-counter-clockwise-2"))
+      kb.turn_cc[1] = charCode;
   }
   console.log("KB Controls:", kb, document.querySelectorAll(".kb-controls"));
   return kb;
@@ -156,6 +163,8 @@ export function checkIfControlsExist(controls) {
       right: [39], //ArrowRight
       swap: [83, 88], // x,s
       raise: [82, 90], // z, r
+      turn_clockwise: [71, 86], // t, c
+      turn_cc: [84, 67], // g, v
     },
     gamepad: {
       up: [12], // D-Pad Up
@@ -170,18 +179,19 @@ export function checkIfControlsExist(controls) {
   };
   if (localStorage.getItem("controls")) {
     // patch to fix broken controls 11/9/2021
+    // patch to fix broken controls 04/2/2023
     try {
       if (
         !controlsObject.timeCreated ||
-        controlsObject.timeCreated < 1656865863014 || // time before latest release (July 3)
+        controlsObject.timeCreated < 1680471712626 || // time before latest release (April 2, 2023)
         !controlsObject.keyboard ||
         !controlsObject.gamepad
       ) {
         localStorage.setItem("controls", JSON.stringify(defaultControls));
-        console.log("Controls invalid, do 11/16/2021 patch to fix.");
+        console.log("Controls invalid or missing, do April 2023 patch to fix.");
         return defaultControls;
       } else {
-        console.log("controls are valid:");
+        console.log("Game Controls object is valid!");
         return JSON.parse(storedControls);
       }
     } catch (error) {
@@ -261,41 +271,35 @@ export function playerAction(input) {
 
   // first input checker, "else if" is required for priority, so case does not work.
   let cursorMoved = false;
+  let cursorMoveSuccess = false;
   if (!game.paused || debug.enabled) {
     if (input.up) {
+      game.cursor.y -= 1;
+      cursorMoved = true;
       action.up = false;
       if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
-      if (game.cursor.y > 1 || (game.cursor.y === 1 && game.rise === 0)) {
-        game.cursor.y -= 1;
-        cursorMoved = true;
-      }
     } else if (input.down) {
+      game.cursor.y += 1;
       action.down = false;
+      cursorMoved = true;
       if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
-      if (game.cursor.y < grid.ROWS - 1) {
-        game.cursor.y += 1;
-        cursorMoved = true;
-      }
     } else if (input.left) {
       action.left = false;
       if (!game.playRecording) replay.digitalInputs.push([game.frames, "left"]);
-      if (game.cursor.x > 0) {
-        game.cursor.x -= 1;
-        cursorMoved = true;
-      }
+      game.cursor.x -= 1;
+      cursorMoved = true;
+      action.right = false;
     } else if (input.right) {
+      game.cursor.x += 1;
+      cursorMoved = true;
       action.right = false;
       if (!game.playRecording)
         replay.digitalInputs.push([game.frames, "right"]);
-      if (game.cursor.x < grid.COLS - 2) {
-        game.cursor.x += 1;
-        cursorMoved = true;
-      }
     } else if (input.swap && !game.over) {
       if (!game.playRecording) replay.digitalInputs.push([game.frames, "swap"]);
       action.swap = false;
       // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
-      if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
+      // if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
       game.swapPressed = true;
       if (
         game.mode === "tutorial" &&
@@ -313,12 +317,41 @@ export function playerAction(input) {
 
     if (cursorMoved) {
       game.cursor_type = "defaultCursor";
-      // if (!input.byCPU) {
-      //   game.cursor_type = "defaultCursor";
-      // }
-      // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
-      if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
-      if (!win.appleProduct && (!cpu.enabled || game.tutorialRunning)) {
+      if (
+        game.cursor.x >= grid.COLS ||
+        (game.cursor.x === grid.COLS - 1 && game.cursor.orientation === "R")
+      ) {
+        game.cursor.x -= 1;
+        cursorMoved = false;
+      } //
+      else if (
+        game.cursor.y >= grid.ROWS ||
+        (game.cursor.y === grid.ROWS - 1 && game.cursor.orientation === "D")
+      ) {
+        game.cursor.y -= 1;
+        cursorMoved = false;
+      } //
+      else if (
+        game.cursor.x < 0 ||
+        (game.cursor.x === 0 && game.cursor.orientation === "L")
+      ) {
+        game.cursor.x += 1;
+        cursorMoved = false;
+      } //
+      else if (
+        game.cursor.y < 0 ||
+        (game.cursor.y === 0 && game.rise !== 0) ||
+        (game.cursor.y === 1 && game.cursor.orientation === "U")
+      ) {
+        game.cursor.y += 1;
+        cursorMoved = false;
+      } //
+
+      if (
+        cursorMoved &&
+        !win.appleProduct &&
+        (!cpu.enabled || game.tutorialRunning)
+      ) {
         playAudio(audio.moveCursor);
       }
     }
@@ -330,6 +363,87 @@ export function playerAction(input) {
         replay.digitalInputs.push([game.frames, "raise"]);
       if (!game.tutorialRunning) game.raisePressed = true;
       win.cvs.scrollIntoView({ block: "nearest" });
+    }
+    let successfulTurn = false; // used to determine if sfx should be played
+    if (input.turn_clockwise || input.turn_cc) {
+      action.turn_clockwise = action.turn_cc = false;
+      game.cursor_type = "defaultCursor";
+      if (
+        game.cursor.orientation === "R" &&
+        game.cursor.y < grid.ROWS - 1 &&
+        !game.tutorialRunning
+      ) {
+        game.cursor.orientation = "D";
+        successfulTurn = true;
+      } //
+      else if (
+        game.cursor.orientation === "D" &&
+        game.cursor.x < grid.COLS - 1
+      ) {
+        game.cursor.orientation = "R";
+        successfulTurn = true;
+      }
+    }
+    // if (input.turn_clockwise) {
+    //   game.cursor_type = "defaultCursor";
+    //   // turn clockwise, but will not face upwards
+    //   action.turn_clockwise = false;
+    //   action.turn_cc = false; // if both turns active, will only turn clockwise
+
+    //   if (game.cursor.orientation === "R" && game.cursor.y < grid.ROWS - 1) {
+    //     game.cursor.orientation = "D";
+    //     successfulTurn = true;
+    //   } //
+    //   else if (game.cursor.orientation === "D" && game.cursor.x > 0) {
+    //     game.cursor.orientation = "L";
+    //     successfulTurn = true;
+    //   } //
+    //   else if (game.cursor.orientation === "L" && game.cursor.y > 1) {
+    //     game.cursor.orientation = "U";
+    //     successfulTurn = true;
+    //   } //
+    //   else if (
+    //     game.cursor.orientation === "U" &&
+    //     game.cursor.x < grid.COLS - 1
+    //   ) {
+    //     game.cursor.orientation = "R";
+    //     successfulTurn = true;
+    //   }
+    // }
+    // if (input.turn_cc) {
+    //   game.cursor_type = "defaultCursor";
+    //   // turn counter-clockwise
+    //   action.turn_cc = false;
+    //   if (game.cursor.orientation === "R" && game.cursor.y > 1) {
+    //     game.cursor.orientation = "U";
+    //     successfulTurn = true;
+    //   } //
+    //   else if (game.cursor.orientation === "U" && game.cursor.x > 0) {
+    //     game.cursor.orientation = "L";
+    //     successfulTurn = true;
+    //   } //
+    //   else if (
+    //     game.cursor.orientation === "L" &&
+    //     game.cursor.y < grid.ROWS - 1
+    //   ) {
+    //     game.cursor.orientation = "D";
+    //     successfulTurn = true;
+    //   } //
+    //   else if (
+    //     game.cursor.orientation === "D" &&
+    //     game.cursor.x < grid.COLS - 1
+    //   ) {
+    //     game.cursor.orientation = "R";
+    //     successfulTurn = true;
+    //   }
+    // }
+
+    if (
+      successfulTurn &&
+      !win.appleProduct &&
+      (!cpu.enabled || game.tutorialRunning)
+    ) {
+      playAudio(audio.moveCursor);
     }
   }
 

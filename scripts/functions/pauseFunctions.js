@@ -234,9 +234,6 @@ export function printDebugInfo() {
     perf,
     "\nfuncTimestamps",
     funcTimestamps,
-    game.cursor_type[0] === "d"
-      ? game.board[game.cursor.x + 1][game.cursor.y]
-      : "",
     `\nblock`,
     game.board[game.cursor.x][game.cursor.y]
   );

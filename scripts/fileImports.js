@@ -4,6 +4,15 @@ import CURSOR_ORANGE from ".././assets/Sprites/cursors/default_cursor_orange.png
 import CURSOR_PINK from ".././assets/Sprites/cursors/default_cursor_pink.png";
 import CURSOR_DARK_GREY from ".././assets/Sprites/cursors/default_cursor_grey.png";
 import CURSOR_LIGHT_GREY from ".././assets/Sprites/cursors/default_cursor_light_grey.png";
+import CURSOR__VERT from ".././assets/Sprites/cursors/default_cursor_VERT.png";
+import CURSOR_ORANGE__VERT from ".././assets/Sprites/cursors/default_cursor_orange_VERT.png";
+import CURSOR_PINK__VERT from ".././assets/Sprites/cursors/default_cursor_pink_VERT.png";
+import CURSOR_DARK_GREY__VERT from ".././assets/Sprites/cursors/default_cursor_grey_VERT.png";
+import CURSOR_LIGHT_GREY__VERT from ".././assets/Sprites/cursors/default_cursor_light_grey_VERT.png";
+import CURSOR_R from ".././assets/Sprites/cursors/default_cursor_R.png";
+import CURSOR_D from ".././assets/Sprites/cursors/default_cursor_D.png";
+import CURSOR_L from ".././assets/Sprites/cursors/default_cursor_L.png";
+import CURSOR_U from ".././assets/Sprites/cursors/default_cursor_U.png";
 import LEGAL_SELECTION_CURSOR from ".././assets/Sprites/cursors/selected_cursor.png";
 import ILLEGAL_SELECTION_CURSOR from ".././assets/Sprites/cursors/invalid_selection_cursor.png";
 import SELECTABLE_CURSOR from ".././assets/Sprites/cursors/selectable_cursor.png";
@@ -361,10 +370,19 @@ import { win } from "./global";
 // Images
 const sprite = {
   defaultCursor: CURSOR,
+  defaultCursor_R: CURSOR_R,
+  defaultCursor_D: CURSOR_D,
+  defaultCursor_L: CURSOR_L,
+  defaultCursor_U: CURSOR_U,
   defaultCursorOrange: CURSOR_ORANGE,
   defaultCursorPink: CURSOR_PINK,
   defaultCursorDarkGrey: CURSOR_DARK_GREY,
   defaultCursorLightGrey: CURSOR_LIGHT_GREY,
+  defaultCursor_V: CURSOR__VERT,
+  defaultCursorOrange_V: CURSOR_ORANGE__VERT,
+  defaultCursorPink_V: CURSOR_PINK__VERT,
+  defaultCursorDarkGrey_V: CURSOR_DARK_GREY__VERT,
+  defaultCursorLightGrey_V: CURSOR_LIGHT_GREY__VERT,
   legalCursorDown: LEGAL_SELECTION_CURSOR,
   illegalCursorDown: ILLEGAL_SELECTION_CURSOR,
   legalCursorUp: SELECTABLE_CURSOR,

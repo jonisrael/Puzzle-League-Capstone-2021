@@ -163,19 +163,29 @@ export function blockKeyOf(color, type, animationIndex = -1) {
 }
 
 export class Cursor {
-  constructor(x, y) {
+  constructor(x, y, orientation) {
     this.x = x;
     this.y = y;
+    this.orientation = orientation;
   }
 
   draw() {
     // param used to be ctx
     let pixelX = this.x * grid.SQ;
     let pixelY = this.y * grid.SQ - game.rise;
-    // if (cpu.showFakeCursorPosition) pixelX += grid.SQ;
-    // const CURSOR_IMAGE = new Image();
-    // CURSOR_IMAGE.src = sprite.cursor;
-    win.ctx.drawImage(loadedSprites[game.cursor_type], pixelX, pixelY);
+
+    let fileToOpen = `${game.cursor_type}${
+      this.orientation === "D" ? "_V" : ""
+    }`;
+
+    // let fileToOpen = `${game.cursor_type}_${this.orientation}`;
+    // if (!game.cursor_type.includes("default")) {
+    //   fileToOpen = fileToOpen.slice(0, -2);
+    // }
+    // if (this.orientation === "L") pixelX -= 1 * grid.SQ;
+    // if (this.orientation === "U") pixelY -= 1 * grid.SQ;
+
+    win.ctx.drawImage(loadedSprites[fileToOpen], pixelX, pixelY);
   }
 }
 
@@ -1337,8 +1347,11 @@ function KEYBOARD_CONTROL(event) {
         action.swap = true; // s or x
       if (savedControls.keyboard.raise.includes(event.keyCode))
         action.raise = true; // r or z
-      if (savedControls.keyboard.turn.includes(event.keyCode)) {
-        action.turn = true;
+      if (savedControls.keyboard.turn_clockwise.includes(event.keyCode)) {
+        action.turn_clockwise = true;
+      }
+      if (savedControls.keyboard.turn_cc.includes(event.keyCode)) {
+        action.turn_cc = true;
       }
     }
 
@@ -1559,6 +1572,7 @@ export function gameLoop() {
   if (win.gameLoopCompleted === false) {
     debug.enabled = true;
     debug.show = true;
+    playAudio(audio.topout, 0.01);
     pause();
     win.mainInfoDisplay.innerHTML = `Game Crash Occured!<br>Please check developer console for details by pressing F12, and email the error at jonisrael45@gmail.com. A snapshot of the board state is below. Please reload website to continue!`;
     win.mainInfoDisplay.style.color = "red";
@@ -1877,6 +1891,8 @@ export function gameLoop() {
           game.boardRiseRestarter = 0; // restart failsafe timer
           if (game.rise !== 0) {
             if (game.cursor.y === 0) game.cursor.y += 1;
+            if (game.cursor.orientation === "U" && game.cursor.y < 2)
+              game.cursor.y = 2;
             if (
               perf.gameSpeed === 2 &&
               (game.currentlyQuickRaising || game.boardRiseSpeed === 1)
@@ -1896,6 +1912,9 @@ export function gameLoop() {
         ) {
           createNewRow();
           game.readyForNewRow = false;
+          if (game.cursor.orientation === "U" && game.cursor.y < 2) {
+            game.cursor.y === 2;
+          }
         }
       }
 
@@ -1937,17 +1956,58 @@ export function gameLoop() {
       }
       if (game.swapPressed) {
         let [x, y] = [game.cursor.x, game.cursor.y];
-        if (game.board[x][y].targetCoord !== undefined) {
-          game.board[x][y].targetCoord = undefined;
-        } else if (game.board[x + 1][y].targetCoord !== undefined) {
-          game.board[x + 1][y].targetCoord = undefined;
-        } else if (!blockVacOrClearing(game.board[x][y])) {
-          game.board[x][y].targetCoord = x + 1;
-          game.board[x][y].swapType = "h";
-        } else if (!blockVacOrClearing(game.board[x + 1][y])) {
-          game.board[x + 1][y].targetCoord = x;
-          game.board[x + 1][y].swapType = "h";
-        }
+        if (game.cursor.orientation === "R") {
+          if (game.board[x][y].targetCoord !== undefined) {
+            game.board[x][y].targetCoord = undefined;
+          } else if (game.board[x + 1][y].targetCoord !== undefined) {
+            game.board[x + 1][y].targetCoord = undefined;
+          } else if (!blockVacOrClearing(game.board[x][y])) {
+            game.board[x][y].targetCoord = x + 1;
+            game.board[x][y].swapType = "h";
+          } else if (!blockVacOrClearing(game.board[x + 1][y])) {
+            game.board[x + 1][y].targetCoord = x;
+            game.board[x + 1][y].swapType = "h";
+          }
+        } //
+        else if (game.cursor.orientation === "D") {
+          if (game.board[x][y].targetCoord !== undefined) {
+            game.board[x][y].targetCoord = undefined;
+          } else if (game.board[x][y + 1].targetCoord !== undefined) {
+            game.board[x][y + 1].targetCoord = undefined;
+          } else if (!blockVacOrClearing(game.board[x][y])) {
+            game.board[x][y].targetCoord = y + 1;
+            game.board[x][y].swapType = "v";
+          } else if (!blockVacOrClearing(game.board[x][y + 1])) {
+            game.board[x][y + 1].targetCoord = y;
+            game.board[x][y + 1].swapType = "v";
+          }
+        } //
+        else if (game.cursor.orientation === "L") {
+          if (game.board[x][y].targetCoord !== undefined) {
+            game.board[x][y].targetCoord = undefined;
+          } else if (game.board[x - 1][y].targetCoord !== undefined) {
+            game.board[x - 1][y].targetCoord = undefined;
+          } else if (!blockVacOrClearing(game.board[x][y])) {
+            game.board[x][y].targetCoord = x - 1;
+            game.board[x][y].swapType = "h";
+          } else if (!blockVacOrClearing(game.board[x - 1][y])) {
+            game.board[x - 1][y].targetCoord = x;
+            game.board[x - 1][y].swapType = "h";
+          }
+        } else if (game.cursor.orientation === "U") {
+          if (game.board[x][y].targetCoord !== undefined) {
+            game.board[x][y].targetCoord = undefined;
+          } else if (game.board[x][y - 1].targetCoord !== undefined) {
+            game.board[x][y - 1].targetCoord = undefined;
+          } else if (!blockVacOrClearing(game.board[x][y])) {
+            game.board[x][y].targetCoord = y - 1;
+            game.board[x][y].swapType = "v";
+          } else if (!blockVacOrClearing(game.board[x][y - 1])) {
+            game.board[x][y - 1].targetCoord = y;
+            game.board[x][y - 1].swapType = "v";
+          }
+        } //
+
         game.swapPressed = false;
       }
 

@@ -104,6 +104,7 @@ export function selectBlock(x, y) {
   // touch.mouse.oldCoords = [[x, y]];
   // touch.mouse.oldX = x;
   // touch.mouse.oldY = y;
+  game.cursor.orientation = "R";
   game.cursor_type = "legalCursorDown";
   let SquareClicked = game.board[x][y];
   SquareClicked.swapType = undefined; // will be either "v" or "h";
