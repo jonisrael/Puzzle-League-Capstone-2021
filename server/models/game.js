@@ -7,13 +7,14 @@ const gameSchema = new mongoose.Schema({
   duration: String, // Time Survived. NOT entered by user
   largestChain: String,
   totalClears: String,
+  playType: String,
   month: String,
   day: String,
   year: String,
   hour: String,
   minute: String,
   meridian: String,
-  k: String,
+  kc: String,
   gameLog: Array,
 });
 

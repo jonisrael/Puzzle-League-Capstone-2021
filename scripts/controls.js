@@ -9,6 +9,7 @@ import * as state from "../store";
 import { nextDialogue, tutorial } from "./tutorial/tutorialScript";
 import { tutorialMessages } from "./tutorial/tutorialMessages";
 import { loadTutorialState } from "./tutorial/tutorialEvents";
+import { touch } from "./clickControls";
 
 export const action = {
   up: false,
@@ -317,6 +318,7 @@ export function playerAction(input) {
 
     if (cursorMoved) {
       game.cursor_type = "defaultCursor";
+      touch.enabled = false;
       if (
         game.cursor.x >= grid.COLS ||
         (game.cursor.x === grid.COLS - 1 && game.cursor.orientation === "R")

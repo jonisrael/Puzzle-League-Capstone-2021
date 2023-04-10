@@ -23,25 +23,27 @@ export function validateForm(nameValue, score, passcode) {
     return -1;
   }
 
-  if (passcode === "" || passcode === "1234") {
-    overwrite = confirm(
-      `Warning -- not setting a passcode will allow ANYONE to overwrite your scores. Continue?`
-    );
-  }
+  // if (passcode === "" || passcode === "1234") {
+  //   overwrite = confirm(
+  //     `Warning -- not setting a passcode will allow ANYONE to overwrite your scores. Continue?`
+  //   );
+  // }
 
   if (identicalEntries.length > 0) {
     let prevLeaderboardEntry = identicalEntries[0];
-    if (!prevLeaderboardEntry.passcode) prevLeaderboardEntry.passcode = "1234";
-    if (passcode !== prevLeaderboardEntry.passcode) {
+    if (!prevLeaderboardEntry.kc) prevLeaderboardEntry.kc = "1234";
+    if (passcode !== prevLeaderboardEntry.kc) {
       alert(
         `Incorrect passcode. If you've lost your passcode, you can contact me for it or create a new name.`
       );
-    } else if (score > prevLeaderboardEntry.score) {
+      overwrite = false;
+    } //
+    else if (score > prevLeaderboardEntry.score) {
       overwrite = confirm(
-        `Your passcode is ${prevLeaderboardEntry.passcode}. You will use this passcode to overwrite your scores in the future if you improve it. \n
-        Replace your current score on the leaderboard taken on ${identicalEntries[0].date} with this one?`
+        `Replace your current score on the leaderboard taken on ${identicalEntries[0].date} with this one?`
       );
-    } else {
+    } //
+    else if (score <= prevLeaderboardEntry.score) {
       overwrite = confirm(
         `WARNING -- This name is already on the leaderboard and currently has a better score of, ${prevLeaderboardEntry.score}. Do you still want to update this score? This is not recommended.`
       );

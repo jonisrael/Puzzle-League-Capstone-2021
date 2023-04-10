@@ -28,6 +28,7 @@ import { updateBestScores, getBestScores } from "./updateBestScores";
 import { validateForm } from "./validateForm";
 import { setUpBestScoreDisplay } from "./setUpViewport";
 import { middleMenuSetup } from "./middleMenu";
+import { touch } from "../clickControls";
 
 export function afterGame() {
   console.log("run aftergame");
@@ -156,12 +157,13 @@ export function submitResults() {
   container.appendChild(form);
 
   let nameLabel = document.createElement("label");
+  let nameInput = document.createElement("input");
+
   nameLabel.setAttribute("for", "player-name");
   nameLabel.setAttribute("id", "enter-name");
   nameLabel.innerHTML = "Enter a name to be associated with the score: ";
   form.append(nameLabel);
 
-  let nameInput = document.createElement("input");
   nameInput.setAttribute("type", "text");
   nameInput.setAttribute("name", "player-name");
   nameInput.setAttribute("id", "player-name");
@@ -169,40 +171,11 @@ export function submitResults() {
   nameInput.setAttribute("maxlength", "15");
   // nameInput.setAttribute("pattern", RegExp("w"));
   // nameInput.setAttribute("placeholder", `Enter Name Here`);
-  if (game.mode === "cpu-play") {
-    nameInput.value = "GiefKid-AI-v1.0";
-    nameInput.readOnly = true;
-  } else {
-    nameInput.value = localStorage.getItem("username");
-  }
-  nameInput.autofocus = true;
   form.appendChild(nameInput);
 
   form.appendChild(document.createElement("br"));
 
-  let passcodeLabel = document.createElement("label");
-  passcodeLabel.setAttribute("for", "player-name");
-  passcodeLabel.setAttribute("id", "enter-name");
-  passcodeLabel.innerHTML = `Enter a 4-digit passcode to protect your score: `;
-  form.append(passcodeLabel);
-
-  let passcodeInput = document.createElement("input");
-  passcodeInput.setAttribute("type", "password");
-  passcodeInput.setAttribute("name", "passcode");
-  passcodeInput.setAttribute("id", "passcode");
-  // passcodeInput.setAttribute("value", "1234");
-  passcodeInput.setAttribute("pattern", "[0-9]*");
-  passcodeInput.setAttribute("inputmode", "numeric");
-  passcodeInput.setAttribute("minlength", "4");
-  passcodeInput.setAttribute("maxlength", "4");
-  passcodeInput.addEventListener("keypress", (evt) => {
-    if (!/^\d+$/.test(evt.key) && evt.key !== "Enter" && evt.key !== `Tab`) {
-      evt.preventDefault();
-    }
-  });
-  form.appendChild(passcodeInput);
-
-  form.appendChild(document.createElement("br"));
+  createPasscodeProtectionForm(form);
 
   let submitForm = document.createElement("input");
   submitForm.setAttribute("id", "submit-name");
@@ -216,6 +189,17 @@ export function submitResults() {
   submitForm.style.color = leaderboard.canPost ? "black" : "black";
   submitForm.className = "default-button";
   form.appendChild(submitForm);
+
+  let passcodeInput = document.getElementById("passcode");
+
+  if (game.mode === "cpu-play") {
+    nameInput.value = "GiefKid-AI-v1.0";
+    nameInput.readOnly = true;
+  } else {
+    nameInput.value = localStorage.getItem("username") || "";
+    passcodeInput.value = localStorage.getItem("kc") || "1234";
+  }
+  nameInput.autofocus = true;
 
   document.querySelector("form").addEventListener("submit", (event) => {
     event.preventDefault();
@@ -233,6 +217,7 @@ export function submitResults() {
         duration: duration,
         largestChain: game.largestChain,
         totalClears: game.totalClears,
+        playType: touch.enabled ? "Touch Screen" : "Keyboard & Gamepad",
         month: api.data.month,
         day: api.data.day,
         year: api.data.year,
@@ -244,6 +229,7 @@ export function submitResults() {
       };
       updateEntry(newData, indexToReplace);
       leaderboard.userPostedName = nameInput.value;
+      leaderboard.userPostedKC = nameInput.kc;
       leaderboard.userPostedScore = finalScore;
       router.navigate("/Leaderboard");
       getLeaderboardData(true);
@@ -308,4 +294,61 @@ function showBestScoreList(container) {
   setUpBestScoreDisplay(column1, bestScores.Blitz, "Blitz");
   setUpBestScoreDisplay(column2, bestScores.Standard, "Standard");
   setUpBestScoreDisplay(column3, bestScores.Marathon, "Marathon");
+}
+
+function createPasscodeProtectionForm(form) {
+  let createPasscodeLabel = document.createElement("label");
+  createPasscodeLabel.setAttribute("for", "open-passcode-label");
+  createPasscodeLabel.setAttribute("name", "open-passcode-label");
+  createPasscodeLabel.setAttribute("id", "open-passcode-label");
+  createPasscodeLabel.innerHTML = `Select if you want to create a passcode to protect your score from being changed by another user:`;
+  form.append(createPasscodeLabel);
+
+  let createPasscodeOpenClose = document.createElement("input");
+  createPasscodeOpenClose.setAttribute("type", "checkbox");
+  createPasscodeOpenClose.setAttribute("id", "open-passcode-creation");
+  createPasscodeOpenClose.setAttribute("for", "open-passcode-creation");
+  createPasscodeOpenClose.setAttribute("name", "open-passcode-creation");
+  form.append(createPasscodeOpenClose);
+
+  form.append(document.createElement("br"));
+
+  let createPasscodeDiv = document.createElement("div");
+  createPasscodeDiv.id = "create-passcode-div";
+  createPasscodeDiv.style.display = "none";
+  form.append(createPasscodeDiv);
+
+  let passcodeLabel = document.createElement("label");
+  passcodeLabel.setAttribute("for", "player-name");
+  passcodeLabel.setAttribute("name", "player-name");
+  passcodeLabel.setAttribute("id", "enter-name");
+  passcodeLabel.innerHTML = `Enter a 4-digit passcode to protect your score: `;
+  createPasscodeDiv.append(passcodeLabel);
+
+  let passcodeInput = document.createElement("input");
+  passcodeInput.setAttribute("type", "password");
+  passcodeInput.setAttribute("name", "passcode");
+  passcodeInput.setAttribute("id", "passcode");
+  // passcodeInput.setAttribute("value", "1234");
+  passcodeInput.setAttribute("pattern", "[0-9]*");
+  passcodeInput.setAttribute("inputmode", "numeric");
+  passcodeInput.setAttribute("minlength", "4");
+  passcodeInput.setAttribute("maxlength", "4");
+  passcodeInput.value = "1234";
+  passcodeInput.addEventListener("keypress", (evt) => {
+    if (!/^\d+$/.test(evt.key) && evt.key !== "Enter" && evt.key !== `Tab`) {
+      evt.preventDefault();
+    }
+  });
+  createPasscodeDiv.appendChild(passcodeInput);
+
+  createPasscodeDiv.appendChild(document.createElement("br"));
+
+  createPasscodeOpenClose.addEventListener("click", () => {
+    createPasscodeDiv.style.display = createPasscodeOpenClose.checked
+      ? "block"
+      : "none";
+    createPasscodeLabel.style.display = "none";
+    createPasscodeOpenClose.style.display = "none";
+  });
 }

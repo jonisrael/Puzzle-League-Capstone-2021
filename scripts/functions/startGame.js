@@ -97,6 +97,7 @@ export function startGame(selectedGameSpeed = 1) {
   win.multiplierDisplay.innerHTML = "1.00x";
   touch.thereIsABlockCurrentlySelected = false;
   touch.moveOrderExists = false;
+  touch.enabled = true;
   game.tutorialRunning = false;
   game.cursor_type = win.mobile ? "legalCursorDown" : "defaultCursor";
   game.cursor.orientation = "R";

@@ -312,7 +312,11 @@ class Block {
   }
 
   drawHint() {
-    if (!game.disableSwap && game.frameMod[60] < 30 && game.mode !== "cpu-play")
+    if (
+      !game.disableSwap &&
+      game.frameMod[180] < 120 &&
+      game.mode !== "cpu-play"
+    )
       win.ctx.drawImage(
         loadedSprites["light_up"],
         grid.SQ * this.x,
@@ -389,7 +393,7 @@ class Block {
       if (type === "Buffer") color = "Pink";
       if (type === "Advice") color = "Grey";
 
-      if (type !== "Advice" || game.frameMod[60] < 30) {
+      if (type !== "Advice" || game.frameMod[180] < 60) {
         if (0 === 0 || coord === gridSize - 1 || NextBlock.color !== "vacant") {
           // If block below is not vacant, do not draw down arrows
           // block below is not vacant, draw normal arrows

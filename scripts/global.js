@@ -588,6 +588,7 @@ export const leaderboard = {
   data: [],
   canPost: true,
   userPostedName: "",
+  userPostedKC: "",
   userPostedScore: "",
   reason: "",
 };
@@ -700,6 +701,7 @@ export function updateFrameMods(frameCount) {
   game.frameMod[30] = frameCount % 30;
   game.frameMod[40] = frameCount % 40;
   game.frameMod[60] = frameCount % 60;
+  game.frameMod[180] = frameCount % 180;
 }
 
 export function getRow(row, colorsOnly = true) {

@@ -47,7 +47,7 @@ export function populateLeaderboard() {
         ${entry.month}/${entry.day}/${entry.year.slice(2.4)}
         </td>
         <td>
-          ${entry.hour}:${entry.minute} ${entry.meridian}
+          ${entry.playType}
         </td>
       </tr>
     `;

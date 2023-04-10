@@ -312,6 +312,7 @@ export function updateEntry(newData, indexToReplace) {
     .then((response) => {
       console.log(`Update Successful! Setting username to ${newData.name}`);
       localStorage.setItem("username", newData.name);
+      localStorage.setItem("kc", newData.kc);
     })
     .catch((error) => {
       leaderboard.reason = "no-leaderboard";
@@ -346,10 +347,11 @@ export function getLeaderboardData(populate = false) {
   axios
     .get("https://puzzle-league-arcade.onrender.com/games")
     .then((response) => {
+      console.log("Got Leaderboard!");
+      leaderboard.data = []; // reset it until new leaderboard appears
       leaderboard.data = response.data.sort((a, b) =>
         parseInt(a.score) < parseInt(b.score) ? 1 : -1
       );
-      console.log("Got Leaderboard!");
       if (populate) {
         state["Leaderboard"].markup = populateLeaderboard();
         render(state.Leaderboard);
@@ -437,7 +439,7 @@ router.hooks({
             leaderboard.data = response.data.sort((a, b) =>
               parseInt(a.score) < parseInt(b.score) ? 1 : -1
             );
-            state[page].markup = populateLeaderboard();
+            state[page].markup = populateLeaderboard(true);
             done();
           })
           .catch((error) => {
@@ -463,4 +465,4 @@ router
   })
   .resolve();
 
-getLeaderboardData(false); // will wake up collection server
+getLeaderboardData(false); // will wake up collection server on website load

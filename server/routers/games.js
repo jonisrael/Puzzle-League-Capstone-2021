@@ -50,6 +50,7 @@ router.put("/games/:id", (request, response) => {
         duration: body.duration,
         largestChain: body.largestChain,
         totalClears: body.totalClears,
+        playType: body.playType,
         month: body.month,
         day: body.day,
         year: body.year,
