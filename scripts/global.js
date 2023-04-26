@@ -478,7 +478,6 @@ export const api = {
     hour: "",
     minute: "",
     meridian: "",
-    kc: "",
   },
 };
 
@@ -588,7 +587,6 @@ export const leaderboard = {
   data: [],
   canPost: true,
   userPostedName: "",
-  userPostedKC: "",
   userPostedScore: "",
   reason: "",
 };

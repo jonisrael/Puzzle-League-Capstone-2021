@@ -57,7 +57,6 @@ router.put("/games/:id", (request, response) => {
         hour: body.hour,
         minute: body.minute,
         meridian: body.meridian,
-        kc: body.kc,
         gamelog: body.gameLog,
       },
     },

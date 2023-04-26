@@ -175,7 +175,7 @@ export function submitResults() {
 
   form.appendChild(document.createElement("br"));
 
-  createPasscodeProtectionForm(form);
+  // createPasscodeProtectionForm(form);
 
   let submitForm = document.createElement("input");
   submitForm.setAttribute("id", "submit-name");
@@ -190,24 +190,17 @@ export function submitResults() {
   submitForm.className = "default-button";
   form.appendChild(submitForm);
 
-  let passcodeInput = document.getElementById("passcode");
-
   if (game.mode === "cpu-play") {
     nameInput.value = "GiefKid-AI-v1.0";
     nameInput.readOnly = true;
   } else {
     nameInput.value = localStorage.getItem("username") || "";
-    passcodeInput.value = localStorage.getItem("kc") || "1234";
   }
   nameInput.autofocus = true;
 
   document.querySelector("form").addEventListener("submit", (event) => {
     event.preventDefault();
-    let indexToReplace = validateForm(
-      nameInput.value,
-      finalScore,
-      passcodeInput.value
-    );
+    let indexToReplace = validateForm(nameInput.value, finalScore);
     console.log("index", indexToReplace);
     // if action is not empty
     if (indexToReplace !== -1) {
@@ -217,14 +210,13 @@ export function submitResults() {
         duration: duration,
         largestChain: game.largestChain,
         totalClears: game.totalClears,
-        playType: touch.enabled ? "Touch Screen" : "Keyboard & Gamepad",
+        playType: touch.enabled ? "Touch Screen" : "Keyboard or Gamepad",
         month: api.data.month,
         day: api.data.day,
         year: api.data.year,
         hour: api.data.hour,
         minute: api.data.minute,
         meridian: api.data.meridian,
-        kc: passcodeInput.value,
         gameLog: game.log,
       };
       updateEntry(newData, indexToReplace);

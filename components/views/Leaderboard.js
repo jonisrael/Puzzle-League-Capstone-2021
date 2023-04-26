@@ -35,7 +35,7 @@ export default (st) => html`
           <th>BLOCKS CLEARED</th>
           <h4 id="scroll-dialogue"><== Scroll ==></h4>
           <th>DATE</th>
-          <th>TIME</th>
+          <th>PLAY TYPE</th>
         </tr>
         <span id="ranked-scores-display">${st.markup}</span>
       </table>

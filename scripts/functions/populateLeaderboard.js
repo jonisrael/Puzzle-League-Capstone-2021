@@ -10,7 +10,10 @@ export function populateLeaderboard() {
     if (leaderboard.data[rank].score >= 999999)
       leaderboard.data[rank].score = "999999";
     let entry = leaderboard.data[rank];
-    if (leaderboard.data[rank].name == leaderboard.userPostedName) {
+    if (
+      leaderboard.data[rank].name == leaderboard.userPostedName ||
+      leaderboard.data[rank].name == localStorage.username
+    ) {
       nameMatchIndexes.push(rank);
       if (leaderboard.data[rank].score == leaderboard.userPostedScore)
         fullMatchIndex = rank;
@@ -20,7 +23,7 @@ export function populateLeaderboard() {
       <tr style='
       ${
         nameMatchIndexes.includes(rank)
-          ? " font-weight: bold; background-color: orange;"
+          ? " font-weight: bold; background-color: yellow;"
           : ""
       }
       ${fullMatchIndex == rank ? " background-color: yellow; color:black" : ""}

@@ -14,7 +14,6 @@ const gameSchema = new mongoose.Schema({
   hour: String,
   minute: String,
   meridian: String,
-  kc: String,
   gameLog: Array,
 });
 

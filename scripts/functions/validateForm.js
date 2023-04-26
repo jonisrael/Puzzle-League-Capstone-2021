@@ -1,7 +1,7 @@
 import { game, leaderboard } from "../global";
 import { displayMessage } from "../..";
 
-export function validateForm(nameValue, score, passcode) {
+export function validateForm(nameValue, score) {
   let identicalEntries = [];
   let overwrite = false;
   leaderboard.data.forEach((entry) => {
@@ -9,7 +9,6 @@ export function validateForm(nameValue, score, passcode) {
       identicalEntries.push({
         name: entry.name,
         score: entry.score,
-        kc: entry.kc,
         date: `${entry.month}/${entry.day}/${entry.year}`,
         _id: entry._id,
       });
@@ -31,33 +30,14 @@ export function validateForm(nameValue, score, passcode) {
 
   if (identicalEntries.length > 0) {
     let prevLeaderboardEntry = identicalEntries[0];
-    if (!prevLeaderboardEntry.kc) prevLeaderboardEntry.kc = "1234";
-    if (passcode !== prevLeaderboardEntry.kc) {
+    if (score > prevLeaderboardEntry.score) {
+      overwrite = confirm(
+        `Replace your current score on the leaderboard of ${identicalEntries[0].score} with this one?`
+      );
+    } else {
       alert(
-        `Incorrect passcode. If you've lost your passcode, you can contact me for it or create a new name.`
+        `Cannot post this score because it is less than ${prevLeaderboardEntry.name}'s score of ${prevLeaderboardEntry.score}. Please enter either a different name or try again!`
       );
-      overwrite = false;
-    } //
-    else if (score > prevLeaderboardEntry.score) {
-      overwrite = confirm(
-        `Replace your current score on the leaderboard taken on ${identicalEntries[0].date} with this one?`
-      );
-    } //
-    else if (score <= prevLeaderboardEntry.score) {
-      overwrite = confirm(
-        `WARNING -- This name is already on the leaderboard and currently has a better score of, ${prevLeaderboardEntry.score}. Do you still want to update this score? This is not recommended.`
-      );
-      if (overwrite) {
-        overwrite = confirm(
-          `Are you still sure you want to do this? This means that you will be updating your current better score on the leaderboard with this weaker one.`
-        );
-      }
-
-      if (overwrite) {
-        overwrite = confirm(
-          `Please confirm one more time -- this action is irreversible!`
-        );
-      }
     }
 
     if (overwrite) {
