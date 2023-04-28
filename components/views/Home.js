@@ -69,7 +69,7 @@ export default (st) => html`
           Chain Puzzle
         </button>
         <button id="training-mode" class="default-button start-buttons">
-          Endless Mode
+          Training Mode
         </button>
         <button id="ai-plays-button" class="default-button start-buttons">
           See My AI Play!

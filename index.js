@@ -99,8 +99,10 @@ function addEventListeners(st) {
   win.muteMusic = document.getElementById("mute-music");
   win.muteSFX = document.getElementById("mute-sfx");
   if (st.view === "Leaderboard") {
-    document.querySelectorAll(".refresh").forEach((item) => {
+    document.querySelectorAll(".refresh-buttons").forEach((item) => {
       item.addEventListener("click", () => {
+        // document.querySelector(".nav-links a[title=Home]").click();
+        // document.querySelector(".nav-links a[title=Leaderboard]").click();
         item.innerHTML = "Fetching...";
         getLeaderboardData(true);
       });

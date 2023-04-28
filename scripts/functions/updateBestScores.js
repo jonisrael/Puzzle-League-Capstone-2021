@@ -68,9 +68,10 @@ export function updateBestScores(score) {
   if (rank < 6) {
     if (leaderboard.reason === "slow") {
       confirmUpdate = confirm(
-        `Your score is #${rank} on your personal best score list, but your game is invalid for the leaderboards due to slowdown.\nDo you still want to add this score locally?`
+        `Your score is #${rank} on your personal best score list, but your game is invalid for the leaderboards due to your device running the game too slowly. Please make sure your device's power saving or battery saving mode is disabled\nDo you still want to add this score locally?`
       );
-      if (confirmUpdate) confirmUpdate = confirm("Are you sure?");
+      if (confirmUpdate)
+        confirmUpdate = confirm("Are you sure? This is not recommended.");
     }
     if (confirmUpdate) {
       if (rank < 6) {

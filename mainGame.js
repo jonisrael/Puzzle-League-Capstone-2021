@@ -1578,7 +1578,7 @@ export function gameLoop() {
     debug.show = true;
     playAudio(audio.topout, 0.01);
     pause();
-    win.mainInfoDisplay.innerHTML = `Game Crash Occured!<br>Please check developer console for details by pressing F12, and email the error at jonisrael45@gmail.com. A snapshot of the board state is below. Please reload website to continue!`;
+    win.mainInfoDisplay.innerHTML = `An error has occurred and the game has stopped.<br>Please check developer console for details by pressing F12, and email the error at jonisrael45@gmail.com. A snapshot of the board state in debug mode is below. Please reload website to continue!`;
     win.mainInfoDisplay.style.color = "red";
     document.querySelector("#pause-button").style.display = "none";
     return;

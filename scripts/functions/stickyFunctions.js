@@ -115,9 +115,9 @@ export function checkBufferedSwap(x, y) {
 }
 
 export function stickyCheck(x, y) {
+  if (outOfRange(x, y)) return false;
   if (game.board[x][y].targetCoord === undefined) return false;
   if (game.board[x][y].airborne) return false;
-  if (outOfRange(x, y)) return false;
   if (!blockIsSolid(game.board[x][y])) return false;
 
   const Square = game.board[x][y];
