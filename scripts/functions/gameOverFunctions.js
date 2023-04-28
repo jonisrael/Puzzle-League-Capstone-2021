@@ -139,8 +139,13 @@ export function gameOverBoard() {
       getLeaderboardData();
     }
     if (!win.muteAnnouncer.checked) playAudio(audio.announcerKO, 0.2);
-    game.messagePriority = "Game Over!";
-    game.message = "Game Over!";
+    if (cpu.enabled) {
+      game.messagePriority = "I lost...";
+      game.message = "I lost...";
+    } else {
+      game.messagePriority = "Game Over!";
+      game.message = "Game Over!";
+    }
   }
   if (game.frames == 4) {
     playAudio(audio.topout);

@@ -109,14 +109,17 @@ export const menus = {
   },
 
   setAISpeed: {
-    question: { text: "How Fast Should the AI Cursor Speed Be?" },
+    question: {
+      text:
+        "How Fast Should the AI Cursor Speed Be, in actions per second (APS)?",
+    },
     buttonFunction: `setAISpeed`,
     buttons: [
-      { text: `30 actions per second` },
-      { text: `20 actions per second` },
-      { text: `10 actions per second` },
-      { text: `4 actions per second` },
-      { text: `2 actions per second` },
+      { text: `Fastest (30 APS)` },
+      { text: `Fast (20 APS)` },
+      { text: `Human Speed (10 APS)` },
+      { text: `Slow (6 APS)` },
+      { text: `Algorithm Viewer (4 APS)` },
     ],
   },
 };
@@ -165,8 +168,8 @@ function setAISpeed(option) {
   if (option === 1) cpu.cursorSpeedDivisor = 2;
   if (option === 2) cpu.cursorSpeedDivisor = 3;
   if (option === 3) cpu.cursorSpeedDivisor = 6;
-  if (option === 4) cpu.cursorSpeedDivisor = 15;
-  if (option === 5) cpu.cursorSpeedDivisor = 30;
+  if (option === 4) cpu.cursorSpeedDivisor = 10;
+  if (option === 5) cpu.cursorSpeedDivisor = 15;
   defineTimeEvents(2);
   startGame();
 }
