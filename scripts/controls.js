@@ -77,7 +77,7 @@ export const savedControls =
 checkIfControlsExist(savedControls);
 
 export function setNewKeyboardControls() {
-  let kb = { swap: [], raise: [] }; // add other inputs later
+  let kb = { swap: [], raise: [], turn_clockwise: [], turn_cc: [] }; // add other inputs later
   for (let i = 0; i < document.querySelectorAll(".kb-controls").length; i++) {
     const el = document.querySelectorAll(".kb-controls")[i];
     let charCode = String.fromCharCode(el.value)
@@ -89,14 +89,14 @@ export function setNewKeyboardControls() {
     if (el === document.querySelector("#right")) kb.right = [charCode];
     if (el === document.querySelector("#swap-1")) kb.swap[0] = charCode;
     if (el === document.querySelector("#swap-2")) kb.swap[1] = charCode;
+    if (el === document.querySelector("#raise-1")) kb.raise[0] = charCode;
+    if (el === document.querySelector("#raise-2")) kb.raise[1] = charCode;
+    if (el === document.querySelector("#turn-cc-1")) kb.turn_cc[0] = charCode;
+    if (el === document.querySelector("#turn-cc-2")) kb.turn_cc[1] = charCode;
     if (el === document.querySelector("#turn-clockwise-1"))
       kb.turn_clockwise[0] = charCode;
     if (el === document.querySelector("#turn-clockwise-2"))
       kb.turn_clockwise[1] = charCode;
-    if (el === document.querySelector("#turn-counter-clockwise-1"))
-      kb.turn_cc[0] = charCode;
-    if (el === document.querySelector("#turn-counter-clockwise-2"))
-      kb.turn_cc[1] = charCode;
   }
   console.log("KB Controls:", kb, document.querySelectorAll(".kb-controls"));
   return kb;
@@ -184,7 +184,7 @@ export function checkIfControlsExist(controls) {
     try {
       if (
         !controlsObject.timeCreated ||
-        controlsObject.timeCreated < 1680471712626 || // time before latest release (April 2, 2023)
+        controlsObject.timeCreated < 1682885793312 || // time before latest release (April 2, 2023)
         !controlsObject.keyboard ||
         !controlsObject.gamepad
       ) {
@@ -278,15 +278,15 @@ export function playerAction(input) {
       game.cursor.y -= 1;
       cursorMoved = true;
       action.up = false;
-      if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
+      // if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
     } else if (input.down) {
       game.cursor.y += 1;
       action.down = false;
       cursorMoved = true;
-      if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
+      // if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
     } else if (input.left) {
       action.left = false;
-      if (!game.playRecording) replay.digitalInputs.push([game.frames, "left"]);
+      // if (!game.playRecording) replay.digitalInputs.push([game.frames, "left"]);
       game.cursor.x -= 1;
       cursorMoved = true;
       action.right = false;
@@ -294,10 +294,10 @@ export function playerAction(input) {
       game.cursor.x += 1;
       cursorMoved = true;
       action.right = false;
-      if (!game.playRecording)
-        replay.digitalInputs.push([game.frames, "right"]);
+      // if (!game.playRecording)
+      // replay.digitalInputs.push([game.frames, "right"]);
     } else if (input.swap && !game.over) {
-      if (!game.playRecording) replay.digitalInputs.push([game.frames, "swap"]);
+      // if (!game.playRecording) replay.digitalInputs.push([game.frames, "swap"]);
       action.swap = false;
       // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
       // if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
@@ -598,7 +598,11 @@ export function preselectControls() {
     document.getElementById("swap-1").value,
     document.getElementById("swap-2").value,
     document.getElementById("raise-1").value,
-    document.getElementById("raise-2").value
+    document.getElementById("raise-2").value,
+    document.getElementById("turn-cc-1").value,
+    document.getElementById("turn-cc-2").value,
+    document.getElementById("turn-clockwise-1").value,
+    document.getElementById("turn-clockwise-2").value
   );
   console.log(kb);
   document.getElementById("left").value = String.fromCharCode(kb.left[0])
@@ -625,8 +629,27 @@ export function preselectControls() {
   document.getElementById("raise-2").value = String.fromCharCode(kb.raise[1])
     .toUpperCase()
     .charCodeAt();
+  document.getElementById("turn-clockwise-1").value = String.fromCharCode(
+    kb.turn_clockwise[0]
+  )
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("turn-clockwise-2").value = String.fromCharCode(
+    kb.turn_clockwise[1]
+  )
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("turn-cc-1").value = String.fromCharCode(
+    kb.turn_cc[0]
+  )
+    .toUpperCase()
+    .charCodeAt();
+  document.getElementById("turn-cc-2").value = String.fromCharCode(
+    kb.turn_cc[1]
+  )
+    .toUpperCase()
+    .charCodeAt();
 
-  console.log(`${kb.swap[0]}`);
   console.log(
     "list of elements:",
     document.getElementById("left").value,
@@ -638,8 +661,6 @@ export function preselectControls() {
     document.getElementById("raise-1").value,
     document.getElementById("raise-2").value
   );
-
-  console.log(`${kb.swap[0] + 32}`, document.getElementById("swap-1").value);
 }
 
 export function setUpASCIIOptions(selector) {

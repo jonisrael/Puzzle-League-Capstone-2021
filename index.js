@@ -136,13 +136,15 @@ function addEventListeners(st) {
     // if saved
     // checkPreselectedControls(savedControls);
     win.controlChangeWasMade = false;
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 8; i++) {
       setUpASCIIOptions(
         `#keyboard-controls-container > div:nth-child(${i}) > select`
       );
     }
     setUpASCIIOptions("#swap-2");
     setUpASCIIOptions("#raise-2");
+    setUpASCIIOptions("#turn-clockwise-2");
+    setUpASCIIOptions("#turn-cc-2");
     preselectControls();
     document
       .getElementById("accept-game-controls")

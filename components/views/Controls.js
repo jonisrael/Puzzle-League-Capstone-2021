@@ -38,6 +38,18 @@ export default (st) => html`
             <label id=raise-2-label>Raise Alt</label>
             <select id="raise-2" class=kb-controls></select>
           </div>
+          <div id=turn-cc-choice-container class=choice-container>
+            <label id=turn-cc-1-label>Rotate Left</label>
+            <select id="turn-cc-1" class=kb-controls></select>
+            <label id=turn-cc-2-label>Rotate Left Alt</label>
+            <select id="turn-cc-2" class=kb-controls></select>
+          </div>
+          <div id=turn-clockwise-choice-container class=choice-container>
+            <label id=turn-clockwise-1-label>Rotate Right</label>
+            <select id="turn-clockwise-1" class=kb-controls></select>
+            <label id=turn-clockwise-2-label>Rotate Alt</label>
+            <select id="turn-clockwise-2" class=kb-controls></select>
+          </div>
         </div>
         </select>
         <br>
