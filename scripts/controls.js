@@ -11,41 +11,24 @@ import { tutorialMessages } from "./tutorial/tutorialMessages";
 import { loadTutorialState } from "./tutorial/tutorialEvents";
 import { touch } from "./clickControls";
 
-export const action = {
+export let action = {
   up: false,
   down: false,
   left: false,
   right: false,
   swap: false,
   raise: false,
+  turn_clockwise: false,
+  turn_cc: false,
   pause: false,
 };
 
-export const [actionKeys, actions] = Object.entries(action);
+const actionKeys = Object.keys(action);
+const actionValues = Object.values(action);
 
 export const holdTime = JSON.parse(JSON.stringify(action));
 export const pressed = JSON.parse(JSON.stringify(action));
 export const heldFrames = JSON.parse(JSON.stringify(action));
-
-// export const holdTime = {
-//   up: 0,
-//   down: 0,
-//   left: 0,
-//   right: 0,
-//   swap: 0,
-//   raise: 0,
-//   pause: 0
-// };
-
-// export const pressed = JSON.stringify
-
-// export const heldFrames = {
-//   up: 0,
-//   down: 0,
-//   left: 0,
-//   right: 0,
-//   swap: 0
-// };
 
 export const defaultControls = {
   keyboard: {
@@ -57,6 +40,7 @@ export const defaultControls = {
     raise: [82, 90], // r, z
     turn_clockwise: [84, 67], // t, c
     turn_cc: [71, 86], // g, v
+    pause: [112], // p
   },
   gamepad: {
     up: [12], // D-Pad Up
@@ -65,6 +49,8 @@ export const defaultControls = {
     right: [15], // D-Pad Right
     swap: [0, 1], // B, A
     raise: [5, 7], // L, R
+    turn_clockwise: [2], // Y
+    turn_cc: [3], // X
     pause: [8, 9], //+, -
   },
   timeCreated: Date.now(),
@@ -102,38 +88,6 @@ export function setNewKeyboardControls() {
   return kb;
 }
 
-// export function setNewKeyboardControlsOld(formInput) {
-//   // set defaults
-//   const keyboard = {
-//     up: [38], // ArrowUp
-//     left: [37], //ArrowLeft
-//     down: [40], //ArrowDown
-//     right: [39], //ArrowRight
-//     swap: [83, 88], // s, x
-//     raise: [82, 90], // r, z
-//   };
-//   if (formInput.selectedIndex === 1) {
-//     keyboard.swap = [83, 90]; // s, z
-//     keyboard.raise = [82, 88]; // r, x
-//   }
-//   if (formInput.selectedIndex > 1) {
-//     keyboard.up = [87]; // w
-//     keyboard.left = [65]; // a
-//     keyboard.down = [83]; // s
-//     keyboard.right = [68]; // d
-//     if (formInput.selectedIndex === 2) {
-//       keyboard.swap = [75, 100]; // k, numpad4
-//       keyboard.raise = [76, 101]; // l, numpad5
-//     }
-//     if (formInput.selectedIndex === 3) {
-//       keyboard.swap = [76, 101]; // l, numpad5
-//       keyboard.raise = [75, 100]; // k, numpad4
-//     }
-//   }
-
-//   return keyboard;
-// }
-
 export function setNewGamepadControls(swapInputs, raiseInputs) {
   const gameController = {
     up: [12], // D-Pad Up
@@ -142,6 +96,8 @@ export function setNewGamepadControls(swapInputs, raiseInputs) {
     right: [15], // D-Pad Right
     swap: [0, 1],
     raise: [5, 7],
+    turn_clockwise: [2], // Y
+    turn_cc: [3], // X
     pause: [8],
   };
   for (let i = 0; i < swapInputs.length; i++) {
@@ -166,6 +122,7 @@ export function checkIfControlsExist(controls) {
       raise: [82, 90], // z, r
       turn_clockwise: [71, 86], // t, c
       turn_cc: [84, 67], // g, v
+      pause: [112], // g, v
     },
     gamepad: {
       up: [12], // D-Pad Up
@@ -174,6 +131,8 @@ export function checkIfControlsExist(controls) {
       right: [15], // D-Pad Right
       swap: [0, 1], // B, A
       raise: [4, 5], // L, R
+      turn_clockwise: [2], // Y
+      turn_cc: [3], // X
       pause: [8, 9], // +, -
     },
     timeCreated: Date.now(),
@@ -184,7 +143,7 @@ export function checkIfControlsExist(controls) {
     try {
       if (
         !controlsObject.timeCreated ||
-        controlsObject.timeCreated < 1682885793312 || // time before latest release (April 2, 2023)
+        controlsObject.timeCreated < 1683399187852 || // time before latest release (May 6,2023)
         !controlsObject.keyboard ||
         !controlsObject.gamepad
       ) {
@@ -192,7 +151,7 @@ export function checkIfControlsExist(controls) {
         console.log("Controls invalid or missing, do April 2023 patch to fix.");
         return defaultControls;
       } else {
-        console.log("Game Controls object is valid!");
+        console.log("Game Controls object is valid and up to date!");
         return JSON.parse(storedControls);
       }
     } catch (error) {
@@ -209,24 +168,26 @@ export function checkIfControlsExist(controls) {
   return defaultControls;
 }
 
-export function playerAction(input) {
-  input.byCPU = false;
+console.log(savedControls.gamepad);
+
+export function playerAction() {
+  action.byCPU = false;
   if (game.tutorialRunning && (!game.humanCanPlay || debug.enabled)) {
-    if (actions.includes(true)) {
-      input = tutorialBreakInputs(input);
+    if (actionValues.includes(true)) {
+      tutorialBreakInputs(action);
       actionKeys.forEach((btn) => (action[btn] = false));
     } else if (win.gamepadPort !== false) {
       // check gamepad inputs
-      input = gamepadInput(input);
+      gamepadInput();
     }
 
-    if (Object.values(input).includes(true) && !input.pause) {
-      return input;
+    if (Object.values(action).includes(true) && !action.pause) {
+      return action;
     }
   }
 
   if (win.gamepadPort !== false) {
-    input = gamepadInput(input);
+    gamepadInput();
   }
 
   if (!game.humanCanPlay && !debug.enabled) {
@@ -237,15 +198,15 @@ export function playerAction(input) {
   // if (inputsActive.length) console.log(inputsActive, game.frames);
   if (cpu.enabled) {
     if (game.board[game.cursor.x][game.cursor.y].type === "swapping") return;
-    if (Object.values(input).includes(true) && !input.byCPU) {
+    if (Object.values(action).includes(true) && !action.byCPU) {
       cpu.control = 0;
-      console.log("player input detected, cpu control off.");
+      console.log("player action detected, cpu control off.");
     }
     try {
       if (!game.paused) {
-        input = cpuAction(input);
-        // console.log(game.frames, Object.values(input));
-        input.byCPU = Object.values(input).includes(true);
+        action = cpuAction(action);
+        // console.log(game.frames, Object.values(action));
+        action.byCPU = Object.values(action).includes(true);
       }
     } catch (error) {
       if (!debug.enabled)
@@ -270,49 +231,45 @@ export function playerAction(input) {
     debug.advanceOneFrame = false;
   }
 
-  // first input checker, "else if" is required for priority, so case does not work.
+  // first action checker, "else if" is required for priority, so case does not work.
   let cursorMoved = false;
   let cursorMoveSuccess = false;
   if (!game.paused || debug.enabled) {
-    if (input.up) {
+    if (action.up && (holdTime.up === 0 || holdTime.up > 11)) {
       game.cursor.y -= 1;
       cursorMoved = true;
       action.up = false;
       // if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
-    } else if (input.down) {
+    } else if (action.down && (holdTime.down === 0 || holdTime.down > 11)) {
       game.cursor.y += 1;
-      action.down = false;
       cursorMoved = true;
+      action.down = false;
       // if (!game.playRecording) replay.digitalInputs.push([game.frames, "up"]);
-    } else if (input.left) {
-      action.left = false;
+    } else if (action.left && (holdTime.left === 0 || holdTime.left > 11)) {
       // if (!game.playRecording) replay.digitalInputs.push([game.frames, "left"]);
       game.cursor.x -= 1;
       cursorMoved = true;
-      action.right = false;
-    } else if (input.right) {
+      action.left = false;
+    } else if (action.right && (holdTime.right === 0 || holdTime.right > 11)) {
       game.cursor.x += 1;
       cursorMoved = true;
       action.right = false;
       // if (!game.playRecording)
       // replay.digitalInputs.push([game.frames, "right"]);
-    } else if (input.swap && !game.over) {
-      // if (!game.playRecording) replay.digitalInputs.push([game.frames, "swap"]);
+    } else if (action.swap && holdTime.swap === 0 && !game.over) {
       action.swap = false;
-      // game.cursor_type = input.byCPU ? "defaultCursor" : "defaultCursor";
-      // if (game.cursor.x === grid.COLS - 1) game.cursor.x -= 1;
       game.swapPressed = true;
       if (
         game.mode === "tutorial" &&
         !game.board[game.cursor.x][game.cursor.y].tutorialSelectable &&
         !game.board[game.cursor.x + 1][game.cursor.y].tutorialSelectable &&
-        !input.byCPU
+        !action.byCPU
       ) {
         console.log("cursor is not swappable here");
         game.swapPressed = false;
       }
 
-      if (input.byCPU)
+      if (action.byCPU)
         cpu.showFakeCursorPosition = cpu.targetX === game.cursor.x;
     }
 
@@ -358,8 +315,8 @@ export function playerAction(input) {
       }
     }
 
-    // second input checker
-    if (input.raise) {
+    // second action checker
+    if (action.raise) {
       action.raise = false;
       if (!game.playRecording)
         replay.digitalInputs.push([game.frames, "raise"]);
@@ -367,7 +324,7 @@ export function playerAction(input) {
       win.cvs.scrollIntoView({ block: "nearest" });
     }
     let successfulTurn = false; // used to determine if sfx should be played
-    if (input.turn_clockwise || input.turn_cc) {
+    if (action.turn_clockwise || action.turn_cc) {
       action.turn_clockwise = action.turn_cc = false;
       game.cursor_type = "defaultCursor";
       if (
@@ -386,7 +343,7 @@ export function playerAction(input) {
         successfulTurn = true;
       }
     }
-    // if (input.turn_clockwise) {
+    // if (action.turn_clockwise) {
     //   game.cursor_type = "defaultCursor";
     //   // turn clockwise, but will not face upwards
     //   action.turn_clockwise = false;
@@ -412,7 +369,7 @@ export function playerAction(input) {
     //     successfulTurn = true;
     //   }
     // }
-    // if (input.turn_cc) {
+    // if (action.turn_cc) {
     //   game.cursor_type = "defaultCursor";
     //   // turn counter-clockwise
     //   action.turn_cc = false;
@@ -450,21 +407,37 @@ export function playerAction(input) {
   }
 
   // check pause
-  if (input.pause) {
+  if (action.pause) {
     action.pause = false;
     game.paused ? unpause() : pause();
   }
 
-  // actionKeys.forEach((btn) => (action[btn] = false));
+  action.up ? (holdTime.up += perf.gameSpeed) : (holdTime.up = 0);
+  action.left ? (holdTime.left += perf.gameSpeed) : (holdTime.left = 0);
+  action.down ? (holdTime.down += perf.gameSpeed) : (holdTime.down = 0);
+  action.right ? (holdTime.right += perf.gameSpeed) : (holdTime.right = 0);
+  action.swap ? (holdTime.swap += perf.gameSpeed) : (holdTime.swap = 0);
+  action.raise ? (holdTime.raise += perf.gameSpeed) : (holdTime.raise = 0);
+  action.pause ? (holdTime.pause += perf.gameSpeed) : (holdTime.pause = 0);
+  action.turn_clockwise
+    ? (holdTime.turn_clockwise += perf.gameSpeed)
+    : (holdTime.turn_clockwise = 0);
+  action.turn_cc
+    ? (holdTime.turn_cc += perf.gameSpeed)
+    : (holdTime.turn_cc = 0);
+
+  actionKeys.forEach((key) => {
+    if (action[key]) holdTime[key] += perf.gameSpeed;
+    else holdTime[key] = 0;
+    action[key] = false;
+  });
 
   // NOT REMOVED
   // reset all keys
-  // actionKeys.forEach(key => {
-  //   action[key] = false;
-  // });
+  // actionKeys.forEach((key) => (action[key] = false));
 }
 
-function gamepadInput(input) {
+function gamepadInput() {
   if (win.gamepadPort !== false) {
     try {
       pollGamepadInputs(navigator.getGamepads()[win.gamepadPort]);
@@ -478,53 +451,58 @@ function gamepadInput(input) {
     }
   }
 
-  if (!game.paused) {
-    // accept input if initially pressed or key is held over 200ms
-    if (action.up && (holdTime.up === 0 || holdTime.up >= 12)) {
-      input.up = true;
-    } else if (action.left && (holdTime.left === 0 || holdTime.left >= 12)) {
-      input.left = true;
-    } else if (action.down && (holdTime.down === 0 || holdTime.down >= 12)) {
-      input.down = true;
-    } else if (action.right && (holdTime.right === 0 || holdTime.right >= 12)) {
-      input.right = true;
-    } else if (action.swap && holdTime.swap === 0) {
-      input.swap = true;
-    }
-    // separate input
-    if (action.raise && (holdTime.raise === 0 || holdTime.raise >= 12)) {
-      input.raise = true;
-    } else if (action.pause && holdTime.pause === 0) {
-      input.pause = true;
-    }
-  } else if (game.paused) {
-    if (action.pause && holdTime.pause === 0) {
-      input.pause = true;
-    } else if (action.raise && holdTime.raise === 0) {
-      playAudio(audio.select);
-      win.running = false;
-      win.restartGame = true;
-    }
-    //  else if (holdTime.pause >= 60) {
-    //   playAudio(audio.select);
-    //   win.running = false;
-    //   render(state.Home);
-    // }
-  }
+  // if (!game.paused) {
+  //   // accept action if initially pressed or key is held over 200ms
+  //   if (action.up && (holdTime.up === 0 || holdTime.up >= 12)) {
+  //     action.up = true;
+  //   } else if (action.left && (holdTime.left === 0 || holdTime.left >= 12)) {
+  //     action.left = true;
+  //   } else if (action.down && (holdTime.down === 0 || holdTime.down >= 12)) {
+  //     action.down = true;
+  //   } else if (action.right && (holdTime.right === 0 || holdTime.right >= 12)) {
+  //     action.right = true;
+  //   } else if (action.swap && holdTime.swap === 0) {
+  //     action.swap = true;
+  //   }
+  //   // separate action
+  //   if (action.raise && (holdTime.raise === 0 || holdTime.raise >= 12)) {
+  //     action.raise = true;
+  //   } else if (action.pause && holdTime.pause === 0) {
+  //     action.pause = true;
+  //   }
+  // } else if (game.paused) {
+  //   if (action.pause && holdTime.pause === 0) {
+  //     action.pause = true;
+  //   } else if (action.raise && holdTime.raise === 0) {
+  //     playAudio(audio.select);
+  //     win.running = false;
+  //     win.restartGame = true;
+  //   }
+  //   //  else if (holdTime.pause >= 60) {
+  //   //   playAudio(audio.select);
+  //   //   win.running = false;
+  //   //   render(state.Home);
+  //   // }
+  // }
 
-  action.up ? (holdTime.up += perf.gameSpeed) : (holdTime.up = 0);
-  action.left ? (holdTime.left += perf.gameSpeed) : (holdTime.left = 0);
-  action.down ? (holdTime.down += perf.gameSpeed) : (holdTime.down = 0);
-  action.right ? (holdTime.right += perf.gameSpeed) : (holdTime.right = 0);
-  action.swap ? (holdTime.swap += perf.gameSpeed) : (holdTime.swap = 0);
-  action.raise ? (holdTime.raise += perf.gameSpeed) : (holdTime.raise = 0);
-  action.pause ? (holdTime.pause += perf.gameSpeed) : (holdTime.pause = 0);
+  // for (let key of actionKeys) {
+  //   if (action[key]) holdTime[key] += perf.gameSpeed;
+  //   else holdTime[key] = 0;
+  // }
 
-  // actionKeys.forEach((btn) => (action[btn] = false));
-  if (game.tutorialRunning && action.swap && holdTime.swap > 1) {
-    input.swap = false;
-  }
-  return input;
+  // // action.up ? (holdTime.up += perf.gameSpeed) : (holdTime.up = 0);
+  // // action.left ? (holdTime.left += perf.gameSpeed) : (holdTime.left = 0);
+  // // action.down ? (holdTime.down += perf.gameSpeed) : (holdTime.down = 0);
+  // // action.right ? (holdTime.right += perf.gameSpeed) : (holdTime.right = 0);
+  // // action.swap ? (holdTime.swap += perf.gameSpeed) : (holdTime.swap = 0);
+  // // action.raise ? (holdTime.raise += perf.gameSpeed) : (holdTime.raise = 0);
+  // // action.pause ? (holdTime.pause += perf.gameSpeed) : (holdTime.pause = 0);
+
+  // // actionKeys.forEach((btn) => (action[btn] = false));
+  // if (game.tutorialRunning && action.swap && holdTime.swap > 1) {
+  //   action.swap = false;
+  // }
+  // return action;
 }
 
 function pollGamepadInputs(gamepad) {
@@ -536,16 +514,27 @@ function pollGamepadInputs(gamepad) {
     }
   }
 
+  if (buttonsPressed.length > 0) console.log(Object.values(buttonsPressed));
+
   // if (buttonsPressed.length) console.log(buttonsPressed, game.frames);
   for (let index = 0; index < buttonsPressed.length; index++) {
     let button = buttonsPressed[index];
-    action.raise = savedControls.gamepad.raise.includes(button);
-    action.up = savedControls.gamepad.up.includes(button);
-    action.down = savedControls.gamepad.down.includes(button);
-    action.left = savedControls.gamepad.left.includes(button);
-    action.right = savedControls.gamepad.right.includes(button);
-    action.swap = savedControls.gamepad.swap.includes(button);
-    action.pause = savedControls.gamepad.pause.includes(button);
+    for (let key of actionKeys) {
+      action[key] = savedControls.gamepad[key].includes(button);
+      if (action[key]) holdTime[key] += perf.gameSpeed;
+      else holdTime[key] = 0;
+    }
+    // if (savedControls.gamepad.up.includes(button)) {
+    //   action.up = true;
+    //   holdTime.up += perf.gameSpeed;
+    // } else holdTime.up = 0;
+    // action.raise = savedControls.gamepad.raise.includes(button);
+    // action.up = savedControls.gamepad.up.includes(button);
+    // action.down = savedControls.gamepad.down.includes(button);
+    // action.left = savedControls.gamepad.left.includes(button);
+    // action.right = savedControls.gamepad.right.includes(button);
+    // action.swap = savedControls.gamepad.swap.includes(button);
+    // action.pause = savedControls.gamepad.pause.includes(button);
   }
 
   let leftStickX = gamepad.axes[0];
@@ -559,8 +548,8 @@ function pollGamepadInputs(gamepad) {
   else if (leftStickX > 0.2 || rightStickX > 0.2) action.right = true;
 }
 
-function tutorialBreakInputs(input) {
-  if (input.swap) {
+function tutorialBreakInputs() {
+  if (action.swap) {
     console.log(tutorial.state);
     if (
       tutorial.state == tutorial.board.length - 1 &&
@@ -571,9 +560,9 @@ function tutorialBreakInputs(input) {
       win.restartGame = true;
     }
     nextDialogue(tutorial.msgIndex);
-    console.log("state is now", tutorial.state, input);
-  } else if (input.raise && debug.enabled) {
-    console.log("raise was pressed", input);
+    console.log("state is now", tutorial.state, action);
+  } else if (action.raise && debug.enabled) {
+    console.log("raise was pressed", action);
     loadTutorialState(tutorial.state + 1, 0, true);
     // tutorial.state = tutorial.board.length - 1;
     // game.tutorialRunning = false;
@@ -582,7 +571,6 @@ function tutorialBreakInputs(input) {
     // win.restartGame = true;
   }
   actionKeys.forEach((btn) => (action[btn] = false));
-  return input;
 }
 
 export function preselectControls() {

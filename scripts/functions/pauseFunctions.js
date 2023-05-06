@@ -16,7 +16,7 @@ import {
 } from "../global";
 import { audio } from "../fileImports";
 import { playAudio, playMusic } from "./audioFunctions";
-import { action } from "../controls";
+import { action, holdTime } from "../controls";
 import { tutorial } from "../tutorial/tutorialScript";
 import { render } from "../../index";
 import * as state from "../../store";
@@ -218,6 +218,8 @@ export function printDebugInfo() {
     previous,
     "\naction",
     action,
+    "\nholdTime",
+    holdTime,
     "\nhelpPlayer",
     helpPlayer,
     "\ndebug",

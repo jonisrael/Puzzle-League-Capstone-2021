@@ -44,6 +44,7 @@ import {
   actionUp,
   savedControls,
   playerAction,
+  holdTime,
 } from "./scripts/controls";
 import {
   pause,
@@ -1339,24 +1340,17 @@ function KEYBOARD_CONTROL(event) {
   // Game Controls
   if (win.running && (!game.over || game.tutorialRunning)) {
     if ((!game.paused && !cpu.control) || debug.enabled) {
-      if (savedControls.keyboard.up.includes(event.keyCode)) action.up = true;
-      if (savedControls.keyboard.down.includes(event.keyCode)) {
-        action.down = true;
-      }
-      if (savedControls.keyboard.left.includes(event.keyCode))
-        action.left = true; // left arrow
-      if (savedControls.keyboard.right.includes(event.keyCode))
-        action.right = true; // right arrow
-      if (savedControls.keyboard.swap.includes(event.keyCode))
-        action.swap = true; // s or x
-      if (savedControls.keyboard.raise.includes(event.keyCode))
-        action.raise = true; // r or z
-      if (savedControls.keyboard.turn_clockwise.includes(event.keyCode)) {
-        action.turn_clockwise = true;
-      }
-      if (savedControls.keyboard.turn_cc.includes(event.keyCode)) {
-        action.turn_cc = true;
-      }
+      action.up = savedControls.keyboard.up.includes(event.keyCode);
+      action.down = savedControls.keyboard.down.includes(event.keyCode);
+      action.left = savedControls.keyboard.left.includes(event.keyCode);
+      action.right = savedControls.keyboard.right.includes(event.keyCode);
+      action.turn_clockwise = savedControls.keyboard.turn_clockwise.includes(
+        event.keyCode
+      );
+      action.turn_cc = savedControls.keyboard.turn_cc.includes(event.keyCode);
+      action.swap =
+        !event.repeat && savedControls.keyboard.swap.includes(event.keyCode);
+      action.raise = savedControls.keyboard.raise.includes(event.keyCode);
     }
 
     if (game.mode === "cpu-play" && !debug.enabled) {
